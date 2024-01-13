@@ -26,9 +26,6 @@ public class Member extends BaseEntity {
     @Column(nullable = false, length = 100)
     private String email;
 
-    @Column(nullable = false, length = 20)
-    private String phone;
-
     @Column(nullable = false, length = 200) // TEXT가 낫나 & 길이는?
     private String pwSalt;
 
@@ -45,10 +42,6 @@ public class Member extends BaseEntity {
 
     @Column(columnDefinition = "TEXT")
     private String profileImg;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "VARCHAR(10)")
-    private Status status;
 
     @Column
     private LocalDate inactiveDate;
