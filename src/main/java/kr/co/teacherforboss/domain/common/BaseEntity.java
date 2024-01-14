@@ -1,6 +1,9 @@
 package kr.co.teacherforboss.domain.common;
 
-import jakarta.persistence.*;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.MappedSuperclass;
 import kr.co.teacherforboss.domain.enums.Status;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
