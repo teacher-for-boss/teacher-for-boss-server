@@ -4,17 +4,14 @@ import kr.co.teacherforboss.config.jwt.JwtAccessDeniedHandler;
 import kr.co.teacherforboss.config.jwt.JwtAuthenticationEntryPoint;
 import kr.co.teacherforboss.config.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @RequiredArgsConstructor
@@ -23,6 +20,12 @@ public class SecurityConfig {
 	private final TokenProvider tokenProvider;
 	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 	private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+
+	private static final String[] AUTH_WHITELIST_SWAGGER = {
+			"/api/**", "/graphiql", "/graphql",
+			"/swagger-ui/**", "/api-docs", "/swagger-ui-custom.html",
+			"/v3/api-docs/**", "/api-docs/**", "/swagger-ui.html"
+	};
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -38,14 +41,10 @@ public class SecurityConfig {
 				.sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-//				.headers((headerConfig) ->
-//						headerConfig.frameOptions(frameOptionsConfig ->
-//								frameOptionsConfig.disable()
-//						)
-//				)
 				.authorizeHttpRequests((authorizeRequests) ->
 						authorizeRequests
 								.requestMatchers("/", "/temp/**", "/login/**").permitAll()
+								.requestMatchers(AUTH_WHITELIST_SWAGGER).permitAll()
 //								.requestMatchers("/posts/**", "/api/v1/posts/**").hasRole(Role.USER.name())
 //								.requestMatchers("/admins/**", "/api/v1/admins/**").hasRole(Role.ADMIN.name())
 								.anyRequest().authenticated()
