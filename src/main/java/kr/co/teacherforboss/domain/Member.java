@@ -1,11 +1,20 @@
 package kr.co.teacherforboss.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import kr.co.teacherforboss.domain.common.BaseEntity;
 import kr.co.teacherforboss.domain.enums.LoginType;
 import kr.co.teacherforboss.domain.enums.Role;
-import kr.co.teacherforboss.domain.enums.Status;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
@@ -26,9 +35,6 @@ public class Member extends BaseEntity {
     @Column(nullable = false, length = 100)
     private String email;
 
-    @Column(nullable = false, length = 20)
-    private String phone;
-
     @Column(nullable = false, length = 200) // TEXT가 낫나 & 길이는?
     private String pwSalt;
 
@@ -45,10 +51,6 @@ public class Member extends BaseEntity {
 
     @Column(columnDefinition = "TEXT")
     private String profileImg;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "VARCHAR(10)")
-    private Status status;
 
     @Column
     private LocalDate inactiveDate;

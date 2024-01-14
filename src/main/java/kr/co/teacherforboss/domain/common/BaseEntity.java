@@ -17,6 +17,9 @@ import java.time.LocalDateTime;
 @Getter
 public abstract class BaseEntity {
 
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
     @CreatedDate
     private LocalDateTime createdAt;
 
