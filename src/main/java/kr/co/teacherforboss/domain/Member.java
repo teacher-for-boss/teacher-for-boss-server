@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import kr.co.teacherforboss.domain.common.BaseEntity;
+import kr.co.teacherforboss.domain.enums.Gender;
 import kr.co.teacherforboss.domain.enums.LoginType;
 import kr.co.teacherforboss.domain.enums.Role;
 import lombok.AccessLevel;
@@ -52,7 +53,18 @@ public class Member extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String profileImg;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "VARCHAR(10)")
+    private Gender gender;
+
+    @Column
+    private LocalDate birthDate;
+
     @Column
     private LocalDate inactiveDate;
 
+    public void setPassword(String pwSalt, String pwHash){
+        this.pwSalt = pwSalt;
+        this.pwHash = pwHash;
+    }
 }
