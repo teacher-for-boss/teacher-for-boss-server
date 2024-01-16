@@ -22,8 +22,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class EmailAuth {
     @Id
-    @NotNull
-    @Column(updatable = false)
+    @Column(nullable = false, updatable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

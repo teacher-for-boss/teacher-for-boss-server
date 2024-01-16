@@ -27,8 +27,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class Member extends BaseEntity {
     @Id
-    @NotNull
-    @Column(updatable = false)
+    @Column(nullable = false, updatable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
