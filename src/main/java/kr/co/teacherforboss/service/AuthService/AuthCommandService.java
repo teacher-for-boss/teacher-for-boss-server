@@ -4,5 +4,7 @@ import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.web.dto.AuthRequestDTO;
 
 public interface AuthCommandService {
-    public Member joinMember(AuthRequestDTO.JoinDto request);
+    Member joinMember(AuthRequestDTO.JoinDto request);
+    String getPassword(String pwRequest, String pwSalt);
+    String getSalt();
 }
