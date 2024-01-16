@@ -7,6 +7,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotNull;
 import kr.co.teacherforboss.domain.enums.Purpose;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -21,20 +22,25 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class EmailAuth {
     @Id
-    @Column(nullable = false, updatable = false)
+    @NotNull
+    @Column(updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 20)
+    @NotNull
+    @Column(length = 20)
     private String email;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "VARCHAR(10)")
+    @Column(columnDefinition = "VARCHAR(10)")
     private Purpose purpose;
 
-    @Column(nullable = false, length = 50)
+    @NotNull
+    @Column(length = 50)
     private String code;
 
-    @Column(nullable = false, columnDefinition = "VARCHAR(1)")
+    @NotNull
+    @Column(columnDefinition = "VARCHAR(1)")
     private String isChecked;
 }
