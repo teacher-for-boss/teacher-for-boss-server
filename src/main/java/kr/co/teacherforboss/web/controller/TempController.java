@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Temp Controller", description = "테스트 API 입니다.")
 @RestController
-@RequestMapping("/temp")
+@RequestMapping("/api/v1/temp")
 @RequiredArgsConstructor
 public class TempController {
 
