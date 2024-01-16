@@ -1,5 +1,7 @@
 package kr.co.teacherforboss.apiPayload.code.status;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+
 import kr.co.teacherforboss.apiPayload.code.BaseErrorCode;
 import kr.co.teacherforboss.apiPayload.code.ErrorReasonDTO;
 import lombok.AllArgsConstructor;
@@ -15,6 +17,15 @@ public enum ErrorStatus implements BaseErrorCode {
     _BAD_REQUEST(HttpStatus.BAD_REQUEST,"COMMON400","잘못된 요청입니다."),
     _UNAUTHORIZED(HttpStatus.UNAUTHORIZED,"COMMON401","인증이 필요합니다."),
     _FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON403", "금지된 요청입니다."),
+
+    // Soft Delete
+    ALREADY_DELETED(HttpStatus.BAD_REQUEST, "DELETE400", "이미 삭제되었습니다."),
+
+    // Mail
+    MAIL_BAD_REQUEST(HttpStatus.BAD_REQUEST, "MAIL4001", "이메일 형식이 유효하지 않습니다."),
+    MAIL_SEND_FAIL(HttpStatus.BAD_REQUEST, "MAIL4002","이메일을 전송할 수 없습니다."),
+    NO_MAIL_CODE(HttpStatus.BAD_REQUEST, "MAIL4003","해당 이메일에 유효한 인증정보가 없습니다."),
+    TOO_MANY_MAIL_REQUEST(HttpStatus.BAD_REQUEST, "MAIL4004","메일 인증 요청은 하루에 5회까지 가능합니다."),
 
     // Member
     MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4001", "사용자가 없습니다."),

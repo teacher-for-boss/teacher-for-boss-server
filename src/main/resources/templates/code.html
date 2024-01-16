@@ -1,0 +1,61 @@
+<!-- 인증 메일 -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+</head>
+<body
+        style="
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f9f9f9;
+    "
+>
+<div
+        style="
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        padding: 20px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+      "
+>
+    <h1 style="text-align: center; margin-bottom: 50px">
+        <img
+                src="https://teacherforboss-bucket.s3.ap-northeast-2.amazonaws.com/common/teacherforboss-temp.png"
+                alt="logo"
+                style="width: 138px; height: 83px"
+        />
+    </h1>
+    <h1 style="text-align: center; margin: 20px 0; margin-bottom: 50px">
+        &nbsp;안녕하세요.<br/>&nbsp;티쳐 포 보스입니다.
+    </h1>
+    <p style="text-align: center; margin: 10px 0; margin-bottom: 50px">
+        &nbsp;본 메일은 티쳐 포 보스 인증메일입니다.<br/>&nbsp;아래의
+        인증번호를 입력하여 본인확인을 해주시기 바랍니다.
+    </p>
+    <p style="margin: 0">&nbsp;</p>
+    <div
+            style="
+          height: 100%;
+          width: 53.3865%;
+          padding-top: 10px;
+          padding-bottom: 10px;
+          border: 1px solid #f3f3f3;
+          background-color: #f3f3f3;
+          text-align: center;
+          margin-left: auto;
+          margin-right: auto;
+          margin-bottom: 50px;
+        "
+    >
+        <p style="color: #7b79e8; margin: 0; padding: 5px; font-size: 20px">
+            <strong th:text="${code}">0000</strong>
+        </p>
+    </div>
+    <p style="text-align: center; margin: 10px 0">&nbsp;감사합니다.</p>
+</div>
+</body>
+</html>
