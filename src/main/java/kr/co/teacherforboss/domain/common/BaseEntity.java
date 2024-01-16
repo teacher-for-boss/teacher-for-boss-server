@@ -5,6 +5,8 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.MappedSuperclass;
+import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
+import kr.co.teacherforboss.apiPayload.exception.GeneralException;
 import kr.co.teacherforboss.domain.enums.Status;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
@@ -34,4 +36,11 @@ public abstract class BaseEntity {
     @LastModifiedDate
     @Getter
     private LocalDateTime updatedAt;
+
+    public boolean softDelete() {
+        if (status == Status.ACTIVE)
+            throw new GeneralException(ErrorStatus.ALREADY_DELETED);
+        this.status = Status.INACTIVE;
+        return true;
+    }
 }
