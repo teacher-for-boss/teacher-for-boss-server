@@ -40,11 +40,11 @@ public class Member extends BaseEntity {
     private String email;
 
     @NotNull
-    @Column(length = 200)
+    @Column(length = 20)
     private String pwSalt;
 
     @NotNull
-    @Column(length = 200)
+    @Column(length = 64)
     private String pwHash;
 
     @NotNull
