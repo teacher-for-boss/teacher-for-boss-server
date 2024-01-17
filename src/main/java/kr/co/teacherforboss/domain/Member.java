@@ -36,7 +36,7 @@ public class Member extends BaseEntity {
     private String email;
 
     @NotNull
-    @Column(length = 20)
+    @Column(length = 40)
     private String pwSalt;
 
     @NotNull
