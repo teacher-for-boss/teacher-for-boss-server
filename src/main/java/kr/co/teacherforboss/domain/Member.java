@@ -36,7 +36,7 @@ public class Member extends BaseEntity {
     @Column(nullable = false, length = 100)
     private String email;
 
-    @Column(nullable = false, length = 200) // TEXT가 낫나 & 길이는?
+    @Column(nullable = false, length = 20)
     private String pwSalt;
 
     @Column(nullable = false, length = 200)

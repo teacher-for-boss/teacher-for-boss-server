@@ -19,7 +19,7 @@ public class AuthConverter {
                 .build();
     }
 
-    public static Member toMember(AuthRequestDTO.JoinDto request){
+    public static Member toMember(AuthRequestDTO.JoinDTO request){
         Gender gender = switch (request.getGender()) {
             case 1 -> Gender.MALE;
             case 2 -> Gender.FEMALE;

@@ -21,7 +21,7 @@ public class AuthController {
     private final AuthCommandService authCommandService;
 
     @PostMapping("/signup")
-    public ApiResponse<AuthResponseDTO.JoinResultDTO> join(@RequestBody @Valid AuthRequestDTO.JoinDto request){
+    public ApiResponse<AuthResponseDTO.JoinResultDTO> join(@RequestBody @Valid AuthRequestDTO.JoinDTO request){
         Member member = authCommandService.joinMember(request);
         return ApiResponse.onSuccess(AuthConverter.toJoinResultDTO(member));
     }
