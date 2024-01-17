@@ -33,20 +33,20 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         if (!request.getPassword().equals(request.getRePassword())) { throw new AuthHandler(ErrorStatus.PASSWORD_NOT_CORRECT);}
 
         Member newMember = AuthConverter.toMember(request);
-        String pwSalt = getSalt();
-        String pwHash = getPassword(request.getPassword(), pwSalt);
+        String pwSalt = generateSalt();
+        String pwHash = generatePwHash(request.getPassword(), pwSalt);
         newMember.setPassword(pwSalt, pwHash);
 
         return memberRepository.save(newMember);
     }
 
     // hash 생성
-    private String getPassword(String pwRequest, String pwSalt){
+    private String generatePwHash(String pwRequest, String pwSalt){
         return passwordEncoder.encode(pwSalt + pwRequest);
     }
 
     // salt 생성
-    private String getSalt() {
+    private String generateSalt() {
 
         SecureRandom r = new SecureRandom();
         byte[] salt = new byte[20];
