@@ -14,7 +14,7 @@ import kr.co.teacherforboss.validation.validator.CheckPurposeValidator;
 @Target( { ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CheckPurpose {
-    String message() default "";
+    String message() default "이메일 인증 목적이 잘못되었습니다.";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

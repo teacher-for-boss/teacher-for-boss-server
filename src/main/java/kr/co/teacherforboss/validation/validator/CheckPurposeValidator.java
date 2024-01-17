@@ -12,9 +12,12 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CheckPurposeValidator implements ConstraintValidator<CheckPurpose, Integer> {
 
+    String message;
+
     @Override
     public void initialize(CheckPurpose constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);
+        this.message = constraintAnnotation.message();
     }
 
     @Override
@@ -23,7 +26,7 @@ public class CheckPurposeValidator implements ConstraintValidator<CheckPurpose, 
 
         if (!isValid) {
             context.disableDefaultConstraintViolation();
-            context.buildConstraintViolationWithTemplate(ErrorStatus.INVALID_MAIL_PURPOSE.toString()).addConstraintViolation();
+            context.buildConstraintViolationWithTemplate(message).addConstraintViolation();
         }
 
         return isValid;
