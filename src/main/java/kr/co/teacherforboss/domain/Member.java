@@ -71,4 +71,9 @@ public class Member extends BaseEntity {
     @Column
     private LocalDate inactiveDate;
 
+    public void setPassword(String pwSalt, String pwHash){
+        this.pwSalt = pwSalt;
+        this.pwHash = pwHash;
+    }
+
 }
