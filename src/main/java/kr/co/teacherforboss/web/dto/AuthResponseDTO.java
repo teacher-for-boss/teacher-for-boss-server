@@ -8,7 +8,15 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 public class AuthResponseDTO {
-
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class JoinResultDTO{
+        Long memberId;
+        LocalDateTime createdAt;
+    }
+    
     @Getter
     @Builder
     @NoArgsConstructor

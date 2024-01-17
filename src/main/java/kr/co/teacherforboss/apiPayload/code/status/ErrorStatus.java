@@ -30,11 +30,10 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4001", "사용자가 없습니다."),
     NICKNAME_NOT_EXIST(HttpStatus.BAD_REQUEST, "MEMBER4002", "닉네임은 필수 입니다."),
 
-    // Food Category
-    FOOD_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "FOODCATEGORY4001", "음식 카테고리가 없습니다."),
-
-    // Stor
-    STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "STORE4001", "가게가 없습니다."),
+    // Auth
+    EMAIL_NOT_CHECKED(HttpStatus.BAD_REQUEST, "AUTH4001", "이메일을 인증 받지 않았습니다."),
+    PASSWORD_NOT_CORRECT(HttpStatus.BAD_REQUEST, "AUTH4002", "비밀번호 입력값과 일치하지 않습니다."),
+    INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "AUTH4003", "비밀번호 입력 조건을 확인해주세요."),
 
     // For test
     TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "이거는 테스트");

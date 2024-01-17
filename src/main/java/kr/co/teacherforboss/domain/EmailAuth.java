@@ -25,8 +25,9 @@ public class EmailAuth extends BaseEntity {
     @Column(length = 50)
     private String email;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "VARCHAR(10)")
+    @Column(columnDefinition = "VARCHAR(10)")
     private Purpose purpose;
 
     @NotNull

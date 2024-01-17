@@ -7,6 +7,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotNull;
 import kr.co.teacherforboss.domain.common.BaseEntity;
 import kr.co.teacherforboss.domain.enums.Gender;
 import kr.co.teacherforboss.domain.enums.LoginType;
@@ -26,31 +27,38 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class Member extends BaseEntity {
 
-    @Column(nullable = false, length = 20)
+    @NotNull
+    @Column(length = 20)
     private String name;
 
-    @Column(nullable = false, length = 100)
+    @NotNull
+    @Column(length = 100)
     private String email;
 
-    @Column(nullable = false, length = 200) // TEXT가 낫나 & 길이는?
+    @NotNull
+    @Column(length = 20)
     private String pwSalt;
 
-    @Column(nullable = false, length = 200)
+    @NotNull
+    @Column(length = 64)
     private String pwHash;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "VARCHAR(10)")
+    @Column(columnDefinition = "VARCHAR(10)")
     private LoginType loginType;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "VARCHAR(10)")
+    @Column(columnDefinition = "VARCHAR(10)")
     private Role role;
 
     @Column(columnDefinition = "TEXT")
     private String profileImg;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "VARCHAR(10)")
+    @Column(columnDefinition = "VARCHAR(10)")
     private Gender gender;
 
     @Column
@@ -58,5 +66,10 @@ public class Member extends BaseEntity {
 
     @Column
     private LocalDate inactiveDate;
+
+    public void setPassword(String pwSalt, String pwHash){
+        this.pwSalt = pwSalt;
+        this.pwHash = pwHash;
+    }
 
 }
