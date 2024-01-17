@@ -26,10 +26,6 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Member extends BaseEntity {
-    @Id
-    @Column(nullable = false, updatable = false, unique = true)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @NotNull
     @Column(length = 20)
@@ -40,7 +36,7 @@ public class Member extends BaseEntity {
     private String email;
 
     @NotNull
-    @Column(length = 20)
+    @Column(length = 40)
     private String pwSalt;
 
     @NotNull

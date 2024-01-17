@@ -1,15 +1,19 @@
 package kr.co.teacherforboss.service.AuthService;
 
-import jakarta.transaction.Transactional;
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import kr.co.teacherforboss.converter.AuthConverter;
-import kr.co.teacherforboss.domain.Member;
-import kr.co.teacherforboss.repository.MemberRepository;
 import kr.co.teacherforboss.web.dto.AuthRequestDTO;
+import kr.co.teacherforboss.domain.Member;
+import kr.co.teacherforboss.domain.EmailAuth;
+import kr.co.teacherforboss.domain.vo.mailVO.CodeMail;
+import kr.co.teacherforboss.repository.MemberRepository;
+import kr.co.teacherforboss.repository.EmailAuthRepository;
+import kr.co.teacherforboss.service.MailService.MailCommandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 
@@ -18,6 +22,8 @@ import java.security.SecureRandom;
 public class AuthCommandServiceImpl implements AuthCommandService {
 
     private final MemberRepository memberRepository;
+    private final EmailAuthRepository emailAuthRepository;
+    private final MailCommandService mailCommandService;
     private final PasswordEncoder passwordEncoder;
 
     // 회원 가입
@@ -53,6 +59,22 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         };
 
         return sb.toString();
+    }
+    
+    @Override
+    @Transactional
+    public EmailAuth sendCodeMail(AuthRequestDTO.SendCodeMailDTO request) {
+        String to = request.getEmail();
+
+        // TODO: 하루 이메일 인증 5회 제한 확인
+
+        CodeMail codeMail = new CodeMail();
+        mailCommandService.sendMail(to, codeMail);
+
+        EmailAuth emailAuth = AuthConverter.toEmailAuth(request);
+        emailAuth.setCode(codeMail.getValues().get("code"));
+
+        return emailAuthRepository.save(emailAuth);
     }
 
 }

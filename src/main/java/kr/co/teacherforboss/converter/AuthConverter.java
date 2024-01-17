@@ -1,9 +1,11 @@
 package kr.co.teacherforboss.converter;
 
 import kr.co.teacherforboss.domain.Member;
+import kr.co.teacherforboss.domain.EmailAuth;
 import kr.co.teacherforboss.domain.enums.Gender;
 import kr.co.teacherforboss.domain.enums.LoginType;
 import kr.co.teacherforboss.domain.enums.Role;
+import kr.co.teacherforboss.domain.enums.Purpose;
 import kr.co.teacherforboss.web.dto.AuthRequestDTO;
 import kr.co.teacherforboss.web.dto.AuthResponseDTO;
 
@@ -33,6 +35,21 @@ public class AuthConverter {
                 .role(Role.USER)
                 .gender(gender)
                 .birthDate(request.getBirthDate())
+                .build();
+    }
+    
+    public static AuthResponseDTO.SendCodeMailResultDTO toSendCodeMailResultDTO(EmailAuth emailAuth) {
+        return AuthResponseDTO.SendCodeMailResultDTO.builder()
+                .emailAuthId(emailAuth.getId())
+                .createdAt(emailAuth.getCreatedAt())
+                .build();
+    }
+
+    public static EmailAuth toEmailAuth(AuthRequestDTO.SendCodeMailDTO request) {
+        return EmailAuth.builder()
+                .email(request.getEmail())
+                .purpose(Purpose.of(request.getPurpose()))
+                .isChecked("F")
                 .build();
     }
 }

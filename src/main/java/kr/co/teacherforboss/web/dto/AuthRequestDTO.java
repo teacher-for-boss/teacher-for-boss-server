@@ -1,11 +1,13 @@
 package kr.co.teacherforboss.web.dto;
 
+import kr.co.teacherforboss.validation.annotation.CheckPurpose;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.AllArgsConstructor;
 
 import java.time.LocalDate;
 
@@ -34,5 +36,16 @@ public class AuthRequestDTO {
         Integer gender;
 
         LocalDate birthDate;
+    }
+    
+    @Getter
+    @AllArgsConstructor
+    public static class SendCodeMailDTO {
+        @NotNull(message = "email 값이 없습니다.")
+        @Email(message = "email 값이 이메일 형식이 아닙니다.")
+        String email;
+
+        @CheckPurpose
+        int purpose;
     }
 }

@@ -16,4 +16,13 @@ public class AuthResponseDTO {
         Long memberId;
         LocalDateTime createdAt;
     }
+    
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SendCodeMailResultDTO {
+        Long emailAuthId;
+        LocalDateTime createdAt;
+    }
 }
