@@ -17,7 +17,7 @@ public class AuthRequestDTO {
         @NotNull
         String email;
 
-        @Pattern(regexp="T")
+        @Pattern(regexp="T", message = "이메일을 인증받아야 합니다.")
         String isChecked;
 
         @NotNull

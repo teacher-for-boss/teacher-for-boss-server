@@ -24,7 +24,6 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Override
     @Transactional
     public Member joinMember(AuthRequestDTO.JoinDTO request){
-        if (request.getIsChecked().equals("F")) { throw new AuthHandler(ErrorStatus.EMAIL_NOT_CHECKED);}
         if (!request.getPassword().equals(request.getRePassword())) { throw new AuthHandler(ErrorStatus.PASSWORD_NOT_CORRECT);}
 
         Member newMember = AuthConverter.toMember(request);
