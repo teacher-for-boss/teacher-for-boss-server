@@ -1,5 +1,23 @@
 package kr.co.teacherforboss.domain.enums;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
 public enum Purpose {
-    SIGNUP, ID, PW
+
+    NONE(0),
+    SIGNUP(1),
+    FINDID(2),
+    FINDPW(3);
+
+    private final int identifier;
+
+    public static Purpose of(int identifier) {
+        if (identifier == 1) return SIGNUP;
+        if (identifier == 2) return FINDID;
+        if (identifier == 3) return FINDPW;
+        return NONE;
+    }
 }

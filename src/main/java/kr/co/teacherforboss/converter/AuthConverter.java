@@ -17,7 +17,7 @@ public class AuthConverter {
     public static EmailAuth toEmailAuth(AuthRequestDTO.SendCodeMailDTO request) {
         return EmailAuth.builder()
                 .email(request.getEmail())
-                .purpose(Purpose.SIGNUP)
+                .purpose(Purpose.of(request.getPurpose()))
                 .isChecked("F")
                 .build();
     }

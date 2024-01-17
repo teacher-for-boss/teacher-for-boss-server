@@ -40,7 +40,7 @@ public class AuthCommandServiceImplTest {
     @Test
     void saveEmailAuth() {
         // given
-        AuthRequestDTO.SendCodeMailDTO request = makeRequest("test@gmail.com");
+        AuthRequestDTO.SendCodeMailDTO request = makeRequest("test@gmail.com", 1);
         EmailAuth expected = makeEmailAuth(request.getEmail());
         Map<String, String> code = new HashMap<>();
         code.put("code", "12345");
@@ -65,8 +65,8 @@ public class AuthCommandServiceImplTest {
 
     //TODO: 하루 가능 이메일 인증 횟수 초과 시 실패 테스트
 
-    private AuthRequestDTO.SendCodeMailDTO makeRequest(String email) {
-        return new AuthRequestDTO.SendCodeMailDTO(email);
+    private AuthRequestDTO.SendCodeMailDTO makeRequest(String email, int purpose) {
+        return new AuthRequestDTO.SendCodeMailDTO(email, purpose);
     }
 
     private EmailAuth makeEmailAuth(String email) {
