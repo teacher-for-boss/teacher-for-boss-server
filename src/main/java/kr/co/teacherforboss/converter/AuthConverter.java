@@ -23,8 +23,7 @@ public class AuthConverter {
         Gender gender = switch (request.getGender()) {
             case 1 -> Gender.MALE;
             case 2 -> Gender.FEMALE;
-            case 3 -> Gender.NONE;
-            default -> null;
+            default -> Gender.NONE;
         };
 
         return Member.builder()

@@ -41,12 +41,12 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     }
 
     // hash 생성
-    public String getPassword(String pwRequest, String pwSalt){
+    private String getPassword(String pwRequest, String pwSalt){
         return passwordEncoder.encode(pwSalt + pwRequest);
     }
 
     // salt 생성
-    public String getSalt() {
+    private String getSalt() {
 
         SecureRandom r = new SecureRandom();
         byte[] salt = new byte[20];
