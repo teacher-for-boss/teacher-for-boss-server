@@ -1,4 +1,4 @@
-package kr.co.teacherforboss.service.MailService;
+package kr.co.teacherforboss.service.mailService;
 
 import jakarta.mail.Message.RecipientType;
 import jakarta.mail.MessagingException;
@@ -10,7 +10,6 @@ import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.MailHandler;
 import kr.co.teacherforboss.config.MailConfig;
 import kr.co.teacherforboss.domain.vo.mailVO.Mail;
-import kr.co.teacherforboss.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
