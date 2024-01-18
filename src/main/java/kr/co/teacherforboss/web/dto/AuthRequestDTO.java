@@ -19,9 +19,6 @@ public class AuthRequestDTO {
         @NotNull
         String email;
 
-        @Pattern(regexp="T", message = "이메일을 인증받아야 합니다.")
-        String isChecked;
-
         @NotNull
         @Size(min = 8, max = 20, message = "비밀번호를 8~20자 사이로 입력해주세요.")
         @Pattern(regexp="(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_+{}|:<>?~,-]).{8,20}", message = "비밀번호는 숫자, 영어, 특수문자를 포함해서 8 ~ 20자리 이내로 입력해주세요.")
@@ -32,6 +29,9 @@ public class AuthRequestDTO {
 
         @NotNull
         String name;
+
+        @NotNull
+        String phone;
 
         Integer gender;
 

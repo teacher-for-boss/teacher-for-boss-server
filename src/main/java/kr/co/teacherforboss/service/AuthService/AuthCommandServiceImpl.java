@@ -2,7 +2,12 @@ package kr.co.teacherforboss.service.AuthService;
 
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
+import kr.co.teacherforboss.apiPayload.exception.handler.MemberHandler;
 import kr.co.teacherforboss.converter.AuthConverter;
+import kr.co.teacherforboss.domain.PhoneAuth;
+import kr.co.teacherforboss.domain.enums.Purpose;
+import kr.co.teacherforboss.domain.enums.Status;
+import kr.co.teacherforboss.repository.PhoneAuthRepository;
 import kr.co.teacherforboss.web.dto.AuthRequestDTO;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.EmailAuth;
@@ -23,6 +28,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
     private final MemberRepository memberRepository;
     private final EmailAuthRepository emailAuthRepository;
+    private final PhoneAuthRepository phoneAuthRepository;
     private final MailCommandService mailCommandService;
     private final PasswordEncoder passwordEncoder;
 
@@ -30,7 +36,10 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Override
     @Transactional
     public Member joinMember(AuthRequestDTO.JoinDTO request){
-        if (!request.getPassword().equals(request.getRePassword())) { throw new AuthHandler(ErrorStatus.PASSWORD_NOT_CORRECT);}
+        if (memberRepository.existsByEmailAndStatus(request.getEmail(), Status.ACTIVE)) throw new MemberHandler(ErrorStatus.MEMBER_DUPLICATE);
+        if (emailAuthRepository.existsByEmailAndPurposeAndIsChecked(request.getEmail(), Purpose.of(1), "T")) throw new AuthHandler(ErrorStatus.MAIL_NOT_CHECKED);
+        if (!request.getPassword().equals(request.getRePassword())) throw new AuthHandler(ErrorStatus.PASSWORD_NOT_CORRECT);
+        if (phoneAuthRepository.existsByPhoneAndPurposeAndIsChecked(request.getEmail(), Purpose.of(1), "T")) throw new AuthHandler(ErrorStatus.PHONE_NOT_CHECKED);
 
         Member newMember = AuthConverter.toMember(request);
         String pwSalt = generateSalt();
