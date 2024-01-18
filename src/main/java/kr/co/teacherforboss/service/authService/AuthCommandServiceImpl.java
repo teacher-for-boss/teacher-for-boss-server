@@ -1,4 +1,4 @@
-package kr.co.teacherforboss.service.AuthService;
+package kr.co.teacherforboss.service.authService;
 
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
@@ -9,7 +9,7 @@ import kr.co.teacherforboss.domain.EmailAuth;
 import kr.co.teacherforboss.domain.vo.mailVO.CodeMail;
 import kr.co.teacherforboss.repository.MemberRepository;
 import kr.co.teacherforboss.repository.EmailAuthRepository;
-import kr.co.teacherforboss.service.MailService.MailCommandService;
+import kr.co.teacherforboss.service.mailService.MailCommandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -77,4 +77,16 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         return emailAuthRepository.save(emailAuth);
     }
 
+    @Override
+    @Transactional
+    public Member login(AuthRequestDTO.LoginDTO request) {
+        Member member = memberRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        String inputPw =  member.getPwSalt() + request.getPassword();
+        if (!passwordEncoder.matches(inputPw, member.getPwHash())) {
+            throw new AuthHandler(ErrorStatus.LOGIN_FAILED_PASSWORD_INCORRECT);
+        }
+        return member;
+    }
 }
