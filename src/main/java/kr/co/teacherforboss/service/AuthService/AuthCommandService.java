@@ -7,4 +7,5 @@ import kr.co.teacherforboss.web.dto.AuthRequestDTO;
 public interface AuthCommandService {
     Member joinMember(AuthRequestDTO.JoinDTO request);
     EmailAuth sendCodeMail(AuthRequestDTO.SendCodeMailDTO request);
+    boolean checkCodeMail(AuthRequestDTO.CheckCodeMailDTO request);
 }
