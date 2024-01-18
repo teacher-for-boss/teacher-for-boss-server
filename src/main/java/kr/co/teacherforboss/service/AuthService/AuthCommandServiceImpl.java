@@ -88,8 +88,6 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         boolean codeCheck = request.getEmailAuthCode().equals(emailAuth.getCode());
         boolean timeCheck = Duration.between(emailAuth.getCreatedAt(), LocalDateTime.now()).getSeconds() < CodeMail.VALID_TIME;
 
-        System.out.println(LocalDateTime.now());
-
         if (codeCheck && timeCheck) {
             emailAuth.setIsChecked(true);
             return true;
