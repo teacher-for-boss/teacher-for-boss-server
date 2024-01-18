@@ -19,11 +19,11 @@ import org.hibernate.annotations.ColumnDefault;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class EmailAuth extends BaseEntity {
+public class PhoneAuth extends BaseEntity {
 
     @NotNull
     @Column(length = 50)
-    private String email;
+    private String phone;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -38,8 +38,5 @@ public class EmailAuth extends BaseEntity {
     @Column(columnDefinition = "VARCHAR(1)")
     @ColumnDefault("'F'")
     private String isChecked;
-
-    public void setCode(String code) {
-        this.code = code;
-    }
+    
 }
