@@ -39,7 +39,7 @@ public class AuthRequestDTO {
     }
     
     @Getter
-    @AllArgsConstructor
+    @Builder
     public static class SendCodeMailDTO {
         @NotNull(message = "email 값이 없습니다.")
         @Email(message = "email 값이 이메일 형식이 아닙니다.")
