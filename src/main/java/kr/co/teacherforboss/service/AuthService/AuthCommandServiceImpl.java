@@ -1,5 +1,7 @@
 package kr.co.teacherforboss.service.AuthService;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import kr.co.teacherforboss.apiPayload.exception.handler.MemberHandler;
@@ -84,6 +86,23 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         emailAuth.setCode(codeMail.getValues().get("code"));
 
         return emailAuthRepository.save(emailAuth);
+    }
+
+    @Override
+    @Transactional
+    public boolean checkCodeMail(AuthRequestDTO.CheckCodeMailDTO request) {
+
+        EmailAuth emailAuth = emailAuthRepository.findById(request.getEmailAuthId())
+                .orElseThrow(() -> new AuthHandler(ErrorStatus._DATA_NOT_FOUND));
+
+        boolean codeCheck = request.getEmailAuthCode().equals(emailAuth.getCode());
+        if (!codeCheck) throw new AuthHandler(ErrorStatus.INVALID_CODE_MAIL);
+
+        boolean timeCheck = Duration.between(emailAuth.getCreatedAt(), LocalDateTime.now()).getSeconds() < CodeMail.VALID_TIME;
+        if (!timeCheck) throw new AuthHandler(ErrorStatus.TIMEOUT_CODE_MAIL);
+
+        emailAuth.setIsChecked(true);
+        return true;
     }
 
 }

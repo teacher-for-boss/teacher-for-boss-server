@@ -3,7 +3,7 @@ package kr.co.teacherforboss.domain.vo.mailVO;
 import java.util.Random;
 
 public class CodeMail extends Mail {
-    public static final long VALID_TIME = 1000 * 60 * 3L;
+    public static final long VALID_TIME = 60 * 3L; // seconds
 
     public CodeMail() {
         super("code", "[티쳐 포 보스] 인증 번호");
