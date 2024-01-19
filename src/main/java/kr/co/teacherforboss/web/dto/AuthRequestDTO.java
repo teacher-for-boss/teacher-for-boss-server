@@ -18,8 +18,10 @@ public class AuthRequestDTO {
         @NotNull
         String email;
 
+        @NotNull
         Long emailAuthId;
 
+        @NotNull
         Long phoneAuthId;
 
         @NotNull
