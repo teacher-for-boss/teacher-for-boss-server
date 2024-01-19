@@ -123,7 +123,7 @@ public class JwtTokenProvider {
     }
 
     public String resolveTokenFromRequest(String token) {
-        if (StringUtils.hasText(token)) {
+        if (StringUtils.hasText(token) && token.startsWith(TOKEN_PREFIX)) {
             return token.substring(TOKEN_PREFIX.length());
         }
         return null;
