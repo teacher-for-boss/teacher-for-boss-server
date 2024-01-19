@@ -9,5 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface EmailAuthRepository extends JpaRepository<EmailAuth, Long> {
-    boolean existsByEmailAndPurposeAndIsChecked(String email, Purpose purpose, String isChecked);
+    boolean existsByIdAndEmailAndPurposeAndIsChecked(Long emailAuthId, String email, Purpose purpose, String isChecked);
 }

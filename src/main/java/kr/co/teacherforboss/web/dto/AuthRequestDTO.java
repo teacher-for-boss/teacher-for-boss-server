@@ -19,6 +19,10 @@ public class AuthRequestDTO {
         @NotNull
         String email;
 
+        Long emailAuthId;
+
+        Long phoneAuthId;
+
         @NotNull
         @Size(min = 8, max = 20, message = "비밀번호를 8~20자 사이로 입력해주세요.")
         @Pattern(regexp="(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_+{}|:<>?~,-]).{8,20}", message = "비밀번호는 숫자, 영어, 특수문자를 포함해서 8 ~ 20자리 이내로 입력해주세요.")
@@ -31,6 +35,7 @@ public class AuthRequestDTO {
         String name;
 
         @NotNull
+        @Pattern(regexp = "^01(?:0|1|[6-9])[.-]?(\\d{3}|\\d{4})[.-]?(\\d{4})$", message = "전화번호는 10 ~ 11 자리의 숫자만 입력 가능합니다.")
         String phone;
 
         Integer gender;
@@ -39,7 +44,7 @@ public class AuthRequestDTO {
     }
     
     @Getter
-    @AllArgsConstructor
+    @Builder
     public static class SendCodeMailDTO {
         @NotNull(message = "email 값이 없습니다.")
         @Email(message = "email 값이 이메일 형식이 아닙니다.")

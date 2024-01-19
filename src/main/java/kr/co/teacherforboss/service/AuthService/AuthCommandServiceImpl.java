@@ -6,7 +6,6 @@ import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import kr.co.teacherforboss.apiPayload.exception.handler.MemberHandler;
 import kr.co.teacherforboss.converter.AuthConverter;
-import kr.co.teacherforboss.domain.PhoneAuth;
 import kr.co.teacherforboss.domain.enums.Purpose;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.PhoneAuthRepository;
@@ -39,9 +38,9 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Transactional
     public Member joinMember(AuthRequestDTO.JoinDTO request){
         if (memberRepository.existsByEmailAndStatus(request.getEmail(), Status.ACTIVE)) throw new MemberHandler(ErrorStatus.MEMBER_DUPLICATE);
-        if (emailAuthRepository.existsByEmailAndPurposeAndIsChecked(request.getEmail(), Purpose.of(1), "T")) throw new AuthHandler(ErrorStatus.MAIL_NOT_CHECKED);
+        if (!emailAuthRepository.existsByIdAndEmailAndPurposeAndIsChecked(request.getEmailAuthId(), request.getEmail(), Purpose.of(1), "T")) throw new AuthHandler(ErrorStatus.MAIL_NOT_CHECKED);
         if (!request.getPassword().equals(request.getRePassword())) throw new AuthHandler(ErrorStatus.PASSWORD_NOT_CORRECT);
-        if (phoneAuthRepository.existsByPhoneAndPurposeAndIsChecked(request.getEmail(), Purpose.of(1), "T")) throw new AuthHandler(ErrorStatus.PHONE_NOT_CHECKED);
+        if (!phoneAuthRepository.existsByIdAndPhoneAndPurposeAndIsChecked(request.getPhoneAuthId(), request.getPhone(), Purpose.of(1), "T")) throw new AuthHandler(ErrorStatus.PHONE_NOT_CHECKED);
 
         Member newMember = AuthConverter.toMember(request);
         String pwSalt = generateSalt();
