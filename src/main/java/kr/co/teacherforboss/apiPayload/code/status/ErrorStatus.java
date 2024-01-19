@@ -3,6 +3,7 @@ package kr.co.teacherforboss.apiPayload.code.status;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 import kr.co.teacherforboss.apiPayload.code.BaseErrorCode;
@@ -20,6 +21,8 @@ public enum ErrorStatus implements BaseErrorCode {
     _BAD_REQUEST(BAD_REQUEST,"COMMON400","잘못된 요청입니다."),
     _UNAUTHORIZED(UNAUTHORIZED,"COMMON401","인증이 필요합니다."),
     _FORBIDDEN(FORBIDDEN, "COMMON403", "금지된 요청입니다."),
+    _DATA_NOT_FOUND(NOT_FOUND, "COMMON404", "해당 데이터를 찾을 수 없습니다."),
+
 
     // Soft Delete
     ALREADY_DELETED(BAD_REQUEST, "DELETE400", "이미 삭제되었습니다."),

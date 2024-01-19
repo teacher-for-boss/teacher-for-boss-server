@@ -83,7 +83,8 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Transactional
     public boolean checkCodeMail(AuthRequestDTO.CheckCodeMailDTO request) {
 
-        EmailAuth emailAuth = emailAuthRepository.findById(request.getEmailAuthId()).get();
+        EmailAuth emailAuth = emailAuthRepository.findById(request.getEmailAuthId())
+                .orElseThrow(() -> new AuthHandler(ErrorStatus._DATA_NOT_FOUND));
 
         boolean codeCheck = request.getEmailAuthCode().equals(emailAuth.getCode());
         if (!codeCheck) throw new AuthHandler(ErrorStatus.INVALID_CODE_MAIL);
