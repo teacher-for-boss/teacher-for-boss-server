@@ -42,4 +42,9 @@ public class EmailAuth extends BaseEntity {
     public void setCode(String code) {
         this.code = code;
     }
+
+    public void setIsChecked(boolean isChecked) {
+        if (isChecked) this.isChecked = "T";
+        else this.isChecked = "F";
+    }
 }

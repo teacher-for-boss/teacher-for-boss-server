@@ -25,4 +25,12 @@ public class AuthResponseDTO {
         Long emailAuthId;
         LocalDateTime createdAt;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CheckCodeMailResultDTO {
+        boolean isChecked;
+    }
 }

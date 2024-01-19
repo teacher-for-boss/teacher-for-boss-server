@@ -32,4 +32,10 @@ public class AuthController {
         EmailAuth emailAuth = authCommandService.sendCodeMail(request);
         return ApiResponse.onSuccess(AuthConverter.toSendCodeMailResultDTO(emailAuth));
     }
+
+    @PostMapping("/email/check")
+    public ApiResponse<AuthResponseDTO.CheckCodeMailResultDTO> checkCodeMail(@RequestBody @Valid AuthRequestDTO.CheckCodeMailDTO request) {
+        boolean isChecked = authCommandService.checkCodeMail(request);
+        return ApiResponse.onSuccess(AuthConverter.toCheckCodeMailResultDTO(isChecked));
+    }
 }

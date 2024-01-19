@@ -7,7 +7,6 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.AllArgsConstructor;
 
 import java.time.LocalDate;
 
@@ -39,7 +38,7 @@ public class AuthRequestDTO {
     }
     
     @Getter
-    @AllArgsConstructor
+    @Builder
     public static class SendCodeMailDTO {
         @NotNull(message = "email 값이 없습니다.")
         @Email(message = "email 값이 이메일 형식이 아닙니다.")
@@ -47,5 +46,16 @@ public class AuthRequestDTO {
 
         @CheckPurpose
         int purpose;
+    }
+
+    @Getter
+    @Builder
+    public static class CheckCodeMailDTO {
+        @NotNull(message = "emailAuthId 값이 없습니다.")
+        Long emailAuthId;
+
+        @NotNull(message = "emailAuthCode 값이 없습니다.")
+        @Pattern(regexp = "\\d{5}", message = "인증 코드는 5자리의 숫자로 이루어져 있어야 합니다.")
+        String emailAuthCode;
     }
 }

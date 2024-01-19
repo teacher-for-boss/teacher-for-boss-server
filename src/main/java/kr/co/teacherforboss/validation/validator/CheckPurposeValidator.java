@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CheckPurposeValidator implements ConstraintValidator<CheckPurpose, Integer> {
 
-    String message;
+    private String message;
 
     @Override
     public void initialize(CheckPurpose constraintAnnotation) {
