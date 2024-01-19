@@ -86,13 +86,13 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         EmailAuth emailAuth = emailAuthRepository.findById(request.getEmailAuthId()).get();
 
         boolean codeCheck = request.getEmailAuthCode().equals(emailAuth.getCode());
-        boolean timeCheck = Duration.between(emailAuth.getCreatedAt(), LocalDateTime.now()).getSeconds() < CodeMail.VALID_TIME;
+        if (!codeCheck) throw new AuthHandler(ErrorStatus.INVALID_CODE_MAIL);
 
-        if (codeCheck && timeCheck) {
-            emailAuth.setIsChecked(true);
-            return true;
-        }
-        return false;
+        boolean timeCheck = Duration.between(emailAuth.getCreatedAt(), LocalDateTime.now()).getSeconds() < CodeMail.VALID_TIME;
+        if (!timeCheck) throw new AuthHandler(ErrorStatus.TIMEOUT_CODE_MAIL);
+
+        emailAuth.setIsChecked(true);
+        return true;
     }
 
 }
