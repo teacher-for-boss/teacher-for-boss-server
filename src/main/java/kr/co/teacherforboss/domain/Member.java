@@ -61,6 +61,10 @@ public class Member extends BaseEntity {
     @Column(columnDefinition = "VARCHAR(10)")
     private Gender gender;
 
+    @NotNull
+    @Column(length = 50)
+    private String phone;
+
     @Column
     private LocalDate birthDate;
 
