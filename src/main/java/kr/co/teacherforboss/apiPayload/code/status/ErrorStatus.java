@@ -43,6 +43,12 @@ public enum ErrorStatus implements BaseErrorCode {
     EMAIL_NOT_CHECKED(BAD_REQUEST, "AUTH4001", "이메일을 인증 받지 않았습니다."),
     PASSWORD_NOT_CORRECT(BAD_REQUEST, "AUTH4002", "비밀번호 입력값과 일치하지 않습니다."),
     INVALID_PASSWORD(BAD_REQUEST, "AUTH4003", "비밀번호 입력 조건을 확인해주세요."),
+    ACCESS_DENIED(FORBIDDEN, "AUTH4004", "접근 권한이 없습니다."),
+    LOGIN_FAILED_PASSWORD_INCORRECT(UNAUTHORIZED,"AUTH4005", "비밀번호가 틀립니다."),
+
+    TOKEN_TIME_OUT(FORBIDDEN, "AUTH4006", "토큰이 만료되었습니다."),
+    JWT_REFRESH_TOKEN_NOT_FOUND(BAD_REQUEST, "AUTH4007", "존재하지 않는 RefreshToken 입니다. 다시 로그인 해주세요."),
+    INVALID_JWT_TOKEN(FORBIDDEN, "AUTH4008", "토큰 유효성 검사 실패 또는 거부된 토큰입니다."),
 
     // For test
     TEMP_EXCEPTION(BAD_REQUEST, "TEMP4001", "이거는 테스트");
