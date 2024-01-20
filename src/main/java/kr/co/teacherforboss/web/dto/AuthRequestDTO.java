@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.web.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import kr.co.teacherforboss.validation.annotation.CheckPurpose;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -13,7 +14,7 @@ import java.time.LocalDate;
 public class AuthRequestDTO {
     @Getter
     @Builder
-    public static class JoinDTO{
+    public static class JoinDTO {
         @Email
         @NotNull
         String email;
@@ -36,7 +37,7 @@ public class AuthRequestDTO {
 
         LocalDate birthDate;
     }
-    
+
     @Getter
     @Builder
     public static class SendCodeMailDTO {
@@ -57,5 +58,13 @@ public class AuthRequestDTO {
         @NotNull(message = "emailAuthCode 값이 없습니다.")
         @Pattern(regexp = "\\d{5}", message = "인증 코드는 5자리의 숫자로 이루어져 있어야 합니다.")
         String emailAuthCode;
+    }
+
+    @Getter
+    public static class LoginDTO {
+        @NotBlank
+        String email;
+        @NotBlank
+        String password;
     }
 }
