@@ -201,7 +201,9 @@ public class AuthCommandServiceImplTest {
     }
 
     private AuthRequestDTO.FindEmailDTO toFindEmail(Long phoneAuthId){
-        return new AuthRequestDTO.FindEmailDTO(phoneAuthId);
+        return AuthRequestDTO.FindEmailDTO.builder()
+                .phoneAuthId(phoneAuthId)
+                .build();
     }
 
     private PhoneAuth phoneAuth(){
