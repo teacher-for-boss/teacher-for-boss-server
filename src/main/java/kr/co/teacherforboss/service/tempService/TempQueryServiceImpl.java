@@ -1,4 +1,4 @@
-package kr.co.teacherforboss.service.TempService;
+package kr.co.teacherforboss.service.tempService;
 
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.TempHandler;

@@ -1,4 +1,4 @@
-package kr.co.teacherforboss.service.AuthService;
+package kr.co.teacherforboss.service.authService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,7 +7,7 @@ import kr.co.teacherforboss.domain.enums.Purpose;
 import kr.co.teacherforboss.domain.vo.mailVO.CodeMail;
 import kr.co.teacherforboss.domain.vo.mailVO.Mail;
 import kr.co.teacherforboss.repository.EmailAuthRepository;
-import kr.co.teacherforboss.service.MailService.MailCommandService;
+import kr.co.teacherforboss.service.mailService.MailCommandService;
 import kr.co.teacherforboss.web.dto.AuthRequestDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
