@@ -9,14 +9,14 @@ public enum Purpose {
 
     NONE(0),
     SIGNUP(1),
-    FINDID(2),
+    FINDEMAIL(2),
     FINDPW(3);
 
     private final int identifier;
 
     public static Purpose of(int identifier) {
         if (identifier == 1) return SIGNUP;
-        if (identifier == 2) return FINDID;
+        if (identifier == 2) return FINDEMAIL;
         if (identifier == 3) return FINDPW;
         return NONE;
     }

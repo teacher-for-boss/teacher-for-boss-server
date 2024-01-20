@@ -38,4 +38,10 @@ public class AuthController {
         boolean isChecked = authCommandService.checkCodeMail(request);
         return ApiResponse.onSuccess(AuthConverter.toCheckCodeMailResultDTO(isChecked));
     }
+
+    @PostMapping("/find/email")
+    public ApiResponse<AuthResponseDTO.FindEmailResultDTO> findEmail(@RequestBody @Valid AuthRequestDTO.FindEmailDTO request) {
+        Member memberEmail = authCommandService.findEmail(request);
+        return ApiResponse.onSuccess(AuthConverter.toFindEmailResultDTO(memberEmail));
+    }
 }

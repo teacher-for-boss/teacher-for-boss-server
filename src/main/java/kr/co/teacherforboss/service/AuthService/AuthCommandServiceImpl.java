@@ -6,6 +6,7 @@ import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import kr.co.teacherforboss.apiPayload.exception.handler.MemberHandler;
 import kr.co.teacherforboss.converter.AuthConverter;
+import kr.co.teacherforboss.domain.PhoneAuth;
 import kr.co.teacherforboss.domain.enums.Purpose;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.PhoneAuthRepository;
@@ -106,6 +107,18 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
         emailAuth.setIsChecked(true);
         return true;
+    }
+
+    @Override
+    @Transactional
+    public Member findEmail(AuthRequestDTO.FindEmailDTO request) {
+        PhoneAuth phoneAuth = phoneAuthRepository.findById(request.getPhoneAuthId())
+                .orElseThrow(() -> new AuthHandler(ErrorStatus._DATA_NOT_FOUND));
+
+        if(!phoneAuthRepository.existsByIdAndPurposeAndIsChecked(request.getPhoneAuthId(), Purpose.of(2), "T"))
+            throw new AuthHandler(ErrorStatus.PHONE_NOT_CHECKED);
+
+        return memberRepository.findByPhoneAndStatus(phoneAuth.getPhone(), Status.ACTIVE);
     }
 
 }

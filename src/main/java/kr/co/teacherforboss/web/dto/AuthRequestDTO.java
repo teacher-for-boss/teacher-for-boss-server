@@ -67,13 +67,8 @@ public class AuthRequestDTO {
     }
 
     @Getter
-    @Builder
-    public static class SendCodePhoneDTO {
-        @NotNull(message = "phone 값이 없습니다.")
-        @Pattern(regexp = "^01(?:0|1|[6-9])[.-]?(\\d{3}|\\d{4})[.-]?(\\d{4})$", message = "전화번호는 10 ~ 11 자리의 숫자만 입력 가능합니다.")
-        String phone;
-
-        @CheckPurpose
-        int purpose;
+    public static class FindEmailDTO {
+        @NotNull(message = "phoneAuthId 값이 없습니다.")
+        Long phoneAuthId;
     }
 }

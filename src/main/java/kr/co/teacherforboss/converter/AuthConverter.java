@@ -59,4 +59,11 @@ public class AuthConverter {
                 .isChecked(isChecked)
                 .build();
     }
+
+    public static AuthResponseDTO.FindEmailResultDTO toFindEmailResultDTO(Member member) {
+        return AuthResponseDTO.FindEmailResultDTO.builder()
+                .email(member.getEmail())
+                .createdAt(member.getCreatedAt())
+                .build();
+    }
 }
