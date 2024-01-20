@@ -1,13 +1,15 @@
 package kr.co.teacherforboss.config;
 
-import kr.co.teacherforboss.config.jwt.JwtAccessDeniedHandler;
-import kr.co.teacherforboss.config.jwt.JwtAuthenticationEntryPoint;
-import kr.co.teacherforboss.config.jwt.TokenProvider;
+import kr.co.teacherforboss.config.jwt.JwtSecurityConfig;
+import kr.co.teacherforboss.config.jwt.JwtTokenProvider;
+import kr.co.teacherforboss.config.jwt.exception.MyAccessDeniedHandler;
+import kr.co.teacherforboss.config.jwt.exception.MyAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,43 +19,44 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig {
-	private final TokenProvider tokenProvider;
-	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-	private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
-	private static final String[] AUTH_WHITELIST_SWAGGER = {
-			"/api/**", "/graphiql", "/graphql",
-			"/swagger-ui/**", "/api-docs", "/swagger-ui-custom.html",
-			"/v3/api-docs/**", "/api-docs/**", "/swagger-ui.html"
-	};
+    private final JwtTokenProvider jwtTokenProvider;
+    private final MyAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final MyAccessDeniedHandler jwtAccessDeniedHandler;
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+    private static final String[] AUTH_WHITELIST_SWAGGER  = {
+            "/api/**",
+            "/graphiql",
+            "/graphql",
+            "/swagger-ui/**",
+            "/api-docs",
+            "/swagger-ui-custom.html",
+            "/v3/api-docs/**",
+            "/api-docs/**",
+            "/swagger-ui.html"
+    };
 
-	@Bean
-	protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http
-				.csrf((csrfConfig) ->
-						csrfConfig.disable()
-				)
-				.sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-				.authorizeHttpRequests((authorizeRequests) ->
-						authorizeRequests
-								.requestMatchers("/", "/api/v1/temp/**", "/api/v1/auth/**").permitAll()
-								.requestMatchers(AUTH_WHITELIST_SWAGGER).permitAll()
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests((authorizeRequests) ->
+                                authorizeRequests
+                                        .requestMatchers("/", "/api/v1/temp/**", "/api/v1/auth/**").permitAll()
+                                        .requestMatchers(AUTH_WHITELIST_SWAGGER).permitAll()
 //								.requestMatchers("/posts/**", "/api/v1/posts/**").hasRole(Role.USER.name())
 //								.requestMatchers("/admins/**", "/api/v1/admins/**").hasRole(Role.ADMIN.name())
-								.anyRequest().authenticated()
-				)
-				.exceptionHandling((exceptionConfig) ->
-						exceptionConfig.authenticationEntryPoint(jwtAuthenticationEntryPoint).accessDeniedHandler(jwtAccessDeniedHandler)
-				)
-				.apply(new JwtSecurityConfig(tokenProvider));
-
-		return http.build();
-	}
+                                        .anyRequest().authenticated()
+                )
+                .exceptionHandling((exceptionConfig) ->
+                        exceptionConfig.authenticationEntryPoint(jwtAuthenticationEntryPoint).accessDeniedHandler(jwtAccessDeniedHandler)
+                )
+                .apply(new JwtSecurityConfig(jwtTokenProvider));
+        return http.build();
+    }
 }
