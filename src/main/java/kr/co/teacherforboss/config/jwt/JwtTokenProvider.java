@@ -3,10 +3,7 @@ package kr.co.teacherforboss.config.jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
-import io.jsonwebtoken.security.Keys;
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import kr.co.teacherforboss.domain.enums.Role;
@@ -21,9 +18,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.security.Key;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
@@ -131,7 +126,7 @@ public class JwtTokenProvider {
             return Jwts.parser().setSigningKey(this.secretKey).parseClaimsJws(token).getBody();
         } catch (ExpiredJwtException e) {
             throw new AuthHandler(ErrorStatus.TOKEN_TIME_OUT);
-        } catch (SignatureException | MalformedJwtException e) {
+        } catch (Exception e) {
             throw new AuthHandler(ErrorStatus.INVALID_JWT_TOKEN);
         }
     }
