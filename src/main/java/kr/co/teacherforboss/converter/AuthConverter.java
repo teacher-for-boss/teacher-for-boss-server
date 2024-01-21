@@ -34,6 +34,7 @@ public class AuthConverter {
                 .role(Role.USER)
                 .gender(gender)
                 .birthDate(request.getBirthDate())
+                .phone(request.getPhone())
                 .build();
     }
     

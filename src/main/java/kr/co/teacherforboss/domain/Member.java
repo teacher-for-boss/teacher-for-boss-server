@@ -4,9 +4,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import kr.co.teacherforboss.domain.common.BaseEntity;
 import kr.co.teacherforboss.domain.enums.Gender;
@@ -60,6 +57,10 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(10)")
     private Gender gender;
+
+    @NotNull
+    @Column(length = 50)
+    private String phone;
 
     @Column
     private LocalDate birthDate;
