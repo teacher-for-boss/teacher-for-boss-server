@@ -23,12 +23,9 @@ public class TokenManager {
         return tokenMap.get(key);
     }
 
-    public boolean deleteRefreshToken(String key) {
+    public void deleteRefreshToken(String key) {
         RMap<String, String> tokenMap = redissonClient.getMap(REFRESH_TOKEN_MAP);
-        boolean result = tokenMap.containsKey(key);
         tokenMap.remove(key);
-
-        return result;
     }
 
     public void addBlackListAccessToken(String token) {
