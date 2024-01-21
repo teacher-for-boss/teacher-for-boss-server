@@ -21,17 +21,20 @@ public class MyAccessDeniedHandler implements AccessDeniedHandler {
     public void handle(HttpServletRequest request,
                        HttpServletResponse response,
                        AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        log.info("[접근 권한 X] URL : [{}]", request.getRequestURL());
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        String code = ErrorStatus.ACCESS_DENIED.getCode();
-        String message = ErrorStatus.ACCESS_DENIED.getMessage();
+        if (request.getRequestURI().startsWith("/api/v1/auth/")) {
+            log.info("[접근 권한 X] URL : [{}]", request.getRequestURL());
 
-        ApiResponse<ErrorStatus> apiResponse = ApiResponse.onFailure(code, message, null);
-        String jsonResponse = objectMapper.writeValueAsString(apiResponse);
+            ObjectMapper objectMapper = new ObjectMapper();
+            String code = ErrorStatus.ACCESS_DENIED.getCode();
+            String message = ErrorStatus.ACCESS_DENIED.getMessage();
 
-        response.setContentType("application/json;charset=UTF-8");
-        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        response.getWriter().write(jsonResponse);
+            ApiResponse<ErrorStatus> apiResponse = ApiResponse.onFailure(code, message, null);
+            String jsonResponse = objectMapper.writeValueAsString(apiResponse);
+
+            response.setContentType("application/json;charset=UTF-8");
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.getWriter().write(jsonResponse);
+        }
     }
 }
