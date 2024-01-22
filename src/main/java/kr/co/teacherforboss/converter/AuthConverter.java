@@ -66,4 +66,11 @@ public class AuthConverter {
                 .logoutAt(LocalDateTime.now())
                 .build();
     }
+
+    public static AuthResponseDTO.ResetPasswordResultDTO toResetPasswordResultDTO(Member member) {
+        return AuthResponseDTO.ResetPasswordResultDTO.builder()
+                .memberId(member.getId())
+                .changeResult("비밀번호가 재설정 되었습니다.")
+                .build();
+    }
 }

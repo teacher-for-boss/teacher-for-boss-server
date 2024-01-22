@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import jakarta.servlet.http.HttpServletRequest;
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
+import kr.co.teacherforboss.apiPayload.exception.handler.MemberHandler;
 import kr.co.teacherforboss.config.jwt.PrincipalDetails;
 import kr.co.teacherforboss.config.jwt.TokenManager;
 import kr.co.teacherforboss.converter.AuthConverter;
@@ -127,5 +128,21 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         tokenManager.addBlackListAccessToken(request.getHeader("Authorization"));
 
         return AuthConverter.toLogoutResultDTO(principalDetails.getEmail(), request.getHeader("Authorization"));
+    }
+
+    @Override
+    @Transactional
+    public Member resetPassword(AuthRequestDTO.resetPasswordDTO request) {
+        Member member = memberRepository.findById(request.getMemberId())
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        if (!request.getPassword().equals(request.getRePassword()))
+            throw new AuthHandler(ErrorStatus.PASSWORD_NOT_CORRECT);
+
+        String pwSalt = generateSalt();
+        String pwHash = generatePwHash(request.getPassword(), pwSalt);
+        member.setPassword(pwSalt, pwHash);
+
+        return memberRepository.save(member);
     }
 }
