@@ -139,6 +139,7 @@ public class AuthCommandServiceImplTest {
         // given
         PhoneAuth phoneAuth = authTestUtil.generatePhoneAuthDummy();
         Member member = authTestUtil.generateMemberDummy();
+
         AuthRequestDTO.FindEmailDTO request = toFindEmail(1L);
         doReturn(Optional.of(phoneAuth)).when(phoneAuthRepository).findById(any(Long.class));
         doReturn(true).when(phoneAuthRepository)
@@ -179,5 +180,4 @@ public class AuthCommandServiceImplTest {
                 .phoneAuthId(phoneAuthId)
                 .build();
     }
-
 }
