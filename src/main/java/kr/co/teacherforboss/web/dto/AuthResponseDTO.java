@@ -16,7 +16,7 @@ public class AuthResponseDTO {
         Long memberId;
         LocalDateTime createdAt;
     }
-    
+
     @Getter
     @Builder
     @NoArgsConstructor
@@ -32,5 +32,25 @@ public class AuthResponseDTO {
     @AllArgsConstructor
     public static class CheckCodeMailResultDTO {
         boolean isChecked;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TokenResponseDTO {
+        String email;
+        String accessToken;
+        String refreshToken;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LogoutResultDTO {
+        String email;
+        String accessToken;
+        LocalDateTime logoutAt;
     }
 }

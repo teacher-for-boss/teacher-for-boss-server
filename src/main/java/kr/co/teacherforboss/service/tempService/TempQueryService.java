@@ -1,4 +1,4 @@
-package kr.co.teacherforboss.service.TempService;
+package kr.co.teacherforboss.service.tempService;
 
 public interface TempQueryService {
 

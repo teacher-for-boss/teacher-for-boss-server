@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.web.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import kr.co.teacherforboss.validation.annotation.CheckPurpose;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -75,5 +76,13 @@ public class AuthRequestDTO {
 
         @CheckPurpose
         int purpose;
+    }
+
+    @Getter
+    public static class LoginDTO {
+        @NotBlank
+        String email;
+        @NotBlank
+        String password;
     }
 }

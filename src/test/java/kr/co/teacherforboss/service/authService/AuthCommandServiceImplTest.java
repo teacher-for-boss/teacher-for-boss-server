@@ -1,16 +1,12 @@
-package kr.co.teacherforboss.service.AuthService;
+package kr.co.teacherforboss.service.authService;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
-import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
-import kr.co.teacherforboss.apiPayload.exception.GeneralException;
-import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import kr.co.teacherforboss.domain.EmailAuth;
 import kr.co.teacherforboss.domain.Member;
-import kr.co.teacherforboss.domain.PhoneAuth;
 import kr.co.teacherforboss.domain.enums.Gender;
 import kr.co.teacherforboss.domain.enums.LoginType;
 import kr.co.teacherforboss.domain.enums.Purpose;
@@ -20,7 +16,7 @@ import kr.co.teacherforboss.domain.vo.mailVO.Mail;
 import kr.co.teacherforboss.repository.EmailAuthRepository;
 import kr.co.teacherforboss.repository.MemberRepository;
 import kr.co.teacherforboss.repository.PhoneAuthRepository;
-import kr.co.teacherforboss.service.MailService.MailCommandService;
+import kr.co.teacherforboss.service.mailService.MailCommandService;
 import kr.co.teacherforboss.web.dto.AuthRequestDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,14 +27,11 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static reactor.core.publisher.Mono.when;
 
 @ExtendWith(MockitoExtension.class)
 public class AuthCommandServiceImplTest {
