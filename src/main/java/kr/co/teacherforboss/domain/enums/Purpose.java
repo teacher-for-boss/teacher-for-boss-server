@@ -9,15 +9,15 @@ public enum Purpose {
 
     NONE(0),
     SIGNUP(1),
-    FINDID(2),
-    FINDPW(3);
+    FIND_EMAIL(2),
+    FIND_PW(3);
 
     private final int identifier;
 
     public static Purpose of(int identifier) {
         if (identifier == 1) return SIGNUP;
-        if (identifier == 2) return FINDID;
-        if (identifier == 3) return FINDPW;
+        if (identifier == 2) return FIND_EMAIL;
+        if (identifier == 3) return FIND_PW;
         return NONE;
     }
 }

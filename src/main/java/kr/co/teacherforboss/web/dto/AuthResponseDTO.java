@@ -53,4 +53,13 @@ public class AuthResponseDTO {
         String accessToken;
         LocalDateTime logoutAt;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class FindEmailResultDTO {
+        String email;
+        LocalDateTime createdAt;
+    }
 }
