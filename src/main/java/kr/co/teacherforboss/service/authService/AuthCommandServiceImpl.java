@@ -44,9 +44,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         if (!request.getPassword().equals(request.getRePassword())) { throw new AuthHandler(ErrorStatus.PASSWORD_NOT_CORRECT);}
 
         Member newMember = AuthConverter.toMember(request);
-        String pwSalt = generateSalt();
-        String pwHash = generatePwHash(request.getPassword(), pwSalt);
-        newMember.setPassword(pwSalt, pwHash);
+        setMemberPassword(newMember, request.getPassword());
 
         return memberRepository.save(newMember);
     }
@@ -139,10 +137,14 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         if (!request.getPassword().equals(request.getRePassword()))
             throw new AuthHandler(ErrorStatus.PASSWORD_NOT_CORRECT);
 
-        String pwSalt = generateSalt();
-        String pwHash = generatePwHash(request.getPassword(), pwSalt);
-        member.setPassword(pwSalt, pwHash);
+        setMemberPassword(member, request.getRePassword());
 
         return memberRepository.save(member);
+    }
+
+    private void setMemberPassword(Member member, String password) {
+        String pwSalt = generateSalt();
+        String pwHash = generatePwHash(password, pwSalt);
+        member.setPassword(pwSalt, pwHash);
     }
 }
