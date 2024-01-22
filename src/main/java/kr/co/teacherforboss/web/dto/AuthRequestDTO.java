@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.web.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import kr.co.teacherforboss.validation.annotation.CheckPurpose;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -84,5 +85,13 @@ public class AuthRequestDTO {
     public static class FindPasswordDTO {
         @NotNull(message = "emailAuthId 값이 없습니다.")
         Long emailAuthId;
+    }
+
+    @Getter
+    public static class LoginDTO {
+        @NotBlank
+        String email;
+        @NotBlank
+        String password;
     }
 }

@@ -1,4 +1,4 @@
-package kr.co.teacherforboss.service.MailService;
+package kr.co.teacherforboss.service.mailService;
 
 import kr.co.teacherforboss.domain.vo.mailVO.Mail;
 

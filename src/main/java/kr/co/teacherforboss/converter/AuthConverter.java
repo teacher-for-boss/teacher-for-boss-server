@@ -1,7 +1,5 @@
 package kr.co.teacherforboss.converter;
 
-import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
-import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.EmailAuth;
 import kr.co.teacherforboss.domain.enums.Gender;
@@ -11,7 +9,6 @@ import kr.co.teacherforboss.domain.enums.Purpose;
 import kr.co.teacherforboss.web.dto.AuthRequestDTO;
 import kr.co.teacherforboss.web.dto.AuthResponseDTO;
 
-import java.security.SecureRandom;
 import java.time.LocalDateTime;
 
 public class AuthConverter {
@@ -65,6 +62,14 @@ public class AuthConverter {
     public static AuthResponseDTO.FindPasswordResultDTO toFindPasswordResultDTO(Member member) {
         return AuthResponseDTO.FindPasswordResultDTO.builder()
                 .memberId(member.getId())
+                .build();
+    }
+
+    public static AuthResponseDTO.LogoutResultDTO toLogoutResultDTO(String email, String accessToken) {
+        return AuthResponseDTO.LogoutResultDTO.builder()
+                .email(email)
+                .accessToken(accessToken)
+                .logoutAt(LocalDateTime.now())
                 .build();
     }
 }

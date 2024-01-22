@@ -1,22 +1,28 @@
-package kr.co.teacherforboss.service.AuthService;
+package kr.co.teacherforboss.service.authService;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+
+import jakarta.servlet.http.HttpServletRequest;
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import kr.co.teacherforboss.apiPayload.exception.handler.MemberHandler;
+import kr.co.teacherforboss.config.jwt.PrincipalDetails;
+import kr.co.teacherforboss.config.jwt.TokenManager;
 import kr.co.teacherforboss.converter.AuthConverter;
 import kr.co.teacherforboss.domain.enums.Purpose;
 import kr.co.teacherforboss.domain.enums.Status;
-import kr.co.teacherforboss.repository.PhoneAuthRepository;
 import kr.co.teacherforboss.web.dto.AuthRequestDTO;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.EmailAuth;
 import kr.co.teacherforboss.domain.vo.mailVO.CodeMail;
 import kr.co.teacherforboss.repository.MemberRepository;
 import kr.co.teacherforboss.repository.EmailAuthRepository;
-import kr.co.teacherforboss.service.MailService.MailCommandService;
+import kr.co.teacherforboss.service.mailService.MailCommandService;
+import kr.co.teacherforboss.web.dto.AuthResponseDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,22 +35,15 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
     private final MemberRepository memberRepository;
     private final EmailAuthRepository emailAuthRepository;
-    private final PhoneAuthRepository phoneAuthRepository;
     private final MailCommandService mailCommandService;
     private final PasswordEncoder passwordEncoder;
+    private final TokenManager tokenManager;
 
     // 회원 가입
     @Override
     @Transactional
     public Member joinMember(AuthRequestDTO.JoinDTO request){
-        if (memberRepository.existsByEmailAndStatus(request.getEmail(), Status.ACTIVE))
-            throw new MemberHandler(ErrorStatus.MEMBER_DUPLICATE);
-        if (!emailAuthRepository.existsByIdAndEmailAndPurposeAndIsChecked(request.getEmailAuthId(), request.getEmail(), Purpose.of(1), "T"))
-            throw new AuthHandler(ErrorStatus.MAIL_NOT_CHECKED);
-        if (!request.getPassword().equals(request.getRePassword()))
-            throw new AuthHandler(ErrorStatus.PASSWORD_NOT_CORRECT);
-        if (!phoneAuthRepository.existsByIdAndPhoneAndPurposeAndIsChecked(request.getPhoneAuthId(), request.getPhone(), Purpose.of(1), "T"))
-            throw new AuthHandler(ErrorStatus.PHONE_NOT_CHECKED);
+        if (!request.getPassword().equals(request.getRePassword())) { throw new AuthHandler(ErrorStatus.PASSWORD_NOT_CORRECT);}
 
         Member newMember = AuthConverter.toMember(request);
         String pwSalt = generateSalt();
@@ -74,7 +73,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
         return sb.toString();
     }
-    
+
     @Override
     @Transactional
     public EmailAuth sendCodeMail(AuthRequestDTO.SendCodeMailDTO request) {
@@ -121,4 +120,27 @@ public class AuthCommandServiceImpl implements AuthCommandService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
 
+    public Member login(AuthRequestDTO.LoginDTO request) {
+        Member member = memberRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        String inputPw =  member.getPwSalt() + request.getPassword();
+        if (!passwordEncoder.matches(inputPw, member.getPwHash())) {
+            throw new AuthHandler(ErrorStatus.LOGIN_FAILED_PASSWORD_INCORRECT);
+        }
+        return member;
+    }
+    @Override
+    public AuthResponseDTO.LogoutResultDTO logout(HttpServletRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if(authentication == null || !(authentication.getPrincipal() instanceof PrincipalDetails principalDetails)) {
+            throw new AuthHandler(ErrorStatus.INVALID_JWT_TOKEN);
+        }
+
+        tokenManager.deleteRefreshToken(principalDetails.getEmail());
+        tokenManager.addBlackListAccessToken(request.getHeader("Authorization"));
+
+        return AuthConverter.toLogoutResultDTO(principalDetails.getEmail(), request.getHeader("Authorization"));
+    }
 }
