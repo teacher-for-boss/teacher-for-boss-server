@@ -45,6 +45,12 @@ public class AuthController {
         return ApiResponse.onSuccess(AuthConverter.toCheckCodeMailResultDTO(isChecked));
     }
 
+    @PostMapping("/find/email")
+    public ApiResponse<AuthResponseDTO.FindEmailResultDTO> findEmail(@RequestBody @Valid AuthRequestDTO.FindEmailDTO request) {
+        Member memberEmail = authCommandService.findEmail(request);
+        return ApiResponse.onSuccess(AuthConverter.toFindEmailResultDTO(memberEmail));
+    }
+
     @PostMapping("/login")
     public ApiResponse<AuthResponseDTO.TokenResponseDTO> login(@RequestBody @Valid AuthRequestDTO.LoginDTO request) {
         Member member = authCommandService.login(request);
