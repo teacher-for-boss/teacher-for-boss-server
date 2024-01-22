@@ -41,7 +41,7 @@ public class AuthController {
 
     @PostMapping("/find/password")
     public ApiResponse<AuthResponseDTO.FindPasswordResultDTO> findEmail(@RequestBody @Valid AuthRequestDTO.FindPasswordDTO request) {
-        boolean isChecked = authCommandService.findPassword(request);
-        return ApiResponse.onSuccess(AuthConverter.toFindPasswordResultDTO(isChecked));
+        Member member = authCommandService.findPassword(request);
+        return ApiResponse.onSuccess(AuthConverter.toFindPasswordResultDTO(member));
     }
 }

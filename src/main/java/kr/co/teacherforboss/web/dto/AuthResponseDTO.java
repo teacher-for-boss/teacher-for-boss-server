@@ -39,6 +39,6 @@ public class AuthResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class FindPasswordResultDTO {
-        String passwordResult;
+        Long memberId;
     }
 }

@@ -110,14 +110,15 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
     @Override
     @Transactional
-    public boolean findPassword(AuthRequestDTO.FindPasswordDTO request) {
+    public Member findPassword(AuthRequestDTO.FindPasswordDTO request) {
         EmailAuth emailAuth = emailAuthRepository.findById(request.getEmailAuthId())
                 .orElseThrow(() -> new AuthHandler(ErrorStatus._DATA_NOT_FOUND));
 
         if(!emailAuthRepository.existsByIdAndPurposeAndIsChecked(request.getEmailAuthId(), Purpose.of(3), "T"))
             throw new AuthHandler(ErrorStatus.PHONE_NOT_CHECKED);
 
-        return memberRepository.existsByEmailAndStatus(emailAuth.getEmail(), Status.ACTIVE);
+        return memberRepository.findByEmailAndStatus(emailAuth.getEmail(), Status.ACTIVE)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
 
 }

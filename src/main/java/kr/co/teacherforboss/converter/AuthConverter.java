@@ -62,10 +62,9 @@ public class AuthConverter {
                 .build();
     }
 
-    public static AuthResponseDTO.FindPasswordResultDTO toFindPasswordResultDTO(boolean emailChecked) {
-        if (!emailChecked) throw new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND);
+    public static AuthResponseDTO.FindPasswordResultDTO toFindPasswordResultDTO(Member member) {
         return AuthResponseDTO.FindPasswordResultDTO.builder()
-                .passwordResult("비밀번호 찾기에 필요한 이메일 인증이 완료되었습니다.")
+                .memberId(member.getId())
                 .build();
     }
 }

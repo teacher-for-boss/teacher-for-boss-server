@@ -8,5 +8,5 @@ public interface AuthCommandService {
     Member joinMember(AuthRequestDTO.JoinDTO request);
     EmailAuth sendCodeMail(AuthRequestDTO.SendCodeMailDTO request);
     boolean checkCodeMail(AuthRequestDTO.CheckCodeMailDTO request);
-    boolean findPassword(AuthRequestDTO.FindPasswordDTO request);
+    Member findPassword(AuthRequestDTO.FindPasswordDTO request);
 }
