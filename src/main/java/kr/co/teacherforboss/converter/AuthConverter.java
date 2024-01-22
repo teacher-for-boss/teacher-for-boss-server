@@ -66,4 +66,12 @@ public class AuthConverter {
                 .logoutAt(LocalDateTime.now())
                 .build();
     }
+
+    public static AuthResponseDTO.TokenResponseDTO toTokenResponseResultDTO(AuthResponseDTO.TokenResponseDTO token) {
+        return AuthResponseDTO.TokenResponseDTO.builder()
+                .email(token.getEmail())
+                .refreshToken(token.getRefreshToken())
+                .accessToken(token.getAccessToken())
+                .build();
+    }
 }
