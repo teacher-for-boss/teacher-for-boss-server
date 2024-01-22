@@ -116,7 +116,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         return member;
     }
     @Override
-    public AuthResponseDTO.LogoutResultDTO logout(HttpServletRequest request) {
+    public AuthResponseDTO.LogoutResultDTO logout(String accessToken, String email) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if(authentication == null || !(authentication.getPrincipal() instanceof PrincipalDetails principalDetails)) {
@@ -124,8 +124,8 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         }
 
         tokenManager.deleteRefreshToken(principalDetails.getEmail());
-        tokenManager.addBlackListAccessToken(request.getHeader("Authorization"));
+        tokenManager.addBlackListAccessToken(accessToken, principalDetails.getEmail());
 
-        return AuthConverter.toLogoutResultDTO(principalDetails.getEmail(), request.getHeader("Authorization"));
+        return AuthConverter.toLogoutResultDTO(principalDetails.getEmail(), accessToken);
     }
 }

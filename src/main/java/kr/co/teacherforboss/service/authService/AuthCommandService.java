@@ -11,5 +11,5 @@ public interface AuthCommandService {
     EmailAuth sendCodeMail(AuthRequestDTO.SendCodeMailDTO request);
     boolean checkCodeMail(AuthRequestDTO.CheckCodeMailDTO request);
     Member login(AuthRequestDTO.LoginDTO request);
-    AuthResponseDTO.LogoutResultDTO logout(HttpServletRequest request);
+    AuthResponseDTO.LogoutResultDTO logout(String accessToken, String email);
 }
