@@ -77,7 +77,6 @@ public class AuthRequestDTO {
     public static class FindEmailDTO {
         @NotNull(message = "phoneAuthId 값이 없습니다.")
         Long phoneAuthId;
-<<<<<<< HEAD
     }
 
     @Getter
@@ -86,7 +85,5 @@ public class AuthRequestDTO {
         String email;
         @NotBlank
         String password;
-=======
->>>>>>> 024f9d8df8eaa7b45c74076d547b8fc13be03a53
     }
 }
