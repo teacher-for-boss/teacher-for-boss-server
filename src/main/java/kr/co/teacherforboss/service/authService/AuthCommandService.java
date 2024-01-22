@@ -1,6 +1,5 @@
 package kr.co.teacherforboss.service.authService;
 
-import jakarta.servlet.http.HttpServletRequest;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.EmailAuth;
 import kr.co.teacherforboss.web.dto.AuthRequestDTO;

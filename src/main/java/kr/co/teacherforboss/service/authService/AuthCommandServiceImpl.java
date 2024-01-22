@@ -3,10 +3,8 @@ package kr.co.teacherforboss.service.authService;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-import jakarta.servlet.http.HttpServletRequest;
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
-import kr.co.teacherforboss.config.jwt.PrincipalDetails;
 import kr.co.teacherforboss.config.jwt.TokenManager;
 import kr.co.teacherforboss.converter.AuthConverter;
 import kr.co.teacherforboss.web.dto.AuthRequestDTO;
@@ -119,13 +117,13 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     public AuthResponseDTO.LogoutResultDTO logout(String accessToken, String email) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if(authentication == null || !(authentication.getPrincipal() instanceof PrincipalDetails principalDetails)) {
+        if(authentication == null || email.isEmpty()) {
             throw new AuthHandler(ErrorStatus.INVALID_JWT_TOKEN);
         }
 
-        tokenManager.deleteRefreshToken(principalDetails.getEmail());
-        tokenManager.addBlackListAccessToken(accessToken, principalDetails.getEmail());
+        tokenManager.deleteRefreshToken(email);
+        tokenManager.addBlackListAccessToken(accessToken, email);
 
-        return AuthConverter.toLogoutResultDTO(principalDetails.getEmail(), accessToken);
+        return AuthConverter.toLogoutResultDTO(email, accessToken);
     }
 }

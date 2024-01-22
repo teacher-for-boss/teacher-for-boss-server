@@ -1,7 +1,7 @@
 package kr.co.teacherforboss.web.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.config.jwt.JwtTokenProvider;
 import kr.co.teacherforboss.config.jwt.PrincipalDetails;
@@ -53,21 +53,20 @@ public class AuthController {
     @PostMapping("/login")
     public ApiResponse<AuthResponseDTO.TokenResponseDTO> login(@RequestBody @Valid AuthRequestDTO.LoginDTO request) {
         Member member = authCommandService.login(request);
-        AuthResponseDTO.TokenResponseDTO token = jwtTokenProvider.createTokenResponse(member.getEmail(), member.getRole());
-        return ApiResponse.onSuccess(AuthConverter.toTokenResponseResultDTO(token));
+        AuthResponseDTO.TokenResponseDTO tokenResponseDTO = jwtTokenProvider.createTokenResponse(member.getEmail(), member.getRole());
+        return ApiResponse.onSuccess(tokenResponseDTO);
     }
 
     @PostMapping("/logout")
-    public ApiResponse<AuthResponseDTO.LogoutResultDTO> logout(@RequestHeader("Authorization") String accessToken,
+    public ApiResponse<AuthResponseDTO.LogoutResultDTO> logout(@NotNull @RequestHeader("Authorization") String accessToken,
                                                                @ExistPrincipalDetails @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        String token = jwtTokenProvider.resolveTokenFromRequest(accessToken);
-        AuthResponseDTO.LogoutResultDTO logoutResultDTO = authCommandService.logout(token, principalDetails.getEmail());
+        AuthResponseDTO.LogoutResultDTO logoutResultDTO = authCommandService.logout(accessToken, principalDetails.getEmail());
         return ApiResponse.onSuccess(AuthConverter.toLogoutResultDTO(logoutResultDTO.getEmail(), accessToken));
     }
 
     @PostMapping("/reissue")
     public ApiResponse<AuthResponseDTO.TokenResponseDTO> reissueToken(@RequestHeader("RefreshToken") String refreshToken) {
-        AuthResponseDTO.TokenResponseDTO token = jwtTokenProvider.recreateAccessToken(refreshToken);
-        return ApiResponse.onSuccess(AuthConverter.toTokenResponseResultDTO(token));
+        AuthResponseDTO.TokenResponseDTO tokenResponseDTO = jwtTokenProvider.recreateAccessToken(refreshToken);
+        return ApiResponse.onSuccess(tokenResponseDTO);
     }
 }
