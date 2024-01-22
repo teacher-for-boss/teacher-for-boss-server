@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.extern.jackson.Jacksonized;
 
 import java.time.LocalDate;
 
@@ -75,5 +76,13 @@ public class AuthRequestDTO {
 
         @CheckPurpose
         int purpose;
+    }
+
+    @Getter
+    @Jacksonized
+    @Builder
+    public static class FindPasswordDTO {
+        @NotNull(message = "emailAuthId 값이 없습니다.")
+        Long emailAuthId;
     }
 }

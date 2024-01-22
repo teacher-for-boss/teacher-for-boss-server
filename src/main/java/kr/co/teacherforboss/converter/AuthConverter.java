@@ -1,5 +1,7 @@
 package kr.co.teacherforboss.converter;
 
+import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
+import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.EmailAuth;
 import kr.co.teacherforboss.domain.enums.Gender;
@@ -57,6 +59,13 @@ public class AuthConverter {
     public static AuthResponseDTO.CheckCodeMailResultDTO toCheckCodeMailResultDTO(boolean isChecked) {
         return AuthResponseDTO.CheckCodeMailResultDTO.builder()
                 .isChecked(isChecked)
+                .build();
+    }
+
+    public static AuthResponseDTO.FindPasswordResultDTO toFindPasswordResultDTO(boolean emailChecked) {
+        if (!emailChecked) throw new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND);
+        return AuthResponseDTO.FindPasswordResultDTO.builder()
+                .passwordResult("비밀번호 찾기에 필요한 이메일 인증이 완료되었습니다.")
                 .build();
     }
 }

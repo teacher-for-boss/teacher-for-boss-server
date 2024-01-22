@@ -33,4 +33,12 @@ public class AuthResponseDTO {
     public static class CheckCodeMailResultDTO {
         boolean isChecked;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class FindPasswordResultDTO {
+        String passwordResult;
+    }
 }
