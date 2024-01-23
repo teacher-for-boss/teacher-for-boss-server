@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
+import kr.co.teacherforboss.apiPayload.exception.handler.MemberHandler;
+import kr.co.teacherforboss.config.jwt.PrincipalDetails;
 import kr.co.teacherforboss.config.jwt.TokenManager;
 import kr.co.teacherforboss.converter.AuthConverter;
 import kr.co.teacherforboss.domain.PhoneAuth;
@@ -108,6 +110,18 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     }
 
     @Override
+    @Transactional
+    public Member findPassword(AuthRequestDTO.FindPasswordDTO request) {
+        EmailAuth emailAuth = emailAuthRepository.findById(request.getEmailAuthId())
+                .orElseThrow(() -> new AuthHandler(ErrorStatus._DATA_NOT_FOUND));
+
+        if(!emailAuthRepository.existsByIdAndPurposeAndIsChecked(request.getEmailAuthId(), Purpose.of(3), "T"))
+            throw new AuthHandler(ErrorStatus.PHONE_NOT_CHECKED);
+
+        return memberRepository.findByEmailAndStatus(emailAuth.getEmail(), Status.ACTIVE)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    }
+
     public Member login(AuthRequestDTO.LoginDTO request) {
         Member member = memberRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));

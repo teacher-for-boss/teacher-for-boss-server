@@ -9,6 +9,7 @@ public interface AuthCommandService {
     Member joinMember(AuthRequestDTO.JoinDTO request);
     EmailAuth sendCodeMail(AuthRequestDTO.SendCodeMailDTO request);
     boolean checkCodeMail(AuthRequestDTO.CheckCodeMailDTO request);
+    Member findPassword(AuthRequestDTO.FindPasswordDTO request);
     Member login(AuthRequestDTO.LoginDTO request);
     AuthResponseDTO.LogoutResultDTO logout(String accessToken, String email);
 }

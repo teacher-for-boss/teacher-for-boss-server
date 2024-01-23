@@ -59,6 +59,12 @@ public class AuthConverter {
                 .build();
     }
 
+    public static AuthResponseDTO.FindPasswordResultDTO toFindPasswordResultDTO(Member member) {
+        return AuthResponseDTO.FindPasswordResultDTO.builder()
+                .memberId(member.getId())
+                .build();
+    }
+
     public static AuthResponseDTO.LogoutResultDTO toLogoutResultDTO(String email, String accessToken) {
         return AuthResponseDTO.LogoutResultDTO.builder()
                 .email(email)
