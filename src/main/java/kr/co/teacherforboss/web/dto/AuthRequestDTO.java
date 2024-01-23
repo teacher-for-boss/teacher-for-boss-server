@@ -105,6 +105,7 @@ public class AuthRequestDTO {
     public static class LoginDTO {
         @NotBlank
         String email;
+
         @NotBlank
         String password;
     }
