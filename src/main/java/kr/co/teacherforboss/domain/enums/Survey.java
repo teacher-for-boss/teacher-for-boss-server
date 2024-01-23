@@ -1,6 +1,5 @@
 package kr.co.teacherforboss.domain.enums;
 
-import kr.co.teacherforboss.domain.enums.survey.MemberSurvey1;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
