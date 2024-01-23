@@ -113,16 +113,6 @@ public class JwtTokenProvider {
         return tokenManager.existBlackListAccessToken(accessToken);
     }
 
-    public Member getMember(String token) {
-        String email = getUsername(token);
-        return memberRepository.findByEmail(email)
-                .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
-    }
-
-    public Long getMemberId(String token) {
-        return getMember(token).getId();
-    }
-
     private String getUsername(String token) {
         return this.parseClaims(token).getSubject();
     }

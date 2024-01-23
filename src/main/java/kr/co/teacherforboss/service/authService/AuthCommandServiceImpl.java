@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
+import kr.co.teacherforboss.apiPayload.exception.GeneralException;
 import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import kr.co.teacherforboss.apiPayload.exception.handler.MemberHandler;
 import kr.co.teacherforboss.config.jwt.PrincipalDetails;
@@ -13,6 +14,7 @@ import kr.co.teacherforboss.domain.PhoneAuth;
 import kr.co.teacherforboss.domain.enums.Purpose;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.PhoneAuthRepository;
+import kr.co.teacherforboss.util.SecurityUtil;
 import kr.co.teacherforboss.web.dto.AuthRequestDTO;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.EmailAuth;
@@ -158,5 +160,12 @@ public class AuthCommandServiceImpl implements AuthCommandService {
             throw new AuthHandler(ErrorStatus.PHONE_NOT_CHECKED);
 
         return memberRepository.findByPhoneAndStatus(phoneAuth.getPhone(), Status.ACTIVE);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Member getMember() {
+        return memberRepository.findByEmail(SecurityUtil.getCurrentUserEmail())
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
     }
 }
