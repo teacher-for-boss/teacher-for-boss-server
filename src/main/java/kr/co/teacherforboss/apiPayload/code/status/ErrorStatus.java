@@ -46,6 +46,8 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_PASSWORD(BAD_REQUEST, "AUTH4003", "비밀번호 입력 조건을 확인해주세요."),
     PHONE_NOT_CHECKED(NOT_FOUND, "AUTH4004", "전화번호를 인증 받지 않았습니다."),
     LOGIN_FAILED_PASSWORD_INCORRECT(UNAUTHORIZED,"AUTH4005", "비밀번호가 틀립니다."),
+    INVALID_CODE_PHONE(BAD_REQUEST, "AUTH4008", "휴대폰 인증번호가 틀렸습니다."),
+    TIMEOUT_CODE_PHONE(BAD_REQUEST, "AUTH4009", "휴대폰 인증 유효시간이 만료되었습니다."),
 
     ACCESS_DENIED(FORBIDDEN, "AUTH4006", "접근 권한이 없습니다."),
     TOKEN_TIME_OUT(FORBIDDEN, "AUTH4007", "토큰이 만료되었습니다."),

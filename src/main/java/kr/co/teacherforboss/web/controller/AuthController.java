@@ -57,6 +57,12 @@ public class AuthController {
         return ApiResponse.onSuccess(AuthConverter.toSendCodePhoneResultDTO(phoneAuth));
     }
 
+    @PostMapping("/phone/check")
+    public ApiResponse<AuthResponseDTO.CheckResultDTO> checkCodePhone(@RequestBody @Valid AuthRequestDTO.CheckCodePhoneDTO request) {
+        boolean isChecked = authCommandService.checkCodePhone(request);
+        return ApiResponse.onSuccess(AuthConverter.toCheckResultDTO(isChecked));
+    }
+
     @PostMapping("/find/password")
     public ApiResponse<AuthResponseDTO.FindPasswordResultDTO> findEmail(@RequestBody @Valid AuthRequestDTO.FindPasswordDTO request) {
         Member member = authCommandService.findPassword(request);

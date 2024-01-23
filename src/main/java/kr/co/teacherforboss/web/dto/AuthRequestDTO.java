@@ -86,6 +86,17 @@ public class AuthRequestDTO {
     }
 
     @Getter
+    @Builder
+    public static class CheckCodePhoneDTO {
+        @NotNull(message = "phoneAuthId 값이 없습니다.")
+        Long phoneAuthId;
+
+        @NotNull(message = "phoneAuthCode 값이 없습니다.")
+        @Pattern(regexp = "\\d{4}", message = "인증 코드는 4자리의 숫자로 이루어져 있어야 합니다.")
+        String phoneAuthCode;
+    }
+
+    @Getter
     @Jacksonized
     @Builder
     public static class FindEmailDTO {

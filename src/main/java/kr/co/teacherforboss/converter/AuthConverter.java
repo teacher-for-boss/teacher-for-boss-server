@@ -69,8 +69,8 @@ public class AuthConverter {
                 .build();
     }
 
-    public static AuthResponseDTO.CheckCodeMailResultDTO toCheckCodeMailResultDTO(boolean isChecked) {
-        return AuthResponseDTO.CheckCodeMailResultDTO.builder()
+    public static AuthResponseDTO.CheckResultDTO toCheckResultDTO(boolean isChecked) {
+        return AuthResponseDTO.CheckResultDTO.builder()
                 .isChecked(isChecked)
                 .build();
     }
