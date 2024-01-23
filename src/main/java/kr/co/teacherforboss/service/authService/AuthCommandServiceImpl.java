@@ -7,7 +7,6 @@ import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.GeneralException;
 import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import kr.co.teacherforboss.apiPayload.exception.handler.MemberHandler;
-import kr.co.teacherforboss.config.jwt.PrincipalDetails;
 import kr.co.teacherforboss.config.jwt.TokenManager;
 import kr.co.teacherforboss.converter.AuthConverter;
 import kr.co.teacherforboss.domain.PhoneAuth;
