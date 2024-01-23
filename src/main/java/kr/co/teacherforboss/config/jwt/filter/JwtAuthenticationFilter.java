@@ -1,9 +1,10 @@
-package kr.co.teacherforboss.config.jwt;
+package kr.co.teacherforboss.config.jwt.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import kr.co.teacherforboss.config.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -27,7 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        String token = jwtTokenProvider.resolveTokenFromRequest(request.getHeader(TOKEN_HEADER));
+        String token = request.getHeader(TOKEN_HEADER);
 
         if(StringUtils.hasText(token) && jwtTokenProvider.validateToken(token) && !jwtTokenProvider.isAccessTokenDenied(token)) {
             Authentication auth = jwtTokenProvider.getAuthentication(token);

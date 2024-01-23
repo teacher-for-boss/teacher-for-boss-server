@@ -1,9 +1,8 @@
 package kr.co.teacherforboss.config;
 
-import kr.co.teacherforboss.config.jwt.JwtSecurityConfig;
 import kr.co.teacherforboss.config.jwt.JwtTokenProvider;
-import kr.co.teacherforboss.config.jwt.exception.MyAccessDeniedHandler;
-import kr.co.teacherforboss.config.jwt.exception.MyAuthenticationEntryPoint;
+import kr.co.teacherforboss.config.jwt.exception.JwtAccessDeniedHandler;
+import kr.co.teacherforboss.config.jwt.exception.JwtAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,8 +20,8 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final MyAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    private final MyAccessDeniedHandler jwtAccessDeniedHandler;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     private static final String[] AUTH_WHITELIST_SWAGGER  = {
             "/api/**",
