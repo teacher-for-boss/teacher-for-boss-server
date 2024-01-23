@@ -40,6 +40,9 @@ public enum ErrorStatus implements BaseErrorCode {
     NICKNAME_NOT_EXIST(BAD_REQUEST, "MEMBER4002", "닉네임은 필수 입니다."),
     MEMBER_DUPLICATE(BAD_REQUEST, "MEMBER4003", "이미 존재하는 이메일입니다."),
 
+    // Survey
+    SURVEY_DUPLICATE(BAD_REQUEST, "SURVEY4001", "이미 사전정보가 존재합니다."),
+
     // Auth
     MAIL_NOT_CHECKED(BAD_REQUEST, "AUTH4001", "이메일을 인증 받지 않았습니다."),
     PASSWORD_NOT_CORRECT(BAD_REQUEST, "AUTH4002", "비밀번호 입력값과 일치하지 않습니다."),
