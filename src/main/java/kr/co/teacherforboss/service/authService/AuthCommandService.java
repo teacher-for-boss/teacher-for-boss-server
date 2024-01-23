@@ -12,4 +12,5 @@ public interface AuthCommandService {
     Member findPassword(AuthRequestDTO.FindPasswordDTO request);
     Member login(AuthRequestDTO.LoginDTO request);
     AuthResponseDTO.LogoutResultDTO logout(String accessToken, String email);
+    Member findEmail(AuthRequestDTO.FindEmailDTO request);
 }

@@ -122,6 +122,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
 
+    @Override
     public Member login(AuthRequestDTO.LoginDTO request) {
         Member member = memberRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
@@ -132,6 +133,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         }
         return member;
     }
+
     @Override
     public AuthResponseDTO.LogoutResultDTO logout(String accessToken, String email) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
