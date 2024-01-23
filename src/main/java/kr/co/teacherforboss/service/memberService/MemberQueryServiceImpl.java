@@ -1,4 +1,4 @@
-package kr.co.teacherforboss.service.MemberService;
+package kr.co.teacherforboss.service.memberService;
 
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.MemberHandler;

@@ -3,7 +3,7 @@ package kr.co.teacherforboss.web.controller;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.converter.MemberConverter;
 import kr.co.teacherforboss.domain.Member;
-import kr.co.teacherforboss.service.MemberService.MemberQueryService;
+import kr.co.teacherforboss.service.memberService.MemberQueryService;
 import kr.co.teacherforboss.web.dto.MemberResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
