@@ -8,6 +8,7 @@ import kr.co.teacherforboss.config.jwt.PrincipalDetails;
 import kr.co.teacherforboss.converter.AuthConverter;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.EmailAuth;
+import kr.co.teacherforboss.domain.PhoneAuth;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.validation.annotation.ExistPrincipalDetails;
 import kr.co.teacherforboss.web.dto.AuthRequestDTO;
@@ -48,6 +49,12 @@ public class AuthController {
     public ApiResponse<AuthResponseDTO.CheckCodeMailResultDTO> checkCodeMail(@RequestBody @Valid AuthRequestDTO.CheckCodeMailDTO request) {
         boolean isChecked = authCommandService.checkCodeMail(request);
         return ApiResponse.onSuccess(AuthConverter.toCheckCodeMailResultDTO(isChecked));
+    }
+
+    @PostMapping("/phone")
+    public ApiResponse<AuthResponseDTO.SendCodePhoneResultDTO> sendCodePhone(@RequestBody @Valid AuthRequestDTO.SendCodePhoneDTO request) {
+        PhoneAuth phoneAuth = authCommandService.sendCodePhone(request);
+        return ApiResponse.onSuccess(AuthConverter.toSendCodePhoneResultDTO(phoneAuth));
     }
 
     @PostMapping("/find/password")
