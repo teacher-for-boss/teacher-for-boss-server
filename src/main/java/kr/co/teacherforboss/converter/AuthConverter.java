@@ -9,7 +9,6 @@ import kr.co.teacherforboss.domain.enums.Purpose;
 import kr.co.teacherforboss.web.dto.AuthRequestDTO;
 import kr.co.teacherforboss.web.dto.AuthResponseDTO;
 
-import java.security.SecureRandom;
 import java.time.LocalDateTime;
 
 public class AuthConverter {
@@ -57,6 +56,27 @@ public class AuthConverter {
     public static AuthResponseDTO.CheckCodeMailResultDTO toCheckCodeMailResultDTO(boolean isChecked) {
         return AuthResponseDTO.CheckCodeMailResultDTO.builder()
                 .isChecked(isChecked)
+                .build();
+    }
+
+    public static AuthResponseDTO.FindPasswordResultDTO toFindPasswordResultDTO(Member member) {
+        return AuthResponseDTO.FindPasswordResultDTO.builder()
+                .memberId(member.getId())
+                .build();
+    }
+
+    public static AuthResponseDTO.LogoutResultDTO toLogoutResultDTO(String email, String accessToken) {
+        return AuthResponseDTO.LogoutResultDTO.builder()
+                .email(email)
+                .accessToken(accessToken)
+                .logoutAt(LocalDateTime.now())
+                .build();
+    }
+
+    public static AuthResponseDTO.FindEmailResultDTO toFindEmailResultDTO(Member member) {
+        return AuthResponseDTO.FindEmailResultDTO.builder()
+                .email(member.getEmail())
+                .createdAt(member.getCreatedAt())
                 .build();
     }
 }
