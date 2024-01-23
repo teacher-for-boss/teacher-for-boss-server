@@ -50,6 +50,12 @@ public class AuthController {
         Member member = authCommandService.findPassword(request);
         return ApiResponse.onSuccess(AuthConverter.toFindPasswordResultDTO(member));
     }
+  
+    @PostMapping("/find/email")
+    public ApiResponse<AuthResponseDTO.FindEmailResultDTO> findEmail(@RequestBody @Valid AuthRequestDTO.FindEmailDTO request) {
+        Member memberEmail = authCommandService.findEmail(request);
+        return ApiResponse.onSuccess(AuthConverter.toFindEmailResultDTO(memberEmail));
+    }
 
     @PostMapping("/login")
     public ApiResponse<AuthResponseDTO.TokenResponseDTO> login(@RequestBody @Valid AuthRequestDTO.LoginDTO request) {

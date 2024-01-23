@@ -10,8 +10,10 @@ import kr.co.teacherforboss.apiPayload.exception.handler.MemberHandler;
 import kr.co.teacherforboss.config.jwt.PrincipalDetails;
 import kr.co.teacherforboss.config.jwt.TokenManager;
 import kr.co.teacherforboss.converter.AuthConverter;
+import kr.co.teacherforboss.domain.PhoneAuth;
 import kr.co.teacherforboss.domain.enums.Purpose;
 import kr.co.teacherforboss.domain.enums.Status;
+import kr.co.teacherforboss.repository.PhoneAuthRepository;
 import kr.co.teacherforboss.web.dto.AuthRequestDTO;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.EmailAuth;
@@ -35,6 +37,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
     private final MemberRepository memberRepository;
     private final EmailAuthRepository emailAuthRepository;
+    private final PhoneAuthRepository phoneAuthRepository;
     private final MailCommandService mailCommandService;
     private final PasswordEncoder passwordEncoder;
     private final TokenManager tokenManager;
@@ -142,5 +145,17 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         tokenManager.addBlackListAccessToken(request.getHeader("Authorization"));
 
         return AuthConverter.toLogoutResultDTO(principalDetails.getEmail(), request.getHeader("Authorization"));
+    }
+
+    @Override
+    @Transactional
+    public Member findEmail(AuthRequestDTO.FindEmailDTO request) {
+        PhoneAuth phoneAuth = phoneAuthRepository.findById(request.getPhoneAuthId())
+                .orElseThrow(() -> new AuthHandler(ErrorStatus._DATA_NOT_FOUND));
+
+        if(!phoneAuthRepository.existsByIdAndPurposeAndIsChecked(request.getPhoneAuthId(), Purpose.of(2), "T"))
+            throw new AuthHandler(ErrorStatus.PHONE_NOT_CHECKED);
+
+        return memberRepository.findByPhoneAndStatus(phoneAuth.getPhone(), Status.ACTIVE);
     }
 }
