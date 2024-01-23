@@ -80,6 +80,14 @@ public class AuthRequestDTO {
     }
 
     @Getter
+    @Jacksonized
+    @Builder
+    public static class FindPasswordDTO {
+        @NotNull(message = "emailAuthId 값이 없습니다.")
+        Long emailAuthId;
+    }
+
+    @Getter
     public static class LoginDTO {
         @NotBlank
         String email;

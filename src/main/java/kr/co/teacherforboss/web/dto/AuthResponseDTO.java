@@ -38,6 +38,14 @@ public class AuthResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class FindPasswordResultDTO {
+        Long memberId;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class TokenResponseDTO {
         String email;
         String accessToken;
