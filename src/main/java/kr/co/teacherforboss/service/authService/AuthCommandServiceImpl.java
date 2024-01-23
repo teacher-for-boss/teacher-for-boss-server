@@ -3,7 +3,6 @@ package kr.co.teacherforboss.service.authService;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-import jakarta.servlet.http.HttpServletRequest;
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import kr.co.teacherforboss.apiPayload.exception.handler.MemberHandler;
@@ -123,6 +122,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
 
+    @Override
     public Member login(AuthRequestDTO.LoginDTO request) {
         Member member = memberRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
@@ -133,18 +133,19 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         }
         return member;
     }
+
     @Override
-    public AuthResponseDTO.LogoutResultDTO logout(HttpServletRequest request) {
+    public AuthResponseDTO.LogoutResultDTO logout(String accessToken, String email) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if(authentication == null || !(authentication.getPrincipal() instanceof PrincipalDetails principalDetails)) {
+        if(authentication == null || email.isEmpty()) {
             throw new AuthHandler(ErrorStatus.INVALID_JWT_TOKEN);
         }
 
-        tokenManager.deleteRefreshToken(principalDetails.getEmail());
-        tokenManager.addBlackListAccessToken(request.getHeader("Authorization"));
+        tokenManager.deleteRefreshToken(email);
+        tokenManager.addBlackListAccessToken(accessToken, email);
 
-        return AuthConverter.toLogoutResultDTO(principalDetails.getEmail(), request.getHeader("Authorization"));
+        return AuthConverter.toLogoutResultDTO(email, accessToken);
     }
 
     @Override
