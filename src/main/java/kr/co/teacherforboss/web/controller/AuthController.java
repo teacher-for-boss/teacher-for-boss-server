@@ -46,9 +46,9 @@ public class AuthController {
     }
 
     @PostMapping("/email/check")
-    public ApiResponse<AuthResponseDTO.CheckCodeMailResultDTO> checkCodeMail(@RequestBody @Valid AuthRequestDTO.CheckCodeMailDTO request) {
+    public ApiResponse<AuthResponseDTO.CheckResultDTO> checkCodeMail(@RequestBody @Valid AuthRequestDTO.CheckCodeMailDTO request) {
         boolean isChecked = authCommandService.checkCodeMail(request);
-        return ApiResponse.onSuccess(AuthConverter.toCheckCodeMailResultDTO(isChecked));
+        return ApiResponse.onSuccess(AuthConverter.toCheckResultDTO(isChecked));
     }
 
     @PostMapping("/phone")
