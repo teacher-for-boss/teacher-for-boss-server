@@ -66,6 +66,15 @@ public class AuthResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class ResetPasswordResultDTO {
+        Long memberId;
+        boolean isChanged;
+    }
+  
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class FindEmailResultDTO {
         String email;
         LocalDateTime createdAt;
