@@ -6,7 +6,9 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
+import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.enums.Role;
+import kr.co.teacherforboss.repository.MemberRepository;
 import kr.co.teacherforboss.web.dto.AuthResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,13 +30,14 @@ import java.util.List;
 public class JwtTokenProvider {
 
     private final UserDetailsService userDetailsService;
+    private final MemberRepository memberRepository;
     private final TokenManager tokenManager;
 
     @Value("${jwt.secret}")
     private String secretKey;
     private static final String KEY_ROLES = "roles";
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = (long) 1000 * 60 * 60 * 24; // 24시간
-    private static final long REFRESH_TOKEN_EXPIRE_TIME = (long) 1000 * 60 * 60 * 24 * 30; // 1달
+    protected static final long ACCESS_TOKEN_EXPIRE_TIME = (long) 1000 * 60 * 60 * 24; // 24시간
+    protected static final long REFRESH_TOKEN_EXPIRE_TIME = (long) 1000 * 60 * 60 * 24 * 30; // 1달
 
     public AuthResponseDTO.TokenResponseDTO createTokenResponse(String email, Role role) {
         List<String> roles = getRolesByUserType(role);
@@ -110,11 +113,14 @@ public class JwtTokenProvider {
         return tokenManager.existBlackListAccessToken(accessToken);
     }
 
-    public String resolveTokenFromRequest(String token) {
-        if (StringUtils.hasText(token)) {
-            return token;
-        }
-        return null;
+    public Member getMember(String token) {
+        String email = getUsername(token);
+        return memberRepository.findByEmail(email)
+                .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    }
+
+    public Long getMemberId(String token) {
+        return getMember(token).getId();
     }
 
     private String getUsername(String token) {
