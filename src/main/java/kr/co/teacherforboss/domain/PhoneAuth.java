@@ -38,5 +38,9 @@ public class PhoneAuth extends BaseEntity {
     @Column(columnDefinition = "VARCHAR(1)")
     @ColumnDefault("'F'")
     private String isChecked;
+
+    public void setCode(String code) {
+        this.code = code;
+    }
     
 }
