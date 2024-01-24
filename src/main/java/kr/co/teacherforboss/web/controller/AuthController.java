@@ -14,6 +14,7 @@ import kr.co.teacherforboss.web.dto.AuthRequestDTO;
 import kr.co.teacherforboss.web.dto.AuthResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -80,5 +81,11 @@ public class AuthController {
     public ApiResponse<AuthResponseDTO.TokenResponseDTO> reissueToken(@RequestHeader("RefreshToken") String refreshToken) {
         AuthResponseDTO.TokenResponseDTO tokenResponseDTO = jwtTokenProvider.recreateAccessToken(refreshToken);
         return ApiResponse.onSuccess(tokenResponseDTO);
+    }
+
+    @PatchMapping("/resetPassword")
+    public ApiResponse<AuthResponseDTO.ResetPasswordResultDTO> resetPassword(@RequestBody @Valid AuthRequestDTO.resetPasswordDTO request) {
+        Member member = authCommandService.resetPassword(request);
+        return ApiResponse.onSuccess(AuthConverter.toResetPasswordResultDTO(member));
     }
 }

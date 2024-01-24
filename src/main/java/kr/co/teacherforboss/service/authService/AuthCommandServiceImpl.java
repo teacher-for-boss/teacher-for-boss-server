@@ -9,6 +9,7 @@ import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import kr.co.teacherforboss.apiPayload.exception.handler.MemberHandler;
 import kr.co.teacherforboss.config.jwt.TokenManager;
 import kr.co.teacherforboss.converter.AuthConverter;
+import kr.co.teacherforboss.util.PasswordUtil;
 import kr.co.teacherforboss.domain.PhoneAuth;
 import kr.co.teacherforboss.domain.enums.Purpose;
 import kr.co.teacherforboss.domain.enums.Status;
@@ -41,6 +42,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private final MailCommandService mailCommandService;
     private final PasswordEncoder passwordEncoder;
     private final TokenManager tokenManager;
+    private final PasswordUtil passwordUtil;
 
     // 회원 가입
     @Override
@@ -49,32 +51,9 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         if (!request.getPassword().equals(request.getRePassword())) { throw new AuthHandler(ErrorStatus.PASSWORD_NOT_CORRECT);}
 
         Member newMember = AuthConverter.toMember(request);
-        String pwSalt = generateSalt();
-        String pwHash = generatePwHash(request.getPassword(), pwSalt);
-        newMember.setPassword(pwSalt, pwHash);
+        passwordUtil.setMemberPassword(newMember, request.getPassword());
 
         return memberRepository.save(newMember);
-    }
-
-    // hash 생성
-    private String generatePwHash(String pwRequest, String pwSalt){
-        return passwordEncoder.encode(pwSalt + pwRequest);
-    }
-
-    // salt 생성
-    private String generateSalt() {
-
-        SecureRandom r = new SecureRandom();
-        byte[] salt = new byte[20];
-
-        r.nextBytes(salt);
-
-        StringBuffer sb = new StringBuffer();
-        for(byte b : salt) {
-            sb.append(String.format("%02x", b));
-        };
-
-        return sb.toString();
     }
 
     @Override
@@ -166,5 +145,19 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     public Member getMember() {
         return memberRepository.findByEmail(SecurityUtil.getCurrentUserEmail())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+    }
+  
+    @Override
+    @Transactional
+    public Member resetPassword(AuthRequestDTO.resetPasswordDTO request) {
+        Member member = memberRepository.findById(request.getMemberId())
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        if (!request.getPassword().equals(request.getRePassword()))
+            throw new AuthHandler(ErrorStatus.PASSWORD_NOT_CORRECT);
+
+        passwordUtil.setMemberPassword(member, request.getRePassword());
+
+        return memberRepository.save(member);
     }
 }
