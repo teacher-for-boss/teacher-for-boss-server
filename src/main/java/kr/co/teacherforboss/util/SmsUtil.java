@@ -1,6 +1,8 @@
 package kr.co.teacherforboss.util;
 
 import jakarta.annotation.PostConstruct;
+import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
+import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import kr.co.teacherforboss.domain.vo.smsVO.SMS;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.exception.NurigoBadRequestException;
@@ -36,12 +38,15 @@ public class SmsUtil {
     }
 
     public SingleMessageSentResponse sendOne(String to, SMS sms) {
-        Message message = new Message();
-        message.setFrom(fromNumber);
-        message.setTo(to);
-        message.setText(sms.getText());
+        try {
+            Message message = new Message();
+            message.setFrom(fromNumber);
+            message.setTo(to);
+            message.setText(sms.getText());
 
-        return this.messageService.sendOne(new SingleMessageSendingRequest(message));
+            return this.messageService.sendOne(new SingleMessageSendingRequest(message));
+        } catch (Exception e) {
+            throw new AuthHandler(ErrorStatus.SMS_SEND_FAIL);
+        }
     }
-
 }

@@ -32,8 +32,9 @@ public enum ErrorStatus implements BaseErrorCode {
     MAIL_SEND_FAIL(BAD_REQUEST, "MAIL4002","이메일을 전송할 수 없습니다."),
     NO_MAIL_CODE(BAD_REQUEST, "MAIL4003","해당 이메일에 유효한 인증정보가 없습니다."),
     TOO_MANY_MAIL_REQUEST(BAD_REQUEST, "MAIL4004","메일 인증 요청은 하루에 5회까지 가능합니다."),
-    INVALID_CODE_MAIL(BAD_REQUEST, "MAIL4005", "이메일 인증번호가 틀렸습니다."),
-    TIMEOUT_CODE_MAIL(BAD_REQUEST, "MAIL4006", "이메일 인증 유효시간이 만료되었습니다."),
+
+    // sms
+    SMS_SEND_FAIL(INTERNAL_SERVER_ERROR, "SMS5001", "sms 전송에 실패했습니다."),
 
     // Member
     MEMBER_NOT_FOUND(BAD_REQUEST, "MEMBER4001", "사용자가 없습니다."),
@@ -49,11 +50,14 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_PASSWORD(BAD_REQUEST, "AUTH4003", "비밀번호 입력 조건을 확인해주세요."),
     PHONE_NOT_CHECKED(NOT_FOUND, "AUTH4004", "전화번호를 인증 받지 않았습니다."),
     LOGIN_FAILED_PASSWORD_INCORRECT(UNAUTHORIZED,"AUTH4005", "비밀번호가 틀립니다."),
-
     ACCESS_DENIED(FORBIDDEN, "AUTH4006", "접근 권한이 없습니다."),
     TOKEN_TIME_OUT(FORBIDDEN, "AUTH4007", "토큰이 만료되었습니다."),
     JWT_REFRESH_TOKEN_NOT_FOUND(BAD_REQUEST, "AUTH4008", "존재하지 않는 RefreshToken 입니다. 다시 로그인 해주세요."),
     INVALID_JWT_TOKEN(FORBIDDEN, "AUTH4009", "토큰 유효성 검사 실패 또는 거부된 토큰입니다."),
+    INVALID_CODE_MAIL(BAD_REQUEST, "AUTH40010", "이메일 인증번호가 틀렸습니다."),
+    TIMEOUT_CODE_MAIL(BAD_REQUEST, "AUTH40011", "이메일 인증 유효시간이 만료되었습니다."),
+    INVALID_CODE_PHONE(BAD_REQUEST, "AUTH40012", "휴대폰 인증번호가 틀렸습니다."),
+    TIMEOUT_CODE_PHONE(BAD_REQUEST, "AUTH40013", "휴대폰 인증 유효시간이 만료되었습니다."),
 
     // For test
     TEMP_EXCEPTION(BAD_REQUEST, "TEMP4001", "이거는 테스트");

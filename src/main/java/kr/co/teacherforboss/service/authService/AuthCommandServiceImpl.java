@@ -110,6 +110,23 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
     @Override
     @Transactional
+    public boolean checkCodePhone(AuthRequestDTO.CheckCodePhoneDTO request) {
+
+        PhoneAuth phoneAuth = phoneAuthRepository.findById(request.getPhoneAuthId())
+                .orElseThrow(() -> new AuthHandler(ErrorStatus._DATA_NOT_FOUND));
+
+        boolean codeCheck = request.getPhoneAuthCode().equals(phoneAuth.getCode());
+        if (!codeCheck) throw new AuthHandler(ErrorStatus.INVALID_CODE_PHONE);
+
+        boolean timeCheck = Duration.between(phoneAuth.getCreatedAt(), LocalDateTime.now()).getSeconds() < CodeSMS.VALID_TIME;
+        if (!timeCheck) throw new AuthHandler(ErrorStatus.TIMEOUT_CODE_PHONE);
+
+        phoneAuth.setIsChecked(true);
+        return true;
+    }
+
+    @Override
+    @Transactional
     public Member findPassword(AuthRequestDTO.FindPasswordDTO request) {
         EmailAuth emailAuth = emailAuthRepository.findById(request.getEmailAuthId())
                 .orElseThrow(() -> new AuthHandler(ErrorStatus._DATA_NOT_FOUND));

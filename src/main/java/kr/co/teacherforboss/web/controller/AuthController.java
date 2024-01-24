@@ -47,15 +47,21 @@ public class AuthController {
     }
 
     @PostMapping("/email/check")
-    public ApiResponse<AuthResponseDTO.CheckCodeMailResultDTO> checkCodeMail(@RequestBody @Valid AuthRequestDTO.CheckCodeMailDTO request) {
+    public ApiResponse<AuthResponseDTO.CheckResultDTO> checkCodeMail(@RequestBody @Valid AuthRequestDTO.CheckCodeMailDTO request) {
         boolean isChecked = authCommandService.checkCodeMail(request);
-        return ApiResponse.onSuccess(AuthConverter.toCheckCodeMailResultDTO(isChecked));
+        return ApiResponse.onSuccess(AuthConverter.toCheckResultDTO(isChecked));
     }
 
     @PostMapping("/phone")
     public ApiResponse<AuthResponseDTO.SendCodePhoneResultDTO> sendCodePhone(@RequestBody @Valid AuthRequestDTO.SendCodePhoneDTO request) {
         PhoneAuth phoneAuth = authCommandService.sendCodePhone(request);
         return ApiResponse.onSuccess(AuthConverter.toSendCodePhoneResultDTO(phoneAuth));
+    }
+
+    @PostMapping("/phone/check")
+    public ApiResponse<AuthResponseDTO.CheckResultDTO> checkCodePhone(@RequestBody @Valid AuthRequestDTO.CheckCodePhoneDTO request) {
+        boolean isChecked = authCommandService.checkCodePhone(request);
+        return ApiResponse.onSuccess(AuthConverter.toCheckResultDTO(isChecked));
     }
 
     @PostMapping("/find/password")

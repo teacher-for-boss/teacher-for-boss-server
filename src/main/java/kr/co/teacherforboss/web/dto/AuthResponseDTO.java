@@ -30,6 +30,14 @@ public class AuthResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class CheckCodeMailResultDTO {
+        boolean isChecked;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class SendCodePhoneResultDTO {
         Long phoneAuthId;
         LocalDateTime createdAt;
@@ -39,7 +47,7 @@ public class AuthResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class CheckCodeMailResultDTO {
+    public static class CheckResultDTO {
         boolean isChecked;
     }
 
