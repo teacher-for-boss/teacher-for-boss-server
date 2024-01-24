@@ -29,7 +29,7 @@ public class MemberController {
     private final MemberCommandService memberCommandService;
     @GetMapping("/profile")
     public ApiResponse<MemberResponseDTO.ViewMemberProfileDTO> viewMemberProfile() {
-        Member member = memberQueryService.viewMemberProfile(1L); // TODO: 토큰 검증 메서드 추가
+        Member member = memberQueryService.viewMemberProfile();
         return ApiResponse.onSuccess(MemberConverter.toViewMemberProfileDTO(member));
     }
 

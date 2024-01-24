@@ -4,5 +4,5 @@ import kr.co.teacherforboss.domain.Member;
 
 
 public interface MemberQueryService {
-    Member viewMemberProfile(Long memberId);
+    Member viewMemberProfile();
 }
