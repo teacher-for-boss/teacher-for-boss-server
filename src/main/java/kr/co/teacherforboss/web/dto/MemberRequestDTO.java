@@ -1,6 +1,5 @@
 package kr.co.teacherforboss.web.dto;
 
-import jakarta.validation.constraints.NotNull;
 import kr.co.teacherforboss.validation.annotation.CheckSurvey;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,8 +9,6 @@ public class MemberRequestDTO {
     @Getter
     @Builder
     public static class SurveyDTO {
-        @NotNull
-        Long memberId;
 
         @CheckSurvey(question = 1, message = "사전정보 1번이 잘못되었습니다.")
         int question1;
