@@ -16,4 +16,5 @@ public interface AuthCommandService {
     Member resetPassword(AuthRequestDTO.resetPasswordDTO request);
     AuthResponseDTO.LogoutResultDTO logout(String accessToken, String email);
     Member findEmail(AuthRequestDTO.FindEmailDTO request);
+    Member getMember();
 }
