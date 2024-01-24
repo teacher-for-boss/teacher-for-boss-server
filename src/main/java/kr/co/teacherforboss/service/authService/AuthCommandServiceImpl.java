@@ -15,6 +15,8 @@ import kr.co.teacherforboss.domain.enums.Purpose;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.PhoneAuthRepository;
 import kr.co.teacherforboss.util.SecurityUtil;
+import kr.co.teacherforboss.domain.vo.smsVO.CodeSMS;
+import kr.co.teacherforboss.util.SmsUtil;
 import kr.co.teacherforboss.web.dto.AuthRequestDTO;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.EmailAuth;
@@ -42,6 +44,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private final MailCommandService mailCommandService;
     private final PasswordEncoder passwordEncoder;
     private final TokenManager tokenManager;
+    private final SmsUtil smsUtil;
     private final PasswordUtil passwordUtil;
 
     // 회원 가입
@@ -87,6 +90,22 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
         emailAuth.setIsChecked(true);
         return true;
+    }
+
+    @Override
+    @Transactional
+    public PhoneAuth sendCodePhone(AuthRequestDTO.SendCodePhoneDTO request) {
+        String to = request.getPhone();
+
+        // TODO: 하루 휴대폰 인증 5회 제한 확인
+
+        CodeSMS codeSMS = new CodeSMS(request.getAppHash());
+        smsUtil.sendOne(to, codeSMS);
+
+        PhoneAuth phoneAuth = AuthConverter.toPhoneAuth(request);
+        phoneAuth.setCode(codeSMS.getCode());
+
+        return phoneAuthRepository.save(phoneAuth);
     }
 
     @Override
