@@ -13,6 +13,7 @@ public interface AuthCommandService {
     Member findPassword(AuthRequestDTO.FindPasswordDTO request);
     PhoneAuth sendCodePhone(AuthRequestDTO.SendCodePhoneDTO request);
     Member login(AuthRequestDTO.LoginDTO request);
+    Member resetPassword(AuthRequestDTO.resetPasswordDTO request);
     AuthResponseDTO.LogoutResultDTO logout(String accessToken, String email);
     Member findEmail(AuthRequestDTO.FindEmailDTO request);
 }
