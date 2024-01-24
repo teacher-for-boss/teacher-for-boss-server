@@ -4,48 +4,46 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
 import kr.co.teacherforboss.domain.common.BaseEntity;
-import kr.co.teacherforboss.domain.enums.Purpose;
+import kr.co.teacherforboss.domain.enums.Survey;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class PhoneAuth extends BaseEntity {
+public class MemberSurvey extends BaseEntity {
 
     @NotNull
-    @Column(length = 50)
-    private String phone;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    Member member;
 
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(10)")
-    private Purpose purpose;
+    Survey question1;
 
     @NotNull
-    @Column(length = 5)
-    private String code;
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "VARCHAR(10)")
+    Survey question2;
 
     @NotNull
-    @Column(columnDefinition = "VARCHAR(1)")
-    @ColumnDefault("'F'")
-    private String isChecked;
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "VARCHAR(10)")
+    Survey question3;
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+    @Column(columnDefinition = "VARCHAR(300)")
+    String question4;
 
-    public void setIsChecked(boolean isChecked) {
-        if (isChecked) this.isChecked = "T";
-        else this.isChecked = "F";
-    }
-    
 }

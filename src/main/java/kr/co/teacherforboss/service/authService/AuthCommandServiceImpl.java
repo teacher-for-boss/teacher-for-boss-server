@@ -4,15 +4,19 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
+import kr.co.teacherforboss.apiPayload.exception.GeneralException;
 import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import kr.co.teacherforboss.apiPayload.exception.handler.MemberHandler;
-import kr.co.teacherforboss.config.jwt.PrincipalDetails;
 import kr.co.teacherforboss.config.jwt.TokenManager;
 import kr.co.teacherforboss.converter.AuthConverter;
+import kr.co.teacherforboss.util.PasswordUtil;
 import kr.co.teacherforboss.domain.PhoneAuth;
 import kr.co.teacherforboss.domain.enums.Purpose;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.PhoneAuthRepository;
+import kr.co.teacherforboss.util.SecurityUtil;
+import kr.co.teacherforboss.domain.vo.smsVO.CodeSMS;
+import kr.co.teacherforboss.util.SmsUtil;
 import kr.co.teacherforboss.web.dto.AuthRequestDTO;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.EmailAuth;
@@ -40,6 +44,8 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private final MailCommandService mailCommandService;
     private final PasswordEncoder passwordEncoder;
     private final TokenManager tokenManager;
+    private final SmsUtil smsUtil;
+    private final PasswordUtil passwordUtil;
 
     // 회원 가입
     @Override
@@ -48,32 +54,9 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         if (!request.getPassword().equals(request.getRePassword())) { throw new AuthHandler(ErrorStatus.PASSWORD_NOT_CORRECT);}
 
         Member newMember = AuthConverter.toMember(request);
-        String pwSalt = generateSalt();
-        String pwHash = generatePwHash(request.getPassword(), pwSalt);
-        newMember.setPassword(pwSalt, pwHash);
+        passwordUtil.setMemberPassword(newMember, request.getPassword());
 
         return memberRepository.save(newMember);
-    }
-
-    // hash 생성
-    private String generatePwHash(String pwRequest, String pwSalt){
-        return passwordEncoder.encode(pwSalt + pwRequest);
-    }
-
-    // salt 생성
-    private String generateSalt() {
-
-        SecureRandom r = new SecureRandom();
-        byte[] salt = new byte[20];
-
-        r.nextBytes(salt);
-
-        StringBuffer sb = new StringBuffer();
-        for(byte b : salt) {
-            sb.append(String.format("%02x", b));
-        };
-
-        return sb.toString();
     }
 
     @Override
@@ -106,6 +89,39 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         if (!timeCheck) throw new AuthHandler(ErrorStatus.TIMEOUT_CODE_MAIL);
 
         emailAuth.setIsChecked(true);
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public PhoneAuth sendCodePhone(AuthRequestDTO.SendCodePhoneDTO request) {
+        String to = request.getPhone();
+
+        // TODO: 하루 휴대폰 인증 5회 제한 확인
+
+        CodeSMS codeSMS = new CodeSMS(request.getAppHash());
+        smsUtil.sendOne(to, codeSMS);
+
+        PhoneAuth phoneAuth = AuthConverter.toPhoneAuth(request);
+        phoneAuth.setCode(codeSMS.getCode());
+
+        return phoneAuthRepository.save(phoneAuth);
+    }
+
+    @Override
+    @Transactional
+    public boolean checkCodePhone(AuthRequestDTO.CheckCodePhoneDTO request) {
+
+        PhoneAuth phoneAuth = phoneAuthRepository.findById(request.getPhoneAuthId())
+                .orElseThrow(() -> new AuthHandler(ErrorStatus._DATA_NOT_FOUND));
+
+        boolean codeCheck = request.getPhoneAuthCode().equals(phoneAuth.getCode());
+        if (!codeCheck) throw new AuthHandler(ErrorStatus.INVALID_CODE_PHONE);
+
+        boolean timeCheck = Duration.between(phoneAuth.getCreatedAt(), LocalDateTime.now()).getSeconds() < CodeSMS.VALID_TIME;
+        if (!timeCheck) throw new AuthHandler(ErrorStatus.TIMEOUT_CODE_PHONE);
+
+        phoneAuth.setIsChecked(true);
         return true;
     }
 
@@ -158,5 +174,26 @@ public class AuthCommandServiceImpl implements AuthCommandService {
             throw new AuthHandler(ErrorStatus.PHONE_NOT_CHECKED);
 
         return memberRepository.findByPhoneAndStatus(phoneAuth.getPhone(), Status.ACTIVE);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Member getMember() {
+        return memberRepository.findByEmail(SecurityUtil.getCurrentUserEmail())
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+    }
+  
+    @Override
+    @Transactional
+    public Member resetPassword(AuthRequestDTO.resetPasswordDTO request) {
+        Member member = memberRepository.findById(request.getMemberId())
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        if (!request.getPassword().equals(request.getRePassword()))
+            throw new AuthHandler(ErrorStatus.PASSWORD_NOT_CORRECT);
+
+        passwordUtil.setMemberPassword(member, request.getRePassword());
+
+        return memberRepository.save(member);
     }
 }

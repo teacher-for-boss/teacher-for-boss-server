@@ -8,12 +8,14 @@ import kr.co.teacherforboss.config.jwt.PrincipalDetails;
 import kr.co.teacherforboss.converter.AuthConverter;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.EmailAuth;
+import kr.co.teacherforboss.domain.PhoneAuth;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.validation.annotation.ExistPrincipalDetails;
 import kr.co.teacherforboss.web.dto.AuthRequestDTO;
 import kr.co.teacherforboss.web.dto.AuthResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,9 +47,21 @@ public class AuthController {
     }
 
     @PostMapping("/email/check")
-    public ApiResponse<AuthResponseDTO.CheckCodeMailResultDTO> checkCodeMail(@RequestBody @Valid AuthRequestDTO.CheckCodeMailDTO request) {
+    public ApiResponse<AuthResponseDTO.CheckResultDTO> checkCodeMail(@RequestBody @Valid AuthRequestDTO.CheckCodeMailDTO request) {
         boolean isChecked = authCommandService.checkCodeMail(request);
-        return ApiResponse.onSuccess(AuthConverter.toCheckCodeMailResultDTO(isChecked));
+        return ApiResponse.onSuccess(AuthConverter.toCheckResultDTO(isChecked));
+    }
+
+    @PostMapping("/phone")
+    public ApiResponse<AuthResponseDTO.SendCodePhoneResultDTO> sendCodePhone(@RequestBody @Valid AuthRequestDTO.SendCodePhoneDTO request) {
+        PhoneAuth phoneAuth = authCommandService.sendCodePhone(request);
+        return ApiResponse.onSuccess(AuthConverter.toSendCodePhoneResultDTO(phoneAuth));
+    }
+
+    @PostMapping("/phone/check")
+    public ApiResponse<AuthResponseDTO.CheckResultDTO> checkCodePhone(@RequestBody @Valid AuthRequestDTO.CheckCodePhoneDTO request) {
+        boolean isChecked = authCommandService.checkCodePhone(request);
+        return ApiResponse.onSuccess(AuthConverter.toCheckResultDTO(isChecked));
     }
 
     @PostMapping("/find/password")
@@ -80,5 +94,11 @@ public class AuthController {
     public ApiResponse<AuthResponseDTO.TokenResponseDTO> reissueToken(@RequestHeader("RefreshToken") String refreshToken) {
         AuthResponseDTO.TokenResponseDTO tokenResponseDTO = jwtTokenProvider.recreateAccessToken(refreshToken);
         return ApiResponse.onSuccess(tokenResponseDTO);
+    }
+
+    @PatchMapping("/resetPassword")
+    public ApiResponse<AuthResponseDTO.ResetPasswordResultDTO> resetPassword(@RequestBody @Valid AuthRequestDTO.resetPasswordDTO request) {
+        Member member = authCommandService.resetPassword(request);
+        return ApiResponse.onSuccess(AuthConverter.toResetPasswordResultDTO(member));
     }
 }

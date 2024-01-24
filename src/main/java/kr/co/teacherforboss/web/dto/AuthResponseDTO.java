@@ -38,6 +38,23 @@ public class AuthResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class SendCodePhoneResultDTO {
+        Long phoneAuthId;
+        LocalDateTime createdAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CheckResultDTO {
+        boolean isChecked;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class FindPasswordResultDTO {
         Long memberId;
     }
@@ -62,6 +79,15 @@ public class AuthResponseDTO {
         LocalDateTime logoutAt;
     }
 
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ResetPasswordResultDTO {
+        Long memberId;
+        boolean isChanged;
+    }
+  
     @Getter
     @Builder
     @NoArgsConstructor

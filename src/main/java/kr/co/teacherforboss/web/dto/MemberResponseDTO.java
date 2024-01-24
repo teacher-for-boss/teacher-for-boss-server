@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.web.dto;
 
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,8 +11,17 @@ public class MemberResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ViewMemberProfileDTO{
+    public static class ViewMemberProfileDTO {
         String name;
         String profileImg;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SurveyResultDTO {
+        Long surveyId;
+        LocalDateTime createdAt;
     }
 }
