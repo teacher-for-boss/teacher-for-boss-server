@@ -69,8 +69,8 @@ public class AuthConverter {
 
     public static AuthResponseDTO.ResetPasswordResultDTO toResetPasswordResultDTO(Member member) {
         return AuthResponseDTO.ResetPasswordResultDTO.builder()
+                .memberId(member.getId())
                 .isChanged(true)
-                .changeResult("비밀번호가 재설정 되었습니다.")
                 .build();
     }
 }

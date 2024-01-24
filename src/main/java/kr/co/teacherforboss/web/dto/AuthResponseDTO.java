@@ -59,7 +59,7 @@ public class AuthResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ResetPasswordResultDTO {
+        Long memberId;
         boolean isChanged;
-        String changeResult;
     }
 }
