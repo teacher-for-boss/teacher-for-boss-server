@@ -3,7 +3,6 @@ package kr.co.teacherforboss.service.authService;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-import jakarta.servlet.http.HttpServletRequest;
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import kr.co.teacherforboss.apiPayload.exception.handler.MemberHandler;
@@ -11,6 +10,10 @@ import kr.co.teacherforboss.config.jwt.PrincipalDetails;
 import kr.co.teacherforboss.config.jwt.TokenManager;
 import kr.co.teacherforboss.converter.AuthConverter;
 import kr.co.teacherforboss.util.PasswordUtil;
+import kr.co.teacherforboss.domain.PhoneAuth;
+import kr.co.teacherforboss.domain.enums.Purpose;
+import kr.co.teacherforboss.domain.enums.Status;
+import kr.co.teacherforboss.repository.PhoneAuthRepository;
 import kr.co.teacherforboss.web.dto.AuthRequestDTO;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.EmailAuth;
@@ -34,6 +37,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
     private final MemberRepository memberRepository;
     private final EmailAuthRepository emailAuthRepository;
+    private final PhoneAuthRepository phoneAuthRepository;
     private final MailCommandService mailCommandService;
     private final PasswordEncoder passwordEncoder;
     private final TokenManager tokenManager;
@@ -85,6 +89,19 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     }
 
     @Override
+    @Transactional
+    public Member findPassword(AuthRequestDTO.FindPasswordDTO request) {
+        EmailAuth emailAuth = emailAuthRepository.findById(request.getEmailAuthId())
+                .orElseThrow(() -> new AuthHandler(ErrorStatus._DATA_NOT_FOUND));
+
+        if(!emailAuthRepository.existsByIdAndPurposeAndIsChecked(request.getEmailAuthId(), Purpose.of(3), "T"))
+            throw new AuthHandler(ErrorStatus.PHONE_NOT_CHECKED);
+
+        return memberRepository.findByEmailAndStatus(emailAuth.getEmail(), Status.ACTIVE)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    }
+
+    @Override
     public Member login(AuthRequestDTO.LoginDTO request) {
         Member member = memberRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
@@ -95,18 +112,31 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         }
         return member;
     }
+
     @Override
-    public AuthResponseDTO.LogoutResultDTO logout(HttpServletRequest request) {
+    public AuthResponseDTO.LogoutResultDTO logout(String accessToken, String email) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if(authentication == null || !(authentication.getPrincipal() instanceof PrincipalDetails principalDetails)) {
+        if(authentication == null || email.isEmpty()) {
             throw new AuthHandler(ErrorStatus.INVALID_JWT_TOKEN);
         }
 
-        tokenManager.deleteRefreshToken(principalDetails.getEmail());
-        tokenManager.addBlackListAccessToken(request.getHeader("Authorization"));
+        tokenManager.deleteRefreshToken(email);
+        tokenManager.addBlackListAccessToken(accessToken, email);
 
-        return AuthConverter.toLogoutResultDTO(principalDetails.getEmail(), request.getHeader("Authorization"));
+        return AuthConverter.toLogoutResultDTO(email, accessToken);
+    }
+
+    @Override
+    @Transactional
+    public Member findEmail(AuthRequestDTO.FindEmailDTO request) {
+        PhoneAuth phoneAuth = phoneAuthRepository.findById(request.getPhoneAuthId())
+                .orElseThrow(() -> new AuthHandler(ErrorStatus._DATA_NOT_FOUND));
+
+        if(!phoneAuthRepository.existsByIdAndPurposeAndIsChecked(request.getPhoneAuthId(), Purpose.of(2), "T"))
+            throw new AuthHandler(ErrorStatus.PHONE_NOT_CHECKED);
+
+        return memberRepository.findByPhoneAndStatus(phoneAuth.getPhone(), Status.ACTIVE);
     }
 
     @Override
