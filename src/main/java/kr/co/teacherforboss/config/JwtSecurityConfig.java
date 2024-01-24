@@ -1,5 +1,8 @@
-package kr.co.teacherforboss.config.jwt;
+package kr.co.teacherforboss.config;
 
+import kr.co.teacherforboss.config.jwt.JwtTokenProvider;
+import kr.co.teacherforboss.config.jwt.filter.JwtAuthenticationFilter;
+import kr.co.teacherforboss.config.jwt.filter.JwtExceptionFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.SecurityConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

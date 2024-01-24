@@ -6,8 +6,12 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.jackson.Jacksonized;
 
 import java.time.LocalDate;
 
@@ -68,14 +72,19 @@ public class AuthRequestDTO {
     }
 
     @Getter
+    @Jacksonized
     @Builder
-    public static class SendCodePhoneDTO {
-        @NotNull(message = "phone 값이 없습니다.")
-        @Pattern(regexp = "^01(?:0|1|[6-9])[.-]?(\\d{3}|\\d{4})[.-]?(\\d{4})$", message = "전화번호는 10 ~ 11 자리의 숫자만 입력 가능합니다.")
-        String phone;
+    public static class FindEmailDTO {
+        @NotNull(message = "phoneAuthId 값이 없습니다.")
+        Long phoneAuthId;
+    }
 
-        @CheckPurpose
-        int purpose;
+    @Getter
+    @Jacksonized
+    @Builder
+    public static class FindPasswordDTO {
+        @NotNull(message = "emailAuthId 값이 없습니다.")
+        Long emailAuthId;
     }
 
     @Getter

@@ -59,6 +59,12 @@ public class AuthConverter {
                 .build();
     }
 
+    public static AuthResponseDTO.FindPasswordResultDTO toFindPasswordResultDTO(Member member) {
+        return AuthResponseDTO.FindPasswordResultDTO.builder()
+                .memberId(member.getId())
+                .build();
+    }
+
     public static AuthResponseDTO.LogoutResultDTO toLogoutResultDTO(String email, String accessToken) {
         return AuthResponseDTO.LogoutResultDTO.builder()
                 .email(email)
@@ -71,6 +77,12 @@ public class AuthConverter {
         return AuthResponseDTO.ResetPasswordResultDTO.builder()
                 .isChanged(true)
                 .changeResult("비밀번호가 재설정 되었습니다.")
+  }
+  
+    public static AuthResponseDTO.FindEmailResultDTO toFindEmailResultDTO(Member member) {
+        return AuthResponseDTO.FindEmailResultDTO.builder()
+                .email(member.getEmail())
+                .createdAt(member.getCreatedAt())
                 .build();
     }
 }

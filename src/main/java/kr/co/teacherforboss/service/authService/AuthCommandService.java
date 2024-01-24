@@ -1,6 +1,5 @@
 package kr.co.teacherforboss.service.authService;
 
-import jakarta.servlet.http.HttpServletRequest;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.EmailAuth;
 import kr.co.teacherforboss.web.dto.AuthRequestDTO;
@@ -10,7 +9,9 @@ public interface AuthCommandService {
     Member joinMember(AuthRequestDTO.JoinDTO request);
     EmailAuth sendCodeMail(AuthRequestDTO.SendCodeMailDTO request);
     boolean checkCodeMail(AuthRequestDTO.CheckCodeMailDTO request);
+    Member findPassword(AuthRequestDTO.FindPasswordDTO request);
     Member login(AuthRequestDTO.LoginDTO request);
-    AuthResponseDTO.LogoutResultDTO logout(HttpServletRequest request);
     Member resetPassword(AuthRequestDTO.resetPasswordDTO request);
+    AuthResponseDTO.LogoutResultDTO logout(String accessToken, String email);
+    Member findEmail(AuthRequestDTO.FindEmailDTO request);
 }
