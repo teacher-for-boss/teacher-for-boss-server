@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import kr.co.teacherforboss.validation.annotation.CheckSocialType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.jackson.Jacksonized;
@@ -131,5 +132,31 @@ public class AuthRequestDTO {
         @NotNull
         @Size(min = 8, max = 20, message = "비밀번호를 8~20자 사이로 입력해주세요.")
         String rePassword;
+    }
+
+    @Getter
+    @Builder
+    public static class SocialLoginDTO {
+
+        @CheckSocialType
+        int socialType;
+
+        @Email
+        @NotNull
+        String email;
+
+        @NotNull
+        String password;
+
+        String name;
+
+        @Pattern(regexp = "010([2-9])\\d{7,8}", message = "전화번호는 10 ~ 11 자리의 숫자만 입력 가능합니다.")
+        String phone;
+
+        Integer gender;
+
+        LocalDate birthDate;
+
+        String profileImg;
     }
 }

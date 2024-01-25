@@ -18,4 +18,5 @@ public interface AuthCommandService {
     AuthResponseDTO.LogoutResultDTO logout(String accessToken, String email);
     Member findEmail(AuthRequestDTO.FindEmailDTO request);
     Member getMember();
+    Member socialLogin(AuthRequestDTO.SocialLoginDTO request);
 }

@@ -101,4 +101,12 @@ public class AuthController {
         Member member = authCommandService.resetPassword(request);
         return ApiResponse.onSuccess(AuthConverter.toResetPasswordResultDTO(member));
     }
+
+    @Validated
+    @PostMapping("/login/social")
+    public ApiResponse<AuthResponseDTO.TokenResponseDTO> socialLogin(@RequestBody @Valid AuthRequestDTO.SocialLoginDTO request) {
+        Member member = authCommandService.socialLogin(request);
+        AuthResponseDTO.TokenResponseDTO tokenResponseDTO = jwtTokenProvider.createTokenResponse(member.getEmail(), member.getRole());
+        return ApiResponse.onSuccess(tokenResponseDTO);
+    }
 }

@@ -9,6 +9,7 @@ import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import kr.co.teacherforboss.apiPayload.exception.handler.MemberHandler;
 import kr.co.teacherforboss.config.jwt.TokenManager;
 import kr.co.teacherforboss.converter.AuthConverter;
+import kr.co.teacherforboss.domain.enums.LoginType;
 import kr.co.teacherforboss.util.PasswordUtil;
 import kr.co.teacherforboss.domain.PhoneAuth;
 import kr.co.teacherforboss.domain.enums.Purpose;
@@ -195,5 +196,22 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         passwordUtil.setMemberPassword(member, request.getRePassword());
 
         return memberRepository.save(member);
+    }
+
+    @Override
+    @Transactional
+    public Member socialLogin(AuthRequestDTO.SocialLoginDTO request) {
+        if (memberRepository.existsByEmailAndStatusAndLoginType(request.getEmail(), Status.ACTIVE, LoginType.GENERAL))
+            throw new MemberHandler(ErrorStatus.GENERAL_MEMBER_DUPLICATE);
+        if (memberRepository.existsByEmailAndStatusAndLoginType(request.getEmail(), Status.ACTIVE, LoginType.of(request.getSocialType())))
+            return memberRepository.findByEmailAndStatusAndLoginType(request.getEmail(), Status.ACTIVE, LoginType.of(request.getSocialType()));
+        if (request.getName() == null || request.getPhone() == null)
+            throw new MemberHandler(ErrorStatus.SOCIAL_MEMBER_INFO_EMPTY);
+
+        Member newMember = AuthConverter.toSocialMember(request);
+        newMember.setLoginType(request.getSocialType());
+        passwordUtil.setMemberPassword(newMember, request.getPassword());
+
+        return memberRepository.save(newMember);
     }
 }
