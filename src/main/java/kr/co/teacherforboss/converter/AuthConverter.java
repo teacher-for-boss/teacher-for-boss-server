@@ -115,6 +115,7 @@ public class AuthConverter {
                 .email(request.getEmail())
                 .role(Role.USER)
                 .gender(gender)
+                .loginType(LoginType.of(request.getSocialType()))
                 .birthDate(request.getBirthDate())
                 .phone(request.getPhone())
                 .profileImg(request.getProfileImg())

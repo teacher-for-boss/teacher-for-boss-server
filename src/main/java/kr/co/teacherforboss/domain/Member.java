@@ -73,8 +73,4 @@ public class Member extends BaseEntity {
         this.pwHash = pwHash;
     }
 
-    public void setLoginType(int loginType){
-        this.loginType = LoginType.of(loginType);
-    }
-
 }
