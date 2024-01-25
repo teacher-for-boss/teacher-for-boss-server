@@ -97,7 +97,7 @@ public class AuthController {
     }
 
     @PatchMapping("/resetPassword")
-    public ApiResponse<AuthResponseDTO.ResetPasswordResultDTO> resetPassword(@RequestBody @Valid AuthRequestDTO.resetPasswordDTO request) {
+    public ApiResponse<AuthResponseDTO.ResetPasswordResultDTO> resetPassword(@RequestBody @Valid AuthRequestDTO.ResetPasswordDTO request) {
         Member member = authCommandService.resetPassword(request);
         return ApiResponse.onSuccess(AuthConverter.toResetPasswordResultDTO(member));
     }

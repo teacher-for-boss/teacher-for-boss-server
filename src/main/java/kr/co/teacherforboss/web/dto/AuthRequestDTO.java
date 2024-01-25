@@ -120,7 +120,7 @@ public class AuthRequestDTO {
     }
 
     @Getter
-    public static class resetPasswordDTO {
+    public static class ResetPasswordDTO {
         @NotNull(message = "memberId 값이 없습니다.")
         Long memberId;
 
