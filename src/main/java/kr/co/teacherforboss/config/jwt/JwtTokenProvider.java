@@ -35,6 +35,8 @@ public class JwtTokenProvider {
 
     @Value("${jwt.secret}")
     private String secretKey;
+
+    public static final String TOKEN_PREFIX = "Bearer ";
     private static final String KEY_ROLES = "roles";
     protected static final long ACCESS_TOKEN_EXPIRE_TIME = (long) 1000 * 60 * 60 * 24; // 24시간
     protected static final long REFRESH_TOKEN_EXPIRE_TIME = (long) 1000 * 60 * 60 * 24 * 30; // 1달
@@ -111,6 +113,13 @@ public class JwtTokenProvider {
 
     public boolean isAccessTokenDenied(String accessToken) {
         return tokenManager.existBlackListAccessToken(accessToken);
+    }
+
+    public String resolveTokenFromRequest(String token) {
+        if (StringUtils.hasText(token) && token.startsWith(TOKEN_PREFIX)) {
+            return token.substring(TOKEN_PREFIX.length());
+        }
+        return null;
     }
 
     private String getUsername(String token) {
