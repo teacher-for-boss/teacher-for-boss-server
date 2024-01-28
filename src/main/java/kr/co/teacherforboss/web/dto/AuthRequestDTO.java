@@ -145,9 +145,6 @@ public class AuthRequestDTO {
         @NotNull
         String email;
 
-        @NotNull
-        String password;
-
         String name;
 
         @Pattern(regexp = "010([2-9])\\d{7,8}", message = "전화번호는 10 ~ 11 자리의 숫자만 입력 가능합니다.")

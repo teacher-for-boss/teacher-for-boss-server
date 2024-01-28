@@ -209,7 +209,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
             throw new MemberHandler(ErrorStatus.SOCIAL_MEMBER_INFO_EMPTY);
 
         Member newMember = AuthConverter.toSocialMember(request);
-        passwordUtil.setMemberPassword(newMember, request.getPassword());
+        passwordUtil.setSocialMemberPassword(newMember);
 
         return memberRepository.save(newMember);
     }
