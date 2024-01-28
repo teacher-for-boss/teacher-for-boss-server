@@ -9,6 +9,8 @@ import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import kr.co.teacherforboss.apiPayload.exception.handler.MemberHandler;
 import kr.co.teacherforboss.config.jwt.TokenManager;
 import kr.co.teacherforboss.converter.AuthConverter;
+import kr.co.teacherforboss.domain.mapping.AgreementTerm;
+import kr.co.teacherforboss.repository.AgreementTermRepository;
 import kr.co.teacherforboss.util.PasswordUtil;
 import kr.co.teacherforboss.domain.PhoneAuth;
 import kr.co.teacherforboss.domain.enums.Purpose;
@@ -32,8 +34,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.SecureRandom;
-
 @Service
 @RequiredArgsConstructor
 public class AuthCommandServiceImpl implements AuthCommandService {
@@ -41,6 +41,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private final MemberRepository memberRepository;
     private final EmailAuthRepository emailAuthRepository;
     private final PhoneAuthRepository phoneAuthRepository;
+    private final AgreementTermRepository agreementTermRepository;
     private final MailCommandService mailCommandService;
     private final PasswordEncoder passwordEncoder;
     private final TokenManager tokenManager;
@@ -51,10 +52,16 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Override
     @Transactional
     public Member joinMember(AuthRequestDTO.JoinDTO request){
-        if (!request.getPassword().equals(request.getRePassword())) { throw new AuthHandler(ErrorStatus.PASSWORD_NOT_CORRECT);}
+        if (!request.getPassword().equals(request.getRePassword()))
+            throw new AuthHandler(ErrorStatus.PASSWORD_NOT_CORRECT);
+        if (!(request.getAgreementUsage().equals("T") && request.getAgreementInfo().equals("T") && request.getAgreementAge().equals("T")))
+            throw new AuthHandler(ErrorStatus.INVALID_AGREEMENT_TERM);
 
         Member newMember = AuthConverter.toMember(request);
         passwordUtil.setMemberPassword(newMember, request.getPassword());
+
+        AgreementTerm newAgreement = AuthConverter.toAgreementTerm(request, newMember);
+        agreementTermRepository.save(newAgreement);
 
         return memberRepository.save(newMember);
     }

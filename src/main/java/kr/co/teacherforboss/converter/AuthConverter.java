@@ -7,6 +7,7 @@ import kr.co.teacherforboss.domain.enums.Gender;
 import kr.co.teacherforboss.domain.enums.LoginType;
 import kr.co.teacherforboss.domain.enums.Role;
 import kr.co.teacherforboss.domain.enums.Purpose;
+import kr.co.teacherforboss.domain.mapping.AgreementTerm;
 import kr.co.teacherforboss.web.dto.AuthRequestDTO;
 import kr.co.teacherforboss.web.dto.AuthResponseDTO;
 
@@ -100,6 +101,15 @@ public class AuthConverter {
         return AuthResponseDTO.FindEmailResultDTO.builder()
                 .email(member.getEmail())
                 .createdAt(member.getCreatedAt())
+                .build();
+    }
+
+    public static AgreementTerm toAgreementTerm(AuthRequestDTO.JoinDTO request, Member member) {
+        return AgreementTerm.builder()
+                .member(member)
+                .agreementSms(request.getAgreementSms())
+                .agreementEmail(request.getAgreementEmail())
+                .agreementLocation(request.getAgreementLocation())
                 .build();
     }
 }
