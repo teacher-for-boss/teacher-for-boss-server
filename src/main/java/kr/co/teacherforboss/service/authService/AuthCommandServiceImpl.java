@@ -200,15 +200,15 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
     @Override
     @Transactional
-    public Member socialLogin(AuthRequestDTO.SocialLoginDTO request) {
+    public Member socialLogin(AuthRequestDTO.SocialLoginDTO request, int socialType) {
         if (memberRepository.existsByEmailAndStatusAndLoginType(request.getEmail(), Status.ACTIVE, LoginType.GENERAL))
             throw new MemberHandler(ErrorStatus.GENERAL_MEMBER_DUPLICATE);
-        if (memberRepository.existsByEmailAndStatusAndLoginType(request.getEmail(), Status.ACTIVE, LoginType.of(request.getSocialType())))
-            return memberRepository.findByEmailAndStatusAndLoginType(request.getEmail(), Status.ACTIVE, LoginType.of(request.getSocialType()));
+        if (memberRepository.existsByEmailAndStatusAndLoginType(request.getEmail(), Status.ACTIVE, LoginType.of(socialType)))
+            return memberRepository.findByEmailAndStatusAndLoginType(request.getEmail(), Status.ACTIVE, LoginType.of(socialType));
         if (request.getName() == null || request.getPhone() == null)
             throw new MemberHandler(ErrorStatus.SOCIAL_MEMBER_INFO_EMPTY);
 
-        Member newMember = AuthConverter.toSocialMember(request);
+        Member newMember = AuthConverter.toSocialMember(request, socialType);
         passwordUtil.setSocialMemberPassword(newMember);
 
         return memberRepository.save(newMember);

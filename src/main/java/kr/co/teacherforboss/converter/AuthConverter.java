@@ -103,7 +103,7 @@ public class AuthConverter {
                 .build();
     }
 
-    public static Member toSocialMember(AuthRequestDTO.SocialLoginDTO request){
+    public static Member toSocialMember(AuthRequestDTO.SocialLoginDTO request, int socialType){
         Gender gender = switch (request.getGender()) {
             case 1 -> Gender.MALE;
             case 2 -> Gender.FEMALE;
@@ -115,7 +115,7 @@ public class AuthConverter {
                 .email(request.getEmail())
                 .role(Role.USER)
                 .gender(gender)
-                .loginType(LoginType.of(request.getSocialType()))
+                .loginType(LoginType.of(socialType))
                 .birthDate(request.getBirthDate())
                 .phone(request.getPhone())
                 .profileImg(request.getProfileImg())
