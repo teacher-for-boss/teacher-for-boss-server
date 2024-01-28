@@ -7,6 +7,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 public class MemberResponseDTO {
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetMemberProfileDTO {
+        String name;
+        String profileImg;
+    }
 
     @Getter
     @Builder
