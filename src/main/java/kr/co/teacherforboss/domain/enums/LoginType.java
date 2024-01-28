@@ -13,7 +13,8 @@ public enum LoginType {
     private final int identifier;
 
     public static LoginType of(int identifier) {
-        if (identifier == 2) return KAKAO;
+
+      if (identifier == 2) return KAKAO;
         if (identifier == 3) return NAVER;
         return GENERAL;
     }
