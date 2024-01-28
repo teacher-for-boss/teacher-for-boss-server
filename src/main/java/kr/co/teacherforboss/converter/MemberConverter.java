@@ -7,8 +7,8 @@ import kr.co.teacherforboss.web.dto.MemberRequestDTO;
 import kr.co.teacherforboss.web.dto.MemberResponseDTO;
 
 public class MemberConverter {
-    public static MemberResponseDTO.ViewMemberProfileDTO toViewMemberProfileDTO(Member member) {
-        return MemberResponseDTO.ViewMemberProfileDTO.builder()
+    public static MemberResponseDTO.GetMemberProfileDTO toGetMemberProfileDTO(Member member) {
+        return MemberResponseDTO.GetMemberProfileDTO.builder()
                 .name(member.getName())
                 .profileImg(member.getProfileImg())
                 .build();

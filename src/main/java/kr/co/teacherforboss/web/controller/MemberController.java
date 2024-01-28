@@ -28,9 +28,9 @@ public class MemberController {
     private final MemberQueryService memberQueryService;
     private final MemberCommandService memberCommandService;
     @GetMapping("/profile")
-    public ApiResponse<MemberResponseDTO.ViewMemberProfileDTO> viewMemberProfile() {
-        Member member = memberQueryService.viewMemberProfile();
-        return ApiResponse.onSuccess(MemberConverter.toViewMemberProfileDTO(member));
+    public ApiResponse<MemberResponseDTO.GetMemberProfileDTO> getMemberProfile() {
+        Member member = memberQueryService.getMemberProfile();
+        return ApiResponse.onSuccess(MemberConverter.toGetMemberProfileDTO(member));
     }
 
     @PostMapping("/survey")

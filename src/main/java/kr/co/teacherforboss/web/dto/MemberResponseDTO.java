@@ -11,7 +11,7 @@ public class MemberResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ViewMemberProfileDTO {
+    public static class GetMemberProfileDTO {
         String name;
         String profileImg;
     }

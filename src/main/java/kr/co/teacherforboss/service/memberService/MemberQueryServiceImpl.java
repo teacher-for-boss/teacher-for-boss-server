@@ -19,7 +19,7 @@ public class MemberQueryServiceImpl implements MemberQueryService{
 
     @Override
     @Transactional
-    public Member viewMemberProfile(){
+    public Member getMemberProfile(){
         Member member = authCommandService.getMember();
         return memberRepository.findByIdAndStatus(member.getId(), Status.ACTIVE)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
