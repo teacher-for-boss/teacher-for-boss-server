@@ -11,6 +11,7 @@ public class CheckSurveyValidatorForIntegerList extends AbstractCheckSurveyValid
 
     @Override
     protected boolean compare(List<Integer> value) {
+        if (value == null) return false;
         return value.stream().noneMatch(v -> Survey.of(question, v).equals(Survey.NONE));
     }
 }
