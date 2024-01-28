@@ -19,7 +19,7 @@ public class MemberConverter {
         return MemberSurvey.builder()
                 .member(member)
                 .question1(Survey.of(1, request.getQuestion1()))
-                .question2(Survey.of(2, request.getQuestion2()))
+                .question2(request.getQuestion2().stream().map(q -> Survey.of(2, q)).toList())
                 .question3(Survey.of(3, request.getQuestion3()))
                 .question4(request.getQuestion4())
                 .build();

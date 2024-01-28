@@ -2,17 +2,12 @@ package kr.co.teacherforboss.validation.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import kr.co.teacherforboss.domain.enums.Survey;
 import kr.co.teacherforboss.validation.annotation.CheckSurvey;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
-@Component
-@RequiredArgsConstructor
-public class CheckSurveyValidator implements ConstraintValidator<CheckSurvey, Integer> {
+public abstract class AbstractCheckSurveyValidator<T> implements ConstraintValidator<CheckSurvey, T> {
 
     private String message;
-    private int question;
+    protected int question;
 
     @Override
     public void initialize(CheckSurvey constraintAnnotation) {
@@ -22,8 +17,8 @@ public class CheckSurveyValidator implements ConstraintValidator<CheckSurvey, In
     }
 
     @Override
-    public boolean isValid(Integer value, ConstraintValidatorContext context) {
-        boolean isValid = !Survey.of(question, value).equals(Survey.NONE);
+    public boolean isValid(T value, ConstraintValidatorContext context) {
+        boolean isValid = compare(value);
 
         if (!isValid) {
             context.disableDefaultConstraintViolation();
@@ -31,6 +26,7 @@ public class CheckSurveyValidator implements ConstraintValidator<CheckSurvey, In
         }
 
         return isValid;
-
     }
+
+    protected abstract boolean compare(T value);
 }
