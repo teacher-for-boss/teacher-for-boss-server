@@ -7,6 +7,12 @@ import kr.co.teacherforboss.web.dto.MemberRequestDTO;
 import kr.co.teacherforboss.web.dto.MemberResponseDTO;
 
 public class MemberConverter {
+    public static MemberResponseDTO.GetMemberProfileDTO toGetMemberProfileDTO(Member member) {
+        return MemberResponseDTO.GetMemberProfileDTO.builder()
+                .name(member.getName())
+                .profileImg(member.getProfileImg())
+                .build();
+    }
 
     public static MemberResponseDTO.SurveyResultDTO toSurveyResultDTO(MemberSurvey memberSurvey) {
         return MemberResponseDTO.SurveyResultDTO.builder()
