@@ -42,7 +42,7 @@ public class PasswordUtil {
 
     public void setSocialMemberPassword(Member member){
         String pwSalt = generateSalt();
-        String pwHash = generatePwHash(getRandomPassword(8), pwSalt);
+        String pwHash = generatePwHash(getRandomPassword(20), pwSalt);
         member.setPassword(pwSalt, pwHash);
     }
 
