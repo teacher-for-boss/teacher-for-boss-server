@@ -9,6 +9,7 @@ import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import kr.co.teacherforboss.apiPayload.exception.handler.MemberHandler;
 import kr.co.teacherforboss.config.jwt.TokenManager;
 import kr.co.teacherforboss.converter.AuthConverter;
+import kr.co.teacherforboss.domain.enums.LoginType;
 import kr.co.teacherforboss.domain.mapping.AgreementTerm;
 import kr.co.teacherforboss.repository.AgreementTermRepository;
 import kr.co.teacherforboss.util.PasswordUtil;
@@ -192,7 +193,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
   
     @Override
     @Transactional
-    public Member resetPassword(AuthRequestDTO.resetPasswordDTO request) {
+    public Member resetPassword(AuthRequestDTO.ResetPasswordDTO request) {
         Member member = memberRepository.findById(request.getMemberId())
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
@@ -202,5 +203,21 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         passwordUtil.setMemberPassword(member, request.getRePassword());
 
         return memberRepository.save(member);
+    }
+
+    @Override
+    @Transactional
+    public Member socialLogin(AuthRequestDTO.SocialLoginDTO request, int socialType) {
+        if (memberRepository.existsByEmailAndStatusAndLoginType(request.getEmail(), Status.ACTIVE, LoginType.GENERAL))
+            throw new MemberHandler(ErrorStatus.GENERAL_MEMBER_DUPLICATE);
+        if (memberRepository.existsByEmailAndStatusAndLoginType(request.getEmail(), Status.ACTIVE, LoginType.of(socialType)))
+            return memberRepository.findByEmailAndStatusAndLoginType(request.getEmail(), Status.ACTIVE, LoginType.of(socialType));
+        if (request.getName() == null || request.getPhone() == null)
+            throw new MemberHandler(ErrorStatus.SOCIAL_MEMBER_INFO_EMPTY);
+
+        Member newMember = AuthConverter.toSocialMember(request, socialType);
+        passwordUtil.setSocialMemberPassword(newMember);
+
+        return memberRepository.save(newMember);
     }
 }

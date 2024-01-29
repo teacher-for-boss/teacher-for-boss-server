@@ -40,6 +40,8 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_NOT_FOUND(BAD_REQUEST, "MEMBER4001", "사용자가 없습니다."),
     NICKNAME_NOT_EXIST(BAD_REQUEST, "MEMBER4002", "닉네임은 필수 입니다."),
     MEMBER_DUPLICATE(BAD_REQUEST, "MEMBER4003", "이미 존재하는 이메일입니다."),
+    GENERAL_MEMBER_DUPLICATE(BAD_REQUEST, "MEMBER4004", "일반 회원가입을 통해 진행한 이메일 계정입니다."),
+    SOCIAL_MEMBER_INFO_EMPTY(BAD_REQUEST, "MEMBER4005", "소셜 회원가입에 필요한 값이 없습니다."),
 
     // Survey
     SURVEY_DUPLICATE(BAD_REQUEST, "SURVEY4001", "이미 사전정보가 존재합니다."),
@@ -58,7 +60,8 @@ public enum ErrorStatus implements BaseErrorCode {
     TIMEOUT_CODE_MAIL(BAD_REQUEST, "AUTH40011", "이메일 인증 유효시간이 만료되었습니다."),
     INVALID_CODE_PHONE(BAD_REQUEST, "AUTH40012", "휴대폰 인증번호가 틀렸습니다."),
     TIMEOUT_CODE_PHONE(BAD_REQUEST, "AUTH40013", "휴대폰 인증 유효시간이 만료되었습니다."),
-    INVALID_AGREEMENT_TERM(BAD_REQUEST, "AUTH40014", "모든 필수 이용 약관에 동의해야 합니다."),
+    SOCIAL_TYPE_BAD_REQUEST(BAD_REQUEST, "AUTH40014", "기입한 소셜 로그인 유형과 일치하지 않습니다."),
+    INVALID_AGREEMENT_TERM(BAD_REQUEST, "AUTH40015", "모든 필수 이용 약관에 동의해야 합니다."),
 
     // For test
     TEMP_EXCEPTION(BAD_REQUEST, "TEMP4001", "이거는 테스트");

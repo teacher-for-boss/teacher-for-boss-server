@@ -144,7 +144,7 @@ public class AuthRequestDTO {
     }
 
     @Getter
-    public static class resetPasswordDTO {
+    public static class ResetPasswordDTO {
         @NotNull(message = "memberId 값이 없습니다.")
         Long memberId;
 
@@ -156,5 +156,25 @@ public class AuthRequestDTO {
         @NotNull
         @Size(min = 8, max = 20, message = "비밀번호를 8~20자 사이로 입력해주세요.")
         String rePassword;
+    }
+
+    @Getter
+    @Builder
+    public static class SocialLoginDTO {
+
+        @Email
+        @NotNull
+        String email;
+
+        String name;
+
+        @Pattern(regexp = "010([2-9])\\d{7,8}", message = "전화번호는 10 ~ 11 자리의 숫자만 입력 가능합니다.")
+        String phone;
+
+        Integer gender;
+
+        LocalDate birthDate;
+
+        String profileImg;
     }
 }

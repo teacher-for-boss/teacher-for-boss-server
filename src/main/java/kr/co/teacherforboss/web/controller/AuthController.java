@@ -10,6 +10,7 @@ import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.EmailAuth;
 import kr.co.teacherforboss.domain.PhoneAuth;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
+import kr.co.teacherforboss.validation.annotation.CheckSocialType;
 import kr.co.teacherforboss.validation.annotation.ExistPrincipalDetails;
 import kr.co.teacherforboss.web.dto.AuthRequestDTO;
 import kr.co.teacherforboss.web.dto.AuthResponseDTO;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -98,8 +100,17 @@ public class AuthController {
     }
 
     @PatchMapping("/resetPassword")
-    public ApiResponse<AuthResponseDTO.ResetPasswordResultDTO> resetPassword(@RequestBody @Valid AuthRequestDTO.resetPasswordDTO request) {
+    public ApiResponse<AuthResponseDTO.ResetPasswordResultDTO> resetPassword(@RequestBody @Valid AuthRequestDTO.ResetPasswordDTO request) {
         Member member = authCommandService.resetPassword(request);
         return ApiResponse.onSuccess(AuthConverter.toResetPasswordResultDTO(member));
+    }
+
+    @Validated
+    @PostMapping("/login/social")
+    public ApiResponse<AuthResponseDTO.TokenResponseDTO> socialLogin(@RequestBody @Valid AuthRequestDTO.SocialLoginDTO request,
+                                                                     @RequestParam(name = "socialType") @CheckSocialType int socialType) {
+        Member member = authCommandService.socialLogin(request, socialType);
+        AuthResponseDTO.TokenResponseDTO tokenResponseDTO = jwtTokenProvider.createTokenResponse(member.getEmail(), member.getRole());
+        return ApiResponse.onSuccess(tokenResponseDTO);
     }
 }

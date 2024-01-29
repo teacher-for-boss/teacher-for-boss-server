@@ -103,7 +103,26 @@ public class AuthConverter {
                 .createdAt(member.getCreatedAt())
                 .build();
     }
+  
+    public static Member toSocialMember(AuthRequestDTO.SocialLoginDTO request, int socialType){
+        Gender gender = switch (request.getGender()) {
+            case 1 -> Gender.MALE;
+            case 2 -> Gender.FEMALE;
+            default -> Gender.NONE;
+        };
 
+        return Member.builder()
+                .name(request.getName())
+                .email(request.getEmail())
+                .role(Role.USER)
+                .gender(gender)
+                .loginType(LoginType.of(socialType))
+                .birthDate(request.getBirthDate())
+                .phone(request.getPhone())
+                .profileImg(request.getProfileImg())
+                .build();
+    }
+  
     public static AgreementTerm toAgreementTerm(AuthRequestDTO.JoinDTO request, Member member) {
         return AgreementTerm.builder()
                 .member(member)

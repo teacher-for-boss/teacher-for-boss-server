@@ -14,8 +14,9 @@ public interface AuthCommandService {
     boolean checkCodePhone(AuthRequestDTO.CheckCodePhoneDTO request);
     Member findPassword(AuthRequestDTO.FindPasswordDTO request);
     Member login(AuthRequestDTO.LoginDTO request);
-    Member resetPassword(AuthRequestDTO.resetPasswordDTO request);
+    Member resetPassword(AuthRequestDTO.ResetPasswordDTO request);
     AuthResponseDTO.LogoutResultDTO logout(String accessToken, String email);
     Member findEmail(AuthRequestDTO.FindEmailDTO request);
     Member getMember();
+    Member socialLogin(AuthRequestDTO.SocialLoginDTO request, int socialType);
 }
