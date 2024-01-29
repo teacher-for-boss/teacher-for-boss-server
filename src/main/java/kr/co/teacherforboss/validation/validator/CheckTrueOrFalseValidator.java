@@ -2,28 +2,25 @@ package kr.co.teacherforboss.validation.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import kr.co.teacherforboss.domain.enums.Survey;
-import kr.co.teacherforboss.validation.annotation.CheckSurvey;
+import kr.co.teacherforboss.validation.annotation.CheckTrueOrFalse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class CheckSurveyValidator implements ConstraintValidator<CheckSurvey, Integer> {
+public class CheckTrueOrFalseValidator implements ConstraintValidator<CheckTrueOrFalse, String> {
 
     private String message;
-    private int question;
 
     @Override
-    public void initialize(CheckSurvey constraintAnnotation) {
+    public void initialize(CheckTrueOrFalse constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);
         this.message = constraintAnnotation.message();
-        this.question = constraintAnnotation.question();
     }
 
     @Override
-    public boolean isValid(Integer value, ConstraintValidatorContext context) {
-        boolean isValid = !Survey.of(question, value).equals(Survey.NONE);
+    public boolean isValid(String value, ConstraintValidatorContext context) {
+        boolean isValid = value.equals("T") || value.equals("F");
 
         if (!isValid) {
             context.disableDefaultConstraintViolation();

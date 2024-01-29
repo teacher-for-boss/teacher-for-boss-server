@@ -88,8 +88,9 @@ public class AuthController {
     @PostMapping("/logout")
     public ApiResponse<AuthResponseDTO.LogoutResultDTO> logout(@NotNull @RequestHeader("Authorization") String accessToken,
                                                                @ExistPrincipalDetails @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        AuthResponseDTO.LogoutResultDTO logoutResultDTO = authCommandService.logout(accessToken, principalDetails.getEmail());
-        return ApiResponse.onSuccess(AuthConverter.toLogoutResultDTO(logoutResultDTO.getEmail(), accessToken));
+        String token = jwtTokenProvider.resolveTokenFromRequest(accessToken);
+        AuthResponseDTO.LogoutResultDTO logoutResultDTO = authCommandService.logout(token, principalDetails.getEmail());
+        return ApiResponse.onSuccess(AuthConverter.toLogoutResultDTO(logoutResultDTO.getEmail(), token));
     }
 
     @PostMapping("/reissue")

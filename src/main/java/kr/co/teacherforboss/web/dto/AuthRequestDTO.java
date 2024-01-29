@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import kr.co.teacherforboss.validation.annotation.CheckTrueOrFalse;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.jackson.Jacksonized;
@@ -44,6 +45,30 @@ public class AuthRequestDTO {
         Integer gender;
 
         LocalDate birthDate;
+
+        @NotNull(message = "이용 정보 약관 동의는 필수여야 합니다.")
+        @CheckTrueOrFalse
+        String agreementUsage;
+
+        @NotNull(message = "개인 정보 약관 동의는 필수여야 합니다.")
+        @CheckTrueOrFalse
+        String agreementInfo;
+
+        @NotNull(message = "14세 이상 약관 동의는 필수여야 합니다.")
+        @CheckTrueOrFalse
+        String agreementAge;
+
+        @NotNull(message = "SMS 수신 동의 여부를 입력해주세요.")
+        @CheckTrueOrFalse
+        String agreementSms;
+
+        @NotNull(message = "Email 수신 동의 여부를 입력해주세요.")
+        @CheckTrueOrFalse
+        String agreementEmail;
+
+        @NotNull(message = "위치 이용 동의 여부를 입력해주세요.")
+        @CheckTrueOrFalse
+        String agreementLocation;
     }
     
     @Getter
