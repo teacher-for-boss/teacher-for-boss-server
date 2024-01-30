@@ -29,7 +29,7 @@ public class SmsUtil {
     @Value("${coolsms.domain}")
     private String domain;
 
-    @Value("${coolsms.fromNumber}")
+    @Value("${coolsms.from-number}")
     private String fromNumber;
 
     private DefaultMessageService messageService;
