@@ -29,7 +29,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
 
         try {
             filterChain.doFilter(request, response);
-        } catch(JwtException e) {
+        } catch (JwtException e) {
             String message = e.getMessage();
             if(message.equals(ErrorStatus.INVALID_JWT_TOKEN.getMessage())) {
                 setResponse(response, ErrorStatus.INVALID_JWT_TOKEN);
@@ -37,6 +37,8 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
             else if (message.equals(ErrorStatus.TOKEN_TIME_OUT.getMessage())) {
                 setResponse(response, ErrorStatus.TOKEN_TIME_OUT);
             }
+        } catch (Exception e) {
+            throw new AuthHandler(ErrorStatus._INTERNAL_SERVER_ERROR);
         }
     }
 

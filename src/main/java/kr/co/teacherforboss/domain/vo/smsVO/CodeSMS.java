@@ -23,7 +23,7 @@ public class CodeSMS extends SMS {
     }
 
     private String createCode() {
-        final int CODE_LENGTH = 4;
+        final int CODE_LENGTH = 5;
         String code = "";
         Random random = new Random();
         for (int i = 0; i < CODE_LENGTH; i++) {
