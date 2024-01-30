@@ -40,7 +40,6 @@ public class SmsUtil {
 
     public SingleMessageSentResponse sendOne(String to, SMS sms) {
         try {
-            System.out.println(fromNumber);
             Message message = new Message();
             message.setFrom(fromNumber);
             message.setTo(to);
