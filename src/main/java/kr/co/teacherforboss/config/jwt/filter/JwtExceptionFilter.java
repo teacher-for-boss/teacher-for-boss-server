@@ -1,17 +1,15 @@
 package kr.co.teacherforboss.config.jwt.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
-import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -26,28 +24,23 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-
         try {
             filterChain.doFilter(request, response);
-        } catch(JwtException e) {
-            String message = e.getMessage();
-            if(message.equals(ErrorStatus.INVALID_JWT_TOKEN.getMessage())) {
-                setResponse(response, ErrorStatus.INVALID_JWT_TOKEN);
-            }
-            else if (message.equals(ErrorStatus.TOKEN_TIME_OUT.getMessage())) {
-                setResponse(response, ErrorStatus.TOKEN_TIME_OUT);
-            }
+        } catch (ExpiredJwtException e) {
+            setResponse(response, ErrorStatus.TOKEN_TIME_OUT);
+        } catch (Exception e) {
+            setResponse(response, ErrorStatus.INVALID_JWT_TOKEN);
         }
     }
 
-    private void setResponse(HttpServletResponse response, ErrorStatus errorStatus)
-            throws RuntimeException, IOException {
+    private void setResponse(HttpServletResponse response, ErrorStatus errorStatus) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
 
-        ObjectMapper objectMapper = new JsonMapper();
-        String responseJson = objectMapper.writeValueAsString(new AuthHandler(errorStatus));
+        ApiResponse<ErrorStatus> apiResponse = ApiResponse.onFailure(errorStatus.getCode(), errorStatus.getMessage(), null);
+        String jsonResponse = objectMapper.writeValueAsString(apiResponse);
 
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8");
-        response.setStatus(errorStatus.getHttpStatus().value());
-        response.getWriter().print(responseJson);
+        response.setContentType("application/json;charset=UTF-8");
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.getWriter().write(jsonResponse);
     }
 }
