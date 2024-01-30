@@ -4,6 +4,7 @@ import jakarta.annotation.PostConstruct;
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import kr.co.teacherforboss.domain.vo.smsVO.SMS;
+import lombok.extern.slf4j.Slf4j;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.exception.NurigoBadRequestException;
 import net.nurigo.sdk.message.exception.NurigoInvalidApiKeyException;
@@ -15,6 +16,7 @@ import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class SmsUtil {
 
@@ -47,7 +49,7 @@ public class SmsUtil {
 
             return this.messageService.sendOne(new SingleMessageSendingRequest(message));
         } catch (Exception e) {
-            System.out.println(e);
+            log.info("[SMS 전송 실패] " + e);
             throw new AuthHandler(ErrorStatus.SMS_SEND_FAIL);
         }
     }
