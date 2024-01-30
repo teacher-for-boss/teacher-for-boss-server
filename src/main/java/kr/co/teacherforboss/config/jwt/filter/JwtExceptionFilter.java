@@ -37,8 +37,6 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
             else if (message.equals(ErrorStatus.TOKEN_TIME_OUT.getMessage())) {
                 setResponse(response, ErrorStatus.TOKEN_TIME_OUT);
             }
-        } catch (Exception e) {
-            throw new AuthHandler(ErrorStatus._INTERNAL_SERVER_ERROR);
         }
     }
 
