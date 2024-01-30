@@ -33,9 +33,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if(StringUtils.hasText(token) && jwtTokenProvider.validateToken(token) && !jwtTokenProvider.isAccessTokenDenied(token)) {
             Authentication auth = jwtTokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(auth);
-        } else {
-            log.info("토큰 유효성 검증 실패 또는 거부된 토큰입니다.");
         }
+
         filterChain.doFilter(request, response);
     }
 }
