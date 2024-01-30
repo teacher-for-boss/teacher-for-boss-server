@@ -35,6 +35,7 @@ public class SmsUtil {
     @PostConstruct
     private void init() {
         this.messageService = NurigoApp.INSTANCE.initialize(apiKey, apiSecretKey, domain);
+        fromNumber = fromNumber.replaceAll("-", "");
     }
 
     public SingleMessageSentResponse sendOne(String to, SMS sms) {
