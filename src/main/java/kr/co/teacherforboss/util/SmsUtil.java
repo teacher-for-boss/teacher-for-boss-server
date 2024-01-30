@@ -27,7 +27,7 @@ public class SmsUtil {
     @Value("${coolsms.domain}")
     private String domain;
 
-    @Value("${coolsms.from-number}")
+    @Value("${coolsms.fromNumber}")
     private String fromNumber;
 
     private DefaultMessageService messageService;
@@ -39,6 +39,7 @@ public class SmsUtil {
 
     public SingleMessageSentResponse sendOne(String to, SMS sms) {
         try {
+            System.out.println(fromNumber);
             Message message = new Message();
             message.setFrom(fromNumber);
             message.setTo(to);
@@ -46,6 +47,7 @@ public class SmsUtil {
 
             return this.messageService.sendOne(new SingleMessageSendingRequest(message));
         } catch (Exception e) {
+            System.out.println(e);
             throw new AuthHandler(ErrorStatus.SMS_SEND_FAIL);
         }
     }
