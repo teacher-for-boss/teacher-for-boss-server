@@ -32,6 +32,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
@@ -178,6 +180,55 @@ public class AuthCommandServiceImplTest {
     private AuthRequestDTO.FindEmailDTO toFindEmail(Long phoneAuthId){
         return AuthRequestDTO.FindEmailDTO.builder()
                 .phoneAuthId(phoneAuthId)
+                .build();
+    }
+
+    /*
+    // TODO: 비밀번호 찾기 테스트
+     */
+    @DisplayName("비밀번호 찾기 (성공)")
+    @Test
+    void findPassword() {
+        // given
+        EmailAuth emailAuth = authTestUtil.generateFindPwCheckEmailAuthDummy("email@gmail.com");
+        Member member = authTestUtil.generateMemberDummy();
+        AuthRequestDTO.FindPasswordDTO request = toFindPassword(emailAuth.getId());
+
+        doReturn(Optional.of(emailAuth)).when(emailAuthRepository).findById(anyLong());
+        doReturn(true).when(emailAuthRepository)
+                .existsByIdAndPurposeAndIsChecked(anyLong(), any(Purpose.class), anyString());
+        doReturn(Optional.of(member)).when(memberRepository).findByEmailAndStatus(any(String.class), any(Status.class));
+
+        // when
+        Member result = authCommandService.findPassword(request);
+
+        // then
+        assertThat(result.getEmail()).isEqualTo(member.getEmail());
+
+        verify(memberRepository, times(1)).findByEmailAndStatus(any(String.class), any(Status.class));
+    }
+
+    @DisplayName("비밀번호 찾기 (실패) - 이메일 인증 X")
+    @Test
+    void failFindPassword() {
+        // given
+        EmailAuth emailAuth = authTestUtil.generateFindPwNotCheckEmailAuthDummy("test@test.com");
+        AuthRequestDTO.FindPasswordDTO request = toFindPassword(1L);
+        doReturn(Optional.of(emailAuth)).when(emailAuthRepository).findById(any(Long.class));
+
+        // when
+        GeneralException e = assertThrows(GeneralException.class
+                , () -> authCommandService.findPassword(request));
+
+        // then
+        assertThat(e.getCode()).isEqualTo(ErrorStatus.PHONE_NOT_CHECKED);
+
+        verify(memberRepository, times(0)).findByEmailAndStatus(any(String.class), any(Status.class));
+    }
+
+    private AuthRequestDTO.FindPasswordDTO toFindPassword(Long emailAuthId){
+        return AuthRequestDTO.FindPasswordDTO.builder()
+                .emailAuthId(emailAuthId)
                 .build();
     }
 }
