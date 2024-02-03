@@ -4,6 +4,7 @@ import jakarta.annotation.PostConstruct;
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import kr.co.teacherforboss.domain.vo.smsVO.SMS;
+import lombok.extern.slf4j.Slf4j;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.exception.NurigoBadRequestException;
 import net.nurigo.sdk.message.exception.NurigoInvalidApiKeyException;
@@ -15,6 +16,7 @@ import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class SmsUtil {
 
@@ -27,7 +29,7 @@ public class SmsUtil {
     @Value("${coolsms.domain}")
     private String domain;
 
-    @Value("${coolsms.fromNumber}")
+    @Value("${coolsms.from-number}")
     private String fromNumber;
 
     private DefaultMessageService messageService;
@@ -35,11 +37,11 @@ public class SmsUtil {
     @PostConstruct
     private void init() {
         this.messageService = NurigoApp.INSTANCE.initialize(apiKey, apiSecretKey, domain);
+        fromNumber = fromNumber.replaceAll("-", "");
     }
 
     public SingleMessageSentResponse sendOne(String to, SMS sms) {
         try {
-            System.out.println(fromNumber);
             Message message = new Message();
             message.setFrom(fromNumber);
             message.setTo(to);
@@ -47,7 +49,7 @@ public class SmsUtil {
 
             return this.messageService.sendOne(new SingleMessageSendingRequest(message));
         } catch (Exception e) {
-            System.out.println(e);
+            log.info("[SMS 전송 실패] " + e);
             throw new AuthHandler(ErrorStatus.SMS_SEND_FAIL);
         }
     }
