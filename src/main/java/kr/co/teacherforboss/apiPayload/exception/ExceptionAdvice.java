@@ -97,7 +97,8 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
 
     private ResponseEntity<Object> handleExceptionInternalArgs(Exception e, HttpHeaders headers, ErrorStatus errorCommonStatus,
                                                                WebRequest request, Map<String, String> errorArgs) {
-        ApiResponse<Object> body = ApiResponse.onFailure(errorCommonStatus.getCode(),errorCommonStatus.getMessage(),errorArgs);
+        String errorMessage = String.join(";", errorArgs.values());
+        ApiResponse<Object> body = ApiResponse.onFailure(errorCommonStatus.getCode(),errorMessage,errorArgs);
         return super.handleExceptionInternal(
                 e,
                 body,
