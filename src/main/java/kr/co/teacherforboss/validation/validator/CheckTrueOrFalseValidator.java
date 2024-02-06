@@ -20,7 +20,7 @@ public class CheckTrueOrFalseValidator implements ConstraintValidator<CheckTrueO
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        boolean isValid = value.equals("T") || value.equals("F");
+        boolean isValid = value != null && !value.isEmpty() && (value.equals("T") || value.equals("F"));
 
         if (!isValid) {
             context.disableDefaultConstraintViolation();
