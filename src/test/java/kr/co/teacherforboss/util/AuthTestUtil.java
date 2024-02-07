@@ -55,4 +55,24 @@ public class AuthTestUtil {
                 .code("12345")
                 .build();
     }
+
+    public EmailAuth generateFindPwCheckEmailAuthDummy(String email) {
+        return EmailAuth.builder()
+                .email(email)
+                .purpose(Purpose.FIND_PW)
+                .code("12345")
+                .isChecked("T")
+                .build();
+
+    }
+
+    public EmailAuth generateFindPwNotCheckEmailAuthDummy(String email) {
+        return EmailAuth.builder()
+                .email(email)
+                .purpose(Purpose.FIND_PW)
+                .code("12345")
+                .isChecked("F")
+                .build();
+
+    }
 }
