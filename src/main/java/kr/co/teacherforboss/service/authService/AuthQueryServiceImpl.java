@@ -24,7 +24,7 @@ public class AuthQueryServiceImpl implements AuthQueryService, UserDetailsServic
         Member member = memberRepository.findByEmail(username)
                 .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        log.info("로그인 성공 [ID : {}]", member.getEmail());
+        log.info("user Email [ID : {}]", member.getEmail());
         return new PrincipalDetails(member);
     }
 }
