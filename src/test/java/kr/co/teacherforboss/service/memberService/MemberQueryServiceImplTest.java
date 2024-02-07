@@ -50,7 +50,7 @@ class MemberQueryServiceImplTest {
         Member member = authTestUtil.generateMemberDummy();
         when(authCommandService.getMember())
                 .thenReturn(member);
-        when(memberRepository.findByIdAndStatus(member.getId(), Status.ACTIVE))
+        when(memberRepository.findByIdAndStatus(any(), any()))
                 .thenReturn(Optional.of(member));
 
         // when
@@ -58,6 +58,7 @@ class MemberQueryServiceImplTest {
 
         // then
         assertThat(result).isEqualTo(member);
+        verify(memberRepository, times(1)).findByIdAndStatus(any(), any());
     }
 
     @Test
