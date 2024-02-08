@@ -7,6 +7,7 @@ import kr.co.teacherforboss.domain.enums.Gender;
 import kr.co.teacherforboss.domain.enums.LoginType;
 import kr.co.teacherforboss.domain.enums.Purpose;
 import kr.co.teacherforboss.domain.enums.Role;
+import kr.co.teacherforboss.domain.mapping.AgreementTerm;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -53,6 +54,14 @@ public class AuthTestUtil {
                 .isChecked("F")
                 .purpose(Purpose.of(2))
                 .code("12345")
+                .build();
+    }
+
+    public AgreementTerm generateAgreementTerm(){
+        return AgreementTerm.builder()
+                .agreementLocation("T")
+                .agreementEmail("T")
+                .agreementSms("T")
                 .build();
     }
 }
