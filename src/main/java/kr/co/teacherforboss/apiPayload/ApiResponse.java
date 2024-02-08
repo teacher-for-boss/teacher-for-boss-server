@@ -7,9 +7,11 @@ import kr.co.teacherforboss.apiPayload.code.BaseCode;
 import kr.co.teacherforboss.apiPayload.code.status.SuccessStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
 @AllArgsConstructor
+@RequiredArgsConstructor
 @JsonPropertyOrder({"isSuccess", "code", "message", "result"})
 public class ApiResponse<T> {
 
@@ -33,6 +35,6 @@ public class ApiResponse<T> {
 
     // 실패한 경우 응답 생성
     public static <T> ApiResponse<T> onFailure(String code, String message, T data){
-        return new ApiResponse<>(false, code, message, data);
+        return new ApiResponse<>(false, code, message);
     }
 }
