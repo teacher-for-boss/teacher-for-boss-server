@@ -67,6 +67,9 @@ public enum ErrorStatus implements BaseErrorCode {
     EXAM_NOT_FOUND(NOT_FOUND, "EXAM4001", "시험 정보를 찾을 수 없습니다."),
     QUESTION_NOT_FOUND(NOT_FOUND, "EXAM4002", "입력한 ID 값에 해당되는 문제를 찾을 수 없습니다."),
     QUESTION_CHOICE_NOT_FOUND(NOT_FOUND, "EXAM4003", "입력한 ID 값에 해당되는 문제 선지를 찾을 수 없습니다."),
+    MEMBER_EXAM_DUPLICATE(BAD_REQUEST, "EXAM4004", "이미 치룬 시험입니다."),
+    QUESTION_OPTION_NULL(BAD_REQUEST, "EXAM4005", "시험 문제 선지를 모두 선택해주세요."),
+
     // For test
     TEMP_EXCEPTION(BAD_REQUEST, "TEMP4001", "이거는 테스트");
 

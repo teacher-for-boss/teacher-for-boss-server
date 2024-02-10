@@ -45,6 +45,12 @@ public class ExamCommandServiceImpl implements ExamCommandService {
         Exam exam = examRepository.findByIdAndStatus(examId, Status.ACTIVE)
                 .orElseThrow(() -> new ExamHandler(ErrorStatus.EXAM_NOT_FOUND));
 
+        if (memberExamRepository.existsByMemberIdAndExamId(member.getId(), examId))
+            throw new ExamHandler(ErrorStatus.MEMBER_EXAM_DUPLICATE);
+
+        if (questionRepository.findAllByExamIdAndStatus(examId, Status.ACTIVE).size() != request.getQuestionAnsList().size())
+            throw new ExamHandler(ErrorStatus.QUESTION_OPTION_NULL);
+
         MemberExam memberExam = ExamConverter.toMemberExam(member, exam);
 
         List<MemberAnswer> memberAnswerList = request.getQuestionAnsList().stream()
