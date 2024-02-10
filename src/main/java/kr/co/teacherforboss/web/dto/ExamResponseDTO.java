@@ -21,14 +21,14 @@ public class ExamResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class GetExamCategoriesDTO{
-        List<ExamCategoryDTO> examCategoryList;
-    }
+    public static class GetExamCategoriesDTO {
+        List<ExamCategoryInfo> examCategoryList;
 
-    @Getter
-    @AllArgsConstructor
-    public static class ExamCategoryDTO{
-        Long examCategoryId;
-        String categoryName;
+        @Getter
+        @AllArgsConstructor
+        public static class ExamCategoryInfo {
+            Long examCategoryId;
+            String categoryName;
+        }
     }
 }
