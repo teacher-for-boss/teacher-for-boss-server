@@ -8,18 +8,22 @@ import java.util.Optional;
 
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.GeneralException;
+import kr.co.teacherforboss.converter.AuthConverter;
 import kr.co.teacherforboss.domain.EmailAuth;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.PhoneAuth;
 import kr.co.teacherforboss.domain.enums.Purpose;
 import kr.co.teacherforboss.domain.enums.Status;
+import kr.co.teacherforboss.domain.mapping.AgreementTerm;
 import kr.co.teacherforboss.domain.vo.mailVO.CodeMail;
 import kr.co.teacherforboss.domain.vo.mailVO.Mail;
+import kr.co.teacherforboss.repository.AgreementTermRepository;
 import kr.co.teacherforboss.repository.EmailAuthRepository;
 import kr.co.teacherforboss.repository.MemberRepository;
 import kr.co.teacherforboss.repository.PhoneAuthRepository;
 import kr.co.teacherforboss.service.mailService.MailCommandService;
 import kr.co.teacherforboss.util.AuthTestUtil;
+import kr.co.teacherforboss.util.PasswordUtil;
 import kr.co.teacherforboss.web.dto.AuthRequestDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -53,9 +57,13 @@ public class AuthCommandServiceImplTest {
     @Mock
     private PhoneAuthRepository phoneAuthRepository;
     @Mock
+    private AgreementTermRepository agreementTermRepository;
+    @Mock
     private CodeMail codeMail;
     @InjectMocks
     private AuthTestUtil authTestUtil;
+    @Mock
+    private PasswordUtil passwordUtil;
 
     /*
     // TODO: 이메일 인증 테스트
@@ -104,9 +112,12 @@ public class AuthCommandServiceImplTest {
     void joinMember() {
         // given
         Member expected = authTestUtil.generateMemberDummy();
-        AuthRequestDTO.JoinDTO request = request("백채연", "email@gmail.com", "asdf1234", "asdf1234", 2, "01012341234"); // request로 입력한 Member data
+        AuthRequestDTO.JoinDTO request = request("백채연", "email@gmail.com", "asdf1234", "asdf1234", 2, "01012341234", "T"); // request로 입력한 Member data
+        AgreementTerm mockAgreement = authTestUtil.generateAgreementTerm();
         doReturn(expected).when(memberRepository)
                 .save(any(Member.class));
+        doReturn(mockAgreement).when(agreementTermRepository)
+                .save(any(AgreementTerm.class));
 
         // when
         Member savedMember = authCommandService.joinMember(request);
@@ -119,7 +130,21 @@ public class AuthCommandServiceImplTest {
         verify(memberRepository, times(1)).save(any(Member.class));
     }
 
-    private AuthRequestDTO.JoinDTO request(String name, String email, String pw, String rePw, Integer gender, String phone){
+    @DisplayName("회원 가입 (실패) - 필수 약관동의 체크 X")
+    @Test
+    void failJoinMemberWithAgreement() {
+        // given
+        AuthRequestDTO.JoinDTO request = request("백채연", "email@gmail.com", "asdf1234", "asdf1234", 2, "01012341234", "F");
+
+        // when
+        GeneralException e = assertThrows(GeneralException.class
+                , () -> authCommandService.joinMember(request));
+
+        // then
+        assertThat(e.getCode()).isEqualTo(ErrorStatus.INVALID_AGREEMENT_TERM);
+    }
+
+    private AuthRequestDTO.JoinDTO request(String name, String email, String pw, String rePw, Integer gender, String phone, String agreement){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return AuthRequestDTO.JoinDTO.builder()
                 .name(name)
@@ -129,6 +154,11 @@ public class AuthCommandServiceImplTest {
                 .birthDate(LocalDate.parse("2000-04-22", formatter))
                 .phone(phone)
                 .gender(gender)
+                .emailAuthId(1L)
+                .phoneAuthId(1L)
+                .agreementAge(agreement)
+                .agreementUsage(agreement)
+                .agreementInfo(agreement)
                 .build();
     }
 
