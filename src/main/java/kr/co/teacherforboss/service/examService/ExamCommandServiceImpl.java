@@ -51,10 +51,10 @@ public class ExamCommandServiceImpl implements ExamCommandService {
                 .map(q -> {
                     Question question = questionRepository.findByIdAndStatus(q.getQuestionId(), Status.ACTIVE)
                             .orElseThrow(() -> new ExamHandler(ErrorStatus.QUESTION_NOT_FOUND));
-                    QuestionChoice questionChoice = questionChoiceRepository.findByIdAndStatus(q.getQuestionChoiceId(), Status.ACTIVE)
+                    QuestionChoice questionChoice = questionChoiceRepository.findByQuestionIdAndChoiceAndStatus(q.getQuestionId(), q.getQuestionChoice(), Status.ACTIVE)
                             .orElseThrow(() -> new ExamHandler(ErrorStatus.QUESTION_CHOICE_NOT_FOUND));
 
-                    if (question.getAnswer().equals(questionChoice.getChoice()))
+                    if (question.getAnswer().equals(q.getQuestionChoice()))
                         score.addAndGet(question.getPoints());
 
                     return ExamConverter.toMemberAnswerList(question, questionChoice);
