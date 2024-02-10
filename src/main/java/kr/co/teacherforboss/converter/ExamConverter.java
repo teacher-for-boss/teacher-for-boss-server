@@ -39,7 +39,7 @@ public class ExamConverter {
     public static ExamResponseDTO.GetExamCategoriesDTO toGetExamCategoriesDTO(List<ExamCategory> examCategories) {
         return ExamResponseDTO.GetExamCategoriesDTO.builder()
                 .examCategoryList(examCategories.stream().map(examCategory ->
-                        new ExamResponseDTO.ExamCategoryDTO(examCategory.getId(), examCategory.getCategoryName())).toList())
+                        new ExamResponseDTO.GetExamCategoriesDTO.ExamCategoryInfo(examCategory.getId(), examCategory.getCategoryName())).toList())
                 .build();
     }
 }
