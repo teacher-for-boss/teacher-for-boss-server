@@ -1,7 +1,9 @@
 package kr.co.teacherforboss.converter;
 
 
+import java.util.List;
 import kr.co.teacherforboss.domain.Exam;
+import kr.co.teacherforboss.domain.ExamCategory;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.MemberAnswer;
 import kr.co.teacherforboss.domain.MemberExam;
@@ -31,6 +33,13 @@ public class ExamConverter {
         return MemberExam.builder()
                 .member(member)
                 .exam(exam)
+                .build();
+    }
+
+    public static ExamResponseDTO.GetExamCategoriesDTO toGetExamCategoriesDTO(List<ExamCategory> examCategories) {
+        return ExamResponseDTO.GetExamCategoriesDTO.builder()
+                .examCategoryList(examCategories.stream().map(examCategory ->
+                        new ExamResponseDTO.ExamCategoryDTO(examCategory.getId(), examCategory.getCategoryName())).toList())
                 .build();
     }
 }

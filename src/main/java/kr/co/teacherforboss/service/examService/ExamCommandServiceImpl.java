@@ -1,15 +1,20 @@
 package kr.co.teacherforboss.service.examService;
 
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.ExamHandler;
 import kr.co.teacherforboss.converter.ExamConverter;
 import kr.co.teacherforboss.domain.Exam;
+import kr.co.teacherforboss.domain.ExamCategory;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.MemberAnswer;
 import kr.co.teacherforboss.domain.MemberExam;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionChoice;
 import kr.co.teacherforboss.domain.enums.Status;
+import kr.co.teacherforboss.repository.ExamCategoryRepository;
 import kr.co.teacherforboss.repository.ExamRepository;
 import kr.co.teacherforboss.repository.MemberAnswerRepository;
 import kr.co.teacherforboss.repository.MemberExamRepository;
@@ -21,10 +26,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-
 @Service
 @RequiredArgsConstructor
 public class ExamCommandServiceImpl implements ExamCommandService {
@@ -34,6 +35,7 @@ public class ExamCommandServiceImpl implements ExamCommandService {
     private final ExamRepository examRepository;
     private final MemberExamRepository memberExamRepository;
     private final MemberAnswerRepository memberAnswerRepository;
+    private final ExamCategoryRepository examCategoryRepository;
     private final AuthCommandService authCommandService;
 
     @Override
@@ -73,5 +75,11 @@ public class ExamCommandServiceImpl implements ExamCommandService {
         memberAnswerRepository.saveAll(memberAnswerList);
 
         return memberExamRepository.save(memberExam);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ExamCategory> getExamCategories() {
+        return examCategoryRepository.findExamCategoriesByStatus(Status.ACTIVE);
     }
 }
