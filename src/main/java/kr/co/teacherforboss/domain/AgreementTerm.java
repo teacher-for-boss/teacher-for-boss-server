@@ -1,4 +1,4 @@
-package kr.co.teacherforboss.domain.mapping;
+package kr.co.teacherforboss.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
