@@ -10,7 +10,7 @@ import kr.co.teacherforboss.apiPayload.exception.handler.MemberHandler;
 import kr.co.teacherforboss.config.jwt.TokenManager;
 import kr.co.teacherforboss.converter.AuthConverter;
 import kr.co.teacherforboss.domain.enums.LoginType;
-import kr.co.teacherforboss.domain.mapping.AgreementTerm;
+import kr.co.teacherforboss.domain.AgreementTerm;
 import kr.co.teacherforboss.repository.AgreementTermRepository;
 import kr.co.teacherforboss.util.PasswordUtil;
 import kr.co.teacherforboss.domain.PhoneAuth;
