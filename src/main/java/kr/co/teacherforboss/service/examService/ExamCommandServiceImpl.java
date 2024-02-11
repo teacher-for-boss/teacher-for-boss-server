@@ -48,7 +48,7 @@ public class ExamCommandServiceImpl implements ExamCommandService {
         if (memberExamRepository.existsByMemberIdAndExamId(member.getId(), examId))
             throw new ExamHandler(ErrorStatus.MEMBER_EXAM_DUPLICATE);
 
-        if (questionRepository.findAllByExamIdAndStatus(examId, Status.ACTIVE).size() != request.getQuestionAnsList().size())
+        if (questionRepository.countByExamIdAndStatus(examId, Status.ACTIVE) != request.getQuestionAnsList().size())
             throw new ExamHandler(ErrorStatus.INVALID_QUESTION_CHOICE);
 
         MemberExam memberExam = ExamConverter.toMemberExam(member, exam);
@@ -63,13 +63,11 @@ public class ExamCommandServiceImpl implements ExamCommandService {
                     if (question.getAnswer().equals(questionChoice.getChoice()))
                         score.addAndGet(question.getPoints());
 
-                    return ExamConverter.toMemberAnswer(question, questionChoice);
-
+                    MemberAnswer memberAnswer =  ExamConverter.toMemberAnswer(question, questionChoice);
+                    memberAnswer.setMemberExam(memberExam);
+                    return memberAnswer;
                 }).collect(Collectors.toList());
 
-        memberExam.setScore(score.intValue());
-
-        memberAnswerList.forEach(memberAnswer -> {memberAnswer.setMemberExam(memberExam);});
         memberAnswerRepository.saveAll(memberAnswerList);
 
         return memberExamRepository.save(memberExam);
