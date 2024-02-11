@@ -20,7 +20,7 @@ public class ExamConverter {
                 .build();
     }
 
-    public static MemberAnswer toMemberAnswerList(Question question, QuestionChoice questionChoice) {
+    public static MemberAnswer toMemberAnswer(Question question, QuestionChoice questionChoice) {
         return MemberAnswer.builder()
                 .question(question)
                 .questionChoice(questionChoice)
