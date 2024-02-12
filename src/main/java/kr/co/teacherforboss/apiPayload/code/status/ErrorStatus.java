@@ -63,6 +63,13 @@ public enum ErrorStatus implements BaseErrorCode {
     SOCIAL_TYPE_BAD_REQUEST(BAD_REQUEST, "AUTH40014", "기입한 소셜 로그인 유형과 일치하지 않습니다."),
     INVALID_AGREEMENT_TERM(BAD_REQUEST, "AUTH40015", "모든 필수 이용 약관에 동의해야 합니다."),
 
+    // Exam
+    EXAM_NOT_FOUND(NOT_FOUND, "EXAM4001", "시험 정보를 찾을 수 없습니다."),
+    QUESTION_NOT_FOUND(NOT_FOUND, "EXAM4002", "입력한 ID 값에 해당되는 문제를 찾을 수 없습니다."),
+    QUESTION_CHOICE_NOT_FOUND(NOT_FOUND, "EXAM4003", "입력한 ID 값에 해당되는 문제 선지를 찾을 수 없습니다."),
+    MEMBER_EXAM_DUPLICATE(BAD_REQUEST, "EXAM4004", "이미 치룬 시험입니다."),
+    INVALID_QUESTION_CHOICE(BAD_REQUEST, "EXAM4005", "시험 문제 선지를 모두 선택해주세요."),
+
     // For test
     TEMP_EXCEPTION(BAD_REQUEST, "TEMP4001", "이거는 테스트");
 
