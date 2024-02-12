@@ -10,6 +10,7 @@ import kr.co.teacherforboss.domain.QuestionChoice;
 import kr.co.teacherforboss.web.dto.ExamResponseDTO;
 
 import java.time.LocalDateTime;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ExamConverter {
 
@@ -31,6 +32,16 @@ public class ExamConverter {
         return MemberExam.builder()
                 .member(member)
                 .exam(exam)
+                .build();
+    }
+
+    public static ExamResponseDTO.GetExamResultDTO toGetExamResultDTO(int score, int questionNum,
+                                                                      AtomicInteger correctAnsNum, AtomicInteger incorrectAnsNum) {
+        return ExamResponseDTO.GetExamResultDTO.builder()
+                .score(score)
+                .questionsNum(questionNum)
+                .correctAnsNum(correctAnsNum.get())
+                .incorrectAnsNum(incorrectAnsNum.get())
                 .build();
     }
 }

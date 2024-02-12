@@ -16,4 +16,15 @@ public class ExamResponseDTO {
         Long memberExamId;
         LocalDateTime createdAt;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetExamResultDTO{
+        int score;
+        int questionsNum;
+        int correctAnsNum;
+        int incorrectAnsNum;
+    }
 }

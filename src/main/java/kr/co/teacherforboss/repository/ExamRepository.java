@@ -10,4 +10,6 @@ import java.util.Optional;
 @Repository
 public interface ExamRepository extends JpaRepository<Exam, Long> {
     Optional<Exam> findByIdAndStatus(Long examId, Status status);
+
+    boolean existsByIdAndStatus(Long examId, Status status);
 }

@@ -17,6 +17,7 @@ import kr.co.teacherforboss.repository.QuestionChoiceRepository;
 import kr.co.teacherforboss.repository.QuestionRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.web.dto.ExamRequestDTO;
+import kr.co.teacherforboss.web.dto.ExamResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,13 +64,42 @@ public class ExamCommandServiceImpl implements ExamCommandService {
                     if (question.getAnswer().equals(questionChoice.getChoice()))
                         score.addAndGet(question.getPoints());
 
-                    MemberAnswer memberAnswer =  ExamConverter.toMemberAnswer(question, questionChoice);
-                    memberAnswer.setMemberExam(memberExam);
-                    return memberAnswer;
+                    return ExamConverter.toMemberAnswer(question, questionChoice);
                 }).collect(Collectors.toList());
 
+        memberExam.setScore(score.intValue());
+
+        memberAnswerList.forEach(memberAnswer -> {memberAnswer.setMemberExam(memberExam);});
         memberAnswerRepository.saveAll(memberAnswerList);
 
         return memberExamRepository.save(memberExam);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ExamResponseDTO.GetExamResultDTO getExamResult(Long examId) {
+        Member member = authCommandService.getMember();
+
+        if (!examRepository.existsByIdAndStatus(examId, Status.ACTIVE))
+            throw new ExamHandler(ErrorStatus.EXAM_NOT_FOUND);
+
+        MemberExam memberExam = memberExamRepository.findByMemberIdAndExamIdAndStatus(member.getId(), examId, Status.ACTIVE)
+                .orElseThrow(() -> new ExamHandler(ErrorStatus.MEMBER_EXAM_NOT_FOUND));
+
+        int questionsNum = questionRepository.countByExamIdAndStatus(examId, Status.ACTIVE);
+        int score = memberExam.getScore();
+        AtomicInteger correctAnsNum = new AtomicInteger(0);
+        AtomicInteger incorrectAnsNum = new AtomicInteger(0);
+
+        memberAnswerRepository.findAllByMemberExamIdAndStatus(memberExam.getId(), Status.ACTIVE)
+                .forEach(q -> {
+                    if (q.getQuestion().getAnswer().equals(q.getQuestionChoice().getChoice())) {
+                        correctAnsNum.incrementAndGet();
+                    } else {
+                        incorrectAnsNum.incrementAndGet();
+                    }
+                });
+
+        return ExamConverter.toGetExamResultDTO(score, questionsNum, correctAnsNum, incorrectAnsNum);
     }
 }
