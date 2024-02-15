@@ -42,4 +42,14 @@ public class ExamConverter {
                         new ExamResponseDTO.GetExamCategoriesDTO.ExamCategoryInfo(examCategory.getId(), examCategory.getCategoryName())).toList())
                 .build();
     }
+
+    public static ExamResponseDTO.GetQuestionsDTO toGetQuestionsDTO(List<Question> questions) {
+        return ExamResponseDTO.GetQuestionsDTO.builder()
+                .questionList(questions.stream().map(question ->
+                        new ExamResponseDTO.GetQuestionsDTO.QuestionInfo(question.getId(), question.getQuestionName(),
+                                question.getQuestionOptionList().stream().map(choice ->
+                                        new ExamResponseDTO.GetQuestionsDTO.QuestionInfo.QuestionChoiceInfo(choice.getId(),
+                                                choice.getChoice())).toList())).toList())
+                .build();
+    }
 }
