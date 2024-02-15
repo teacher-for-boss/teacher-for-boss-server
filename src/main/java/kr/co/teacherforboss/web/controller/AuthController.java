@@ -66,18 +66,6 @@ public class AuthController {
         return ApiResponse.onSuccess(AuthConverter.toCheckResultDTO(isChecked));
     }
 
-    @PostMapping("/find/password")
-    public ApiResponse<AuthResponseDTO.FindPasswordResultDTO> findEmail(@RequestBody @Valid AuthRequestDTO.FindPasswordDTO request) {
-        Member member = authCommandService.findPassword(request);
-        return ApiResponse.onSuccess(AuthConverter.toFindPasswordResultDTO(member));
-    }
-  
-    @PostMapping("/find/email")
-    public ApiResponse<AuthResponseDTO.FindEmailResultDTO> findEmail(@RequestBody @Valid AuthRequestDTO.FindEmailDTO request) {
-        Member memberEmail = authCommandService.findEmail(request);
-        return ApiResponse.onSuccess(AuthConverter.toFindEmailResultDTO(memberEmail));
-    }
-
     @PostMapping("/login")
     public ApiResponse<AuthResponseDTO.TokenResponseDTO> login(@RequestBody @Valid AuthRequestDTO.LoginDTO request) {
         Member member = authCommandService.login(request);
@@ -99,9 +87,9 @@ public class AuthController {
         return ApiResponse.onSuccess(tokenResponseDTO);
     }
 
-    @PatchMapping("/resetPassword")
-    public ApiResponse<AuthResponseDTO.ResetPasswordResultDTO> resetPassword(@RequestBody @Valid AuthRequestDTO.ResetPasswordDTO request) {
-        Member member = authCommandService.resetPassword(request);
+    @PatchMapping("/find/password")
+    public ApiResponse<AuthResponseDTO.ResetPasswordResultDTO> findPassword(@RequestBody @Valid AuthRequestDTO.FindPasswordDTO request) {
+        Member member = authCommandService.findPassword(request);
         return ApiResponse.onSuccess(AuthConverter.toResetPasswordResultDTO(member));
     }
 

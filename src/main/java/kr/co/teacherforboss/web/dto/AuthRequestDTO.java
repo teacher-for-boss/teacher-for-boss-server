@@ -127,14 +127,6 @@ public class AuthRequestDTO {
     }
 
     @Getter
-    @Jacksonized
-    @Builder
-    public static class FindPasswordDTO {
-        @NotNull(message = "emailAuthId 값이 없습니다.")
-        Long emailAuthId;
-    }
-
-    @Getter
     public static class LoginDTO {
         @NotBlank
         String email;
@@ -144,9 +136,12 @@ public class AuthRequestDTO {
     }
 
     @Getter
-    public static class ResetPasswordDTO {
+    public static class FindPasswordDTO {
         @NotNull(message = "memberId 값이 없습니다.")
         Long memberId;
+
+        @NotNull(message = "emailAuthId 값이 없습니다.")
+        Long emailAuthId;
 
         @NotNull
         @Size(min = 8, max = 20, message = "비밀번호를 8~20자 사이로 입력해주세요.")

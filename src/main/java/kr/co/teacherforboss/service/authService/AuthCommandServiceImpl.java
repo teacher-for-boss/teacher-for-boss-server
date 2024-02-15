@@ -136,19 +136,6 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     }
 
     @Override
-    @Transactional
-    public Member findPassword(AuthRequestDTO.FindPasswordDTO request) {
-        EmailAuth emailAuth = emailAuthRepository.findById(request.getEmailAuthId())
-                .orElseThrow(() -> new AuthHandler(ErrorStatus._DATA_NOT_FOUND));
-
-        if(!emailAuthRepository.existsByIdAndPurposeAndIsChecked(request.getEmailAuthId(), Purpose.of(3), "T"))
-            throw new AuthHandler(ErrorStatus.PHONE_NOT_CHECKED);
-
-        return memberRepository.findByEmailAndStatus(emailAuth.getEmail(), Status.ACTIVE)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-    }
-
-    @Override
     public Member login(AuthRequestDTO.LoginDTO request) {
         Member member = memberRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
@@ -195,10 +182,14 @@ public class AuthCommandServiceImpl implements AuthCommandService {
   
     @Override
     @Transactional
-    public Member resetPassword(AuthRequestDTO.ResetPasswordDTO request) {
+    public Member findPassword(AuthRequestDTO.FindPasswordDTO request) {
         Member member = memberRepository.findById(request.getMemberId())
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        EmailAuth emailAuth = emailAuthRepository.findById(request.getEmailAuthId())
+                .orElseThrow(() -> new AuthHandler(ErrorStatus._DATA_NOT_FOUND));
 
+        if(!emailAuthRepository.existsByIdAndPurposeAndIsChecked(emailAuth.getId(), Purpose.of(3), "T"))
+            throw new AuthHandler(ErrorStatus.PHONE_NOT_CHECKED);
         if (!request.getPassword().equals(request.getRePassword()))
             throw new AuthHandler(ErrorStatus.PASSWORD_NOT_CORRECT);
 

@@ -97,13 +97,6 @@ public class AuthConverter {
                 .build();
   }
   
-    public static AuthResponseDTO.FindEmailResultDTO toFindEmailResultDTO(Member member) {
-        return AuthResponseDTO.FindEmailResultDTO.builder()
-                .email(member.getEmail())
-                .createdAt(member.getCreatedAt())
-                .build();
-    }
-  
     public static Member toSocialMember(AuthRequestDTO.SocialLoginDTO request, int socialType){
         Gender gender = switch (request.getGender()) {
             case 1 -> Gender.MALE;
