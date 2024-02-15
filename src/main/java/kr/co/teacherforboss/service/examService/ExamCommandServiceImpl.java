@@ -88,17 +88,11 @@ public class ExamCommandServiceImpl implements ExamCommandService {
 
         int questionsNum = questionRepository.countByExamIdAndStatus(examId, Status.ACTIVE);
         int score = memberExam.getScore();
-        AtomicInteger correctAnsNum = new AtomicInteger(0);
-        AtomicInteger incorrectAnsNum = new AtomicInteger(0);
 
-        memberAnswerRepository.findAllByMemberExamIdAndStatus(memberExam.getId(), Status.ACTIVE)
-                .forEach(q -> {
-                    if (q.getQuestion().getAnswer().equals(q.getQuestionChoice().getChoice())) {
-                        correctAnsNum.incrementAndGet();
-                    } else {
-                        incorrectAnsNum.incrementAndGet();
-                    }
-                });
+        List<MemberAnswer> memberAnswers = memberAnswerRepository.findAllByMemberExamIdAndStatus(memberExam.getId(), Status.ACTIVE);
+        int correctAnsNum = memberAnswers.stream()
+                .filter(q -> q.getQuestion().getAnswer().equals(q.getQuestionChoice().getChoice())).mapToInt(e -> 1).sum();
+        int incorrectAnsNum = memberAnswers.size() - correctAnsNum;
 
         return ExamConverter.toGetExamResultDTO(score, questionsNum, correctAnsNum, incorrectAnsNum);
     }

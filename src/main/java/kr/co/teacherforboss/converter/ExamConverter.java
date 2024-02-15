@@ -36,12 +36,12 @@ public class ExamConverter {
     }
 
     public static ExamResponseDTO.GetExamResultDTO toGetExamResultDTO(int score, int questionNum,
-                                                                      AtomicInteger correctAnsNum, AtomicInteger incorrectAnsNum) {
+                                                                      int correctAnsNum, int incorrectAnsNum) {
         return ExamResponseDTO.GetExamResultDTO.builder()
                 .score(score)
                 .questionsNum(questionNum)
-                .correctAnsNum(correctAnsNum.get())
-                .incorrectAnsNum(incorrectAnsNum.get())
+                .correctAnsNum(correctAnsNum)
+                .incorrectAnsNum(incorrectAnsNum)
                 .build();
     }
 }
