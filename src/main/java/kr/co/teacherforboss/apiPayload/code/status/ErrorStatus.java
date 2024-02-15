@@ -42,6 +42,7 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_DUPLICATE(BAD_REQUEST, "MEMBER4003", "이미 존재하는 이메일입니다."),
     GENERAL_MEMBER_DUPLICATE(BAD_REQUEST, "MEMBER4004", "일반 회원가입을 통해 진행한 이메일 계정입니다."),
     SOCIAL_MEMBER_INFO_EMPTY(BAD_REQUEST, "MEMBER4005", "소셜 회원가입에 필요한 값이 없습니다."),
+    MEMBER_PHONE_DUPLICATE(BAD_REQUEST, "MEMBER4006", "이미 존재하는 휴대전화 번호입니다."),
 
     // Survey
     SURVEY_DUPLICATE(BAD_REQUEST, "SURVEY4001", "이미 사전정보가 존재합니다."),
