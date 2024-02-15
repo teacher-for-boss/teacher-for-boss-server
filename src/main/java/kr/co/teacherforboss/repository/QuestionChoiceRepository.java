@@ -9,5 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface QuestionChoiceRepository extends JpaRepository<QuestionChoice, Long> {
-    Optional<QuestionChoice> findByQuestionIdAndChoiceAndStatus(Long questionId, String choice, Status status);
+    Optional<QuestionChoice> findByIdAndStatus(Long questionChoiceId, Status status);
 }

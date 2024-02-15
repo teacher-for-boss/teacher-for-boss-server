@@ -47,8 +47,8 @@ public class ExamCommandServiceImpl implements ExamCommandService {
         if (memberExamRepository.existsByMemberIdAndExamId(member.getId(), examId))
             throw new ExamHandler(ErrorStatus.MEMBER_EXAM_DUPLICATE);
 
-        if (questionRepository.findAllByExamIdAndStatus(examId, Status.ACTIVE).size() != request.getQuestionAnsList().size())
-            throw new ExamHandler(ErrorStatus.QUESTION_OPTION_NULL);
+        if (questionRepository.countByExamIdAndStatus(examId, Status.ACTIVE) != request.getQuestionAnsList().size())
+            throw new ExamHandler(ErrorStatus.INVALID_QUESTION_CHOICE);
 
         MemberExam memberExam = ExamConverter.toMemberExam(member, exam);
 
@@ -56,19 +56,18 @@ public class ExamCommandServiceImpl implements ExamCommandService {
                 .map(q -> {
                     Question question = questionRepository.findByIdAndStatus(q.getQuestionId(), Status.ACTIVE)
                             .orElseThrow(() -> new ExamHandler(ErrorStatus.QUESTION_NOT_FOUND));
-                    QuestionChoice questionChoice = questionChoiceRepository.findByQuestionIdAndChoiceAndStatus(q.getQuestionId(), q.getQuestionChoice(), Status.ACTIVE)
+                    QuestionChoice questionChoice = questionChoiceRepository.findByIdAndStatus(q.getQuestionChoiceId(), Status.ACTIVE)
                             .orElseThrow(() -> new ExamHandler(ErrorStatus.QUESTION_CHOICE_NOT_FOUND));
 
-                    if (question.getAnswer().equals(q.getQuestionChoice()))
+                    if (question.getAnswer().equals(questionChoice.getChoice()))
                         score.addAndGet(question.getPoints());
 
-                    return ExamConverter.toMemberAnswerList(question, questionChoice);
-
+                    MemberAnswer memberAnswer = ExamConverter.toMemberAnswer(question, questionChoice);
+                    memberAnswer.setMemberExam(memberExam);
+                    return memberAnswer;
                 }).collect(Collectors.toList());
 
         memberExam.setScore(score.intValue());
-
-        memberAnswerList.forEach(memberAnswer -> {memberAnswer.setMemberExam(memberExam);});
         memberAnswerRepository.saveAll(memberAnswerList);
 
         return memberExamRepository.save(memberExam);

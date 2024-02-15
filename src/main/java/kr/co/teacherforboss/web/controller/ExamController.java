@@ -30,7 +30,7 @@ public class ExamController {
     private final ExamQueryService examQueryService;
 
     @PostMapping("/{examId}")
-    public ApiResponse<ExamResponseDTO.TakeExamsDTO> takeExams(@PathVariable("examId") Long examId, @RequestBody @Valid ExamRequestDTO.TakeExamsDTO request) {
+    public ApiResponse<ExamResponseDTO.TakeExamsDTO> takeExam(@PathVariable("examId") Long examId, @RequestBody @Valid ExamRequestDTO.TakeExamsDTO request) {
         MemberExam memberExam = examCommandService.takeExams(examId, request);
         return ApiResponse.onSuccess(ExamConverter.toTakeExamsDTO(memberExam));
     }

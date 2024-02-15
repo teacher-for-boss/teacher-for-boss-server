@@ -29,6 +29,6 @@ public class ExamRequestDTO {
         Long questionId;
 
         @NotNull
-        String questionChoice;
+        Long questionChoiceId;
     }
 }
