@@ -63,14 +63,12 @@ public class ExamCommandServiceImpl implements ExamCommandService {
                     if (question.getAnswer().equals(questionChoice.getChoice()))
                         score.addAndGet(question.getPoints());
 
-                    return ExamConverter.toMemberAnswer(question, questionChoice);
+                    MemberAnswer memberAnswer = ExamConverter.toMemberAnswer(question, questionChoice);
+                    memberAnswer.setMemberExam(memberExam);
+                    return memberAnswer;
                 }).collect(Collectors.toList());
 
         memberExam.setScore(score.intValue());
-
-        memberAnswerList.forEach(memberAnswer -> {
-            memberAnswer.setMemberExam(memberExam);
-        });
         memberAnswerRepository.saveAll(memberAnswerList);
 
         return memberExamRepository.save(memberExam);
