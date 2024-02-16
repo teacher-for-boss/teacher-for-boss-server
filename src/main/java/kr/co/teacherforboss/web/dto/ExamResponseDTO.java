@@ -27,7 +27,11 @@ public class ExamResponseDTO {
         int correctAnsNum;
         int incorrectAnsNum;
     }
-  
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class GetExamCategoriesDTO {
         List<ExamCategoryInfo> examCategoryList;
 
