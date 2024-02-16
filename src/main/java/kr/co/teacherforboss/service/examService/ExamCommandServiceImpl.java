@@ -1,5 +1,8 @@
 package kr.co.teacherforboss.service.examService;
 
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.ExamHandler;
 import kr.co.teacherforboss.converter.ExamConverter;
@@ -21,10 +24,6 @@ import kr.co.teacherforboss.web.dto.ExamResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -64,12 +63,12 @@ public class ExamCommandServiceImpl implements ExamCommandService {
                     if (question.getAnswer().equals(questionChoice.getChoice()))
                         score.addAndGet(question.getPoints());
 
-                    return ExamConverter.toMemberAnswer(question, questionChoice);
+                    MemberAnswer memberAnswer = ExamConverter.toMemberAnswer(question, questionChoice);
+                    memberAnswer.setMemberExam(memberExam);
+                    return memberAnswer;
                 }).collect(Collectors.toList());
 
         memberExam.setScore(score.intValue());
-
-        memberAnswerList.forEach(memberAnswer -> {memberAnswer.setMemberExam(memberExam);});
         memberAnswerRepository.saveAll(memberAnswerList);
 
         return memberExamRepository.save(memberExam);
