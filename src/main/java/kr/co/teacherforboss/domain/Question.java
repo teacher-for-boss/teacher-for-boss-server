@@ -43,6 +43,10 @@ public class Question extends BaseEntity {
     @Column
     private Integer points;
 
+    @NotNull
+    @Column
+    private Integer questionSequence;
+
     @OneToMany(mappedBy = "question")
     private List<QuestionChoice> questionOptionList;
 
