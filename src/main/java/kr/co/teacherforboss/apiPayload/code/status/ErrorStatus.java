@@ -62,6 +62,8 @@ public enum ErrorStatus implements BaseErrorCode {
     TIMEOUT_CODE_PHONE(BAD_REQUEST, "AUTH40013", "휴대폰 인증 유효시간이 만료되었습니다."),
     SOCIAL_TYPE_BAD_REQUEST(BAD_REQUEST, "AUTH40014", "기입한 소셜 로그인 유형과 일치하지 않습니다."),
     INVALID_AGREEMENT_TERM(BAD_REQUEST, "AUTH40015", "모든 필수 이용 약관에 동의해야 합니다."),
+    AUTH_EMAIL_DUPLICATED(BAD_REQUEST, "AUTH40016", "이미 가입된 이메일입니다."),
+    AUTH_PHONE_DUPLICATED(BAD_REQUEST, "AUTH40017", "이미 가입된 전화번호입니다."),
 
     // Exam
     EXAM_NOT_FOUND(NOT_FOUND, "EXAM4001", "시험 정보를 찾을 수 없습니다."),

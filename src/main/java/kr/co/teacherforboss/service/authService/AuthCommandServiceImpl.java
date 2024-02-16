@@ -74,6 +74,10 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     public EmailAuth sendCodeMail(AuthRequestDTO.SendCodeMailDTO request) {
         String to = request.getEmail();
 
+        if (Purpose.of(request.getPurpose()).equals(Purpose.SIGNUP) &&
+                memberRepository.existsByEmailAndStatus(request.getEmail(), Status.ACTIVE))
+            throw new AuthHandler(ErrorStatus.AUTH_EMAIL_DUPLICATED);
+
         // TODO: 하루 이메일 인증 5회 제한 확인
 
         CodeMail codeMail = new CodeMail();
@@ -106,6 +110,10 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Transactional
     public PhoneAuth sendCodePhone(AuthRequestDTO.SendCodePhoneDTO request) {
         String to = request.getPhone();
+
+        if (Purpose.of(request.getPurpose()).equals(Purpose.SIGNUP) &&
+                memberRepository.existsByPhoneAndStatus(request.getPhone(), Status.ACTIVE))
+            throw new AuthHandler(ErrorStatus.AUTH_PHONE_DUPLICATED);
 
         // TODO: 하루 휴대폰 인증 5회 제한 확인
 
