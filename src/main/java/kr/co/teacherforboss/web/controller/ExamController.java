@@ -35,6 +35,11 @@ public class ExamController {
         return ApiResponse.onSuccess(ExamConverter.toTakeExamsDTO(memberExam));
     }
 
+    @GetMapping("/{examId}/result")
+    public ApiResponse<ExamResponseDTO.GetExamResultDTO> getExamResult(@PathVariable("examId") Long examId) {
+        return ApiResponse.onSuccess(examCommandService.getExamResult(examId));
+    }
+  
     @GetMapping("/category")
     public ApiResponse<ExamResponseDTO.GetExamCategoriesDTO> getExamCategories() {
         List<ExamCategory> examCategories = examQueryService.getExamCategories();
