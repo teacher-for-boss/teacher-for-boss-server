@@ -42,4 +42,20 @@ public class ExamResponseDTO {
             String categoryName;
         }
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetExamAnsNotesResultDTO {
+        List<ExamWrongQuestion> examWrongQuestionList;
+
+        @Getter
+        @AllArgsConstructor
+        public static class ExamWrongQuestion {
+            int questionSequence;
+            String questionName;
+            String commentary;
+        }
+    }
 }

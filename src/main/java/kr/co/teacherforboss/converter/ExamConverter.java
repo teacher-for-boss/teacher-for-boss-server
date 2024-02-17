@@ -53,4 +53,12 @@ public class ExamConverter {
                         new ExamResponseDTO.GetExamCategoriesDTO.ExamCategoryInfo(examCategory.getId(), examCategory.getCategoryName())).toList())
                 .build();
     }
+
+    public static ExamResponseDTO.GetExamAnsNotesResultDTO toGetExamAnsNotesDTO(List<Question> questions) {
+        return ExamResponseDTO.GetExamAnsNotesResultDTO.builder()
+                .examWrongQuestionList(questions.stream().map(q ->
+                        new ExamResponseDTO.GetExamAnsNotesResultDTO.ExamWrongQuestion(
+                                q.getQuestionSequence(), q.getQuestionName(), q.getCommentary()))
+                        .toList()).build();
+    }
 }
