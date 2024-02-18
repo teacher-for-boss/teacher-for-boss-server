@@ -65,6 +65,7 @@ public class AuthResponseDTO {
     @AllArgsConstructor
     public static class TokenResponseDTO {
         String email;
+        String name;
         String accessToken;
         String refreshToken;
     }
