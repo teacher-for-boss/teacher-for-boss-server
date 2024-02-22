@@ -5,7 +5,9 @@ import java.util.List;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.converter.ExamConverter;
 import kr.co.teacherforboss.domain.ExamCategory;
+import kr.co.teacherforboss.domain.MemberAnswer;
 import kr.co.teacherforboss.domain.MemberExam;
+import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.service.examService.ExamCommandService;
 import kr.co.teacherforboss.service.examService.ExamQueryService;
 import kr.co.teacherforboss.web.dto.ExamRequestDTO;
@@ -44,5 +46,11 @@ public class ExamController {
     public ApiResponse<ExamResponseDTO.GetExamCategoriesDTO> getExamCategories() {
         List<ExamCategory> examCategories = examQueryService.getExamCategories();
         return ApiResponse.onSuccess(ExamConverter.toGetExamCategoriesDTO(examCategories));
+    }
+
+    @GetMapping("/{examId}/result/incorrect/list")
+    public ApiResponse<ExamResponseDTO.GetExamAnsNotesResultDTO> getExamIncorrectList(@PathVariable("examId") Long examId) {
+        List<Question> questions = examCommandService.getExamAnsNotes(examId);
+        return ApiResponse.onSuccess(ExamConverter.toGetExamAnsNotesDTO(questions));
     }
 }
