@@ -55,7 +55,6 @@ public class ExamResponseDTO {
         public static class ExamWrongQuestion {
             int questionSequence;
             String questionName;
-            String commentary;
         }
     }
 }
