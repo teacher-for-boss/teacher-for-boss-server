@@ -42,4 +42,19 @@ public class ExamResponseDTO {
             String categoryName;
         }
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetExamIncorrectAnswersResultDTO {
+        List<ExamIncorrectQuestion> examIncorrectQuestionList;
+
+        @Getter
+        @AllArgsConstructor
+        public static class ExamIncorrectQuestion {
+            int questionSequence;
+            String questionName;
+        }
+    }
 }

@@ -60,7 +60,7 @@ public class ExamCommandServiceImpl implements ExamCommandService {
                     QuestionChoice questionChoice = questionChoiceRepository.findByIdAndStatus(q.getQuestionChoiceId(), Status.ACTIVE)
                             .orElseThrow(() -> new ExamHandler(ErrorStatus.QUESTION_CHOICE_NOT_FOUND));
 
-                    if (question.getAnswer().equals(questionChoice.getChoice()))
+                    if (question.getAnswer().equals(questionChoice.getId()))
                         score.addAndGet(question.getPoints());
 
                     MemberAnswer memberAnswer = ExamConverter.toMemberAnswer(question, questionChoice);
@@ -94,5 +94,16 @@ public class ExamCommandServiceImpl implements ExamCommandService {
         int incorrectAnsNum = memberAnswers.size() - correctAnsNum;
 
         return ExamConverter.toGetExamResultDTO(score, questionsNum, correctAnsNum, incorrectAnsNum);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Question> getExamIncorrectAnswers(Long examId) {
+        Member member = authCommandService.getMember();
+        MemberExam memberExam = memberExamRepository.findByMemberIdAndExamIdAndStatus(member.getId(), examId, Status.ACTIVE)
+                .orElseThrow(() -> new ExamHandler(ErrorStatus.MEMBER_EXAM_NOT_FOUND));
+
+        List<MemberAnswer> memberIncorrectAnswers = memberAnswerRepository.findIncorrectAnswers(memberExam, Status.ACTIVE);
+        return memberIncorrectAnswers.stream().map(MemberAnswer::getQuestion).toList();
     }
 }
