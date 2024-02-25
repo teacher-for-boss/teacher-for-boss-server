@@ -47,12 +47,12 @@ public class ExamResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class GetExamAnsNotesResultDTO {
-        List<ExamWrongQuestion> examWrongQuestionList;
+    public static class GetExamIncorrectAnswersResultDTO {
+        List<ExamIncorrectQuestion> examIncorrectQuestionList;
 
         @Getter
         @AllArgsConstructor
-        public static class ExamWrongQuestion {
+        public static class ExamIncorrectQuestion {
             int questionSequence;
             String questionName;
         }

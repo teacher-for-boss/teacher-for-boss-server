@@ -54,10 +54,10 @@ public class ExamConverter {
                 .build();
     }
 
-    public static ExamResponseDTO.GetExamAnsNotesResultDTO toGetExamAnsNotesDTO(List<Question> questions) {
-        return ExamResponseDTO.GetExamAnsNotesResultDTO.builder()
-                .examWrongQuestionList(questions.stream().map(q ->
-                        new ExamResponseDTO.GetExamAnsNotesResultDTO.ExamWrongQuestion(
+    public static ExamResponseDTO.GetExamIncorrectAnswersResultDTO toGetExamAnsNotesDTO(List<Question> questions) {
+        return ExamResponseDTO.GetExamIncorrectAnswersResultDTO.builder()
+                .examIncorrectQuestionList(questions.stream().map(q ->
+                        new ExamResponseDTO.GetExamIncorrectAnswersResultDTO.ExamIncorrectQuestion(
                                 q.getQuestionSequence(), q.getQuestionName()))
                         .toList()).build();
     }

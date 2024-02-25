@@ -98,12 +98,12 @@ public class ExamCommandServiceImpl implements ExamCommandService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Question> getExamAnsNotes(Long examId) {
+    public List<Question> getExamIncorrectAnswers(Long examId) {
         Member member = authCommandService.getMember();
         MemberExam memberExam = memberExamRepository.findByMemberIdAndExamIdAndStatus(member.getId(), examId, Status.ACTIVE)
                 .orElseThrow(() -> new ExamHandler(ErrorStatus.MEMBER_EXAM_NOT_FOUND));
 
-        List<MemberAnswer> memberWrongAnswers = memberAnswerRepository.findAllByMemberExamAndStatus(memberExam, Status.ACTIVE);
-        return memberWrongAnswers.stream().map(MemberAnswer::getQuestion).toList();
+        List<MemberAnswer> memberIncorrectAnswers = memberAnswerRepository.findIncorrectAnswers(memberExam, Status.ACTIVE);
+        return memberIncorrectAnswers.stream().map(MemberAnswer::getQuestion).toList();
     }
 }

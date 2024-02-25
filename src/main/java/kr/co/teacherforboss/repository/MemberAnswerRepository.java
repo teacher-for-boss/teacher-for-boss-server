@@ -15,6 +15,6 @@ public interface MemberAnswerRepository extends JpaRepository<MemberAnswer, Long
     List<MemberAnswer> findAllByMemberExamIdAndStatus(Long memberExamId, Status status);
 
     @Query(value = "select ma from MemberAnswer ma where ma.memberExam = ?1 and ma.questionChoice.choice != ma.question.answer")
-    List<MemberAnswer> findAllByMemberExamAndStatus(MemberExam memberExam, Status status);
+    List<MemberAnswer> findIncorrectAnswers(MemberExam memberExam, Status status);
 
 }
