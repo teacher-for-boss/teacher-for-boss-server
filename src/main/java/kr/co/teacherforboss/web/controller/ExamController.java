@@ -5,7 +5,6 @@ import java.util.List;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.converter.ExamConverter;
 import kr.co.teacherforboss.domain.ExamCategory;
-import kr.co.teacherforboss.domain.MemberAnswer;
 import kr.co.teacherforboss.domain.MemberExam;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.service.examService.ExamCommandService;

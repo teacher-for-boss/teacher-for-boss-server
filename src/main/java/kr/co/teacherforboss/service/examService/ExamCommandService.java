@@ -1,12 +1,10 @@
 package kr.co.teacherforboss.service.examService;
 
-import kr.co.teacherforboss.domain.MemberAnswer;
+import java.util.List;
 import kr.co.teacherforboss.domain.MemberExam;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.web.dto.ExamRequestDTO;
 import kr.co.teacherforboss.web.dto.ExamResponseDTO;
-
-import java.util.List;
 
 public interface ExamCommandService {
     MemberExam takeExams(Long examId, ExamRequestDTO.TakeExamsDTO request);

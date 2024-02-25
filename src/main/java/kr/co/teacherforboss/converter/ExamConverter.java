@@ -1,6 +1,7 @@
 package kr.co.teacherforboss.converter;
 
 
+import java.time.LocalDateTime;
 import java.util.List;
 import kr.co.teacherforboss.domain.Exam;
 import kr.co.teacherforboss.domain.ExamCategory;
@@ -10,9 +11,6 @@ import kr.co.teacherforboss.domain.MemberExam;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionChoice;
 import kr.co.teacherforboss.web.dto.ExamResponseDTO;
-
-import java.time.LocalDateTime;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class ExamConverter {
 
