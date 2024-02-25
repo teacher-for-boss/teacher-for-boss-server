@@ -20,6 +20,7 @@ import kr.co.teacherforboss.repository.QuestionChoiceRepository;
 import kr.co.teacherforboss.repository.QuestionRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.web.dto.ExamRequestDTO;
+import kr.co.teacherforboss.web.dto.ExamResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,7 +60,7 @@ public class ExamCommandServiceImpl implements ExamCommandService {
                     QuestionChoice questionChoice = questionChoiceRepository.findByIdAndStatus(q.getQuestionChoiceId(), Status.ACTIVE)
                             .orElseThrow(() -> new ExamHandler(ErrorStatus.QUESTION_CHOICE_NOT_FOUND));
 
-                    if (question.getAnswer().equals(questionChoice.getChoice()))
+                    if (question.getAnswer().equals(questionChoice.getId()))
                         score.addAndGet(question.getPoints());
 
                     MemberAnswer memberAnswer = ExamConverter.toMemberAnswer(question, questionChoice);
@@ -71,5 +72,38 @@ public class ExamCommandServiceImpl implements ExamCommandService {
         memberAnswerRepository.saveAll(memberAnswerList);
 
         return memberExamRepository.save(memberExam);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ExamResponseDTO.GetExamResultDTO getExamResult(Long examId) {
+        Member member = authCommandService.getMember();
+
+        if (!examRepository.existsByIdAndStatus(examId, Status.ACTIVE))
+            throw new ExamHandler(ErrorStatus.EXAM_NOT_FOUND);
+
+        MemberExam memberExam = memberExamRepository.findByMemberIdAndExamIdAndStatus(member.getId(), examId, Status.ACTIVE)
+                .orElseThrow(() -> new ExamHandler(ErrorStatus.MEMBER_EXAM_NOT_FOUND));
+
+        int questionsNum = questionRepository.countByExamIdAndStatus(examId, Status.ACTIVE);
+        int score = memberExam.getScore();
+
+        List<MemberAnswer> memberAnswers = memberAnswerRepository.findAllByMemberExamIdAndStatus(memberExam.getId(), Status.ACTIVE);
+        int correctAnsNum = memberAnswers.stream()
+                .filter(q -> q.getQuestion().getAnswer().equals(q.getQuestionChoice().getChoice())).mapToInt(e -> 1).sum();
+        int incorrectAnsNum = memberAnswers.size() - correctAnsNum;
+
+        return ExamConverter.toGetExamResultDTO(score, questionsNum, correctAnsNum, incorrectAnsNum);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Question> getExamIncorrectAnswers(Long examId) {
+        Member member = authCommandService.getMember();
+        MemberExam memberExam = memberExamRepository.findByMemberIdAndExamIdAndStatus(member.getId(), examId, Status.ACTIVE)
+                .orElseThrow(() -> new ExamHandler(ErrorStatus.MEMBER_EXAM_NOT_FOUND));
+
+        List<MemberAnswer> memberIncorrectAnswers = memberAnswerRepository.findIncorrectAnswers(memberExam, Status.ACTIVE);
+        return memberIncorrectAnswers.stream().map(MemberAnswer::getQuestion).toList();
     }
 }

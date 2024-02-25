@@ -42,6 +42,7 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_DUPLICATE(BAD_REQUEST, "MEMBER4003", "이미 존재하는 이메일입니다."),
     GENERAL_MEMBER_DUPLICATE(BAD_REQUEST, "MEMBER4004", "일반 회원가입을 통해 진행한 이메일 계정입니다."),
     SOCIAL_MEMBER_INFO_EMPTY(BAD_REQUEST, "MEMBER4005", "소셜 회원가입에 필요한 값이 없습니다."),
+    MEMBER_PHONE_DUPLICATE(BAD_REQUEST, "MEMBER4006", "이미 존재하는 휴대전화 번호입니다."),
 
     // Survey
     SURVEY_DUPLICATE(BAD_REQUEST, "SURVEY4001", "이미 사전정보가 존재합니다."),
@@ -62,6 +63,8 @@ public enum ErrorStatus implements BaseErrorCode {
     TIMEOUT_CODE_PHONE(BAD_REQUEST, "AUTH40013", "휴대폰 인증 유효시간이 만료되었습니다."),
     SOCIAL_TYPE_BAD_REQUEST(BAD_REQUEST, "AUTH40014", "기입한 소셜 로그인 유형과 일치하지 않습니다."),
     INVALID_AGREEMENT_TERM(BAD_REQUEST, "AUTH40015", "모든 필수 이용 약관에 동의해야 합니다."),
+    AUTH_EMAIL_DUPLICATED(BAD_REQUEST, "AUTH40016", "이미 가입된 이메일입니다."),
+    AUTH_PHONE_DUPLICATED(BAD_REQUEST, "AUTH40017", "이미 가입된 전화번호입니다."),
 
     // Exam
     EXAM_NOT_FOUND(NOT_FOUND, "EXAM4001", "시험 정보를 찾을 수 없습니다."),
@@ -69,6 +72,7 @@ public enum ErrorStatus implements BaseErrorCode {
     QUESTION_CHOICE_NOT_FOUND(NOT_FOUND, "EXAM4003", "입력한 ID 값에 해당되는 문제 선지를 찾을 수 없습니다."),
     MEMBER_EXAM_DUPLICATE(BAD_REQUEST, "EXAM4004", "이미 치룬 시험입니다."),
     INVALID_QUESTION_CHOICE(BAD_REQUEST, "EXAM4005", "시험 문제 선지를 모두 선택해주세요."),
+    MEMBER_EXAM_NOT_FOUND(NOT_FOUND, "EXAM4006", "사용자가 치루지 않은 시험입니다."),
 
     // For test
     TEMP_EXCEPTION(BAD_REQUEST, "TEMP4001", "이거는 테스트");

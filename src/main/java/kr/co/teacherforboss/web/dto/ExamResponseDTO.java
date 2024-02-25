@@ -21,6 +21,17 @@ public class ExamResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class GetExamResultDTO{
+        int score;
+        int questionsNum;
+        int correctAnsNum;
+        int incorrectAnsNum;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class GetExamCategoriesDTO {
         List<ExamCategoryInfo> examCategoryList;
 
@@ -29,6 +40,21 @@ public class ExamResponseDTO {
         public static class ExamCategoryInfo {
             Long examCategoryId;
             String categoryName;
+        }
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetExamIncorrectAnswersResultDTO {
+        List<ExamIncorrectQuestion> examIncorrectQuestionList;
+
+        @Getter
+        @AllArgsConstructor
+        public static class ExamIncorrectQuestion {
+            int questionSequence;
+            String questionName;
         }
     }
 

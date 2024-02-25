@@ -32,8 +32,8 @@ public class Question extends BaseEntity {
     private String questionName;
 
     @NotNull
-    @Column(length = 30)
-    private String answer;
+    @Column
+    private Long answer;
 
     @NotNull
     @Column(length = 100)
@@ -42,6 +42,10 @@ public class Question extends BaseEntity {
     @NotNull
     @Column
     private Integer points;
+
+    @NotNull
+    @Column
+    private Integer questionSequence;
 
     @OneToMany(mappedBy = "question")
     private List<QuestionChoice> questionOptionList;
