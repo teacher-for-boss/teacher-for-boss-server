@@ -69,6 +69,7 @@ public class ExamResponseDTO {
         @AllArgsConstructor
         public static class QuestionInfo {
             Long questionId;
+            Integer questionSequence;
             String questionName;
             List<QuestionChoiceInfo> choiceList;
 

@@ -63,7 +63,7 @@ public class ExamConverter {
     public static ExamResponseDTO.GetQuestionsDTO toGetQuestionsDTO(List<Question> questions) {
         return ExamResponseDTO.GetQuestionsDTO.builder()
                 .questionList(questions.stream().map(question ->
-                        new ExamResponseDTO.GetQuestionsDTO.QuestionInfo(question.getId(), question.getQuestionName(),
+                        new ExamResponseDTO.GetQuestionsDTO.QuestionInfo(question.getId(), question.getQuestionSequence(), question.getQuestionName(),
                                 question.getQuestionOptionList().stream().map(choice ->
                                         new ExamResponseDTO.GetQuestionsDTO.QuestionInfo.QuestionChoiceInfo(choice.getId(),
                                                 choice.getChoice())).toList())).toList())
