@@ -12,7 +12,7 @@ public class ExamResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class TakeExamsDTO{
+    public static class TakeExamsDTO {
         Long memberExamId;
         LocalDateTime createdAt;
     }
@@ -55,6 +55,30 @@ public class ExamResponseDTO {
         public static class ExamIncorrectQuestion {
             int questionSequence;
             String questionName;
+        }
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetQuestionsDTO {
+        List<QuestionInfo> questionList;
+
+        @Getter
+        @AllArgsConstructor
+        public static class QuestionInfo {
+            Long questionId;
+            Integer questionSequence;
+            String questionName;
+            List<QuestionChoiceInfo> choiceList;
+
+            @Getter
+            @AllArgsConstructor
+            public static class QuestionChoiceInfo {
+                Long choiceId;
+                String choiceName;
+            }
         }
     }
 }

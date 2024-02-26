@@ -59,4 +59,22 @@ public class ExamConverter {
                                 q.getQuestionSequence(), q.getQuestionName()))
                         .toList()).build();
     }
+
+    public static ExamResponseDTO.GetQuestionsDTO toGetQuestionsDTO(List<Question> questions) {
+        List<ExamResponseDTO.GetQuestionsDTO.QuestionInfo> questionInfos = questions.stream()
+                .map(ExamConverter::toQuestionInfo)
+                .toList();
+
+        return ExamResponseDTO.GetQuestionsDTO.builder()
+                .questionList(questionInfos)
+                .build();
+    }
+
+    private static ExamResponseDTO.GetQuestionsDTO.QuestionInfo toQuestionInfo(Question question) {
+        List<ExamResponseDTO.GetQuestionsDTO.QuestionInfo.QuestionChoiceInfo> choiceInfos = question.getQuestionOptionList().stream()
+                .map(choice -> new ExamResponseDTO.GetQuestionsDTO.QuestionInfo.QuestionChoiceInfo(choice.getId(), choice.getChoice()))
+                .toList();
+
+        return new ExamResponseDTO.GetQuestionsDTO.QuestionInfo(question.getId(), question.getQuestionSequence(), question.getQuestionName(), choiceInfos);
+    }
 }

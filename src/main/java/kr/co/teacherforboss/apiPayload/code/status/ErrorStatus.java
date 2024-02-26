@@ -33,7 +33,7 @@ public enum ErrorStatus implements BaseErrorCode {
     NO_MAIL_CODE(BAD_REQUEST, "MAIL4003","해당 이메일에 유효한 인증정보가 없습니다."),
     TOO_MANY_MAIL_REQUEST(BAD_REQUEST, "MAIL4004","메일 인증 요청은 하루에 5회까지 가능합니다."),
 
-    // sms
+    // Sms
     SMS_SEND_FAIL(INTERNAL_SERVER_ERROR, "SMS5001", "sms 전송에 실패했습니다."),
 
     // Member
