@@ -81,4 +81,23 @@ public class ExamResponseDTO {
             }
         }
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetExamRankInfoDTO {
+        List<ExamRankInfo> examRankList;
+
+        @Getter
+        @Builder
+        @AllArgsConstructor
+        public static class ExamRankInfo {
+            Long rank;
+            String name;
+            String profileImg;
+            int score;
+            boolean isMine;
+        }
+    }
 }
