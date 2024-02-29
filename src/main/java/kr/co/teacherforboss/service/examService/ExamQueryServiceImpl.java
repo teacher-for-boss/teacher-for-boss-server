@@ -19,6 +19,7 @@ import kr.co.teacherforboss.repository.QuestionRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.web.dto.ExamResponseDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,7 +54,8 @@ public class ExamQueryServiceImpl implements ExamQueryService {
         Member member = authCommandService.getMember();
         List<ExamResponseDTO.GetExamRankInfoDTO.ExamRankInfo> examRankInfos = new ArrayList<>();
 
-        List<MemberExam> top3 = memberExamRepository.findTop3ByExamIdAndStatusOrderByScoreDescCreatedAt(examId, Status.ACTIVE);
+        List<MemberExam> top3 = memberExamRepository.findTop3ByExamIdAndStatus(examId, Status.ACTIVE,
+                Sort.by(Sort.Order.desc("score"), Sort.Order.asc("createdAt")));
 
         boolean inTop3 = false;
         for (int i = 0; i < top3.size(); i++) {
@@ -71,7 +73,8 @@ public class ExamQueryServiceImpl implements ExamQueryService {
             Long rank = memberExamRepository.findRankById(mine.getId());
             examRankInfos.add(ExamConverter.toGetExamRankInfo(mine, rank, true));
         } else {
-            MemberExam last = memberExamRepository.findTop1ByExamIdAndStatusOrderByScoreAscCreatedAtDesc(examId, Status.ACTIVE);
+            MemberExam last = memberExamRepository.findTop1ByExamIdAndStatus(examId, Status.ACTIVE,
+                    Sort.by(Sort.Order.asc("score"), Sort.Order.desc("createdAt")));
             Long rank = memberExamRepository.findRankById(last.getId());
             boolean isLastInTop3 = top3.stream().anyMatch(exam -> Objects.equals(exam.getId(), last.getId()));
             if (!isLastInTop3) {
