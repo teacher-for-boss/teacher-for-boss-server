@@ -39,7 +39,7 @@ public enum ErrorStatus implements BaseErrorCode {
     // Member
     MEMBER_NOT_FOUND(BAD_REQUEST, "MEMBER4001", "사용자가 없습니다."),
     NICKNAME_NOT_EXIST(BAD_REQUEST, "MEMBER4002", "닉네임은 필수 입니다."),
-    MEMBER_DUPLICATE(BAD_REQUEST, "MEMBER4003", "이미 존재하는 이메일입니다."),
+    MEMBER_EMAIL_DUPLICATE(BAD_REQUEST, "MEMBER4003", "이미 존재하는 이메일입니다."),
     GENERAL_MEMBER_DUPLICATE(BAD_REQUEST, "MEMBER4004", "일반 회원가입을 통해 진행한 이메일 계정입니다."),
     SOCIAL_MEMBER_INFO_EMPTY(BAD_REQUEST, "MEMBER4005", "소셜 회원가입에 필요한 값이 없습니다."),
     MEMBER_PHONE_DUPLICATE(BAD_REQUEST, "MEMBER4006", "이미 존재하는 휴대전화 번호입니다."),
