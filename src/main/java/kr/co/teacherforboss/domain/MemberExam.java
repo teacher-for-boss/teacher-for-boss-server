@@ -32,6 +32,10 @@ public class MemberExam extends BaseEntity {
     @Column
     private Integer score;
 
+    @NotNull
+    @Column
+    private Long time;
+
     public void setScore(Integer score) {
         this.score = score;
     }
