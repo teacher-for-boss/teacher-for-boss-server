@@ -14,8 +14,8 @@ import kr.co.teacherforboss.web.dto.ExamResponseDTO;
 
 public class ExamConverter {
 
-    public static ExamResponseDTO.TakeExamsDTO toTakeExamsDTO(MemberExam memberExam) {
-        return ExamResponseDTO.TakeExamsDTO.builder()
+    public static ExamResponseDTO.TakeExamDTO toTakeExamDTO(MemberExam memberExam) {
+        return ExamResponseDTO.TakeExamDTO.builder()
                 .memberExamId(memberExam.getId())
                 .createdAt(LocalDateTime.now())
                 .build();

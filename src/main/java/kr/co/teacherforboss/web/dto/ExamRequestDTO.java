@@ -15,16 +15,16 @@ public class ExamRequestDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class TakeExamsDTO{
+    public static class TakeExamDTO{
 
         @NotNull
-        List<TakeExamsChoicesDTO> questionAnsList;
+        List<TakeExamChoiceDTO> questionAnsList;
 
     }
 
     @Getter
     @Builder
-    public static class TakeExamsChoicesDTO{
+    public static class TakeExamChoiceDTO{
         @NotNull
         Long questionId;
 

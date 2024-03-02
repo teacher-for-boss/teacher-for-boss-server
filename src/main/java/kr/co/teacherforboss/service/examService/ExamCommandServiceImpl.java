@@ -38,7 +38,7 @@ public class ExamCommandServiceImpl implements ExamCommandService {
 
     @Override
     @Transactional
-    public MemberExam takeExams(Long examId, ExamRequestDTO.TakeExamsDTO request) {
+    public MemberExam takeExam(Long examId, ExamRequestDTO.TakeExamDTO request) {
         Member member = authCommandService.getMember();
         AtomicInteger score = new AtomicInteger(0);
 
