@@ -220,11 +220,14 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Override
     @Transactional
     public Member socialLogin(AuthRequestDTO.SocialLoginDTO request, int socialType) {
-        if (memberRepository.existsByEmailAndStatusAndLoginType(request.getEmail(), Status.ACTIVE, LoginType.GENERAL))
-            throw new MemberHandler(ErrorStatus.GENERAL_MEMBER_DUPLICATE);
+        // TODO: 이메일 & 전화번호 두 개 파라미터로 받아서 할지 그냥 이대로 놔둘지 고민
         if (memberRepository.existsByEmailAndStatusAndLoginType(request.getEmail(), Status.ACTIVE, LoginType.of(socialType)))
             return memberRepository.findByEmailAndStatusAndLoginType(request.getEmail(), Status.ACTIVE, LoginType.of(socialType));
 
+        if (memberRepository.existsByEmailAndStatus(request.getEmail(), Status.ACTIVE))
+            throw new MemberHandler(ErrorStatus.MEMBER_EMAIL_DUPLICATE);
+        if (memberRepository.existsByPhoneAndStatus(request.getPhone(), Status.ACTIVE))
+            throw new MemberHandler(ErrorStatus.MEMBER_PHONE_DUPLICATE);
 
         Member newMember = AuthConverter.toSocialMember(request, socialType);
         passwordUtil.setSocialMemberPassword(newMember);
