@@ -162,12 +162,14 @@ public class AuthRequestDTO {
     @Builder
     public static class SocialLoginDTO {
 
-        @Email
-        @NotNull
+        @Email(message = "이메일 형식이 아닙니다.")
+        @NotNull(message = "이메일이 없습니다.")
         String email;
 
+        @NotNull(message = "이름이 없습니다.")
         String name;
 
+        @NotNull(message = "전화번호가 없습니다.")
         @Pattern(regexp = "010([2-9])\\d{7,8}", message = "전화번호는 10 ~ 11 자리의 숫자만 입력 가능합니다.")
         String phone;
 

@@ -224,8 +224,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
             throw new MemberHandler(ErrorStatus.GENERAL_MEMBER_DUPLICATE);
         if (memberRepository.existsByEmailAndStatusAndLoginType(request.getEmail(), Status.ACTIVE, LoginType.of(socialType)))
             return memberRepository.findByEmailAndStatusAndLoginType(request.getEmail(), Status.ACTIVE, LoginType.of(socialType));
-        if (request.getName() == null || request.getPhone() == null)
-            throw new MemberHandler(ErrorStatus.SOCIAL_MEMBER_INFO_EMPTY);
+
 
         Member newMember = AuthConverter.toSocialMember(request, socialType);
         passwordUtil.setSocialMemberPassword(newMember);
