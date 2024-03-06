@@ -21,17 +21,19 @@ public class ExamConverter {
                 .build();
     }
 
-    public static MemberAnswer toMemberAnswer(Question question, QuestionChoice questionChoice) {
+    public static MemberAnswer toMemberAnswer(MemberExam memberExam, Question question, QuestionChoice questionChoice) {
         return MemberAnswer.builder()
+                .memberExam(memberExam)
                 .question(question)
                 .questionChoice(questionChoice)
                 .build();
     }
 
-    public static MemberExam toMemberExam(Member member, Exam exam) {
+    public static MemberExam toMemberExam(Member member, Exam exam, int score) {
         return MemberExam.builder()
                 .member(member)
                 .exam(exam)
+                .score(score)
                 .build();
     }
 

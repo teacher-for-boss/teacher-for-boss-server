@@ -40,35 +40,38 @@ public class ExamCommandServiceImpl implements ExamCommandService {
     @Transactional
     public MemberExam takeExam(Long examId, ExamRequestDTO.TakeExamDTO request) {
         Member member = authCommandService.getMember();
-        AtomicInteger score = new AtomicInteger(0);
 
         Exam exam = examRepository.findByIdAndStatus(examId, Status.ACTIVE)
                 .orElseThrow(() -> new ExamHandler(ErrorStatus.EXAM_NOT_FOUND));
 
+        // TODO: 재시험 보기
         if (memberExamRepository.existsByMemberIdAndExamId(member.getId(), examId))
             throw new ExamHandler(ErrorStatus.MEMBER_EXAM_DUPLICATE);
-
         if (questionRepository.countByExamIdAndStatus(examId, Status.ACTIVE) != request.getQuestionAnsList().size())
             throw new ExamHandler(ErrorStatus.INVALID_QUESTION_CHOICE);
 
-        MemberExam memberExam = ExamConverter.toMemberExam(member, exam);
+        AtomicInteger score = new AtomicInteger(0);
+        request.getQuestionAnsList().forEach(q -> {
+            Question question = questionRepository.findByIdAndStatus(q.getQuestionId(), Status.ACTIVE)
+                    .orElseThrow(() -> new ExamHandler(ErrorStatus.QUESTION_NOT_FOUND));
+            QuestionChoice questionChoice = questionChoiceRepository.findByIdAndStatus(q.getQuestionChoiceId(), Status.ACTIVE)
+                    .orElseThrow(() -> new ExamHandler(ErrorStatus.QUESTION_CHOICE_NOT_FOUND));
+            // TODO: questionChoice.getQuestion == question 검증 (=각 문제에 올바른 선지를 보냈는지)
 
-        List<MemberAnswer> memberAnswerList = request.getQuestionAnsList().stream()
-                .map(q -> {
-                    Question question = questionRepository.findByIdAndStatus(q.getQuestionId(), Status.ACTIVE)
-                            .orElseThrow(() -> new ExamHandler(ErrorStatus.QUESTION_NOT_FOUND));
-                    QuestionChoice questionChoice = questionChoiceRepository.findByIdAndStatus(q.getQuestionChoiceId(), Status.ACTIVE)
-                            .orElseThrow(() -> new ExamHandler(ErrorStatus.QUESTION_CHOICE_NOT_FOUND));
+            if (questionChoice.isCorrect()) {
+                score.addAndGet(question.getPoints());
+            }
+        });
 
-                    if (question.getAnswer().equals(questionChoice.getId()))
-                        score.addAndGet(question.getPoints());
+        MemberExam memberExam = ExamConverter.toMemberExam(member, exam, score.intValue());
 
-                    MemberAnswer memberAnswer = ExamConverter.toMemberAnswer(question, questionChoice);
-                    memberAnswer.setMemberExam(memberExam);
-                    return memberAnswer;
-                }).collect(Collectors.toList());
-
-        memberExam.setScore(score.intValue());
+        List<MemberAnswer> memberAnswerList = request.getQuestionAnsList().stream().map(q -> {
+            Question question = questionRepository.findByIdAndStatus(q.getQuestionId(), Status.ACTIVE)
+                    .orElseThrow(() -> new ExamHandler(ErrorStatus.QUESTION_NOT_FOUND));
+            QuestionChoice questionChoice = questionChoiceRepository.findByIdAndStatus(q.getQuestionChoiceId(), Status.ACTIVE)
+                    .orElseThrow(() -> new ExamHandler(ErrorStatus.QUESTION_CHOICE_NOT_FOUND));
+            return ExamConverter.toMemberAnswer(memberExam, question, questionChoice);
+        }).collect(Collectors.toList());
         memberAnswerRepository.saveAll(memberAnswerList);
 
         return memberExamRepository.save(memberExam);
