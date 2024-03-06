@@ -20,6 +20,9 @@ public class ExamRequestDTO {
         @NotNull
         List<TakeExamChoiceDTO> questionAnsList;
 
+        @NotNull(message = "남은 시간은 필수 입력값입니다.")
+        Long leftTime;
+
     }
 
     @Getter

@@ -29,11 +29,12 @@ public class ExamConverter {
                 .build();
     }
 
-    public static MemberExam toMemberExam(Member member, Exam exam, int score) {
+    public static MemberExam toMemberExam(Member member, Exam exam, int score, long leftTime) {
         return MemberExam.builder()
                 .member(member)
                 .exam(exam)
                 .score(score)
+                .time(MemberExam.TIME_LIMIT - leftTime)
                 .build();
     }
 

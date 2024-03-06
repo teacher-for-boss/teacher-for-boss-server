@@ -63,7 +63,7 @@ public class ExamCommandServiceImpl implements ExamCommandService {
             }
         });
 
-        MemberExam memberExam = ExamConverter.toMemberExam(member, exam, score.intValue());
+        MemberExam memberExam = ExamConverter.toMemberExam(member, exam, score.intValue(), request.getLeftTime());
 
         List<MemberAnswer> memberAnswerList = request.getQuestionAnsList().stream().map(q -> {
             Question question = questionRepository.findByIdAndStatus(q.getQuestionId(), Status.ACTIVE)

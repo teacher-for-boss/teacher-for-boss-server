@@ -20,6 +20,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MemberExam extends BaseEntity {
 
+    public static final long TIME_LIMIT = 1000 * 60 * 10L; // 10분 (millis)
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memberId")
     private Member member;
@@ -34,6 +36,6 @@ public class MemberExam extends BaseEntity {
 
     @NotNull
     @Column
-    private Long time;
+    private Long time = 600000L;
 
 }
