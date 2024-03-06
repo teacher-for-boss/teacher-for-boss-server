@@ -72,8 +72,8 @@ public class ExamCommandServiceImpl implements ExamCommandService {
         request.getQuestionAnsList().forEach(q -> {
             Question question = questionMap.get(q.getQuestionId());
             QuestionChoice questionChoice = questionChoiceMap.get(q.getQuestionChoiceId());
-            QuestionChoice questionChoice = questionChoiceRepository.findByIdAndStatus(q.getQuestionChoiceId(), Status.ACTIVE)
-                    .orElseThrow(() -> new ExamHandler(ErrorStatus.QUESTION_CHOICE_NOT_FOUND));
+            if (!questionChoice.getQuestion().getId().equals(question.getId()))
+                throw new ExamHandler(ErrorStatus.INVALID_QUESTION_CHOICE);
             if (questionChoice.isCorrect()) {
                 score.addAndGet(question.getPoints());
             }
