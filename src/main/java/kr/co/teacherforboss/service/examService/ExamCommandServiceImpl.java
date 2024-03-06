@@ -1,7 +1,10 @@
 package kr.co.teacherforboss.service.examService;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.ExamHandler;
@@ -44,20 +47,33 @@ public class ExamCommandServiceImpl implements ExamCommandService {
         Exam exam = examRepository.findByIdAndStatus(examId, Status.ACTIVE)
                 .orElseThrow(() -> new ExamHandler(ErrorStatus.EXAM_NOT_FOUND));
 
-        // TODO: 재시험 보기
-        if (memberExamRepository.existsByMemberIdAndExamId(member.getId(), examId))
-            throw new ExamHandler(ErrorStatus.MEMBER_EXAM_DUPLICATE);
         if (questionRepository.countByExamIdAndStatus(examId, Status.ACTIVE) != request.getQuestionAnsList().size())
-            throw new ExamHandler(ErrorStatus.INVALID_QUESTION_CHOICE);
+            throw new ExamHandler(ErrorStatus.INVALID_EXAM_TAKE);
+
+        List<Long> questionIds = request.getQuestionAnsList().stream()
+                .map(ExamRequestDTO.TakeExamChoiceDTO::getQuestionId)
+                .toList();
+        List<Question> questions = questionRepository.findByIdInAndStatus(questionIds, Status.ACTIVE);
+        if (questions.size() != questionIds.size())
+            throw new ExamHandler(ErrorStatus.QUESTION_NOT_FOUND);
+        Map<Long, Question> questionMap = questions.stream()
+                .collect(Collectors.toMap(Question::getId, Function.identity()));
+
+        List<Long> questionChoiceIds = request.getQuestionAnsList().stream()
+                .map(ExamRequestDTO.TakeExamChoiceDTO::getQuestionChoiceId)
+                .toList();
+        List<QuestionChoice> choices = questionChoiceRepository.findByIdInAndStatus(questionChoiceIds, Status.ACTIVE);
+        if (choices.size() != questionChoiceIds.size())
+            throw new ExamHandler(ErrorStatus.QUESTION_CHOICE_NOT_FOUND);
+        Map<Long, QuestionChoice> questionChoiceMap = choices.stream()
+                .collect(Collectors.toMap(QuestionChoice::getId, Function.identity()));
 
         AtomicInteger score = new AtomicInteger(0);
         request.getQuestionAnsList().forEach(q -> {
-            Question question = questionRepository.findByIdAndStatus(q.getQuestionId(), Status.ACTIVE)
-                    .orElseThrow(() -> new ExamHandler(ErrorStatus.QUESTION_NOT_FOUND));
+            Question question = questionMap.get(q.getQuestionId());
+            QuestionChoice questionChoice = questionChoiceMap.get(q.getQuestionChoiceId());
             QuestionChoice questionChoice = questionChoiceRepository.findByIdAndStatus(q.getQuestionChoiceId(), Status.ACTIVE)
                     .orElseThrow(() -> new ExamHandler(ErrorStatus.QUESTION_CHOICE_NOT_FOUND));
-            // TODO: questionChoice.getQuestion == question 검증 (=각 문제에 올바른 선지를 보냈는지)
-
             if (questionChoice.isCorrect()) {
                 score.addAndGet(question.getPoints());
             }
@@ -66,10 +82,8 @@ public class ExamCommandServiceImpl implements ExamCommandService {
         MemberExam memberExam = ExamConverter.toMemberExam(member, exam, score.intValue(), request.getLeftTime());
 
         List<MemberAnswer> memberAnswerList = request.getQuestionAnsList().stream().map(q -> {
-            Question question = questionRepository.findByIdAndStatus(q.getQuestionId(), Status.ACTIVE)
-                    .orElseThrow(() -> new ExamHandler(ErrorStatus.QUESTION_NOT_FOUND));
-            QuestionChoice questionChoice = questionChoiceRepository.findByIdAndStatus(q.getQuestionChoiceId(), Status.ACTIVE)
-                    .orElseThrow(() -> new ExamHandler(ErrorStatus.QUESTION_CHOICE_NOT_FOUND));
+            Question question = questionMap.get(q.getQuestionId());
+            QuestionChoice questionChoice = questionChoiceMap.get(q.getQuestionChoiceId());
             return ExamConverter.toMemberAnswer(memberExam, question, questionChoice);
         }).toList();
         memberAnswerRepository.saveAll(memberAnswerList);
