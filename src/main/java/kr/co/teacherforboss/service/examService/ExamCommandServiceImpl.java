@@ -71,7 +71,7 @@ public class ExamCommandServiceImpl implements ExamCommandService {
             QuestionChoice questionChoice = questionChoiceRepository.findByIdAndStatus(q.getQuestionChoiceId(), Status.ACTIVE)
                     .orElseThrow(() -> new ExamHandler(ErrorStatus.QUESTION_CHOICE_NOT_FOUND));
             return ExamConverter.toMemberAnswer(memberExam, question, questionChoice);
-        }).collect(Collectors.toList());
+        }).toList();
         memberAnswerRepository.saveAll(memberAnswerList);
 
         return memberExamRepository.save(memberExam);
