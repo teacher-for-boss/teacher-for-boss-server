@@ -43,11 +43,13 @@ public class PrincipalDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
+        // TODO: return memberStatus == ACTIVE;
         return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
+        // TODO: return memberStatus == ACTIVE;
         return true;
     }
 
