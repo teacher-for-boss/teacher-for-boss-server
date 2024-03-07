@@ -220,7 +220,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Override
     @Transactional
     public Member socialLogin(AuthRequestDTO.SocialLoginDTO request, int socialType) {
-        // TODO: 이메일 & 전화번호 두 개 파라미터로 받아서 할지 그냥 이대로 놔둘지 고민
+        // TODO: 전화번호가 변경되었을 때 어떻게 처리할지
         if (memberRepository.existsByEmailAndStatusAndLoginType(request.getEmail(), Status.ACTIVE, LoginType.of(socialType)))
             return memberRepository.findByEmailAndStatusAndLoginType(request.getEmail(), Status.ACTIVE, LoginType.of(socialType));
 
