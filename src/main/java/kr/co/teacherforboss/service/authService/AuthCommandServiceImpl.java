@@ -54,7 +54,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Transactional
     public Member joinMember(AuthRequestDTO.JoinDTO request){
         if (memberRepository.existsByEmailAndStatus(request.getEmail(), Status.ACTIVE))
-            throw new AuthHandler(ErrorStatus.MEMBER_DUPLICATE);
+            throw new AuthHandler(ErrorStatus.MEMBER_EMAIL_DUPLICATE);
         if (memberRepository.existsByPhoneAndStatus(request.getPhone(), Status.ACTIVE))
             throw new AuthHandler(ErrorStatus.MEMBER_PHONE_DUPLICATE);
         if (!request.getPassword().equals(request.getRePassword()))
@@ -220,12 +220,14 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Override
     @Transactional
     public Member socialLogin(AuthRequestDTO.SocialLoginDTO request, int socialType) {
-        if (memberRepository.existsByEmailAndStatusAndLoginType(request.getEmail(), Status.ACTIVE, LoginType.GENERAL))
-            throw new MemberHandler(ErrorStatus.GENERAL_MEMBER_DUPLICATE);
+        // TODO: 전화번호가 변경되었을 때 어떻게 처리할지
         if (memberRepository.existsByEmailAndStatusAndLoginType(request.getEmail(), Status.ACTIVE, LoginType.of(socialType)))
             return memberRepository.findByEmailAndStatusAndLoginType(request.getEmail(), Status.ACTIVE, LoginType.of(socialType));
-        if (request.getName() == null || request.getPhone() == null)
-            throw new MemberHandler(ErrorStatus.SOCIAL_MEMBER_INFO_EMPTY);
+
+        if (memberRepository.existsByEmailAndStatus(request.getEmail(), Status.ACTIVE))
+            throw new MemberHandler(ErrorStatus.MEMBER_EMAIL_DUPLICATE);
+        if (memberRepository.existsByPhoneAndStatus(request.getPhone(), Status.ACTIVE))
+            throw new MemberHandler(ErrorStatus.MEMBER_PHONE_DUPLICATE);
 
         Member newMember = AuthConverter.toSocialMember(request, socialType);
         passwordUtil.setSocialMemberPassword(newMember);

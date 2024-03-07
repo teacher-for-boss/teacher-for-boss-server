@@ -11,6 +11,7 @@ import kr.co.teacherforboss.repository.ExamCategoryRepository;
 import kr.co.teacherforboss.repository.ExamRepository;
 import kr.co.teacherforboss.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +35,6 @@ public class ExamQueryServiceImpl implements ExamQueryService {
         if (!examRepository.existsByIdAndStatus(examId, Status.ACTIVE))
             throw new ExamHandler(ErrorStatus.EXAM_NOT_FOUND);
 
-        return questionRepository.findAllByExamIdAndStatus(examId, Status.ACTIVE);
+        return questionRepository.findAllByExamIdAndStatus(examId, Status.ACTIVE, Sort.by(Sort.Order.asc("questionSequence")));
     }
 }
