@@ -78,7 +78,8 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // Exam
     MEMBER_EXAM_DUPLICATE(BAD_REQUEST, "EXAM4001", "이미 치룬 시험입니다."),
-    INVALID_QUESTION_CHOICE(BAD_REQUEST, "EXAM4002", "시험 문제 선지를 모두 선택해주세요."),
+    INVALID_QUESTION_CHOICE(BAD_REQUEST, "EXAM4002", "문제에 맞지 않는 선지를 선택했습니다."),
+    INVALID_EXAM_TAKE(BAD_REQUEST, "EXAM4003", "풀지 않은 문제가 있거나 문제가 너무 많습니다."),
 
     MEMBER_EXAM_NOT_FOUND(NOT_FOUND, "EXAM4041", "사용자가 치루지 않은 시험입니다."),
     EXAM_NOT_FOUND(NOT_FOUND, "EXAM4042", "시험 정보를 찾을 수 없습니다."),

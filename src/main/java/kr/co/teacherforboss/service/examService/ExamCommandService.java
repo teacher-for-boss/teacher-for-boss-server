@@ -7,7 +7,7 @@ import kr.co.teacherforboss.web.dto.ExamRequestDTO;
 import kr.co.teacherforboss.web.dto.ExamResponseDTO;
 
 public interface ExamCommandService {
-    MemberExam takeExams(Long examId, ExamRequestDTO.TakeExamsDTO request);
+    MemberExam takeExam(Long examId, ExamRequestDTO.TakeExamDTO request);
 
     ExamResponseDTO.GetExamResultDTO getExamResult(Long examId);
 

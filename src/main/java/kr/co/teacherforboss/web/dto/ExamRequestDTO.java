@@ -15,20 +15,23 @@ public class ExamRequestDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class TakeExamsDTO{
+    public static class TakeExamDTO{
 
-        @NotNull
-        List<TakeExamsChoicesDTO> questionAnsList;
+        @NotNull(message = "문항 정답 리스트는 필수 입력값입니다.")
+        List<TakeExamChoiceDTO> questionAnsList;
+
+        @NotNull(message = "남은 시간은 필수 입력값입니다.")
+        Long leftTime;
 
     }
 
     @Getter
     @Builder
-    public static class TakeExamsChoicesDTO{
-        @NotNull
+    public static class TakeExamChoiceDTO{
+        @NotNull(message = "문항 식별자는 필수 입력값입니다.")
         Long questionId;
 
-        @NotNull
+        @NotNull(message = "문항 선지 식별자는 필수 입력값입니다.")
         Long questionChoiceId;
     }
 }

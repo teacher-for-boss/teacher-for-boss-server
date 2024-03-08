@@ -30,8 +30,4 @@ public class MemberAnswer extends BaseEntity {
     @JoinColumn(name = "questionChoiceId")
     private QuestionChoice questionChoice;
 
-    public void setMemberExam(MemberExam memberExam) {
-        this.memberExam = memberExam;
-    }
-
 }

@@ -13,4 +13,5 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     Integer countByExamIdAndStatus(Long examId, Status status);
     Optional<Question> findByIdAndStatus(Long questionId, Status status);
     List<Question> findAllByExamIdAndStatus(Long examId, Status status, Sort sort);
+    List<Question> findByIdInAndStatus(List<Long> idCollect, Status status);
 }
