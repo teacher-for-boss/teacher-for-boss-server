@@ -14,24 +14,27 @@ import kr.co.teacherforboss.web.dto.ExamResponseDTO;
 
 public class ExamConverter {
 
-    public static ExamResponseDTO.TakeExamsDTO toTakeExamsDTO(MemberExam memberExam) {
-        return ExamResponseDTO.TakeExamsDTO.builder()
+    public static ExamResponseDTO.TakeExamDTO toTakeExamDTO(MemberExam memberExam) {
+        return ExamResponseDTO.TakeExamDTO.builder()
                 .memberExamId(memberExam.getId())
                 .createdAt(LocalDateTime.now())
                 .build();
     }
 
-    public static MemberAnswer toMemberAnswer(Question question, QuestionChoice questionChoice) {
+    public static MemberAnswer toMemberAnswer(MemberExam memberExam, Question question, QuestionChoice questionChoice) {
         return MemberAnswer.builder()
+                .memberExam(memberExam)
                 .question(question)
                 .questionChoice(questionChoice)
                 .build();
     }
 
-    public static MemberExam toMemberExam(Member member, Exam exam) {
+    public static MemberExam toMemberExam(Member member, Exam exam, int score, long leftTime) {
         return MemberExam.builder()
                 .member(member)
                 .exam(exam)
+                .score(score)
+                .time(MemberExam.TIME_LIMIT - leftTime)
                 .build();
     }
 

@@ -12,7 +12,7 @@ public class ExamResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class TakeExamsDTO {
+    public static class TakeExamDTO {
         Long memberExamId;
         LocalDateTime createdAt;
     }
