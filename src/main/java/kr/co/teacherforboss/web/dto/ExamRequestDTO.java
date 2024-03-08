@@ -17,7 +17,7 @@ public class ExamRequestDTO {
     @Builder
     public static class TakeExamsDTO{
 
-        @NotNull
+        @NotNull(message = "시험지 답 리스트는 필수 입력값입니다.")
         List<TakeExamsChoicesDTO> questionAnsList;
 
     }
@@ -25,10 +25,10 @@ public class ExamRequestDTO {
     @Getter
     @Builder
     public static class TakeExamsChoicesDTO{
-        @NotNull
+        @NotNull(message = "시험 문항 식별자는 필수 입력값입니다.")
         Long questionId;
 
-        @NotNull
+        @NotNull(message = "시험 문항 선택번호 식별자는 필수 입력값입니다.")
         Long questionChoiceId;
     }
 }
