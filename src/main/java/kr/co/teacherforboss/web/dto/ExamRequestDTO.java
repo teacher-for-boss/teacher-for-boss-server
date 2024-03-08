@@ -1,5 +1,7 @@
 package kr.co.teacherforboss.web.dto;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,9 +20,11 @@ public class ExamRequestDTO {
     public static class TakeExamDTO{
 
         @NotNull(message = "문항 정답 리스트는 필수 입력값입니다.")
+        @Valid
         List<TakeExamChoiceDTO> questionAnsList;
 
         @NotNull(message = "남은 시간은 필수 입력값입니다.")
+        @Max(value = 600000, message = "남은 시간은 최대 10분입니다.")
         Long leftTime;
 
     }
