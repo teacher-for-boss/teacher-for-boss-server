@@ -163,6 +163,10 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         Member member = memberRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
+        if(!memberRepository.existsByEmailAndStatusAndLoginType(member.getEmail(), Status.ACTIVE, LoginType.GENERAL)) {
+            throw new AuthHandler(ErrorStatus.NOT_GENERAL_MEMBER);
+        }
+
         String inputPw =  member.getPwSalt() + request.getPassword();
         if (!passwordEncoder.matches(inputPw, member.getPwHash())) {
             throw new AuthHandler(ErrorStatus.LOGIN_FAILED_PASSWORD_INCORRECT);
@@ -228,7 +232,6 @@ public class AuthCommandServiceImpl implements AuthCommandService {
             throw new MemberHandler(ErrorStatus.MEMBER_EMAIL_DUPLICATE);
         if (memberRepository.existsByPhoneAndStatus(request.getPhone(), Status.ACTIVE))
             throw new MemberHandler(ErrorStatus.MEMBER_PHONE_DUPLICATE);
-
         Member newMember = AuthConverter.toSocialMember(request, socialType);
         passwordUtil.setSocialMemberPassword(newMember);
 
