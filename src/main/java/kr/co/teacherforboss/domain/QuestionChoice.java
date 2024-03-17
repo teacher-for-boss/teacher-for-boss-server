@@ -27,4 +27,8 @@ public class QuestionChoice extends BaseEntity {
     @NotNull
     @Column(length = 30)
     private String choice;
+
+    public boolean isCorrect() {
+        return question.getAnswer().equals(this.getId());
+    }
 }

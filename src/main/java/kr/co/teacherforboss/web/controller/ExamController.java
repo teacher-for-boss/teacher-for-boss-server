@@ -32,9 +32,9 @@ public class ExamController {
     private final ExamQueryService examQueryService;
 
     @PostMapping("/{examId}")
-    public ApiResponse<ExamResponseDTO.TakeExamsDTO> takeExam(@PathVariable("examId") Long examId, @RequestBody @Valid ExamRequestDTO.TakeExamsDTO request) {
-        MemberExam memberExam = examCommandService.takeExams(examId, request);
-        return ApiResponse.onSuccess(ExamConverter.toTakeExamsDTO(memberExam));
+    public ApiResponse<ExamResponseDTO.TakeExamDTO> takeExam(@PathVariable("examId") Long examId, @RequestBody @Valid ExamRequestDTO.TakeExamDTO request) {
+        MemberExam memberExam = examCommandService.takeExam(examId, request);
+        return ApiResponse.onSuccess(ExamConverter.toTakeExamDTO(memberExam));
     }
 
     @GetMapping("/{examId}/result")
