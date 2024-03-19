@@ -53,6 +53,10 @@ public class ExamQueryServiceImpl implements ExamQueryService {
     public List<ExamResponseDTO.GetExamRankInfoDTO.ExamRankInfo> getExamRankInfo(Long examId) {
         Member member = authCommandService.getMember();
         List<ExamResponseDTO.GetExamRankInfoDTO.ExamRankInfo> examRankInfos = new ArrayList<>();
+
+        if (!examRepository.existsByIdAndStatus(examId, Status.ACTIVE))
+            throw new ExamHandler(ErrorStatus.EXAM_NOT_FOUND);
+
         List<MemberExam> top3 = memberExamRepository.findTop3ByExamId(examId);
 
         boolean inTop3 = false;
