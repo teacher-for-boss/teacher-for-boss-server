@@ -92,16 +92,13 @@ public class ExamCommandServiceImpl implements ExamCommandService {
 
     @Override
     @Transactional(readOnly = true)
-    public ExamResponseDTO.GetExamResultDTO getExamResult(Long examId) {
+    public ExamResponseDTO.GetExamResultDTO getExamResult(Long memberExamId) {
         Member member = authCommandService.getMember();
 
-        if (!examRepository.existsByIdAndStatus(examId, Status.ACTIVE))
-            throw new ExamHandler(ErrorStatus.EXAM_NOT_FOUND);
-
-        MemberExam memberExam = memberExamRepository.findFirstByMemberIdAndExamIdAndStatusOrderByCreatedAtDesc(member.getId(), examId, Status.ACTIVE)
+        MemberExam memberExam = memberExamRepository.findByIdAndMemberAndStatus(memberExamId, member, Status.ACTIVE)
                 .orElseThrow(() -> new ExamHandler(ErrorStatus.MEMBER_EXAM_NOT_FOUND));
 
-        int questionsNum = questionRepository.countByExamIdAndStatus(examId, Status.ACTIVE);
+        int questionsNum = questionRepository.countByExamIdAndStatus(memberExam.getExam().getId(), Status.ACTIVE);
         int score = memberExam.getScore();
 
         List<MemberAnswer> memberAnswers = memberAnswerRepository.findAllByMemberExamIdAndStatus(memberExam.getId(), Status.ACTIVE);
