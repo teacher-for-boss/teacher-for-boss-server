@@ -59,7 +59,7 @@ public class ExamConverter {
         return ExamResponseDTO.GetExamIncorrectAnswersResultDTO.builder()
                 .examIncorrectQuestionList(questions.stream().map(q ->
                         new ExamResponseDTO.GetExamIncorrectAnswersResultDTO.ExamIncorrectQuestion(
-                                q.getQuestionSequence(), q.getQuestionName()))
+                                q.getId(), q.getQuestionSequence(), q.getQuestionName()))
                         .toList()).build();
     }
 

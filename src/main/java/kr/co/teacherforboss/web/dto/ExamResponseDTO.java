@@ -53,6 +53,7 @@ public class ExamResponseDTO {
         @Getter
         @AllArgsConstructor
         public static class ExamIncorrectQuestion {
+            Long questionId;
             int questionSequence;
             String questionName;
         }
