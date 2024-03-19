@@ -90,6 +90,7 @@ public class ExamConverter {
     public static ExamResponseDTO.GetExamRankInfoDTO.ExamRankInfo toGetExamRankInfo(MemberExam memberExam, Long rank, boolean isMine) {
         return ExamResponseDTO.GetExamRankInfoDTO.ExamRankInfo.builder()
                 .rank(rank)
+                .memberId(memberExam.getMember().getId())
                 .name(memberExam.getMember().getName())
                 .profileImg(memberExam.getMember().getProfileImg())
                 .score(memberExam.getScore())

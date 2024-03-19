@@ -94,6 +94,7 @@ public class ExamResponseDTO {
         @AllArgsConstructor
         public static class ExamRankInfo {
             Long rank;
+            Long memberId;
             String name;
             String profileImg;
             int score;
