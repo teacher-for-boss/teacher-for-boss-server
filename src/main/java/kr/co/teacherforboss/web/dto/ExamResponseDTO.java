@@ -22,6 +22,7 @@ public class ExamResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class GetExamResultDTO{
+        long memberExamId;
         int score;
         int questionsNum;
         int correctAnsNum;

@@ -2,7 +2,6 @@ package kr.co.teacherforboss.service.examService;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -99,7 +98,7 @@ public class ExamCommandServiceImpl implements ExamCommandService {
         if (!examRepository.existsByIdAndStatus(examId, Status.ACTIVE))
             throw new ExamHandler(ErrorStatus.EXAM_NOT_FOUND);
 
-        MemberExam memberExam = memberExamRepository.findByMemberIdAndExamIdAndStatus(member.getId(), examId, Status.ACTIVE)
+        MemberExam memberExam = memberExamRepository.findFirstByMemberIdAndExamIdAndStatusOrderByCreatedAtDesc(member.getId(), examId, Status.ACTIVE)
                 .orElseThrow(() -> new ExamHandler(ErrorStatus.MEMBER_EXAM_NOT_FOUND));
 
         int questionsNum = questionRepository.countByExamIdAndStatus(examId, Status.ACTIVE);
@@ -110,14 +109,14 @@ public class ExamCommandServiceImpl implements ExamCommandService {
                 .filter(q -> q.getQuestion().getAnswer().equals(q.getQuestionChoice().getChoice())).mapToInt(e -> 1).sum();
         int incorrectAnsNum = memberAnswers.size() - correctAnsNum;
 
-        return ExamConverter.toGetExamResultDTO(score, questionsNum, correctAnsNum, incorrectAnsNum);
+        return ExamConverter.toGetExamResultDTO(memberExam.getId(), score, questionsNum, correctAnsNum, incorrectAnsNum);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Question> getExamIncorrectAnswers(Long examId) {
+    public List<Question> getExamIncorrectAnswers(Long memberExamId) {
         Member member = authCommandService.getMember();
-        MemberExam memberExam = memberExamRepository.findByMemberIdAndExamIdAndStatus(member.getId(), examId, Status.ACTIVE)
+        MemberExam memberExam = memberExamRepository.findByIdAndMemberAndStatus(memberExamId, member, Status.ACTIVE)
                 .orElseThrow(() -> new ExamHandler(ErrorStatus.MEMBER_EXAM_NOT_FOUND));
 
         List<MemberAnswer> memberIncorrectAnswers = memberAnswerRepository.findIncorrectAnswers(memberExam, Status.ACTIVE);
