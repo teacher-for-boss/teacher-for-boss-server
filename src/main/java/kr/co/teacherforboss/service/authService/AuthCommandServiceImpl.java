@@ -160,15 +160,13 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
     @Override
     public Member login(AuthRequestDTO.LoginDTO request) {
-        Member member = memberRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
-        if(!memberRepository.existsByEmailAndStatusAndLoginType(member.getEmail(), Status.ACTIVE, LoginType.GENERAL)) {
-            throw new AuthHandler(ErrorStatus.NOT_GENERAL_MEMBER);
+        Member member = memberRepository.findByEmailAndStatusAndLoginType(request.getEmail(), Status.ACTIVE, LoginType.GENERAL);
+        if(member == null) {
+            throw new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND);
         }
 
         String inputPw =  member.getPwSalt() + request.getPassword();
-        if (!passwordEncoder.matches(inputPw, member.getPwHash())) {
+        if(!passwordEncoder.matches(inputPw, member.getPwHash())) {
             throw new AuthHandler(ErrorStatus.LOGIN_FAILED_PASSWORD_INCORRECT);
         }
         return member;
