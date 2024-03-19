@@ -33,7 +33,7 @@ public class Question extends BaseEntity {
 
     @NotNull
     @Column
-    private Long answer;
+    private Long answer;    // QuestionChoice.id
 
     @NotNull
     @Column(length = 100)
