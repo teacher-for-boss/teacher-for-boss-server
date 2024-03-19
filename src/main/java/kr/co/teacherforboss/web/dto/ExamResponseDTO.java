@@ -81,4 +81,19 @@ public class ExamResponseDTO {
             }
         }
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetSolutionsDTO {
+        List<QuestionSolution> solutionList;
+
+        @Getter
+        @AllArgsConstructor
+        public static class QuestionSolution {
+            Long questionId;
+            String solution;
+        }
+    }
 }
