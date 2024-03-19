@@ -53,9 +53,7 @@ public class ExamQueryServiceImpl implements ExamQueryService {
     public List<ExamResponseDTO.GetExamRankInfoDTO.ExamRankInfo> getExamRankInfo(Long examId) {
         Member member = authCommandService.getMember();
         List<ExamResponseDTO.GetExamRankInfoDTO.ExamRankInfo> examRankInfos = new ArrayList<>();
-
-        List<MemberExam> top3 = memberExamRepository.findTop3ByExamIdAndStatus(examId, Status.ACTIVE,
-                Sort.by(Sort.Order.desc("score"), Sort.Order.asc("createdAt")));
+        List<MemberExam> top3 = memberExamRepository.findTop3ByExamId(examId);
 
         boolean inTop3 = false;
         for (int i = 0; i < top3.size(); i++) {
@@ -68,13 +66,12 @@ public class ExamQueryServiceImpl implements ExamQueryService {
         }
 
         if (!inTop3) {
-            MemberExam mine = memberExamRepository.findByMemberIdAndExamIdAndStatus(member.getId(), examId, Status.ACTIVE)
+            MemberExam mine = memberExamRepository.findRecentByMemberIdAndExamId(member.getId(), examId)
                     .orElseThrow(() -> new ExamHandler(ErrorStatus.MEMBER_EXAM_NOT_FOUND));
             Long rank = memberExamRepository.findRankById(mine.getId());
             examRankInfos.add(ExamConverter.toGetExamRankInfo(mine, rank, true));
         } else {
-            MemberExam last = memberExamRepository.findTop1ByExamIdAndStatus(examId, Status.ACTIVE,
-                    Sort.by(Sort.Order.asc("score"), Sort.Order.desc("createdAt")));
+            MemberExam last = memberExamRepository.findBottom1ByExamId(examId);
             Long rank = memberExamRepository.findRankById(last.getId());
             boolean isLastInTop3 = top3.stream().anyMatch(exam -> Objects.equals(exam.getId(), last.getId()));
             if (!isLastInTop3) {

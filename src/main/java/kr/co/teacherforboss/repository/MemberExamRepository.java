@@ -13,18 +13,48 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MemberExamRepository extends JpaRepository<MemberExam, Long> {
     boolean existsByMemberIdAndExamId(Long memberId, Long examId);
-
     Optional<MemberExam> findByMemberIdAndExamIdAndStatus(Long memberId, Long examId, Status status);
-    List<MemberExam> findTop3ByExamIdAndStatus(Long examId, Status status, Sort sort);
-    MemberExam findTop1ByExamIdAndStatus(Long examId, Status status, Sort sort);
 
-    @Query(value = "select me.ranking "
+    @Query(value = "select *"
+            + "from member_exam me "
+            + "where member_id = :memberId"
+            + "    and exam_id = :examId "
+            + "    and status = 'ACTIVE'"
+            + "order by created_at desc "
+            + "limit 1", nativeQuery = true)
+    Optional<MemberExam> findRecentByMemberIdAndExamId(@Param("memberId") Long memberId, @Param("examId") Long examId);
+
+    @Query(value = "select *"
+            + "from ("
+            + "    select *"
+            + "    from member_exam"
+            + "    where exam_id = :examId and status = 'ACTIVE'"
+            + "    group by member_id"
+            + "    having max(created_at)"
+            + "     ) as me1_0 "
+            + "order by me1_0.score desc, me1_0.time desc "
+            + "limit 3", nativeQuery = true)
+    List<MemberExam> findTop3ByExamId(@Param("examId") Long examId);
+
+    @Query(value = "select *"
+            + "from ("
+            + "    select *"
+            + "    from member_exam"
+            + "    where exam_id = :examId and status = 'ACTIVE'"
+            + "    group by member_id"
+            + "    having max(created_at)"
+            + "     ) as me1_0 "
+            + "order by me1_0.score, me1_0.time "
+            + "limit 1", nativeQuery = true)
+    MemberExam findBottom1ByExamId(@Param("examId") Long examId);
+
+    @Query(value = "select me1_0.ranking "
             + "from ("
             + "    select *, rank() over (order by score desc) as ranking"
             + "    from member_exam"
-            + "     ) as me "
-            + "where me.id = :id", nativeQuery = true)
+            + "    where status = 'ACTIVE'"
+            + "     ) as me1_0 "
+            + "where me1_0.id = :id", nativeQuery = true)
     Long findRankById(@Param("id") Long id);
-
 
 }
