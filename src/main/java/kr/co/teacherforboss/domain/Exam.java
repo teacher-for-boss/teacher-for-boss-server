@@ -30,6 +30,14 @@ public class Exam extends BaseEntity {
     @JoinColumn(name = "examCategoryId")
     private ExamCategory examCategory;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "examSubCategoryId")
+    private ExamSubCategory examSubCategory;
+
+    @NotNull
+    @Column(length = 60)
+    private String detail;
+
     @NotNull
     @Column(length = 30)
     private String name;
