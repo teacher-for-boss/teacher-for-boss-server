@@ -38,9 +38,10 @@ public class ExamConverter {
                 .build();
     }
 
-    public static ExamResponseDTO.GetExamResultDTO toGetExamResultDTO(int score, int questionNum,
+    public static ExamResponseDTO.GetExamResultDTO toGetExamResultDTO(long memberExamId, int score, int questionNum,
                                                                       int correctAnsNum, int incorrectAnsNum) {
         return ExamResponseDTO.GetExamResultDTO.builder()
+                .memberExamId(memberExamId)
                 .score(score)
                 .questionsNum(questionNum)
                 .correctAnsNum(correctAnsNum)
@@ -59,7 +60,7 @@ public class ExamConverter {
         return ExamResponseDTO.GetExamIncorrectAnswersResultDTO.builder()
                 .examIncorrectQuestionList(questions.stream().map(q ->
                         new ExamResponseDTO.GetExamIncorrectAnswersResultDTO.ExamIncorrectQuestion(
-                                q.getQuestionSequence(), q.getQuestionName()))
+                                q.getId(), q.getQuestionSequence(), q.getQuestionName()))
                         .toList()).build();
     }
 
