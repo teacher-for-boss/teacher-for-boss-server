@@ -9,7 +9,7 @@ import kr.co.teacherforboss.web.dto.ExamResponseDTO;
 public interface ExamCommandService {
     MemberExam takeExam(Long examId, ExamRequestDTO.TakeExamDTO request);
 
-    ExamResponseDTO.GetExamResultDTO getExamResult(Long examId);
+    ExamResponseDTO.GetExamResultDTO getExamResult(Long memberExamId);
 
-    List<Question> getExamIncorrectAnswers(Long examId);
+    List<Question> getExamIncorrectAnswers(Long memberExamId);
 }
