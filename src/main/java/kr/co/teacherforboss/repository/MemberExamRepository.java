@@ -2,6 +2,8 @@ package kr.co.teacherforboss.repository;
 
 import java.util.Optional;
 import java.util.List;
+
+import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.MemberExam;
 import kr.co.teacherforboss.domain.enums.Status;
 import org.springframework.data.domain.Sort;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MemberExamRepository extends JpaRepository<MemberExam, Long> {
+    Optional<MemberExam> findByIdAndMemberAndStatus(Long memberExamId, Member member, Status status);
     boolean existsByMemberIdAndExamId(Long memberId, Long examId);
     Optional<MemberExam> findByMemberIdAndExamIdAndStatus(Long memberId, Long examId, Status status);
 
