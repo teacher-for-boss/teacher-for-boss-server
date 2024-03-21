@@ -59,4 +59,10 @@ public class ExamController {
         List<Question> questions = examQueryService.getQuestions(examId, ExamConfig.EXAM_TYPE);
         return ApiResponse.onSuccess(ExamConverter.toGetQuestionsDTO(questions));
     }
+
+    @GetMapping("/{examId}/rank")
+    public ApiResponse<ExamResponseDTO.GetExamRankInfoDTO> getExamRankInfo(@PathVariable("examId") Long examId) {
+        List<ExamResponseDTO.GetExamRankInfoDTO.ExamRankInfo> rankInfos = examQueryService.getExamRankInfo(examId);
+        return ApiResponse.onSuccess(ExamConverter.toGetExamRankInfoDTO(rankInfos));
+    }
 }

@@ -81,4 +81,21 @@ public class ExamConverter {
 
         return new ExamResponseDTO.GetQuestionsDTO.QuestionInfo(question.getId(), question.getQuestionSequence(), question.getQuestionName(), choiceInfos);
     }
+
+    public static ExamResponseDTO.GetExamRankInfoDTO toGetExamRankInfoDTO(List<ExamResponseDTO.GetExamRankInfoDTO.ExamRankInfo> examRankInfos) {
+        return ExamResponseDTO.GetExamRankInfoDTO.builder()
+                .examRankList(examRankInfos)
+                .build();
+    }
+
+    public static ExamResponseDTO.GetExamRankInfoDTO.ExamRankInfo toGetExamRankInfo(MemberExam memberExam, Long rank, boolean isMine) {
+        return ExamResponseDTO.GetExamRankInfoDTO.ExamRankInfo.builder()
+                .rank(rank)
+                .memberId(memberExam.getMember().getId())
+                .name(memberExam.getMember().getName())
+                .profileImg(memberExam.getMember().getProfileImg())
+                .score(memberExam.getScore())
+                .isMine(isMine)
+                .build();
+    }
 }
