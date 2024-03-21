@@ -98,12 +98,12 @@ public class ExamCommandServiceImpl implements ExamCommandService {
         MemberExam memberExam = memberExamRepository.findByIdAndMemberAndStatus(memberExamId, member, Status.ACTIVE)
                 .orElseThrow(() -> new ExamHandler(ErrorStatus.MEMBER_EXAM_NOT_FOUND));
 
-        int questionsNum = questionRepository.countByExamIdAndStatus(memberExam.getExam().getId(), Status.ACTIVE);
+        int questionsNum =  memberExam.getExam().getQuestionList().size();
         int score = memberExam.getScore();
 
         List<MemberAnswer> memberAnswers = memberAnswerRepository.findAllByMemberExamIdAndStatus(memberExam.getId(), Status.ACTIVE);
         int correctAnsNum = memberAnswers.stream()
-                .filter(q -> q.getQuestion().getAnswer().equals(q.getQuestionChoice().getChoice())).mapToInt(e -> 1).sum();
+                .filter(q -> q.getQuestionChoice().isCorrect()).mapToInt(e -> 1).sum();
         int incorrectAnsNum = memberAnswers.size() - correctAnsNum;
 
         return ExamConverter.toGetExamResultDTO(memberExam.getId(), score, questionsNum, correctAnsNum, incorrectAnsNum);
