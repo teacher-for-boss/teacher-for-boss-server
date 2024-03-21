@@ -36,7 +36,7 @@ public class Exam extends BaseEntity {
 
     @NotNull
     @Column(length = 60)
-    private String detail;
+    private String description;
 
     @NotNull
     @Column(length = 30)
