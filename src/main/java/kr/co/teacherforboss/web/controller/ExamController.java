@@ -37,7 +37,7 @@ public class ExamController {
         return ApiResponse.onSuccess(ExamConverter.toTakeExamDTO(memberExam));
     }
 
-    @GetMapping("/{memberExamId}/result")
+    @GetMapping(" /member-exams/{memberExamId}/result")
     public ApiResponse<ExamResponseDTO.GetExamResultDTO> getExamResult(@PathVariable("memberExamId") Long memberExamId) {
         return ApiResponse.onSuccess(examCommandService.getExamResult(memberExamId));
     }
