@@ -101,4 +101,13 @@ public class ExamResponseDTO {
             boolean isMine;
         }
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetAverageDTO{
+        int averageScore;
+        int userScore;
+    }
 }

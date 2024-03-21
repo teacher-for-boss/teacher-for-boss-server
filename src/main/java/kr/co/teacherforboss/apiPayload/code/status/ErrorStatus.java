@@ -85,6 +85,8 @@ public enum ErrorStatus implements BaseErrorCode {
     EXAM_NOT_FOUND(NOT_FOUND, "EXAM4042", "시험 정보를 찾을 수 없습니다."),
     QUESTION_NOT_FOUND(NOT_FOUND, "EXAM4043", "입력한 ID 값에 해당되는 문제를 찾을 수 없습니다."),
     QUESTION_CHOICE_NOT_FOUND(NOT_FOUND, "EXAM4044", "입력한 ID 값에 해당되는 문제 선지를 찾을 수 없습니다."),
+    EXAM_AVERAGE_NOT_FOUND(NOT_FOUND, "EXAM4045", "같은 업종 사장님 평균 점수를 내기 위한 데이터가 없습니다."),
+    MEMBER_EXAM_HISTORY_NOT_FOUND(NOT_FOUND, "EXAM4046", "사용자가 시험을 치룬 내역이 없습니다."),
 
 
     // For test

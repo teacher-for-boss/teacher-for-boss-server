@@ -86,4 +86,17 @@ public class ExamQueryServiceImpl implements ExamQueryService {
         return examRankInfos;
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public ExamResponseDTO.GetAverageDTO getAverage(){
+        Member member = authCommandService.getMember();
+
+        Integer userScore = memberExamRepository.findAllByMemberId(member.getId())
+                .orElseThrow(() -> new ExamHandler(ErrorStatus.MEMBER_EXAM_HISTORY_NOT_FOUND));
+        Integer averageScore = memberExamRepository.findByMemberIdNot(member.getId())
+                .orElseThrow(() -> new ExamHandler(ErrorStatus.EXAM_AVERAGE_NOT_FOUND));
+
+        return ExamConverter.toGetAverageDTO(averageScore, userScore);
+    }
+
 }

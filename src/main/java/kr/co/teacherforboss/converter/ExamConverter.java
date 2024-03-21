@@ -97,4 +97,11 @@ public class ExamConverter {
                 .isMine(isMine)
                 .build();
     }
+
+    public static ExamResponseDTO.GetAverageDTO toGetAverageDTO(int averageScore, int userScore) {
+        return ExamResponseDTO.GetAverageDTO.builder()
+                .averageScore(averageScore)
+                .userScore(userScore)
+                .build();
+    }
 }

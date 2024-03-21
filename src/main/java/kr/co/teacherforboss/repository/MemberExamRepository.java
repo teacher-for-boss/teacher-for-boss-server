@@ -2,9 +2,9 @@ package kr.co.teacherforboss.repository;
 
 import java.util.Optional;
 import java.util.List;
+
 import kr.co.teacherforboss.domain.MemberExam;
 import kr.co.teacherforboss.domain.enums.Status;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -57,4 +57,13 @@ public interface MemberExamRepository extends JpaRepository<MemberExam, Long> {
             + "where me1_0.id = :id", nativeQuery = true)
     Long findRankById(@Param("id") Long id);
 
+    @Query(value = "select round(avg(me.score)) from member_exam me " +
+            "where me.member_id = :memberId " +
+            "and me.status = 'ACTIVE'", nativeQuery = true)
+    Optional<Integer> findAllByMemberId(@Param("memberId") Long memberId);
+
+    @Query(value = "select round(avg(me.score)) from member_exam me " +
+            "where me.member_id <> :memberId " +
+            "and me.status = 'ACTIVE'", nativeQuery = true)
+    Optional<Integer> findByMemberIdNot(@Param("memberId") Long memberId);
 }
