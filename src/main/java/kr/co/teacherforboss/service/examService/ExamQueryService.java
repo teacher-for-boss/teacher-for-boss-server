@@ -1,6 +1,7 @@
 package kr.co.teacherforboss.service.examService;
 
 import java.util.List;
+import kr.co.teacherforboss.domain.Exam;
 import kr.co.teacherforboss.domain.ExamCategory;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.enums.ExamType;
@@ -10,4 +11,5 @@ public interface ExamQueryService {
     List<ExamCategory> getExamCategories();
     List<Question> getQuestions(Long examId, ExamType examType);
     List<ExamResponseDTO.GetExamRankInfoDTO.ExamRankInfo> getExamRankInfo(Long examId);
+    List<Exam> getTakenExams();
 }

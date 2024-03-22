@@ -98,4 +98,10 @@ public class ExamConverter {
                 .isMine(isMine)
                 .build();
     }
+
+    public static ExamResponseDTO.GetTakenExamCountDTO toGetTakenExamCountDTO(List<Exam> exams) {
+        return ExamResponseDTO.GetTakenExamCountDTO.builder()
+                .takenExamsCount(exams.size())
+                .build();
+    }
 }
