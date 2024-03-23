@@ -20,5 +20,4 @@ public class ExamCategory extends BaseEntity {
     @NotNull
     @Column(length = 10)
     private String categoryName;
-
 }
