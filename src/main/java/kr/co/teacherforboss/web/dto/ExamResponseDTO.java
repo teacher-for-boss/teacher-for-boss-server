@@ -44,6 +44,28 @@ public class ExamResponseDTO {
         }
     }
 
+    @Getter
+    @AllArgsConstructor
+    public static class TagInfo {
+        private Long tagId;
+        private String tagName;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetTagsDTO {
+        private List<CategoryTags> tagsList;
+
+        @Getter
+        @AllArgsConstructor
+        public static class CategoryTags {
+            private String categoryName;
+            private List<TagInfo> tagsInfo;
+        }
+    }
+
     @Builder
     @Getter
     @NoArgsConstructor

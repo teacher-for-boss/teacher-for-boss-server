@@ -3,6 +3,8 @@ package kr.co.teacherforboss.converter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import kr.co.teacherforboss.domain.Exam;
 import kr.co.teacherforboss.domain.ExamCategory;
 import kr.co.teacherforboss.domain.Member;
@@ -10,7 +12,9 @@ import kr.co.teacherforboss.domain.MemberAnswer;
 import kr.co.teacherforboss.domain.MemberExam;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionChoice;
+import kr.co.teacherforboss.domain.Tag;
 import kr.co.teacherforboss.web.dto.ExamResponseDTO;
+import kr.co.teacherforboss.web.dto.ExamResponseDTO.TagInfo;
 
 public class ExamConverter {
 
@@ -54,6 +58,22 @@ public class ExamConverter {
                 .examCategoryList(examCategories.stream().map(examCategory ->
                         new ExamResponseDTO.GetExamCategoriesDTO.ExamCategoryInfo(examCategory.getId(), examCategory.getCategoryName())).toList())
                 .build();
+    }
+
+    public static ExamResponseDTO.GetTagsDTO toGetTagsDTO(List<Tag> tags) {
+        Map<String, List<TagInfo>> categoryTagMap = tags.stream()
+                .collect(Collectors.groupingBy(
+                        tag -> tag.getExamCategory().getCategoryName(),
+                        Collectors.mapping(
+                                tag -> new TagInfo(tag.getId(), tag.getTagName()),
+                                Collectors.toList())
+                ));
+
+        List<ExamResponseDTO.GetTagsDTO.CategoryTags> categoryTagsList = categoryTagMap.entrySet().stream()
+                .map(entry -> new ExamResponseDTO.GetTagsDTO.CategoryTags(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+
+        return new ExamResponseDTO.GetTagsDTO(categoryTagsList);
     }
 
     public static ExamResponseDTO.GetExamIncorrectAnswersResultDTO toGetExamAnsNotesDTO(List<Question> questions) {
