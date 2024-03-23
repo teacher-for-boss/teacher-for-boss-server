@@ -15,9 +15,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class ExamSubCategory extends BaseEntity {
+public class Tag extends BaseEntity {
 
     @NotNull
     @Column(length = 10)
-    private String subCategoryName;
+    private String tagName;
 }
