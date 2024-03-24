@@ -67,6 +67,7 @@ public interface MemberExamRepository extends JpaRepository<MemberExam, Long> {
 
     @Query(value = "select round(avg(me.score)) from member_exam me " +
             "where me.member_id <> :memberId " +
+            "and month(me.created_at) between :first and :last " +
             "and me.status = 'ACTIVE'", nativeQuery = true)
-    Optional<Integer> getAverageByMemberIdNot(@Param("memberId") Long memberId);
+    Optional<Integer> getAverageByMemberIdNot(@Param("memberId") Long memberId, @Param("first") int first, @Param("last") int last);
 }

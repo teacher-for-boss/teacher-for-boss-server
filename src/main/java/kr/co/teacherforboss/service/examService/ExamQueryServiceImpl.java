@@ -95,7 +95,7 @@ public class ExamQueryServiceImpl implements ExamQueryService {
 
         Integer userScore = memberExamRepository.getAverageByMemberId(member.getId(), examQuarter.getFirst(), examQuarter.getLast())
                 .orElseThrow(() -> new ExamHandler(ErrorStatus.MEMBER_EXAM_HISTORY_NOT_FOUND));
-        Integer averageScore = memberExamRepository.getAverageByMemberIdNot(member.getId())
+        Integer averageScore = memberExamRepository.getAverageByMemberIdNot(member.getId(), examQuarter.getFirst(), examQuarter.getLast())
                 .orElseThrow(() -> new ExamHandler(ErrorStatus.EXAM_AVERAGE_NOT_FOUND));
 
         return ExamConverter.toGetAverageDTO(averageScore, userScore);
