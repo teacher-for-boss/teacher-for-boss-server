@@ -73,6 +73,11 @@ public class ExamController {
         return ApiResponse.onSuccess(ExamConverter.toGetExamRankInfoDTO(rankInfos));
     }
 
+    @GetMapping("/average")
+    public ApiResponse<ExamResponseDTO.GetAverageDTO> getAverage() {
+        return ApiResponse.onSuccess(examQueryService.getAverage(ExamConfig.EXAM_QUARTER));
+    }
+  
     @GetMapping("/count")
     public ApiResponse<ExamResponseDTO.GetTakenExamCountDTO> getTakenExamCount() {
         List<Exam> takenExams = examQueryService.getTakenExams();

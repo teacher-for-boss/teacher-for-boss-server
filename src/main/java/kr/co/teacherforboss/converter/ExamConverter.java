@@ -106,6 +106,13 @@ public class ExamConverter {
                 .build();
     }
 
+    public static ExamResponseDTO.GetAverageDTO toGetAverageDTO(int averageScore, int userScore) {
+        return ExamResponseDTO.GetAverageDTO.builder()
+                .averageScore(averageScore)
+                .userScore(userScore)
+                .build();
+    }
+  
     public static ExamResponseDTO.GetTakenExamCountDTO toGetTakenExamCountDTO(List<Exam> exams) {
         return ExamResponseDTO.GetTakenExamCountDTO.builder()
                 .takenExamsCount(exams.size())

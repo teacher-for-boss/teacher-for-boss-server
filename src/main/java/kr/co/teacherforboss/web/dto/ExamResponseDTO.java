@@ -123,6 +123,15 @@ public class ExamResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class GetAverageDTO{
+        int averageScore;
+        int userScore;
+    }
+  
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor  
     public static class GetTakenExamCountDTO {
         int takenExamsCount;
     }
