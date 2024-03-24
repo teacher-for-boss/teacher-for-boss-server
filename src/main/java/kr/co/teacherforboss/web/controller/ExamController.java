@@ -56,13 +56,13 @@ public class ExamController {
 
     @GetMapping("/{examId}")
     public ApiResponse<ExamResponseDTO.GetQuestionsDTO> getQuestions(@PathVariable("examId") Long examId) {
-        List<Question> questions = examQueryService.getQuestions(examId, ExamConfig.EXAM_TYPE);
+        List<Question> questions = examQueryService.getQuestions(examId);
         return ApiResponse.onSuccess(ExamConverter.toGetQuestionsDTO(questions));
     }
 
     @GetMapping("/{examId}/solutions")
     public ApiResponse<ExamResponseDTO.GetSolutionsDTO> getSolutions(@PathVariable("examId") Long examId) {
-        List<Question> questions = examQueryService.getQuestions(examId, ExamConfig.EXAM_TYPE);
+        List<Question> questions = examQueryService.getQuestions(examId);
         return ApiResponse.onSuccess(ExamConverter.toGetSolutionsDTO(questions));
     }
     
