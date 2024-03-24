@@ -160,7 +160,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
     @Override
     public Member login(AuthRequestDTO.LoginDTO request) {
-        Member member = memberRepository.findByEmailAndStatusAndLoginType(request.getEmail(), Status.ACTIVE, LoginType.GENERAL)
+        Member member = memberRepository.findByEmailAndLoginTypeAndStatus(request.getEmail(), LoginType.GENERAL, Status.ACTIVE)
                 .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         String inputPw =  member.getPwSalt() + request.getPassword();
@@ -174,7 +174,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     public AuthResponseDTO.LogoutResultDTO logout(String accessToken, String email) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if(authentication == null || email.isEmpty()) {
+        if (authentication == null || email.isEmpty()) {
             throw new AuthHandler(ErrorStatus.INVALID_JWT_TOKEN);
         }
 
@@ -221,8 +221,8 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Transactional
     public Member socialLogin(AuthRequestDTO.SocialLoginDTO request, int socialType) {
         // TODO: 전화번호가 변경되었을 때 어떻게 처리할지
-        if (memberRepository.existsByEmailAndStatusAndLoginType(request.getEmail(), Status.ACTIVE, LoginType.of(socialType)))
-            return memberRepository.findByEmailAndStatusAndLoginType(request.getEmail(), Status.ACTIVE, LoginType.of(socialType))
+        if (memberRepository.existsByEmailAndLoginTypeAndStatus(request.getEmail(), LoginType.of(socialType), Status.ACTIVE))
+            return memberRepository.findByEmailAndLoginTypeAndStatus(request.getEmail(), LoginType.of(socialType), Status.ACTIVE)
                     .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         if (memberRepository.existsByEmailAndStatus(request.getEmail(), Status.ACTIVE))
