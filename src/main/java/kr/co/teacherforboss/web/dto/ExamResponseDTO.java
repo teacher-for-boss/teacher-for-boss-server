@@ -95,7 +95,8 @@ public class ExamResponseDTO {
         @AllArgsConstructor
         public static class QuestionSolution {
             Long questionId;
-            String solution; 
+            String solution;
+        }
     }
       
     public static class GetExamRankInfoDTO {
