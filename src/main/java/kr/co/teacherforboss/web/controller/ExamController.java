@@ -37,9 +37,9 @@ public class ExamController {
         return ApiResponse.onSuccess(ExamConverter.toTakeExamDTO(memberExam));
     }
 
-    @GetMapping("/{examId}/result")
-    public ApiResponse<ExamResponseDTO.GetExamResultDTO> getExamResult(@PathVariable("examId") Long examId) {
-        return ApiResponse.onSuccess(examCommandService.getExamResult(examId));
+    @GetMapping(" /member-exams/{memberExamId}/result")
+    public ApiResponse<ExamResponseDTO.GetExamResultDTO> getExamResult(@PathVariable("memberExamId") Long memberExamId) {
+        return ApiResponse.onSuccess(examCommandService.getExamResult(memberExamId));
     }
   
     @GetMapping("/category")
@@ -48,9 +48,9 @@ public class ExamController {
         return ApiResponse.onSuccess(ExamConverter.toGetExamCategoriesDTO(examCategories));
     }
 
-    @GetMapping("/{examId}/result/incorrect/list")
-    public ApiResponse<ExamResponseDTO.GetExamIncorrectAnswersResultDTO> getExamIncorrectAnswers(@PathVariable("examId") Long examId) {
-        List<Question> questions = examCommandService.getExamIncorrectAnswers(examId);
+    @GetMapping("/member-exams/{memberExamId}/result/incorrect/list")
+    public ApiResponse<ExamResponseDTO.GetExamIncorrectAnswersResultDTO> getExamIncorrectAnswers(@PathVariable("memberExamId") Long memberExamId) {
+        List<Question> questions = examCommandService.getExamIncorrectAnswers(memberExamId);
         return ApiResponse.onSuccess(ExamConverter.toGetExamAnsNotesDTO(questions));
     }
 
@@ -64,5 +64,11 @@ public class ExamController {
     public ApiResponse<ExamResponseDTO.GetSolutionsDTO> getSolutions(@PathVariable("examId") Long examId) {
         List<Question> questions = examQueryService.getQuestions(examId, ExamConfig.EXAM_TYPE);
         return ApiResponse.onSuccess(ExamConverter.toGetSolutionsDTO(questions));
+    }
+    
+    @GetMapping("/{examId}/rank")
+    public ApiResponse<ExamResponseDTO.GetExamRankInfoDTO> getExamRankInfo(@PathVariable("examId") Long examId) {
+        List<ExamResponseDTO.GetExamRankInfoDTO.ExamRankInfo> rankInfos = examQueryService.getExamRankInfo(examId);
+        return ApiResponse.onSuccess(ExamConverter.toGetExamRankInfoDTO(rankInfos));
     }
 }

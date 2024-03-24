@@ -38,9 +38,10 @@ public class ExamConverter {
                 .build();
     }
 
-    public static ExamResponseDTO.GetExamResultDTO toGetExamResultDTO(int score, int questionNum,
+    public static ExamResponseDTO.GetExamResultDTO toGetExamResultDTO(long memberExamId, int score, int questionNum,
                                                                       int correctAnsNum, int incorrectAnsNum) {
         return ExamResponseDTO.GetExamResultDTO.builder()
+                .memberExamId(memberExamId)
                 .score(score)
                 .questionsNum(questionNum)
                 .correctAnsNum(correctAnsNum)
@@ -59,7 +60,7 @@ public class ExamConverter {
         return ExamResponseDTO.GetExamIncorrectAnswersResultDTO.builder()
                 .examIncorrectQuestionList(questions.stream().map(q ->
                         new ExamResponseDTO.GetExamIncorrectAnswersResultDTO.ExamIncorrectQuestion(
-                                q.getQuestionSequence(), q.getQuestionName()))
+                                q.getId(), q.getQuestionSequence(), q.getQuestionName()))
                         .toList()).build();
     }
 
@@ -86,5 +87,22 @@ public class ExamConverter {
                 .solutionList(questions.stream().map(question ->
                         new ExamResponseDTO.GetSolutionsDTO.QuestionSolution(question.getId(), question.getCommentary()))
                         .toList()).build();
+    }
+  
+    public static ExamResponseDTO.GetExamRankInfoDTO toGetExamRankInfoDTO(List<ExamResponseDTO.GetExamRankInfoDTO.ExamRankInfo> examRankInfos) {
+        return ExamResponseDTO.GetExamRankInfoDTO.builder()
+                .examRankList(examRankInfos)
+                .build();
+    }
+
+    public static ExamResponseDTO.GetExamRankInfoDTO.ExamRankInfo toGetExamRankInfo(MemberExam memberExam, Long rank, boolean isMine) {
+        return ExamResponseDTO.GetExamRankInfoDTO.ExamRankInfo.builder()
+                .rank(rank)
+                .memberId(memberExam.getMember().getId())
+                .name(memberExam.getMember().getName())
+                .profileImg(memberExam.getMember().getProfileImg())
+                .score(memberExam.getScore())
+                .isMine(isMine)
+                .build();
     }
 }

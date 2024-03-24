@@ -22,6 +22,7 @@ public class ExamResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class GetExamResultDTO{
+        long memberExamId;
         int score;
         int questionsNum;
         int correctAnsNum;
@@ -53,6 +54,7 @@ public class ExamResponseDTO {
         @Getter
         @AllArgsConstructor
         public static class ExamIncorrectQuestion {
+            Long questionId;
             int questionSequence;
             String questionName;
         }
@@ -93,7 +95,22 @@ public class ExamResponseDTO {
         @AllArgsConstructor
         public static class QuestionSolution {
             Long questionId;
-            String solution;
+            String solution; 
+    }
+      
+    public static class GetExamRankInfoDTO {
+        List<ExamRankInfo> examRankList;
+
+        @Getter
+        @Builder
+        @AllArgsConstructor
+        public static class ExamRankInfo {
+            Long rank;
+            Long memberId;
+            String name;
+            String profileImg;
+            int score;
+            boolean isMine;
         }
     }
 }
