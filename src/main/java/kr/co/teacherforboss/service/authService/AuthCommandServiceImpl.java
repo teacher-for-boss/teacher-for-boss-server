@@ -202,7 +202,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         return memberRepository.findByEmail(SecurityUtil.getCurrentUserEmail())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
     }
-  
+
     @Override
     @Transactional
     public Member resetPassword(AuthRequestDTO.ResetPasswordDTO request) {
@@ -222,7 +222,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     public Member socialLogin(AuthRequestDTO.SocialLoginDTO request, int socialType) {
         // TODO: 전화번호가 변경되었을 때 어떻게 처리할지
         if (memberRepository.existsByEmailAndStatusAndLoginType(request.getEmail(), Status.ACTIVE, LoginType.of(socialType)))
-            return memberRepository.findByEmailAndStatusAndLoginType(request.getEmail(), Status.ACTIVE, LoginType.GENERAL)
+            return memberRepository.findByEmailAndStatusAndLoginType(request.getEmail(), Status.ACTIVE, LoginType.of(socialType))
                     .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         if (memberRepository.existsByEmailAndStatus(request.getEmail(), Status.ACTIVE))
