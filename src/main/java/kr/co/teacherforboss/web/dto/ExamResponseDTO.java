@@ -118,4 +118,12 @@ public class ExamResponseDTO {
             boolean isMine;
         }
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetTakenExamCountDTO {
+        int takenExamsCount;
+    }
 }

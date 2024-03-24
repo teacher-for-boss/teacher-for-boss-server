@@ -5,6 +5,7 @@ import java.util.List;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.config.ExamConfig;
 import kr.co.teacherforboss.converter.ExamConverter;
+import kr.co.teacherforboss.domain.Exam;
 import kr.co.teacherforboss.domain.ExamCategory;
 import kr.co.teacherforboss.domain.MemberExam;
 import kr.co.teacherforboss.domain.Question;
@@ -70,5 +71,11 @@ public class ExamController {
     public ApiResponse<ExamResponseDTO.GetExamRankInfoDTO> getExamRankInfo(@PathVariable("examId") Long examId) {
         List<ExamResponseDTO.GetExamRankInfoDTO.ExamRankInfo> rankInfos = examQueryService.getExamRankInfo(examId);
         return ApiResponse.onSuccess(ExamConverter.toGetExamRankInfoDTO(rankInfos));
+    }
+
+    @GetMapping("/count")
+    public ApiResponse<ExamResponseDTO.GetTakenExamCountDTO> getTakenExamCount() {
+        List<Exam> takenExams = examQueryService.getTakenExams();
+        return ApiResponse.onSuccess(ExamConverter.toGetTakenExamCountDTO(takenExams));
     }
 }
