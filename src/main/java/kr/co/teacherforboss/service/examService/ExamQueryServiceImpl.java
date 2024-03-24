@@ -10,6 +10,7 @@ import kr.co.teacherforboss.domain.ExamCategory;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.MemberExam;
 import kr.co.teacherforboss.domain.Question;
+import kr.co.teacherforboss.domain.enums.ExamQuarter;
 import kr.co.teacherforboss.domain.enums.ExamType;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.ExamCategoryRepository;
@@ -88,10 +89,10 @@ public class ExamQueryServiceImpl implements ExamQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public ExamResponseDTO.GetAverageDTO getAverage(){
+    public ExamResponseDTO.GetAverageDTO getAverage(ExamQuarter examQuarter){
         Member member = authCommandService.getMember();
 
-        Integer userScore = memberExamRepository.getAverageByMemberId(member.getId())
+        Integer userScore = memberExamRepository.getAverageByMemberId(member.getId(), examQuarter.getFirst(), examQuarter.getLast())
                 .orElseThrow(() -> new ExamHandler(ErrorStatus.MEMBER_EXAM_HISTORY_NOT_FOUND));
         Integer averageScore = memberExamRepository.getAverageByMemberIdNot(member.getId())
                 .orElseThrow(() -> new ExamHandler(ErrorStatus.EXAM_AVERAGE_NOT_FOUND));

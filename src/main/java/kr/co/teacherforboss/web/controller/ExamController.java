@@ -68,6 +68,6 @@ public class ExamController {
 
     @GetMapping("/average")
     public ApiResponse<ExamResponseDTO.GetAverageDTO> getAverage() {
-        return ApiResponse.onSuccess(examQueryService.getAverage());
+        return ApiResponse.onSuccess(examQueryService.getAverage(ExamConfig.EXAM_QUARTER));
     }
 }
