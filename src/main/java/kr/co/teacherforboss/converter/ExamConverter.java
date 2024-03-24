@@ -82,6 +82,13 @@ public class ExamConverter {
         return new ExamResponseDTO.GetQuestionsDTO.QuestionInfo(question.getId(), question.getQuestionSequence(), question.getQuestionName(), choiceInfos);
     }
 
+    public static ExamResponseDTO.GetSolutionsDTO toGetSolutionsDTO(List<Question> questions) {
+        return ExamResponseDTO.GetSolutionsDTO.builder()
+                .solutionList(questions.stream().map(question ->
+                        new ExamResponseDTO.GetSolutionsDTO.QuestionSolution(question.getId(), question.getCommentary()))
+                        .toList()).build();
+    }
+  
     public static ExamResponseDTO.GetExamRankInfoDTO toGetExamRankInfoDTO(List<ExamResponseDTO.GetExamRankInfoDTO.ExamRankInfo> examRankInfos) {
         return ExamResponseDTO.GetExamRankInfoDTO.builder()
                 .examRankList(examRankInfos)
