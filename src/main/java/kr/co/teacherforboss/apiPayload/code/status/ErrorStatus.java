@@ -48,7 +48,6 @@ public enum ErrorStatus implements BaseErrorCode {
 
     MEMBER_NOT_FOUND(NOT_FOUND, "MEMBER4041", "사용자가 없습니다."),
 
-
     // Survey
     SURVEY_DUPLICATE(BAD_REQUEST, "SURVEY4001", "이미 사전정보가 존재합니다."),
 
