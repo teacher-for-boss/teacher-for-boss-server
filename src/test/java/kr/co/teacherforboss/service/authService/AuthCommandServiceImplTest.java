@@ -8,13 +8,12 @@ import java.util.Optional;
 
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.GeneralException;
-import kr.co.teacherforboss.converter.AuthConverter;
+import kr.co.teacherforboss.domain.AgreementTerm;
 import kr.co.teacherforboss.domain.EmailAuth;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.PhoneAuth;
 import kr.co.teacherforboss.domain.enums.Purpose;
 import kr.co.teacherforboss.domain.enums.Status;
-import kr.co.teacherforboss.domain.mapping.AgreementTerm;
 import kr.co.teacherforboss.domain.vo.mailVO.CodeMail;
 import kr.co.teacherforboss.domain.vo.mailVO.Mail;
 import kr.co.teacherforboss.repository.AgreementTermRepository;
@@ -38,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.will;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
@@ -222,7 +222,7 @@ public class AuthCommandServiceImplTest {
         // given
         EmailAuth emailAuth = authTestUtil.generateFindPwCheckEmailAuthDummy("email@gmail.com");
         Member member = authTestUtil.generateMemberDummy();
-        AuthRequestDTO.FindPasswordDTO request = toFindPassword(emailAuth.getId());
+        AuthRequestDTO.FindPasswordDTO request = toFindPassword(1L);
 
         doReturn(Optional.of(emailAuth)).when(emailAuthRepository).findById(anyLong());
         doReturn(true).when(emailAuthRepository)
