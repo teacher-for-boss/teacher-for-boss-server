@@ -98,7 +98,11 @@ public class ExamResponseDTO {
             String solution;
         }
     }
-      
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class GetExamRankInfoDTO {
         List<ExamRankInfo> examRankList;
 
