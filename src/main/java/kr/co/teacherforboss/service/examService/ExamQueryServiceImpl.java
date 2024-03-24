@@ -6,6 +6,7 @@ import java.util.Objects;
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.ExamHandler;
 import kr.co.teacherforboss.converter.ExamConverter;
+import kr.co.teacherforboss.domain.Exam;
 import kr.co.teacherforboss.domain.ExamCategory;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.MemberExam;
@@ -42,7 +43,7 @@ public class ExamQueryServiceImpl implements ExamQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Question> getQuestions(Long examId, ExamType examType) {
+    public List<Question> getQuestions(Long examId) {
         if (!examRepository.existsByIdAndStatus(examId, Status.ACTIVE))
             throw new ExamHandler(ErrorStatus.EXAM_NOT_FOUND);
 
@@ -98,6 +99,14 @@ public class ExamQueryServiceImpl implements ExamQueryService {
                 .orElseThrow(() -> new ExamHandler(ErrorStatus.EXAM_AVERAGE_NOT_FOUND));
 
         return ExamConverter.toGetAverageDTO(averageScore, userScore);
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public List<Exam> getTakenExams() {
+        Member member = authCommandService.getMember();
+        List<Exam> exams = examRepository.findAllTakenExamByMemberId(member.getId());
+        return exams;
     }
 
 }

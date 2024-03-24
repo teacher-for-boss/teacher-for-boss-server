@@ -88,6 +88,21 @@ public class ExamResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class GetSolutionsDTO {
+        List<QuestionSolution> solutionList;
+
+        @Getter
+        @AllArgsConstructor
+        public static class QuestionSolution {
+            Long questionId;
+            String solution;
+        }
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class GetExamRankInfoDTO {
         List<ExamRankInfo> examRankList;
 
@@ -111,5 +126,13 @@ public class ExamResponseDTO {
     public static class GetAverageDTO{
         int averageScore;
         int userScore;
+    }
+  
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor  
+    public static class GetTakenExamCountDTO {
+        int takenExamsCount;
     }
 }
