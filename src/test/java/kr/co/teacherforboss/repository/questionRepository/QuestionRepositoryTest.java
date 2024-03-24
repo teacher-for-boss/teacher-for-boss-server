@@ -16,9 +16,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 
-import static org.assertj.core.api.FactoryBasedNavigableListAssert.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 class QuestionRepositoryTest {
@@ -39,8 +38,8 @@ class QuestionRepositoryTest {
         // given
         Exam exam = examTestUtil.generateExam(ExamType.MID);
         List<Question> questionList = new ArrayList<>();
-        IntStream.rangeClosed(1, 1000000)
-                .forEach(i -> questionList.add(examTestUtil.generateQuestion(exam, "문제" + i, "답" + i)));
+        LongStream.rangeClosed(1, 1000000)
+                .forEach(i -> questionList.add(examTestUtil.generateQuestion(exam, "문제" + i, i)));
         exam.setQuestionList(questionList);
 
         examRepository.save(exam);
