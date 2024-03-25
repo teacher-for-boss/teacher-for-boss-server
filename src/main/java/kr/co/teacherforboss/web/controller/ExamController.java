@@ -50,15 +50,10 @@ public class ExamController {
         return ApiResponse.onSuccess(ExamConverter.toGetExamCategoriesDTO(examCategories));
     }
 
-    @GetMapping("/category/tags")
-    public ApiResponse<ExamResponseDTO.GetTagsDTO> getTags() {
-        List<Tag> tags = examQueryService.getTags();
+    @GetMapping("/{examCategoryId}/tags")
+    public ApiResponse<ExamResponseDTO.GetTagsDTO> getTags(@PathVariable("examCategoryId") Long examCategoryId) {
+        List<Tag> tags = examQueryService.getTags(examCategoryId);
         return ApiResponse.onSuccess(ExamConverter.toGetTagsDTO(tags));
-    }
-
-    @GetMapping("/list/{categoryId}/{tagId}")
-    public void getExams() {
-        return;
     }
 
     @GetMapping("/member-exams/{memberExamId}/result/incorrect/list")

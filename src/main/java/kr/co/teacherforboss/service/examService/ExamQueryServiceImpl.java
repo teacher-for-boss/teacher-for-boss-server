@@ -46,8 +46,8 @@ public class ExamQueryServiceImpl implements ExamQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Tag> getTags() {
-        return tagRepository.findTagsByStatus(Status.ACTIVE);
+    public List<Tag> getTags(Long examCategoryId) {
+        return tagRepository.findTagsByExamCategoryIdAndStatus(examCategoryId, Status.ACTIVE);
     }
 
     @Override

@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface TagRepository extends JpaRepository<Tag, Long> {
-    List<Tag> findTagsByStatus(Status status);
+    List<Tag> findTagsByExamCategoryIdAndStatus(Long categoryId, Status status);
 }

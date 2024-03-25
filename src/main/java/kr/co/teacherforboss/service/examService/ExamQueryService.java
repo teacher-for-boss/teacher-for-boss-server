@@ -12,7 +12,7 @@ import kr.co.teacherforboss.web.dto.ExamResponseDTO;
 
 public interface ExamQueryService {
     List<ExamCategory> getExamCategories();
-    List<Tag> getTags();
+    List<Tag> getTags(Long categoryId);
     List<Question> getQuestions(Long examId);
     List<ExamResponseDTO.GetExamRankInfoDTO.ExamRankInfo> getExamRankInfo(Long examId);
     ExamResponseDTO.GetAverageDTO getAverage(ExamQuarter examQuarter);
