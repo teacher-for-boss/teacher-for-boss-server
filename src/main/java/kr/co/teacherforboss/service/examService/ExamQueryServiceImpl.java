@@ -52,7 +52,7 @@ public class ExamQueryServiceImpl implements ExamQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Question> getQuestions(Long examId, ExamType examType) {
+    public List<Question> getQuestions(Long examId) {
         if (!examRepository.existsByIdAndStatus(examId, Status.ACTIVE))
             throw new ExamHandler(ErrorStatus.EXAM_NOT_FOUND);
 
