@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.util;
 
+import kr.co.teacherforboss.domain.AgreementTerm;
 import kr.co.teacherforboss.domain.EmailAuth;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.PhoneAuth;
@@ -7,7 +8,6 @@ import kr.co.teacherforboss.domain.enums.Gender;
 import kr.co.teacherforboss.domain.enums.LoginType;
 import kr.co.teacherforboss.domain.enums.Purpose;
 import kr.co.teacherforboss.domain.enums.Role;
-import kr.co.teacherforboss.domain.mapping.AgreementTerm;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

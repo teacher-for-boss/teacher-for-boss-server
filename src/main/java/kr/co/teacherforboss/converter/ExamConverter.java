@@ -102,6 +102,13 @@ public class ExamConverter {
         return new ExamResponseDTO.GetQuestionsDTO.QuestionInfo(question.getId(), question.getQuestionSequence(), question.getQuestionName(), choiceInfos);
     }
 
+    public static ExamResponseDTO.GetSolutionsDTO toGetSolutionsDTO(List<Question> questions) {
+        return ExamResponseDTO.GetSolutionsDTO.builder()
+                .solutionList(questions.stream().map(question ->
+                        new ExamResponseDTO.GetSolutionsDTO.QuestionSolution(question.getId(), question.getCommentary()))
+                        .toList()).build();
+    }
+  
     public static ExamResponseDTO.GetExamRankInfoDTO toGetExamRankInfoDTO(List<ExamResponseDTO.GetExamRankInfoDTO.ExamRankInfo> examRankInfos) {
         return ExamResponseDTO.GetExamRankInfoDTO.builder()
                 .examRankList(examRankInfos)
@@ -116,6 +123,19 @@ public class ExamConverter {
                 .profileImg(memberExam.getMember().getProfileImg())
                 .score(memberExam.getScore())
                 .isMine(isMine)
+                .build();
+    }
+
+    public static ExamResponseDTO.GetAverageDTO toGetAverageDTO(int averageScore, int userScore) {
+        return ExamResponseDTO.GetAverageDTO.builder()
+                .averageScore(averageScore)
+                .userScore(userScore)
+                .build();
+    }
+  
+    public static ExamResponseDTO.GetTakenExamCountDTO toGetTakenExamCountDTO(List<Exam> exams) {
+        return ExamResponseDTO.GetTakenExamCountDTO.builder()
+                .takenExamsCount(exams.size())
                 .build();
     }
 }

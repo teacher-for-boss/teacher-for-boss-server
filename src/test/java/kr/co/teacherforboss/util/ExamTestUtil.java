@@ -25,7 +25,7 @@ public class ExamTestUtil {
                 .build();
     }
 
-    public Question generateQuestion(Exam exam, String questionName, String answer) {
+    public Question generateQuestion(Exam exam, String questionName, Long answer) {
         return Question.builder()
                 .exam(exam)
                 .questionName(questionName)

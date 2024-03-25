@@ -5,6 +5,7 @@ import java.util.List;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.config.ExamConfig;
 import kr.co.teacherforboss.converter.ExamConverter;
+import kr.co.teacherforboss.domain.Exam;
 import kr.co.teacherforboss.domain.ExamCategory;
 import kr.co.teacherforboss.domain.MemberExam;
 import kr.co.teacherforboss.domain.Question;
@@ -55,6 +56,11 @@ public class ExamController {
         return ApiResponse.onSuccess(ExamConverter.toGetTagsDTO(tags));
     }
 
+    @GetMapping("/list/{categoryId}/{tagId}")
+    public void getExams() {
+        return;
+    }
+
     @GetMapping("/member-exams/{memberExamId}/result/incorrect/list")
     public ApiResponse<ExamResponseDTO.GetExamIncorrectAnswersResultDTO> getExamIncorrectAnswers(@PathVariable("memberExamId") Long memberExamId) {
         List<Question> questions = examCommandService.getExamIncorrectAnswers(memberExamId);
@@ -63,13 +69,30 @@ public class ExamController {
 
     @GetMapping("/{examId}")
     public ApiResponse<ExamResponseDTO.GetQuestionsDTO> getQuestions(@PathVariable("examId") Long examId) {
-        List<Question> questions = examQueryService.getQuestions(examId, ExamConfig.EXAM_TYPE);
+        List<Question> questions = examQueryService.getQuestions(examId);
         return ApiResponse.onSuccess(ExamConverter.toGetQuestionsDTO(questions));
     }
 
+    @GetMapping("/{examId}/solutions")
+    public ApiResponse<ExamResponseDTO.GetSolutionsDTO> getSolutions(@PathVariable("examId") Long examId) {
+        List<Question> questions = examQueryService.getQuestions(examId);
+        return ApiResponse.onSuccess(ExamConverter.toGetSolutionsDTO(questions));
+    }
+    
     @GetMapping("/{examId}/rank")
     public ApiResponse<ExamResponseDTO.GetExamRankInfoDTO> getExamRankInfo(@PathVariable("examId") Long examId) {
         List<ExamResponseDTO.GetExamRankInfoDTO.ExamRankInfo> rankInfos = examQueryService.getExamRankInfo(examId);
         return ApiResponse.onSuccess(ExamConverter.toGetExamRankInfoDTO(rankInfos));
+    }
+
+    @GetMapping("/average")
+    public ApiResponse<ExamResponseDTO.GetAverageDTO> getAverage() {
+        return ApiResponse.onSuccess(examQueryService.getAverage(ExamConfig.EXAM_QUARTER));
+    }
+  
+    @GetMapping("/count")
+    public ApiResponse<ExamResponseDTO.GetTakenExamCountDTO> getTakenExamCount() {
+        List<Exam> takenExams = examQueryService.getTakenExams();
+        return ApiResponse.onSuccess(ExamConverter.toGetTakenExamCountDTO(takenExams));
     }
 }
