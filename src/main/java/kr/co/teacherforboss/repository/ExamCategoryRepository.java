@@ -8,5 +8,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ExamCategoryRepository extends JpaRepository<ExamCategory, Long> {
+
+    boolean existsByIdAndStatus(Long id, Status status);
     List<ExamCategory> findExamCategoriesByStatus(Status status);
 }
