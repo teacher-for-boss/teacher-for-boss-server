@@ -48,6 +48,22 @@ public class ExamResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class GetTagsDTO {
+        private List<TagInfo> tagsList;
+
+        @Builder
+        @Getter
+        @AllArgsConstructor
+        public static class TagInfo {
+            private Long tagId;
+            private String tagName;
+        }
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class GetExamIncorrectAnswersResultDTO {
         List<ExamIncorrectQuestion> examIncorrectQuestionList;
 

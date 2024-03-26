@@ -10,6 +10,7 @@ import kr.co.teacherforboss.domain.MemberAnswer;
 import kr.co.teacherforboss.domain.MemberExam;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionChoice;
+import kr.co.teacherforboss.domain.Tag;
 import kr.co.teacherforboss.web.dto.ExamResponseDTO;
 
 public class ExamConverter {
@@ -56,6 +57,13 @@ public class ExamConverter {
                 .build();
     }
 
+    public static ExamResponseDTO.GetTagsDTO toGetTagsDTO(List<Tag> tags) {
+        return ExamResponseDTO.GetTagsDTO.builder()
+                .tagsList(tags.stream().map(tag ->
+                        new ExamResponseDTO.GetTagsDTO.TagInfo(tag.getId(), tag.getTagName()))
+                        .toList()).build();
+    }
+
     public static ExamResponseDTO.GetExamIncorrectAnswersResultDTO toGetExamAnsNotesDTO(List<Question> questions) {
         return ExamResponseDTO.GetExamIncorrectAnswersResultDTO.builder()
                 .examIncorrectQuestionList(questions.stream().map(q ->
@@ -88,7 +96,7 @@ public class ExamConverter {
                         new ExamResponseDTO.GetSolutionsDTO.QuestionSolution(question.getId(), question.getCommentary()))
                         .toList()).build();
     }
-  
+
     public static ExamResponseDTO.GetExamRankInfoDTO toGetExamRankInfoDTO(List<ExamResponseDTO.GetExamRankInfoDTO.ExamRankInfo> examRankInfos) {
         return ExamResponseDTO.GetExamRankInfoDTO.builder()
                 .examRankList(examRankInfos)

@@ -9,6 +9,7 @@ import kr.co.teacherforboss.domain.Exam;
 import kr.co.teacherforboss.domain.ExamCategory;
 import kr.co.teacherforboss.domain.MemberExam;
 import kr.co.teacherforboss.domain.Question;
+import kr.co.teacherforboss.domain.Tag;
 import kr.co.teacherforboss.service.examService.ExamCommandService;
 import kr.co.teacherforboss.service.examService.ExamQueryService;
 import kr.co.teacherforboss.web.dto.ExamRequestDTO;
@@ -47,6 +48,12 @@ public class ExamController {
     public ApiResponse<ExamResponseDTO.GetExamCategoriesDTO> getExamCategories() {
         List<ExamCategory> examCategories = examQueryService.getExamCategories();
         return ApiResponse.onSuccess(ExamConverter.toGetExamCategoriesDTO(examCategories));
+    }
+
+    @GetMapping("/{examCategoryId}/tags")
+    public ApiResponse<ExamResponseDTO.GetTagsDTO> getTags(@PathVariable("examCategoryId") Long examCategoryId) {
+        List<Tag> tags = examQueryService.getTags(examCategoryId);
+        return ApiResponse.onSuccess(ExamConverter.toGetTagsDTO(tags));
     }
 
     @GetMapping("/member-exams/{memberExamId}/result/incorrect/list")

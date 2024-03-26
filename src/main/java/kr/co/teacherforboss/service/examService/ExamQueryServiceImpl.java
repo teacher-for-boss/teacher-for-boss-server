@@ -11,13 +11,14 @@ import kr.co.teacherforboss.domain.ExamCategory;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.MemberExam;
 import kr.co.teacherforboss.domain.Question;
+import kr.co.teacherforboss.domain.Tag;
 import kr.co.teacherforboss.domain.enums.ExamQuarter;
-import kr.co.teacherforboss.domain.enums.ExamType;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.ExamCategoryRepository;
 import kr.co.teacherforboss.repository.ExamRepository;
 import kr.co.teacherforboss.repository.MemberExamRepository;
 import kr.co.teacherforboss.repository.QuestionRepository;
+import kr.co.teacherforboss.repository.TagRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.web.dto.ExamResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -34,11 +35,21 @@ public class ExamQueryServiceImpl implements ExamQueryService {
     private final QuestionRepository questionRepository;
     private final MemberExamRepository memberExamRepository;
     private final AuthCommandService authCommandService;
+    private final TagRepository tagRepository;
 
     @Override
     @Transactional(readOnly = true)
     public List<ExamCategory> getExamCategories() {
         return examCategoryRepository.findExamCategoriesByStatus(Status.ACTIVE);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Tag> getTags(Long examCategoryId) {
+        if (!examCategoryRepository.existsByIdAndStatus(examCategoryId, Status.ACTIVE))
+            throw new ExamHandler(ErrorStatus.EXAM_CATEGORY_NOT_FOUND);
+
+        return tagRepository.findTagsByExamCategoryIdAndStatus(examCategoryId, Status.ACTIVE);
     }
 
     @Override
@@ -100,7 +111,7 @@ public class ExamQueryServiceImpl implements ExamQueryService {
 
         return ExamConverter.toGetAverageDTO(averageScore, userScore);
     }
-    
+
     @Override
     @Transactional(readOnly = true)
     public List<Exam> getTakenExams() {
@@ -108,5 +119,4 @@ public class ExamQueryServiceImpl implements ExamQueryService {
         List<Exam> exams = examRepository.findAllTakenExamByMemberId(member.getId());
         return exams;
     }
-
 }
