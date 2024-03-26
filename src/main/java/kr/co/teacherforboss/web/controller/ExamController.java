@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -59,10 +60,10 @@ public class ExamController {
         return ApiResponse.onSuccess(ExamConverter.toGetTagsDTO(tags));
     }
 
-    @GetMapping("/list/{examCategoryId}/{tagId}")
+    @GetMapping("/list/{examCategoryId}")
     public ApiResponse<ExamResponseDTO.GetExamsDTO> getExams(@PathVariable("examCategoryId") Long examCategoryId,
-                                                            @PathVariable("tagId") Long tagId,
-                                                            @ExistPrincipalDetails @AuthenticationPrincipal PrincipalDetails principalDetails) {
+                                                             @RequestParam("tagId") Long tagId,
+                                                             @ExistPrincipalDetails @AuthenticationPrincipal PrincipalDetails principalDetails) {
         List<ExamResponseDTO.GetExamsDTO.ExamInfo> examInfos = examQueryService.getExams(principalDetails.getMemberId(), examCategoryId, tagId);
         return ApiResponse.onSuccess(ExamConverter.toGetExamsDTO(examInfos));
     }
