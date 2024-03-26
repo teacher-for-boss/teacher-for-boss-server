@@ -57,17 +57,11 @@ public class ExamConverter {
                 .build();
     }
 
-    public static ExamResponseDTO.GetTagsDTO.TagInfo toGetTagInfo(Tag tag) {
-        return ExamResponseDTO.GetTagsDTO.TagInfo.builder()
-                .tagId(tag.getId())
-                .tagName(tag.getTagName())
-                .build();
-    }
-
-    public static ExamResponseDTO.GetTagsDTO toGetTagsDTO(List<ExamResponseDTO.GetTagsDTO.TagInfo> tagInfos) {
+    public static ExamResponseDTO.GetTagsDTO toGetTagsDTO(List<Tag> tags) {
         return ExamResponseDTO.GetTagsDTO.builder()
-                .tagsList(tagInfos)
-                .build();
+                .tagsList(tags.stream().map(tag ->
+                        new ExamResponseDTO.GetTagsDTO.TagInfo(tag.getId(), tag.getTagName()))
+                        .toList()).build();
     }
 
     public static ExamResponseDTO.GetExamIncorrectAnswersResultDTO toGetExamAnsNotesDTO(List<Question> questions) {
