@@ -55,6 +55,13 @@ public class ExamQueryServiceImpl implements ExamQueryService {
     @Override
     @Transactional(readOnly = true)
     public List<ExamResponseDTO.GetExamsDTO.ExamInfo> getExams(Long memberId, Long examCategoryId, Long tagId) {
+        if(!examCategoryRepository.existsByIdAndStatus(examCategoryId, Status.ACTIVE)) {
+            throw new ExamHandler(ErrorStatus.EXAM_CATEGORY_NOT_FOUND);
+        }
+        if(!tagRepository.existsByIdAndStatus(tagId, Status.ACTIVE)) {
+            throw new ExamHandler(ErrorStatus.EXAM_TAG_NOT_FOUND);
+        }
+
         List<ExamResponseDTO.GetExamsDTO.ExamInfo> examInfos = new ArrayList<>();
         List<Exam> examList = examRepository.findByExamCategoryIdAndTagIdAndStatus(examCategoryId, tagId, Status.ACTIVE);
 
