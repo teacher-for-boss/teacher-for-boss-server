@@ -74,7 +74,6 @@ public class ExamResponseDTO {
             private Long examId;
             private String examName;
             private String examDescription;
-            private String tagName;
             private boolean examYN;
             private Boolean examPassYN;
             private Integer examScore;

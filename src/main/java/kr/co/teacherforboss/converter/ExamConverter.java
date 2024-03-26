@@ -75,7 +75,6 @@ public class ExamConverter {
                 .examId(exam.getId())
                 .examName(exam.getName())
                 .examDescription(exam.getDescription())
-                .tagName(exam.getTag().getTagName())
                 .examYN(isTakenExam)
                 .examPassYN(isPassed)
                 .examScore(score)
