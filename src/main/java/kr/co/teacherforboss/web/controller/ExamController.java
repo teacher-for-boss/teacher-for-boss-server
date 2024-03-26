@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.config.ExamConfig;
+import kr.co.teacherforboss.config.jwt.PrincipalDetails;
 import kr.co.teacherforboss.converter.ExamConverter;
 import kr.co.teacherforboss.domain.Exam;
 import kr.co.teacherforboss.domain.ExamCategory;
@@ -12,10 +13,12 @@ import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.Tag;
 import kr.co.teacherforboss.service.examService.ExamCommandService;
 import kr.co.teacherforboss.service.examService.ExamQueryService;
+import kr.co.teacherforboss.validation.annotation.ExistPrincipalDetails;
 import kr.co.teacherforboss.web.dto.ExamRequestDTO;
 import kr.co.teacherforboss.web.dto.ExamResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,6 +57,14 @@ public class ExamController {
     public ApiResponse<ExamResponseDTO.GetTagsDTO> getTags(@PathVariable("examCategoryId") Long examCategoryId) {
         List<Tag> tags = examQueryService.getTags(examCategoryId);
         return ApiResponse.onSuccess(ExamConverter.toGetTagsDTO(tags));
+    }
+
+    @GetMapping("/list/{examCategoryId}/{tagId}")
+    public ApiResponse<ExamResponseDTO.GetExamsDTO> getExams(@PathVariable("examCategoryId") Long examCategoryId,
+                                                            @PathVariable("tagId") Long tagId,
+                                                            @ExistPrincipalDetails @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        List<ExamResponseDTO.GetExamsDTO.ExamInfo> examInfos = examQueryService.getExams(principalDetails.getMemberId(), examCategoryId, tagId);
+        return ApiResponse.onSuccess(ExamConverter.toGetExamsDTO(examInfos));
     }
 
     @GetMapping("/member-exams/{memberExamId}/result/incorrect/list")

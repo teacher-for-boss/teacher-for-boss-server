@@ -13,7 +13,6 @@ import kr.co.teacherforboss.domain.MemberExam;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.Tag;
 import kr.co.teacherforboss.domain.enums.ExamQuarter;
-import kr.co.teacherforboss.domain.enums.ExamType;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.ExamCategoryRepository;
 import kr.co.teacherforboss.repository.ExamRepository;
@@ -48,6 +47,31 @@ public class ExamQueryServiceImpl implements ExamQueryService {
     @Transactional(readOnly = true)
     public List<Tag> getTags(Long examCategoryId) {
         return tagRepository.findTagsByExamCategoryIdAndStatus(examCategoryId, Status.ACTIVE);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ExamResponseDTO.GetExamsDTO.ExamInfo> getExams(Long memberId, Long examCategoryId, Long tagId) {
+        List<ExamResponseDTO.GetExamsDTO.ExamInfo> examInfos = new ArrayList<>();
+        List<Exam> examList = examRepository.findByExamCategoryIdAndTagIdAndStatus(examCategoryId, tagId, Status.ACTIVE);
+
+        for (Exam exam : examList) {
+            MemberExam memberExam = memberExamRepository.findByMemberIdAndExamIdAndStatus(memberId, exam.getId(), Status.ACTIVE);
+
+            boolean isTakenExam = memberExam != null;
+            Integer score = null;
+            Boolean isPassed = null;
+
+            if (isTakenExam) {
+                score = memberExam.getScore();
+                isPassed = score >= 70;
+            }
+
+            ExamResponseDTO.GetExamsDTO.ExamInfo examInfo = ExamConverter.toGetExamInfo(exam, isTakenExam, isPassed, score);
+            examInfos.add(examInfo);
+        }
+
+        return examInfos;
     }
 
     @Override

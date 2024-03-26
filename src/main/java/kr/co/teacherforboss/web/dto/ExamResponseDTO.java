@@ -70,6 +70,27 @@ public class ExamResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class GetExamsDTO {
+        List<ExamInfo> examList;
+
+        @Builder
+        @Getter
+        @AllArgsConstructor
+        public static class ExamInfo {
+            private String name;
+            private String description;
+            private String tagName;
+            private String examCategoryName;
+            private boolean isTakenExam;
+            private Boolean isPassed;
+            private Integer score;
+        }
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class GetExamIncorrectAnswersResultDTO {
         List<ExamIncorrectQuestion> examIncorrectQuestionList;
 

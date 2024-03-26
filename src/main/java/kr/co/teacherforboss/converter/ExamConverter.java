@@ -76,6 +76,24 @@ public class ExamConverter {
         return new ExamResponseDTO.GetTagsDTO(categoryTagsList);
     }
 
+    public static ExamResponseDTO.GetExamsDTO toGetExamsDTO(List<ExamResponseDTO.GetExamsDTO.ExamInfo> examInfos) {
+        return ExamResponseDTO.GetExamsDTO.builder()
+                .examList(examInfos)
+                .build();
+    }
+
+    public static ExamResponseDTO.GetExamsDTO.ExamInfo toGetExamInfo(Exam exam, boolean isTakenExam, Boolean isPassed, Integer score) {
+        return ExamResponseDTO.GetExamsDTO.ExamInfo.builder()
+                .name(exam.getName())
+                .description(exam.getDescription())
+                .tagName(exam.getTag().getTagName())
+                .examCategoryName(exam.getExamCategory().getCategoryName())
+                .isTakenExam(isTakenExam)
+                .isPassed(isPassed)
+                .score(score)
+                .build();
+    }
+
     public static ExamResponseDTO.GetExamIncorrectAnswersResultDTO toGetExamAnsNotesDTO(List<Question> questions) {
         return ExamResponseDTO.GetExamIncorrectAnswersResultDTO.builder()
                 .examIncorrectQuestionList(questions.stream().map(q ->
