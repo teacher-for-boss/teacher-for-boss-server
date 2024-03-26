@@ -73,6 +73,7 @@ public class ExamConverter {
     public static ExamResponseDTO.GetExamsDTO.ExamInfo toGetExamInfo(Exam exam, boolean isTakenExam, Boolean isPassed, Integer score) {
         return ExamResponseDTO.GetExamsDTO.ExamInfo.builder()
                 .examId(exam.getId())
+                .tagName(exam.getTag().getTagName())
                 .examName(exam.getName())
                 .examDescription(exam.getDescription())
                 .examYN(isTakenExam)

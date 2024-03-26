@@ -72,6 +72,7 @@ public class ExamResponseDTO {
         @AllArgsConstructor
         public static class ExamInfo {
             private Long examId;
+            private String tagName;
             private String examName;
             private String examDescription;
             private boolean examYN;
