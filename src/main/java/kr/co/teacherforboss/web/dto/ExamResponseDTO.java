@@ -64,6 +64,27 @@ public class ExamResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class GetExamsDTO {
+        List<ExamInfo> examList;
+
+        @Builder
+        @Getter
+        @AllArgsConstructor
+        public static class ExamInfo {
+            private Long examId;
+            private String tagName;
+            private String examName;
+            private String examDescription;
+            private boolean examYN;
+            private Boolean examPassYN;
+            private Integer examScore;
+        }
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class GetExamIncorrectAnswersResultDTO {
         List<ExamIncorrectQuestion> examIncorrectQuestionList;
 

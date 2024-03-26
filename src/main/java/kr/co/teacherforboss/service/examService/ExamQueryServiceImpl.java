@@ -54,6 +54,38 @@ public class ExamQueryServiceImpl implements ExamQueryService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<ExamResponseDTO.GetExamsDTO.ExamInfo> getExams(Long memberId, Long examCategoryId, Long tagId) {
+        if(!examCategoryRepository.existsByIdAndStatus(examCategoryId, Status.ACTIVE)) {
+            throw new ExamHandler(ErrorStatus.EXAM_CATEGORY_NOT_FOUND);
+        }
+        if(!tagRepository.existsByIdAndStatus(tagId, Status.ACTIVE)) {
+            throw new ExamHandler(ErrorStatus.EXAM_TAG_NOT_FOUND);
+        }
+
+        List<ExamResponseDTO.GetExamsDTO.ExamInfo> examInfos = new ArrayList<>();
+        List<Exam> examList = examRepository.findByExamCategoryIdAndTagIdAndStatus(examCategoryId, tagId, Status.ACTIVE);
+
+        for (Exam exam : examList) {
+            MemberExam memberExam = memberExamRepository.findByMemberIdAndExamIdAndStatus(memberId, exam.getId(), Status.ACTIVE);
+
+            boolean isTakenExam = memberExam != null;
+            Integer score = null;
+            Boolean isPassed = null;
+
+            if (isTakenExam) {
+                score = memberExam.getScore();
+                isPassed = score >= 70;
+            }
+
+            ExamResponseDTO.GetExamsDTO.ExamInfo examInfo = ExamConverter.toGetExamInfo(exam, isTakenExam, isPassed, score);
+            examInfos.add(examInfo);
+        }
+
+        return examInfos;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<Question> getQuestions(Long examId) {
         if (!examRepository.existsByIdAndStatus(examId, Status.ACTIVE))
             throw new ExamHandler(ErrorStatus.EXAM_NOT_FOUND);
