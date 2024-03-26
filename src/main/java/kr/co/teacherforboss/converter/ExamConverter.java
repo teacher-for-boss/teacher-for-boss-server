@@ -3,8 +3,6 @@ package kr.co.teacherforboss.converter;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import kr.co.teacherforboss.domain.Exam;
 import kr.co.teacherforboss.domain.ExamCategory;
 import kr.co.teacherforboss.domain.Member;
@@ -14,7 +12,6 @@ import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionChoice;
 import kr.co.teacherforboss.domain.Tag;
 import kr.co.teacherforboss.web.dto.ExamResponseDTO;
-import kr.co.teacherforboss.web.dto.ExamResponseDTO.TagInfo;
 
 public class ExamConverter {
 
@@ -60,20 +57,17 @@ public class ExamConverter {
                 .build();
     }
 
-    public static ExamResponseDTO.GetTagsDTO toGetTagsDTO(List<Tag> tags) {
-        Map<String, List<TagInfo>> categoryTagMap = tags.stream()
-                .collect(Collectors.groupingBy(
-                        tag -> tag.getExamCategory().getCategoryName(),
-                        Collectors.mapping(
-                                tag -> new TagInfo(tag.getId(), tag.getTagName()),
-                                Collectors.toList())
-                ));
+    public static ExamResponseDTO.GetTagsDTO.TagInfo toGetTagInfo(Tag tag) {
+        return ExamResponseDTO.GetTagsDTO.TagInfo.builder()
+                .tagId(tag.getId())
+                .tagName(tag.getTagName())
+                .build();
+    }
 
-        List<ExamResponseDTO.GetTagsDTO.CategoryTags> categoryTagsList = categoryTagMap.entrySet().stream()
-                .map(entry -> new ExamResponseDTO.GetTagsDTO.CategoryTags(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList());
-
-        return new ExamResponseDTO.GetTagsDTO(categoryTagsList);
+    public static ExamResponseDTO.GetTagsDTO toGetTagsDTO(List<ExamResponseDTO.GetTagsDTO.TagInfo> tagInfos) {
+        return ExamResponseDTO.GetTagsDTO.builder()
+                .tagsList(tagInfos)
+                .build();
     }
 
     public static ExamResponseDTO.GetExamIncorrectAnswersResultDTO toGetExamAnsNotesDTO(List<Question> questions) {
@@ -108,7 +102,7 @@ public class ExamConverter {
                         new ExamResponseDTO.GetSolutionsDTO.QuestionSolution(question.getId(), question.getCommentary()))
                         .toList()).build();
     }
-  
+
     public static ExamResponseDTO.GetExamRankInfoDTO toGetExamRankInfoDTO(List<ExamResponseDTO.GetExamRankInfoDTO.ExamRankInfo> examRankInfos) {
         return ExamResponseDTO.GetExamRankInfoDTO.builder()
                 .examRankList(examRankInfos)

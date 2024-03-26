@@ -13,7 +13,6 @@ import kr.co.teacherforboss.domain.MemberExam;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.Tag;
 import kr.co.teacherforboss.domain.enums.ExamQuarter;
-import kr.co.teacherforboss.domain.enums.ExamType;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.ExamCategoryRepository;
 import kr.co.teacherforboss.repository.ExamRepository;
@@ -46,8 +45,16 @@ public class ExamQueryServiceImpl implements ExamQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Tag> getTags(Long examCategoryId) {
-        return tagRepository.findTagsByExamCategoryIdAndStatus(examCategoryId, Status.ACTIVE);
+    public List<ExamResponseDTO.GetTagsDTO.TagInfo> getTags(Long examCategoryId) {
+        List<Tag> tagList = tagRepository.findTagsByExamCategoryIdAndStatus(examCategoryId, Status.ACTIVE);
+        List<ExamResponseDTO.GetTagsDTO.TagInfo> tagInfos = new ArrayList<>();
+
+        for (Tag tag : tagList) {
+            ExamResponseDTO.GetTagsDTO.TagInfo tagInfo = ExamConverter.toGetTagInfo(tag);
+            tagInfos.add(tagInfo);
+        }
+
+        return tagInfos;
     }
 
     @Override
