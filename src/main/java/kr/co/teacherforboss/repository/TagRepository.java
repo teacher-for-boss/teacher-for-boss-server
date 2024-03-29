@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface TagRepository extends JpaRepository<Tag, Long> {
-    boolean existsByIdAndStatus(Long id, Status status);
+    boolean existsByIdAndExamCategoryIdAndStatus(Long id, Long examCategoryId, Status status);
     List<Tag> findTagsByExamCategoryIdAndStatus(Long categoryId, Status status);
 }

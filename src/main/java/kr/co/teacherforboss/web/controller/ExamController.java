@@ -62,9 +62,8 @@ public class ExamController {
 
     @GetMapping("/list/{examCategoryId}")
     public ApiResponse<ExamResponseDTO.GetExamsDTO> getExams(@PathVariable("examCategoryId") Long examCategoryId,
-                                                             @RequestParam("tagId") Long tagId,
-                                                             @ExistPrincipalDetails @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        List<ExamResponseDTO.GetExamsDTO.ExamInfo> examInfos = examQueryService.getExams(principalDetails.getMemberId(), examCategoryId, tagId);
+                                                             @RequestParam(value = "tagId", required = false) Long tagId) {
+        List<ExamResponseDTO.GetExamsDTO.ExamInfo> examInfos = examQueryService.getExams(examCategoryId, tagId);
         return ApiResponse.onSuccess(ExamConverter.toGetExamsDTO(examInfos));
     }
 
