@@ -78,7 +78,7 @@ public class ExamConverter {
             for (MemberExam memberExam : memberExamList) {
                 isTakenExam = memberExam != null;
                 score = isTakenExam ? memberExam.getScore() : null;
-                isPassed = isTakenExam && score >= ExamConfig.PATH_THRESHOLD;
+                isPassed = isTakenExam && score >= ExamConfig.PASS_THRESHOLD;
             }
 
             ExamResponseDTO.GetExamsDTO.ExamInfo examInfo = toGetExamInfo(exam, isTakenExam, isPassed, score);
