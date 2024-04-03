@@ -4,6 +4,7 @@ import java.util.List;
 
 import kr.co.teacherforboss.domain.Exam;
 import kr.co.teacherforboss.domain.ExamCategory;
+import kr.co.teacherforboss.domain.MemberExam;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.Tag;
 import kr.co.teacherforboss.domain.enums.ExamQuarter;
@@ -12,7 +13,8 @@ import kr.co.teacherforboss.web.dto.ExamResponseDTO;
 public interface ExamQueryService {
     List<ExamCategory> getExamCategories();
     List<Tag> getTags(Long categoryId);
-    List<ExamResponseDTO.GetExamsDTO.ExamInfo> getExams(Long examCategoryId, Long tagId);
+    List<Exam> getExams(Long examCategoryId, Long tagId);
+    List<MemberExam> getMemberExams();
     List<Question> getQuestions(Long examId);
     List<ExamResponseDTO.GetExamRankInfoDTO.ExamRankInfo> getExamRankInfo(Long examId);
     ExamResponseDTO.GetAverageDTO getAverage(ExamQuarter examQuarter);

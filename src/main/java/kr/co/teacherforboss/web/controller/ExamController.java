@@ -63,8 +63,9 @@ public class ExamController {
     @GetMapping("/list/{examCategoryId}")
     public ApiResponse<ExamResponseDTO.GetExamsDTO> getExams(@PathVariable("examCategoryId") Long examCategoryId,
                                                              @RequestParam(value = "tagId", required = false) Long tagId) {
-        List<ExamResponseDTO.GetExamsDTO.ExamInfo> examInfos = examQueryService.getExams(examCategoryId, tagId);
-        return ApiResponse.onSuccess(ExamConverter.toGetExamsDTO(examInfos));
+        List<Exam> exams = examQueryService.getExams(examCategoryId, tagId);
+        List<MemberExam> memberExams = examQueryService.getMemberExams();
+        return ApiResponse.onSuccess(ExamConverter.toGetExamsDTO(exams, memberExams));
     }
 
     @GetMapping("/member-exams/{memberExamId}/result/incorrect/list")

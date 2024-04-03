@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Objects;
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.ExamHandler;
-import kr.co.teacherforboss.config.ExamConfig;
 import kr.co.teacherforboss.converter.ExamConverter;
 import kr.co.teacherforboss.domain.Exam;
 import kr.co.teacherforboss.domain.ExamCategory;
@@ -55,36 +54,27 @@ public class ExamQueryServiceImpl implements ExamQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ExamResponseDTO.GetExamsDTO.ExamInfo> getExams(Long examCategoryId, Long tagId) {
+    public List<Exam> getExams(Long examCategoryId, Long tagId) {
         if(!examCategoryRepository.existsByIdAndStatus(examCategoryId, Status.ACTIVE))
             throw new ExamHandler(ErrorStatus.EXAM_CATEGORY_NOT_FOUND);
 
-        Member member = authCommandService.getMember();
         List<Exam> examList;
 
-        if(tagId == null) {
+        if (tagId == null) {
             examList = examRepository.findByExamCategoryIdAndStatus(examCategoryId, Status.ACTIVE);
         } else {
             if(!tagRepository.existsByIdAndExamCategoryIdAndStatus(tagId, examCategoryId, Status.ACTIVE))
                 throw new ExamHandler(ErrorStatus.EXAM_TAG_NOT_FOUND);
             examList = examRepository.findByExamCategoryIdAndTagIdAndStatus(examCategoryId, tagId, Status.ACTIVE);
         }
-        return getExamInfos(examList, member);
+        return examList;
     }
 
-    private List<ExamResponseDTO.GetExamsDTO.ExamInfo> getExamInfos(List<Exam> examList, Member member) {
-        List<ExamResponseDTO.GetExamsDTO.ExamInfo> examInfos = new ArrayList<>();
-
-        for (Exam exam : examList) {
-            MemberExam memberExam = memberExamRepository.findByMemberIdAndExamIdAndStatus(member.getId(), exam.getId(), Status.ACTIVE);
-            boolean isTakenExam = memberExam != null;
-            Integer score = isTakenExam ? memberExam.getScore() : null;
-            boolean isPassed = isTakenExam && score >= ExamConfig.PATH_THRESHOLD;
-            ExamResponseDTO.GetExamsDTO.ExamInfo examInfo = ExamConverter.toGetExamInfo(exam, isTakenExam, isPassed, score);
-            examInfos.add(examInfo);
-        }
-
-        return examInfos;
+    @Override
+    @Transactional(readOnly = true)
+    public List<MemberExam> getMemberExams() {
+        Member member = authCommandService.getMember();
+        return memberExamRepository.findByMemberAndStatus(member, Status.ACTIVE);
     }
 
     @Override

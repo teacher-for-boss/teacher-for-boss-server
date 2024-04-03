@@ -13,10 +13,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MemberExamRepository extends JpaRepository<MemberExam, Long> {
-
+    List<MemberExam> findByMemberAndStatus(Member member, Status status);
     Optional<MemberExam> findByIdAndMemberAndStatus(Long memberExamId, Member member, Status status);
     boolean existsByMemberIdAndExamId(Long memberId, Long examId);
-    MemberExam findByMemberIdAndExamIdAndStatus(Long memberId, Long examId, Status status);
 
     @Query(value = "select *"
             + "from member_exam me "

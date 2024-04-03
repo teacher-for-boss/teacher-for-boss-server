@@ -2,7 +2,10 @@ package kr.co.teacherforboss.converter;
 
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+
+import kr.co.teacherforboss.config.ExamConfig;
 import kr.co.teacherforboss.domain.Exam;
 import kr.co.teacherforboss.domain.ExamCategory;
 import kr.co.teacherforboss.domain.Member;
@@ -64,7 +67,24 @@ public class ExamConverter {
                         .toList()).build();
     }
 
-    public static ExamResponseDTO.GetExamsDTO toGetExamsDTO(List<ExamResponseDTO.GetExamsDTO.ExamInfo> examInfos) {
+    public static ExamResponseDTO.GetExamsDTO toGetExamsDTO(List<Exam> examList, List<MemberExam> memberExamList) {
+        List<ExamResponseDTO.GetExamsDTO.ExamInfo> examInfos = new ArrayList<>();
+
+        for (Exam exam : examList) {
+            boolean isTakenExam = false;
+            Integer score = null;
+            boolean isPassed = false;
+
+            for (MemberExam memberExam : memberExamList) {
+                isTakenExam = memberExam != null;
+                score = isTakenExam ? memberExam.getScore() : null;
+                isPassed = isTakenExam && score >= ExamConfig.PATH_THRESHOLD;
+            }
+
+            ExamResponseDTO.GetExamsDTO.ExamInfo examInfo = toGetExamInfo(exam, isTakenExam, isPassed, score);
+            examInfos.add(examInfo);
+        }
+
         return ExamResponseDTO.GetExamsDTO.builder()
                 .examList(examInfos)
                 .build();
