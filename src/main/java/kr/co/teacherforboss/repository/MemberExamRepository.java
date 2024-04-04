@@ -15,18 +15,18 @@ import org.springframework.stereotype.Repository;
 public interface MemberExamRepository extends JpaRepository<MemberExam, Long> {
     @Query(value = "select me.* "
             + "from member_exam me "
-            + "inner join exam e on me.exam_id = e.id "
-            + "inner join (select e1.exam_category_id, e1.tag_id, max(me1.updated_at) as max_updated_at "
-            + "            from member_exam me1 "
-            + "            inner join exam e1 on me1.exam_id = e1.id "
-            + "            where me1.member_id = :memberId and me1.status = 'ACTIVE' "
-            + "            group by e1.exam_category_id, e1.tag_id) as latest "
-            + "on e.exam_category_id = latest.exam_category_id "
-            + "and e.tag_id = latest.tag_id "
-            + "and me.updated_at = latest.max_updated_at " 
+            + "inner join ( "
+            + "    select exam_id, MAX(created_at) as created_at "
+            + "    from member_exam "
+            + "    where member_id = :memberId "
+            + "    group by exam_id"
+            + "            ) latest "
             + "where me.member_id = :memberId "
+            + "and me.exam_id = latest.exam_id  "
+            + "and me.created_at = latest.created_at "
             + "and me.status = 'ACTIVE'", nativeQuery = true)
     List<MemberExam> findRecentByMemberIdGroupByCategoryAndTag(@Param("memberId") Long memberId);
+
     Optional<MemberExam> findByIdAndMemberAndStatus(Long memberExamId, Member member, Status status);
     boolean existsByMemberIdAndExamId(Long memberId, Long examId);
 
