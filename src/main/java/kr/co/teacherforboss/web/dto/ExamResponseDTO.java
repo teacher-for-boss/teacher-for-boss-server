@@ -71,13 +71,13 @@ public class ExamResponseDTO {
         @Getter
         @AllArgsConstructor
         public static class ExamInfo {
-            Long examId;
-            String tagName;
-            String examName;
-            String examDescription;
-            boolean examYN;
-            Boolean examPassYN;
-            Integer examScore;
+            Long id;
+            String tag;
+            String name;
+            String description;
+            boolean isTaken;
+            Boolean isPassed;
+            Integer score;
         }
     }
 
