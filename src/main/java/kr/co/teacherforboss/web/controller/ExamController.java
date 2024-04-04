@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.config.ExamConfig;
+import kr.co.teacherforboss.config.jwt.PrincipalDetails;
 import kr.co.teacherforboss.converter.ExamConverter;
 import kr.co.teacherforboss.domain.Exam;
 import kr.co.teacherforboss.domain.ExamCategory;
@@ -12,16 +13,19 @@ import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.Tag;
 import kr.co.teacherforboss.service.examService.ExamCommandService;
 import kr.co.teacherforboss.service.examService.ExamQueryService;
+import kr.co.teacherforboss.validation.annotation.ExistPrincipalDetails;
 import kr.co.teacherforboss.web.dto.ExamRequestDTO;
 import kr.co.teacherforboss.web.dto.ExamResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -54,6 +58,14 @@ public class ExamController {
     public ApiResponse<ExamResponseDTO.GetTagsDTO> getTags(@PathVariable("examCategoryId") Long examCategoryId) {
         List<Tag> tags = examQueryService.getTags(examCategoryId);
         return ApiResponse.onSuccess(ExamConverter.toGetTagsDTO(tags));
+    }
+
+    @GetMapping("/list/{examCategoryId}")
+    public ApiResponse<ExamResponseDTO.GetExamsDTO> getExams(@PathVariable("examCategoryId") Long examCategoryId,
+                                                             @RequestParam(value = "tagId", required = false) Long tagId) {
+        List<Exam> exams = examQueryService.getExams(examCategoryId, tagId);
+        List<MemberExam> memberExams = examQueryService.getMemberExams();
+        return ApiResponse.onSuccess(ExamConverter.toGetExamsDTO(exams, memberExams));
     }
 
     @GetMapping("/member-exams/{memberExamId}/result/incorrect/list")

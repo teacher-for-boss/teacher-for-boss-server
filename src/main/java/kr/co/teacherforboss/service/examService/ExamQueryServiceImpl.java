@@ -54,6 +54,31 @@ public class ExamQueryServiceImpl implements ExamQueryService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<Exam> getExams(Long examCategoryId, Long tagId) {
+        if(!examCategoryRepository.existsByIdAndStatus(examCategoryId, Status.ACTIVE))
+            throw new ExamHandler(ErrorStatus.EXAM_CATEGORY_NOT_FOUND);
+
+        List<Exam> examList;
+
+        if (tagId == null) {
+            examList = examRepository.findByExamCategoryIdAndStatus(examCategoryId, Status.ACTIVE);
+        } else {
+            if(!tagRepository.existsByIdAndExamCategoryIdAndStatus(tagId, examCategoryId, Status.ACTIVE))
+                throw new ExamHandler(ErrorStatus.EXAM_TAG_NOT_FOUND);
+            examList = examRepository.findByExamCategoryIdAndTagIdAndStatus(examCategoryId, tagId, Status.ACTIVE);
+        }
+        return examList;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<MemberExam> getMemberExams() {
+        Member member = authCommandService.getMember();
+        return memberExamRepository.findAllRecentByMemberId(member.getId());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<Question> getQuestions(Long examId) {
         if (!examRepository.existsByIdAndStatus(examId, Status.ACTIVE))
             throw new ExamHandler(ErrorStatus.EXAM_NOT_FOUND);

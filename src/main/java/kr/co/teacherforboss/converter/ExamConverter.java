@@ -3,6 +3,10 @@ package kr.co.teacherforboss.converter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import kr.co.teacherforboss.config.ExamConfig;
 import kr.co.teacherforboss.domain.Exam;
 import kr.co.teacherforboss.domain.ExamCategory;
 import kr.co.teacherforboss.domain.Member;
@@ -62,6 +66,35 @@ public class ExamConverter {
                 .tagsList(tags.stream().map(tag ->
                         new ExamResponseDTO.GetTagsDTO.TagInfo(tag.getId(), tag.getTagName()))
                         .toList()).build();
+    }
+
+    public static ExamResponseDTO.GetExamsDTO toGetExamsDTO(List<Exam> examList, List<MemberExam> memberExamList) {
+        Map<Long, Integer> examScoresMap = memberExamList.stream()
+                .collect(Collectors.toMap(memberExam -> memberExam.getExam().getId(), MemberExam::getScore));
+
+        List<ExamResponseDTO.GetExamsDTO.ExamInfo> examInfos = examList.stream()
+                .map(exam -> {
+                    boolean isTakenExam = examScoresMap.containsKey(exam.getId());
+                    Integer score = isTakenExam ? examScoresMap.get(exam.getId()) : null;
+                    boolean isPassed = isTakenExam && score >= ExamConfig.PASS_THRESHOLD;
+                    return toGetExamInfo(exam, isTakenExam, isPassed, score);
+                }).collect(Collectors.toList());
+
+        return ExamResponseDTO.GetExamsDTO.builder()
+                .examList(examInfos)
+                .build();
+    }
+
+    public static ExamResponseDTO.GetExamsDTO.ExamInfo toGetExamInfo(Exam exam, boolean isTakenExam, Boolean isPassed, Integer score) {
+        return ExamResponseDTO.GetExamsDTO.ExamInfo.builder()
+                .id(exam.getId())
+                .tag(exam.getTag().getTagName())
+                .name(exam.getName())
+                .description(exam.getDescription())
+                .isTaken(isTakenExam)
+                .isPassed(isPassed)
+                .score(score)
+                .build();
     }
 
     public static ExamResponseDTO.GetExamIncorrectAnswersResultDTO toGetExamAnsNotesDTO(List<Question> questions) {
