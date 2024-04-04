@@ -2,8 +2,9 @@ package kr.co.teacherforboss.converter;
 
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import kr.co.teacherforboss.config.ExamConfig;
 import kr.co.teacherforboss.domain.Exam;
@@ -68,22 +69,16 @@ public class ExamConverter {
     }
 
     public static ExamResponseDTO.GetExamsDTO toGetExamsDTO(List<Exam> examList, List<MemberExam> memberExamList) {
-        List<ExamResponseDTO.GetExamsDTO.ExamInfo> examInfos = new ArrayList<>();
+        Map<Long, Integer> examScoresMap = memberExamList.stream()
+                .collect(Collectors.toMap(memberExam -> memberExam.getExam().getId(), MemberExam::getScore));
 
-        for (Exam exam : examList) {
-            boolean isTakenExam = false;
-            Integer score = null;
-            boolean isPassed = false;
-
-            for (MemberExam memberExam : memberExamList) {
-                isTakenExam = memberExam != null;
-                score = isTakenExam ? memberExam.getScore() : null;
-                isPassed = isTakenExam && score >= ExamConfig.PASS_THRESHOLD;
-            }
-
-            ExamResponseDTO.GetExamsDTO.ExamInfo examInfo = toGetExamInfo(exam, isTakenExam, isPassed, score);
-            examInfos.add(examInfo);
-        }
+        List<ExamResponseDTO.GetExamsDTO.ExamInfo> examInfos = examList.stream()
+                .map(exam -> {
+                    boolean isTakenExam = examScoresMap.containsKey(exam.getId());
+                    Integer score = isTakenExam ? examScoresMap.get(exam.getId()) : null;
+                    boolean isPassed = isTakenExam && score >= ExamConfig.PASS_THRESHOLD;
+                    return toGetExamInfo(exam, isTakenExam, isPassed, score);
+                }).collect(Collectors.toList());
 
         return ExamResponseDTO.GetExamsDTO.builder()
                 .examList(examInfos)
