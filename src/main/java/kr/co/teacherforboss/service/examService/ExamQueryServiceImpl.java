@@ -74,7 +74,7 @@ public class ExamQueryServiceImpl implements ExamQueryService {
     @Transactional(readOnly = true)
     public List<MemberExam> getMemberExams() {
         Member member = authCommandService.getMember();
-        return memberExamRepository.findRecentByMemberIdGroupByCategoryAndTag(member.getId());
+        return memberExamRepository.findAllRecentByMemberId(member.getId());
     }
 
     @Override
