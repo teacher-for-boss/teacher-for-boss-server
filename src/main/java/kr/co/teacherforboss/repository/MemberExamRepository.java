@@ -3,11 +3,13 @@ package kr.co.teacherforboss.repository;
 import java.util.Optional;
 import java.util.List;
 
+import jakarta.persistence.QueryHint;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.MemberExam;
 import kr.co.teacherforboss.domain.enums.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
@@ -27,7 +29,6 @@ public interface MemberExamRepository extends JpaRepository<MemberExam, Long> {
     List<MemberExam> findAllRecentByMemberId(@Param("memberId") Long memberId);
 
     Optional<MemberExam> findByIdAndMemberAndStatus(Long memberExamId, Member member, Status status);
-    boolean existsByMemberIdAndExamId(Long memberId, Long examId);
 
     @Query(value = "select *"
             + "from member_exam me "
@@ -71,15 +72,18 @@ public interface MemberExamRepository extends JpaRepository<MemberExam, Long> {
             + "where me1_0.id = :id", nativeQuery = true)
     Long findRankById(@Param("id") Long id);
 
+    @QueryHints(value = @QueryHint(name = "org.hibernate.readOnly", value = "true"))
     @Query(value = "select round(avg(me.score)) from member_exam me " +
             "where me.member_id = :memberId " +
-            "and month(me.created_at) between :first and :last " +
+            "and month(me.created_at) >= :first and month(me.created_at) <= :last " +
             "and me.status = 'ACTIVE'", nativeQuery = true)
     Optional<Integer> getAverageByMemberId(@Param("memberId") Long memberId, @Param("first") int first, @Param("last") int last);
 
+    @QueryHints(value = @QueryHint(name = "org.hibernate.readOnly", value = "true"))
     @Query(value = "select round(avg(me.score)) from member_exam me " +
-            "where me.member_id <> :memberId " +
-            "and month(me.created_at) between :first and :last " +
+            "left outer join (select member_id from member_exam where member_id = :memberId) m on me.member_id = m.member_id " +
+            "where m.member_id is null " +
+            "and month(me.created_at) >= :first and month(me.created_at) <= :last " +
             "and me.status = 'ACTIVE'", nativeQuery = true)
     Optional<Integer> getAverageByMemberIdNot(@Param("memberId") Long memberId, @Param("first") int first, @Param("last") int last);
 }
