@@ -81,8 +81,7 @@ public interface MemberExamRepository extends JpaRepository<MemberExam, Long> {
 
     @QueryHints(value = @QueryHint(name = "org.hibernate.readOnly", value = "true"))
     @Query(value = "select round(avg(me.score)) from member_exam me " +
-            "left outer join (select member_id from member_exam where member_id = :memberId) m on me.member_id = m.member_id " +
-            "where m.member_id is null " +
+            "where me.member_id <> :memberId " +
             "and month(me.created_at) >= :first and month(me.created_at) <= :last " +
             "and me.status = 'ACTIVE'", nativeQuery = true)
     Optional<Integer> getAverageByMemberIdNot(@Param("memberId") Long memberId, @Param("first") int first, @Param("last") int last);
