@@ -24,11 +24,11 @@ public class AuthTestUtil {
 
     }
 
-    public Member generateMemberDummy(){
+    public Member generateMemberDummy(String email){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return Member.builder()
                 .name("백채연")
-                .email("email@gmail.com")
+                .email(email)
                 .loginType(LoginType.GENERAL)
                 .role(Role.USER)
                 .birthDate(LocalDate.parse("2000-04-22", formatter))

@@ -47,7 +47,7 @@ class MemberQueryServiceImplTest {
     @DisplayName("프로필 조회 (성공) - ACTIVE 상태의 사용자 이름과 프로필 이미지 조회")
     void getMemberProfile() {
         // given
-        Member member = authTestUtil.generateMemberDummy();
+        Member member = authTestUtil.generateMemberDummy("email@gmail.com");
         when(authCommandService.getMember())
                 .thenReturn(member);
         when(memberRepository.findByIdAndStatus(any(), any()))
@@ -65,7 +65,7 @@ class MemberQueryServiceImplTest {
     @DisplayName("프로필 조회 (실패) - 존재하지 않는 사용자 이름과 프로필 이미지 조회")
     void failGetMemberProfile() {
         // given
-        Member member = authTestUtil.generateMemberDummy(); // 조회하려는 사용자
+        Member member = authTestUtil.generateMemberDummy("email@gmail.com"); // 조회하려는 사용자
         when(authCommandService.getMember())
                 .thenReturn(member);
         when(memberRepository.findByIdAndStatus(member.getId(), Status.ACTIVE))

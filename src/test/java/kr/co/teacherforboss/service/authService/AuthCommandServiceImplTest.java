@@ -37,7 +37,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.will;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
@@ -62,8 +61,6 @@ public class AuthCommandServiceImplTest {
     private CodeMail codeMail;
     @InjectMocks
     private AuthTestUtil authTestUtil;
-    @Mock
-    private PasswordUtil passwordUtil;
 
     /*
     // TODO: 이메일 인증 테스트
@@ -111,7 +108,7 @@ public class AuthCommandServiceImplTest {
     @Test
     void joinMember() {
         // given
-        Member expected = authTestUtil.generateMemberDummy();
+        Member expected = authTestUtil.generateMemberDummy("email@gmail.com");
         AuthRequestDTO.JoinDTO request = request("백채연", "email@gmail.com", "asdf1234", "asdf1234", 2, "01012341234", "T"); // request로 입력한 Member data
         AgreementTerm mockAgreement = authTestUtil.generateAgreementTerm();
         doReturn(expected).when(memberRepository)
@@ -170,7 +167,7 @@ public class AuthCommandServiceImplTest {
     void findEmail() {
         // given
         PhoneAuth phoneAuth = authTestUtil.generatePhoneAuthDummy();
-        Member member = authTestUtil.generateMemberDummy();
+        Member member = authTestUtil.generateMemberDummy("email@gmail.com");
 
         AuthRequestDTO.FindEmailDTO request = toFindEmail(1L);
         doReturn(Optional.of(phoneAuth)).when(phoneAuthRepository).findById(any(Long.class));
@@ -221,7 +218,7 @@ public class AuthCommandServiceImplTest {
     void findPassword() {
         // given
         EmailAuth emailAuth = authTestUtil.generateFindPwCheckEmailAuthDummy("email@gmail.com");
-        Member member = authTestUtil.generateMemberDummy();
+        Member member = authTestUtil.generateMemberDummy("email@gmail.com");
         AuthRequestDTO.FindPasswordDTO request = toFindPassword(1L);
 
         doReturn(Optional.of(emailAuth)).when(emailAuthRepository).findById(anyLong());
