@@ -2,9 +2,13 @@ package kr.co.teacherforboss.service.authService;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.GeneralException;
@@ -22,7 +26,6 @@ import kr.co.teacherforboss.repository.MemberRepository;
 import kr.co.teacherforboss.repository.PhoneAuthRepository;
 import kr.co.teacherforboss.service.mailService.MailCommandService;
 import kr.co.teacherforboss.util.AuthTestUtil;
-import kr.co.teacherforboss.util.PasswordUtil;
 import kr.co.teacherforboss.web.dto.AuthRequestDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,6 +36,8 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hibernate.query.sqm.tree.SqmNode.log;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -139,6 +144,44 @@ public class AuthCommandServiceImplTest {
 
         // then
         assertThat(e.getCode()).isEqualTo(ErrorStatus.INVALID_AGREEMENT_TERM);
+    }
+
+    @Test
+    @DisplayName("회원 가입 - 동시성 테스트")
+    void joinMemberWithConcurrent() throws InterruptedException {
+        // given
+        Member expected = authTestUtil.generateMemberDummy("email@gmail.com");
+        AuthRequestDTO.JoinDTO request = request("백채연", "email@gmail.com", "asdf1234", "asdf1234", 2, "01012341234", "T"); // request로 입력한 Member data
+
+        doReturn(expected).when(memberRepository)
+                .save(any(Member.class));
+
+        ExecutorService executorService = Executors.newFixedThreadPool(5);
+        CountDownLatch latch = new CountDownLatch(5);
+
+        // when
+        log.info("회원가입 동시성 테스트 진행");
+        ArrayList<Member> memberList = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            executorService.execute(() -> {
+                Member member = memberRepository.save(authCommandService.joinMember(request));
+                if (memberList.isEmpty()){
+                    memberList.add(member);
+                }
+                else{
+                    for (Member m : memberList) {
+                        if (!m.getEmail().equals(member.getEmail())) {
+                            memberList.add(member);
+                        }
+                    }
+                }
+                latch.countDown();
+            });
+        }
+        latch.await();
+
+        // then
+        assertEquals(memberList.size(), 1);
     }
 
     private AuthRequestDTO.JoinDTO request(String name, String email, String pw, String rePw, Integer gender, String phone, String agreement){
