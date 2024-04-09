@@ -29,7 +29,7 @@ public class Member extends BaseEntity {
     private String name;
 
     @NotNull
-    @Column(length = 100)
+    @Column(length = 100, unique = true)
     private String email;
 
     @NotNull
@@ -59,7 +59,7 @@ public class Member extends BaseEntity {
     private Gender gender;
 
     @NotNull
-    @Column(length = 50)
+    @Column(length = 50, unique = true)
     private String phone;
 
     @Column
