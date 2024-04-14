@@ -2,7 +2,7 @@
 ![image](https://github.com/teacher-for-boss/teacher-for-boss-server/assets/77263479/93cddb64-40f7-477b-826a-598f301cf930)
 
 
-1인 자영업자를 위한 솔루션 제공 서비스, **티쳐 포 보스 (Teacher for boss) 팀의 백엔드 레포지토리 저장소**입니다.
+1인 자영업자를 위한 솔루션 제공 서비스, **티쳐 포 보스 (Teacher for boss) 팀의 백엔드 레포지토리**입니다.
 
 <br>
 
