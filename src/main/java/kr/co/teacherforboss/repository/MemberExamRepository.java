@@ -3,6 +3,7 @@ package kr.co.teacherforboss.repository;
 import java.util.Optional;
 import java.util.List;
 
+import jakarta.persistence.QueryHint;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.MemberExam;
 import kr.co.teacherforboss.domain.enums.Status;
@@ -27,7 +28,6 @@ public interface MemberExamRepository extends JpaRepository<MemberExam, Long> {
     List<MemberExam> findAllRecentByMemberId(@Param("memberId") Long memberId);
 
     Optional<MemberExam> findByIdAndMemberAndStatus(Long memberExamId, Member member, Status status);
-    boolean existsByMemberIdAndExamId(Long memberId, Long examId);
 
     @Query(value = "select *"
             + "from member_exam me "
@@ -73,13 +73,13 @@ public interface MemberExamRepository extends JpaRepository<MemberExam, Long> {
 
     @Query(value = "select round(avg(me.score)) from member_exam me " +
             "where me.member_id = :memberId " +
-            "and month(me.created_at) between :first and :last " +
+            "and month(me.created_at) >= :first and month(me.created_at) <= :last " +
             "and me.status = 'ACTIVE'", nativeQuery = true)
     Optional<Integer> getAverageByMemberId(@Param("memberId") Long memberId, @Param("first") int first, @Param("last") int last);
 
     @Query(value = "select round(avg(me.score)) from member_exam me " +
             "where me.member_id <> :memberId " +
-            "and month(me.created_at) between :first and :last " +
+            "and month(me.created_at) >= :first and month(me.created_at) <= :last " +
             "and me.status = 'ACTIVE'", nativeQuery = true)
     Optional<Integer> getAverageByMemberIdNot(@Param("memberId") Long memberId, @Param("first") int first, @Param("last") int last);
 }

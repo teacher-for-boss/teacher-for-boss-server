@@ -34,4 +34,13 @@ public class ExamTestUtil {
                 .commentary("해설")
                 .build();
     }
+
+    public MemberExam generateMemberExam(Exam exam, Member member){
+        return MemberExam.builder()
+                .member(member)
+                .exam(exam)
+                .score(70)
+                .time(100000L)
+                .build();
+    }
 }
