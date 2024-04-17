@@ -25,10 +25,9 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Table(uniqueConstraints = {
-        @UniqueConstraint(
-                name="UNIQUE_EMAIL_PHONE",
-                columnNames={"email","phone"}
-        )})
+        @UniqueConstraint(name= "member_email_uk", columnNames={ "email" }),
+        @UniqueConstraint(name= "member_phone_uk", columnNames={ "phone" })
+})
 public class Member extends BaseEntity {
 
     @NotNull
