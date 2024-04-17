@@ -4,6 +4,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import kr.co.teacherforboss.domain.common.BaseEntity;
 import kr.co.teacherforboss.domain.enums.Gender;
@@ -22,6 +24,11 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Table(uniqueConstraints = {
+        @UniqueConstraint(
+                name="UNIQUE_EMAIL_PHONE",
+                columnNames={"email","phone"}
+        )})
 public class Member extends BaseEntity {
 
     @NotNull
@@ -29,7 +36,7 @@ public class Member extends BaseEntity {
     private String name;
 
     @NotNull
-    @Column(length = 100, unique = true)
+    @Column(length = 100)
     private String email;
 
     @NotNull
@@ -59,7 +66,7 @@ public class Member extends BaseEntity {
     private Gender gender;
 
     @NotNull
-    @Column(length = 50, unique = true)
+    @Column(length = 50)
     private String phone;
 
     @Column
