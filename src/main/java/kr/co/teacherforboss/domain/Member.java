@@ -29,6 +29,10 @@ public class Member extends BaseEntity {
     private String name;
 
     @NotNull
+    @Column(length = 10)
+    private String nickname;
+
+    @NotNull
     @Column(length = 100)
     private String email;
 
