@@ -54,6 +54,12 @@ public class AuthRequestDTO {
         String introduction;
 
         String keywords;
+
+        String bank;
+
+        String accountNum;
+
+        String accountHolder;
     }
 
     @Getter

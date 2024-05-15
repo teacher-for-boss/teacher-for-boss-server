@@ -57,8 +57,6 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Override
     @Transactional
     public Member joinMember(AuthRequestDTO.JoinDTO request){
-        if (!(Role.of(request.getRole()).equals(Role.BOSS) || Role.of(request.getRole()).equals(Role.TEACHER)))
-            throw new AuthHandler(ErrorStatus.MEMBER_ROLE_INVALID);
         if (memberRepository.existsByEmailAndStatus(request.getEmail(), Status.ACTIVE))
             throw new AuthHandler(ErrorStatus.MEMBER_EMAIL_DUPLICATE);
         if (memberRepository.existsByPhoneAndStatus(request.getPhone(), Status.ACTIVE))
@@ -244,8 +242,6 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         Member newMember = AuthConverter.toSocialMember(request, socialType);
         passwordUtil.setSocialMemberPassword(newMember);
 
-        if (!(Role.of(request.getRole()).equals(Role.BOSS) || Role.of(request.getRole()).equals(Role.TEACHER)))
-            throw new AuthHandler(ErrorStatus.MEMBER_ROLE_INVALID);
         if (memberRepository.existsByNicknameAndStatus(request.getNickname(), Status.ACTIVE))
             throw new AuthHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATE);
 
@@ -255,12 +251,14 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         return memberRepository.save(newMember);
     }
 
-    private void enterBossInfo(AuthRequestDTO.JoinCommonDTO request, Member member) {
+    @Override
+    public void enterBossInfo(AuthRequestDTO.JoinCommonDTO request, Member member) {
         member.setProfile(request.getNickname(), request.getProfileImg());
     }
 
+    @Override
     @Transactional
-    private void enterTeacherInfo(AuthRequestDTO.JoinCommonDTO request, Member member) {
+    public void enterTeacherInfo(AuthRequestDTO.JoinCommonDTO request, Member member) {
         // TODO : 사업자 인증 여부 확인 로직 추가
 
         if (request.getBusinessNum() == null)
@@ -269,6 +267,12 @@ public class AuthCommandServiceImpl implements AuthCommandService {
             throw new AuthHandler(ErrorStatus.MEMBER_REPRESENTATIVE_EMPTY);
         if (request.getOpenDate() == null || request.getOpenDate().toString().isEmpty())
             throw new AuthHandler(ErrorStatus.MEMBER_OPEN_DATE_EMPTY);
+        if (request.getBank() == null)
+            throw new AuthHandler(ErrorStatus.MEMBER_BANK_EMPTY);
+        if (request.getAccountNum() == null)
+            throw new AuthHandler(ErrorStatus.MEMBER_ACCOUNT_NUM_EMPTY);
+        if (request.getAccountHolder() == null)
+            throw new AuthHandler(ErrorStatus.MEMBER_ACCOUNT_HOLDER_EMPTY);
         if (request.getField() == null)
             throw new AuthHandler(ErrorStatus.MEMBER_FIELD_EMPTY);
         if (request.getCareer() == null)

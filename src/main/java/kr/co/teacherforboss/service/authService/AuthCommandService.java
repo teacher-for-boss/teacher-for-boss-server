@@ -19,4 +19,6 @@ public interface AuthCommandService {
     Member findEmail(AuthRequestDTO.FindEmailDTO request);
     Member getMember();
     Member socialLogin(AuthRequestDTO.SocialLoginDTO request, int socialType);
+    void enterBossInfo(AuthRequestDTO.JoinCommonDTO request, Member member);
+    void enterTeacherInfo(AuthRequestDTO.JoinCommonDTO request, Member member);
 }

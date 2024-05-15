@@ -54,7 +54,10 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_OPEN_DATE_EMPTY(BAD_REQUEST, "MEMBER40012", "개업연월일은 필수 입니다."),
     MEMBER_ROLE_INVALID(BAD_REQUEST, "MEMBER40013", "유효하지 않은 역할 값입니다."),
     MEMBER_DATE_INVALID(BAD_REQUEST, "MEMBER40014", "날짜 형식이 옳바르지 않습니다."),
-    MEMBER_NICKNAME_DUPLICATE(BAD_REQUEST, "MEMBER4015", "이미 존재하는 닉네임입니다."),
+    MEMBER_BANK_EMPTY(BAD_REQUEST, "MEMBER40015", "은행 선택은 필수 입니다."),
+    MEMBER_ACCOUNT_NUM_EMPTY(BAD_REQUEST, "MEMBER40016", "계좌번호 입력은 필수 입니다."),
+    MEMBER_ACCOUNT_HOLDER_EMPTY(BAD_REQUEST, "MEMBER40017", "예금주명 입력은 필수 입니다."),
+    MEMBER_NICKNAME_DUPLICATE(BAD_REQUEST, "MEMBER4018", "이미 존재하는 닉네임입니다."),
 
     MEMBER_NOT_FOUND(NOT_FOUND, "MEMBER4041", "사용자가 없습니다."),
 

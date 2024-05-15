@@ -58,6 +58,9 @@ public class AuthConverter {
                 .introduction(request.getIntroduction())
                 .keywords(request.getKeywords())
                 .level(Level.LEVEL1)
+                .bank(request.getBank())
+                .accountNum(request.getAccountNum())
+                .accountHolder(request.getAccountHolder())
                 .build();
     }
 
