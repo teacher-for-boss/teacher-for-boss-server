@@ -190,4 +190,12 @@ public class AuthRequestDTO {
     public static class SocialLoginDTO extends JoinCommonDTO{
 
     }
+
+    @Getter
+    @Jacksonized
+    @Builder
+    public static class CheckNicknameDTO {
+        @NotNull(message = "닉네임을 입력해주세요.")
+        String nickname;
+    }
 }

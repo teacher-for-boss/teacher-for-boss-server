@@ -30,7 +30,7 @@ public class AuthTestUtil {
                 .name("백채연")
                 .email("email@gmail.com")
                 .loginType(LoginType.GENERAL)
-                .role(Role.USER)
+                .role(Role.BOSS)
                 .birthDate(LocalDate.parse("2000-04-22", formatter))
                 .gender(Gender.FEMALE)
                 .phone("01012341234")

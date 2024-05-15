@@ -4,7 +4,9 @@ import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import kr.co.teacherforboss.config.jwt.PrincipalDetails;
 import kr.co.teacherforboss.domain.Member;
+import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.MemberRepository;
+import kr.co.teacherforboss.web.dto.AuthRequestDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,5 +28,10 @@ public class AuthQueryServiceImpl implements AuthQueryService, UserDetailsServic
 
         log.info("user Email [ID : {}]", member.getEmail());
         return new PrincipalDetails(member);
+    }
+
+    @Override
+    public boolean checkNickname(AuthRequestDTO.CheckNicknameDTO request) {
+        return !memberRepository.existsByNicknameAndStatus(request.getNickname(), Status.ACTIVE);
     }
 }
