@@ -15,12 +15,50 @@ import java.time.LocalDate;
 
 public class AuthRequestDTO {
     @Getter
-    @Builder
-    public static class JoinDTO{
-        @Email
-        @NotNull
+    public static abstract class JoinCommonDTO{
+        @NotNull(message = "보스(1)/티쳐(2) 중 선택해주세요.")
+        Integer role;
+
+        @Email(message = "이메일 형식이 아닙니다.")
+        @NotNull(message = "이메일이 없습니다.")
         String email;
 
+        @NotNull(message = "이름이 없습니다.")
+        String name;
+
+        @NotNull(message = "닉네임을 입력해주세요.")
+        @Pattern(regexp = "^[가-힣a-zA-Z0-9]{1,10}$", message = "닉네임은 한국어/영어/숫자로 최대 10자 입력 가능합니다.")
+        String nickname;
+
+        @NotNull(message = "전화번호가 없습니다.")
+        @Pattern(regexp = "010([2-9])\\d{7,8}", message = "전화번호는 10 ~ 11 자리의 숫자만 입력 가능합니다.")
+        String phone;
+
+        Integer gender;
+
+        LocalDate birthDate;
+
+        @NotNull(message = "프로필 이미지를 선택해주세요.")
+        String profileImg;
+
+        String businessNum;
+
+        String representative;
+
+        LocalDate openDate;
+
+        String field;
+
+        Integer career;
+
+        String introduction;
+
+        String keywords;
+    }
+
+    @Getter
+    @Builder
+    public static class JoinDTO extends JoinCommonDTO{
         @NotNull
         Long emailAuthId;
 
@@ -34,17 +72,6 @@ public class AuthRequestDTO {
 
         @NotNull
         String rePassword;
-
-        @NotNull
-        String name;
-
-        @NotNull
-        @Pattern(regexp = "010([2-9])\\d{7,8}", message = "전화번호는 10 ~ 11 자리의 숫자만 입력 가능합니다.")
-        String phone;
-
-        Integer gender;
-
-        LocalDate birthDate;
 
         @NotNull(message = "이용 정보 약관 동의는 필수여야 합니다.")
         @CheckTrueOrFalse
@@ -160,23 +187,7 @@ public class AuthRequestDTO {
 
     @Getter
     @Builder
-    public static class SocialLoginDTO {
+    public static class SocialLoginDTO extends JoinCommonDTO{
 
-        @Email(message = "이메일 형식이 아닙니다.")
-        @NotNull(message = "이메일이 없습니다.")
-        String email;
-
-        @NotNull(message = "이름이 없습니다.")
-        String name;
-
-        @NotNull(message = "전화번호가 없습니다.")
-        @Pattern(regexp = "010([2-9])\\d{7,8}", message = "전화번호는 10 ~ 11 자리의 숫자만 입력 가능합니다.")
-        String phone;
-
-        Integer gender;
-
-        LocalDate birthDate;
-
-        String profileImg;
     }
 }

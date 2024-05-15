@@ -77,4 +77,8 @@ public class Member extends BaseEntity {
         this.pwHash = pwHash;
     }
 
+    public void setProfile(String nickname, String profileImg){
+        this.nickname = nickname;
+        this.profileImg = profileImg;
+    }
 }

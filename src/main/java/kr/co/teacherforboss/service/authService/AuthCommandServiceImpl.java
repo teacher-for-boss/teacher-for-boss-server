@@ -9,9 +9,12 @@ import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import kr.co.teacherforboss.apiPayload.exception.handler.MemberHandler;
 import kr.co.teacherforboss.config.jwt.TokenManager;
 import kr.co.teacherforboss.converter.AuthConverter;
+import kr.co.teacherforboss.domain.TeacherInfo;
 import kr.co.teacherforboss.domain.enums.LoginType;
 import kr.co.teacherforboss.domain.AgreementTerm;
+import kr.co.teacherforboss.domain.enums.Role;
 import kr.co.teacherforboss.repository.AgreementTermRepository;
+import kr.co.teacherforboss.repository.TeacherInfoRepository;
 import kr.co.teacherforboss.util.PasswordUtil;
 import kr.co.teacherforboss.domain.PhoneAuth;
 import kr.co.teacherforboss.domain.enums.Purpose;
@@ -43,6 +46,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private final EmailAuthRepository emailAuthRepository;
     private final PhoneAuthRepository phoneAuthRepository;
     private final AgreementTermRepository agreementTermRepository;
+    private final TeacherInfoRepository teacherInfoRepository;
     private final MailCommandService mailCommandService;
     private final PasswordEncoder passwordEncoder;
     private final TokenManager tokenManager;
@@ -53,6 +57,8 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Override
     @Transactional
     public Member joinMember(AuthRequestDTO.JoinDTO request){
+        if (!(Role.of(request.getRole()).equals(Role.BOSS) || Role.of(request.getRole()).equals(Role.TEACHER)))
+            throw new AuthHandler(ErrorStatus.MEMBER_ROLE_INVALID);
         if (memberRepository.existsByEmailAndStatus(request.getEmail(), Status.ACTIVE))
             throw new AuthHandler(ErrorStatus.MEMBER_EMAIL_DUPLICATE);
         if (memberRepository.existsByPhoneAndStatus(request.getPhone(), Status.ACTIVE))
@@ -66,8 +72,14 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         passwordUtil.setMemberPassword(newMember, request.getPassword());
 
         AgreementTerm newAgreement = AuthConverter.toAgreementTerm(request, newMember);
-        agreementTermRepository.save(newAgreement);
 
+        if (memberRepository.existsByNicknameAndStatus(request.getNickname(), Status.ACTIVE))
+            throw new AuthHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATE);
+
+        if (request.getRole().equals(1)) enterBossInfo(request, newMember);
+        else if (request.getRole().equals(2)) enterTeacherInfo(request, newMember);
+
+        agreementTermRepository.save(newAgreement);
         return memberRepository.save(newMember);
     }
 
@@ -232,6 +244,42 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         Member newMember = AuthConverter.toSocialMember(request, socialType);
         passwordUtil.setSocialMemberPassword(newMember);
 
+        if (!(Role.of(request.getRole()).equals(Role.BOSS) || Role.of(request.getRole()).equals(Role.TEACHER)))
+            throw new AuthHandler(ErrorStatus.MEMBER_ROLE_INVALID);
+        if (memberRepository.existsByNicknameAndStatus(request.getNickname(), Status.ACTIVE))
+            throw new AuthHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATE);
+
+        if (request.getRole().equals(1)) enterBossInfo(request, newMember);
+        else if (request.getRole().equals(2)) enterTeacherInfo(request, newMember);
+
         return memberRepository.save(newMember);
+    }
+
+    private void enterBossInfo(AuthRequestDTO.JoinCommonDTO request, Member member) {
+        member.setProfile(request.getNickname(), request.getProfileImg());
+    }
+
+    @Transactional
+    private void enterTeacherInfo(AuthRequestDTO.JoinCommonDTO request, Member member) {
+        // TODO : 사업자 인증 여부 확인 로직 추가
+
+        if (request.getBusinessNum() == null)
+            throw new AuthHandler(ErrorStatus.MEMBER_BUSINESS_NUM_EMPTY);
+        if (request.getRepresentative() == null)
+            throw new AuthHandler(ErrorStatus.MEMBER_REPRESENTATIVE_EMPTY);
+        if (request.getOpenDate() == null || request.getOpenDate().toString().isEmpty())
+            throw new AuthHandler(ErrorStatus.MEMBER_OPEN_DATE_EMPTY);
+        if (request.getField() == null)
+            throw new AuthHandler(ErrorStatus.MEMBER_FIELD_EMPTY);
+        if (request.getCareer() == null)
+            throw new AuthHandler(ErrorStatus.MEMBER_CAREER_EMPTY);
+        if (request.getIntroduction() == null)
+            throw new AuthHandler(ErrorStatus.MEMBER_INTRODUCTION_EMPTY);
+        if (request.getKeywords().length() < 2)
+            throw new AuthHandler(ErrorStatus.MEMBER_KEYWORDS_EMPTY);
+
+        member.setProfile(request.getNickname(), request.getProfileImg());
+        TeacherInfo newTeacher = AuthConverter.toTeacher(request);
+        teacherInfoRepository.save(newTeacher);
     }
 }

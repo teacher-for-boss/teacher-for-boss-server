@@ -3,7 +3,9 @@ package kr.co.teacherforboss.converter;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.EmailAuth;
 import kr.co.teacherforboss.domain.PhoneAuth;
+import kr.co.teacherforboss.domain.TeacherInfo;
 import kr.co.teacherforboss.domain.enums.Gender;
+import kr.co.teacherforboss.domain.enums.Level;
 import kr.co.teacherforboss.domain.enums.LoginType;
 import kr.co.teacherforboss.domain.enums.Role;
 import kr.co.teacherforboss.domain.enums.Purpose;
@@ -29,17 +31,36 @@ public class AuthConverter {
             default -> Gender.NONE;
         };
 
+        Role role = switch (request.getRole()) {
+            case 2 -> Role.TEACHER;
+            case 3 -> Role.ADMIN;
+            default -> Role.BOSS;
+        };
+
         return Member.builder()
                 .name(request.getName())
                 .email(request.getEmail())
                 .loginType(LoginType.GENERAL)
-                .role(Role.USER)
+                .role(role)
                 .gender(gender)
                 .birthDate(request.getBirthDate())
                 .phone(request.getPhone())
                 .build();
     }
-    
+
+    public static TeacherInfo toTeacher(AuthRequestDTO.JoinCommonDTO request){
+        return TeacherInfo.builder()
+                .businessNum(request.getBusinessNum())
+                .representative(request.getRepresentative())
+                .openDate(request.getOpenDate())
+                .field(request.getField())
+                .career(request.getCareer())
+                .introduction(request.getIntroduction())
+                .keywords(request.getKeywords())
+                .level(Level.LEVEL1)
+                .build();
+    }
+
     public static AuthResponseDTO.SendCodeMailResultDTO toSendCodeMailResultDTO(EmailAuth emailAuth) {
         return AuthResponseDTO.SendCodeMailResultDTO.builder()
                 .emailAuthId(emailAuth.getId())
@@ -95,7 +116,7 @@ public class AuthConverter {
                 .memberId(member.getId())
                 .isChanged(true)
                 .build();
-  }
+    }
   
     public static AuthResponseDTO.FindEmailResultDTO toFindEmailResultDTO(Member member) {
         return AuthResponseDTO.FindEmailResultDTO.builder()
@@ -111,10 +132,16 @@ public class AuthConverter {
             default -> Gender.NONE;
         };
 
+        Role role = switch (request.getRole()) {
+            case 2 -> Role.TEACHER;
+            case 3 -> Role.ADMIN;
+            default -> Role.BOSS;
+        };
+
         return Member.builder()
                 .name(request.getName())
                 .email(request.getEmail())
-                .role(Role.USER)
+                .role(role)
                 .gender(gender)
                 .loginType(LoginType.of(socialType))
                 .birthDate(request.getBirthDate())
@@ -129,6 +156,12 @@ public class AuthConverter {
                 .agreementSms(request.getAgreementSms())
                 .agreementEmail(request.getAgreementEmail())
                 .agreementLocation(request.getAgreementLocation())
+                .build();
+    }
+
+    public static AuthResponseDTO.CheckNicknameResultDTO toCheckNicknameDTO(Boolean nicknameCheck) {
+        return AuthResponseDTO.CheckNicknameResultDTO.builder()
+                .nicknameCheck(nicknameCheck)
                 .build();
     }
 }
