@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import kr.co.teacherforboss.validation.annotation.CheckRole;
 import kr.co.teacherforboss.validation.annotation.CheckTrueOrFalse;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,6 +17,7 @@ import java.time.LocalDate;
 public class AuthRequestDTO {
     @Getter
     public static abstract class JoinCommonDTO{
+        @CheckRole
         @NotNull(message = "보스(1)/티쳐(2) 중 선택해주세요.")
         Integer role;
 
