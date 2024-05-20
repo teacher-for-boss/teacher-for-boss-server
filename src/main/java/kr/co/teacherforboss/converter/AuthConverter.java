@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.converter;
 
+import kr.co.teacherforboss.domain.BusinessAuth;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.EmailAuth;
 import kr.co.teacherforboss.domain.PhoneAuth;
@@ -51,6 +52,13 @@ public class AuthConverter {
         return EmailAuth.builder()
                 .email(request.getEmail())
                 .purpose(Purpose.of(request.getPurpose()))
+                .isChecked("F")
+                .build();
+    }
+
+    public static BusinessAuth toBusinessAuth(AuthRequestDTO.BusinessCheckDTO request) {
+        return BusinessAuth.builder()
+                .businessNum(request.getBusinessNum())
                 .isChecked("F")
                 .build();
     }
@@ -129,6 +137,13 @@ public class AuthConverter {
                 .agreementSms(request.getAgreementSms())
                 .agreementEmail(request.getAgreementEmail())
                 .agreementLocation(request.getAgreementLocation())
+                .build();
+    }
+
+    public static AuthResponseDTO.BusinessCheckResultDTO toBusinessCheckResultDTO(boolean isChecked) {
+        return AuthResponseDTO.BusinessCheckResultDTO.builder()
+                .isChecked(isChecked)
+                .createdAt(LocalDateTime.now())
                 .build();
     }
 }

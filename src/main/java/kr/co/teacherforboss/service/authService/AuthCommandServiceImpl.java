@@ -9,9 +9,12 @@ import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import kr.co.teacherforboss.apiPayload.exception.handler.MemberHandler;
 import kr.co.teacherforboss.config.jwt.TokenManager;
 import kr.co.teacherforboss.converter.AuthConverter;
+import kr.co.teacherforboss.domain.BusinessAuth;
 import kr.co.teacherforboss.domain.enums.LoginType;
 import kr.co.teacherforboss.domain.AgreementTerm;
 import kr.co.teacherforboss.repository.AgreementTermRepository;
+import kr.co.teacherforboss.repository.BusinessAuthRepository;
+import kr.co.teacherforboss.util.BusinessUtil;
 import kr.co.teacherforboss.util.PasswordUtil;
 import kr.co.teacherforboss.domain.PhoneAuth;
 import kr.co.teacherforboss.domain.enums.Purpose;
@@ -29,6 +32,8 @@ import kr.co.teacherforboss.repository.EmailAuthRepository;
 import kr.co.teacherforboss.service.mailService.MailCommandService;
 import kr.co.teacherforboss.web.dto.AuthResponseDTO;
 import lombok.RequiredArgsConstructor;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -43,11 +48,13 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private final EmailAuthRepository emailAuthRepository;
     private final PhoneAuthRepository phoneAuthRepository;
     private final AgreementTermRepository agreementTermRepository;
+    private final BusinessAuthRepository businessAuthRepository;
     private final MailCommandService mailCommandService;
     private final PasswordEncoder passwordEncoder;
     private final TokenManager tokenManager;
     private final SmsUtil smsUtil;
     private final PasswordUtil passwordUtil;
+    private final BusinessUtil businessUtil;
 
     // 회원 가입
     @Override
@@ -233,5 +240,30 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         passwordUtil.setSocialMemberPassword(newMember);
 
         return memberRepository.save(newMember);
+    }
+
+    @Override
+    @Transactional
+    public boolean businessCheck(AuthRequestDTO.BusinessCheckDTO request) {
+        if (businessAuthRepository.existsByBusinessNum(request.getBusinessNum())) {
+            throw new AuthHandler(ErrorStatus.BUSINESS_NUM_DUPLICATE);
+        }
+
+        JSONObject response = businessUtil.getBusinessInfo(request.getBusinessNum(), request.getOpenDate(), request.getRepresentative());
+        if(response == null || !businessUtil.isStatusCodeOk(response)) {
+            throw new AuthHandler(ErrorStatus.INVALID_BUSINESS_INFO);
+        }
+
+        JSONArray businessDataArray = (JSONArray) response.get("data");
+        JSONObject businessData = (JSONObject) businessDataArray.get(0);
+
+        boolean isChecked = businessUtil.isValidCode(businessData);
+        if(isChecked) {
+            BusinessAuth businessAuth = AuthConverter.toBusinessAuth(request);
+            businessAuth.setIsChecked(isChecked);
+            businessAuthRepository.save(businessAuth);
+        }
+
+        return isChecked;
     }
 }
