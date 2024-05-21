@@ -21,7 +21,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Question extends BaseEntity {
+public class Problem extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "examId")
@@ -33,7 +33,7 @@ public class Question extends BaseEntity {
 
     @NotNull
     @Column
-    private Long answer;    // QuestionChoice.id
+    private Long answer;    // ProblemChoice.id
 
     @NotNull
     @Column(length = 100)
@@ -47,7 +47,7 @@ public class Question extends BaseEntity {
     @Column
     private Integer sequence;
 
-    @OneToMany(mappedBy = "question")
-    private List<QuestionChoice> questionOptionList;
+    @OneToMany(mappedBy = "problem")
+    private List<ProblemChoice> problemChoiceList;
 
 }

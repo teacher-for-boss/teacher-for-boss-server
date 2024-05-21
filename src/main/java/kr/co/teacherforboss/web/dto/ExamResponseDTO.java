@@ -24,9 +24,9 @@ public class ExamResponseDTO {
     public static class GetExamResultDTO{
         long memberExamId;
         int score;
-        int questionsNum;
-        int correctAnsNum;
-        int incorrectAnsNum;
+        int problemsCount;
+        int correctChoicesCount;
+        int incorrectChoicesCount;
     }
 
     @Builder
@@ -86,12 +86,12 @@ public class ExamResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class GetExamIncorrectChoicesResultDTO {
-        List<ExamIncorrectQuestion> examIncorrectQuestionList;
+        List<ExamIncorrectProblem> examIncorrectProblemList;
 
         @Getter
         @AllArgsConstructor
-        public static class ExamIncorrectQuestion {
-            Long questionId;
+        public static class ExamIncorrectProblem {
+            Long problemId;
             int sequence;
             String name;
         }
@@ -101,20 +101,20 @@ public class ExamResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class GetQuestionsDTO {
-        List<QuestionInfo> questionList;
+    public static class GetProblemsDTO {
+        List<ProblemInfo> problemList;
 
         @Getter
         @AllArgsConstructor
-        public static class QuestionInfo {
-            Long questionId;
+        public static class ProblemInfo {
+            Long problemId;
             Integer sequence;
             String name;
-            List<QuestionChoiceInfo> choiceList;
+            List<ProblemChoiceInfo> choiceList;
 
             @Getter
             @AllArgsConstructor
-            public static class QuestionChoiceInfo {
+            public static class ProblemChoiceInfo {
                 Long choiceId;
                 String choiceName;
             }
@@ -126,12 +126,12 @@ public class ExamResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class GetSolutionsDTO {
-        List<QuestionSolution> solutionList;
+        List<ProblemSolution> solutionList;
 
         @Getter
         @AllArgsConstructor
-        public static class QuestionSolution {
-            Long questionId;
+        public static class ProblemSolution {
+            Long problemId;
             String solution;
         }
     }

@@ -8,7 +8,7 @@ import kr.co.teacherforboss.converter.ExamConverter;
 import kr.co.teacherforboss.domain.Exam;
 import kr.co.teacherforboss.domain.ExamCategory;
 import kr.co.teacherforboss.domain.MemberExam;
-import kr.co.teacherforboss.domain.Question;
+import kr.co.teacherforboss.domain.Problem;
 import kr.co.teacherforboss.domain.ExamTag;
 import kr.co.teacherforboss.service.examService.ExamCommandService;
 import kr.co.teacherforboss.service.examService.ExamQueryService;
@@ -68,20 +68,20 @@ public class ExamController {
 
     @GetMapping("/member-exams/{memberExamId}/result/incorrect/list")
     public ApiResponse<ExamResponseDTO.GetExamIncorrectChoicesResultDTO> getExamIncorrectChoices(@PathVariable("memberExamId") Long memberExamId) {
-        List<Question> questions = examCommandService.getExamIncorrectChoices(memberExamId);
-        return ApiResponse.onSuccess(ExamConverter.toGetExamAnsNotesDTO(questions));
+        List<Problem> problems = examCommandService.getExamIncorrectChoices(memberExamId);
+        return ApiResponse.onSuccess(ExamConverter.toGetExamAnsNotesDTO(problems));
     }
 
     @GetMapping("/{examId}")
-    public ApiResponse<ExamResponseDTO.GetQuestionsDTO> getQuestions(@PathVariable("examId") Long examId) {
-        List<Question> questions = examQueryService.getQuestions(examId);
-        return ApiResponse.onSuccess(ExamConverter.toGetQuestionsDTO(questions));
+    public ApiResponse<ExamResponseDTO.GetProblemsDTO> getProblems(@PathVariable("examId") Long examId) {
+        List<Problem> problems = examQueryService.getProblems(examId);
+        return ApiResponse.onSuccess(ExamConverter.toGetProblemsDTO(problems));
     }
 
     @GetMapping("/{examId}/solutions")
     public ApiResponse<ExamResponseDTO.GetSolutionsDTO> getSolutions(@PathVariable("examId") Long examId) {
-        List<Question> questions = examQueryService.getQuestions(examId);
-        return ApiResponse.onSuccess(ExamConverter.toGetSolutionsDTO(questions));
+        List<Problem> problems = examQueryService.getProblems(examId);
+        return ApiResponse.onSuccess(ExamConverter.toGetSolutionsDTO(problems));
     }
     
     @GetMapping("/{examId}/rank")

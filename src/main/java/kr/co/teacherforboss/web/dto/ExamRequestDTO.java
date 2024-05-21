@@ -21,7 +21,7 @@ public class ExamRequestDTO {
 
         @NotNull(message = "문항 정답 리스트는 필수 입력값입니다.")
         @Valid
-        List<TakeExamChoiceDTO> questionAnsList;
+        List<TakeExamChoiceDTO> problemAnsList;
 
         @NotNull(message = "남은 시간은 필수 입력값입니다.")
         @Max(value = 600000, message = "남은 시간은 최대 10분입니다.")
@@ -33,9 +33,9 @@ public class ExamRequestDTO {
     @Builder
     public static class TakeExamChoiceDTO{
         @NotNull(message = "문항 식별자는 필수 입력값입니다.")
-        Long questionId;
+        Long problemId;
 
         @NotNull(message = "문항 선지 식별자는 필수 입력값입니다.")
-        Long questionChoiceId;
+        Long problemChoiceId;
     }
 }

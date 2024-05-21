@@ -23,11 +23,11 @@ public class MemberChoice extends BaseEntity {
     private MemberExam memberExam;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "questionId")
-    private Question question;
+    @JoinColumn(name = "problemId")
+    private Problem problem;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "questionChoiceId")
-    private QuestionChoice questionChoice;
+    @JoinColumn(name = "problemChoiceId")
+    private ProblemChoice problemChoice;
 
 }

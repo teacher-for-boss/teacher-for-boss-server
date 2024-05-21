@@ -12,8 +12,8 @@ import kr.co.teacherforboss.domain.ExamCategory;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.MemberChoice;
 import kr.co.teacherforboss.domain.MemberExam;
-import kr.co.teacherforboss.domain.Question;
-import kr.co.teacherforboss.domain.QuestionChoice;
+import kr.co.teacherforboss.domain.Problem;
+import kr.co.teacherforboss.domain.ProblemChoice;
 import kr.co.teacherforboss.domain.ExamTag;
 import kr.co.teacherforboss.web.dto.ExamResponseDTO;
 
@@ -26,11 +26,11 @@ public class ExamConverter {
                 .build();
     }
 
-    public static MemberChoice toMemberChoice(MemberExam memberExam, Question question, QuestionChoice questionChoice) {
+    public static MemberChoice toMemberChoice(MemberExam memberExam, Problem problem, ProblemChoice problemChoice) {
         return MemberChoice.builder()
                 .memberExam(memberExam)
-                .question(question)
-                .questionChoice(questionChoice)
+                .problem(problem)
+                .problemChoice(problemChoice)
                 .build();
     }
 
@@ -43,14 +43,14 @@ public class ExamConverter {
                 .build();
     }
 
-    public static ExamResponseDTO.GetExamResultDTO toGetExamResultDTO(long memberExamId, int score, int questionNum,
-                                                                      int correctAnsNum, int incorrectAnsNum) {
+    public static ExamResponseDTO.GetExamResultDTO toGetExamResultDTO(long memberExamId, int score, int problemsCount,
+                                                                      int correctChoicesCount, int incorrectChoicesCount) {
         return ExamResponseDTO.GetExamResultDTO.builder()
                 .memberExamId(memberExamId)
                 .score(score)
-                .questionsNum(questionNum)
-                .correctAnsNum(correctAnsNum)
-                .incorrectAnsNum(incorrectAnsNum)
+                .problemsCount(problemsCount)
+                .correctChoicesCount(correctChoicesCount)
+                .incorrectChoicesCount(incorrectChoicesCount)
                 .build();
     }
           
@@ -97,36 +97,36 @@ public class ExamConverter {
                 .build();
     }
 
-    public static ExamResponseDTO.GetExamIncorrectChoicesResultDTO toGetExamAnsNotesDTO(List<Question> questions) {
+    public static ExamResponseDTO.GetExamIncorrectChoicesResultDTO toGetExamAnsNotesDTO(List<Problem> problems) {
         return ExamResponseDTO.GetExamIncorrectChoicesResultDTO.builder()
-                .examIncorrectQuestionList(questions.stream().map(q ->
-                        new ExamResponseDTO.GetExamIncorrectChoicesResultDTO.ExamIncorrectQuestion(
+                .examIncorrectProblemList(problems.stream().map(q ->
+                        new ExamResponseDTO.GetExamIncorrectChoicesResultDTO.ExamIncorrectProblem(
                                 q.getId(), q.getSequence(), q.getName()))
                         .toList()).build();
     }
 
-    public static ExamResponseDTO.GetQuestionsDTO toGetQuestionsDTO(List<Question> questions) {
-        List<ExamResponseDTO.GetQuestionsDTO.QuestionInfo> questionInfos = questions.stream()
-                .map(ExamConverter::toQuestionInfo)
+    public static ExamResponseDTO.GetProblemsDTO toGetProblemsDTO(List<Problem> problems) {
+        List<ExamResponseDTO.GetProblemsDTO.ProblemInfo> problemInfos = problems.stream()
+                .map(ExamConverter::toProblemInfo)
                 .toList();
 
-        return ExamResponseDTO.GetQuestionsDTO.builder()
-                .questionList(questionInfos)
+        return ExamResponseDTO.GetProblemsDTO.builder()
+                .problemList(problemInfos)
                 .build();
     }
 
-    private static ExamResponseDTO.GetQuestionsDTO.QuestionInfo toQuestionInfo(Question question) {
-        List<ExamResponseDTO.GetQuestionsDTO.QuestionInfo.QuestionChoiceInfo> choiceInfos = question.getQuestionOptionList().stream()
-                .map(choice -> new ExamResponseDTO.GetQuestionsDTO.QuestionInfo.QuestionChoiceInfo(choice.getId(), choice.getChoice()))
+    private static ExamResponseDTO.GetProblemsDTO.ProblemInfo toProblemInfo(Problem problem) {
+        List<ExamResponseDTO.GetProblemsDTO.ProblemInfo.ProblemChoiceInfo> choiceInfos = problem.getProblemChoiceList().stream()
+                .map(choice -> new ExamResponseDTO.GetProblemsDTO.ProblemInfo.ProblemChoiceInfo(choice.getId(), choice.getChoice()))
                 .toList();
 
-        return new ExamResponseDTO.GetQuestionsDTO.QuestionInfo(question.getId(), question.getSequence(), question.getName(), choiceInfos);
+        return new ExamResponseDTO.GetProblemsDTO.ProblemInfo(problem.getId(), problem.getSequence(), problem.getName(), choiceInfos);
     }
 
-    public static ExamResponseDTO.GetSolutionsDTO toGetSolutionsDTO(List<Question> questions) {
+    public static ExamResponseDTO.GetSolutionsDTO toGetSolutionsDTO(List<Problem> problems) {
         return ExamResponseDTO.GetSolutionsDTO.builder()
-                .solutionList(questions.stream().map(question ->
-                        new ExamResponseDTO.GetSolutionsDTO.QuestionSolution(question.getId(), question.getCommentary()))
+                .solutionList(problems.stream().map(problem ->
+                        new ExamResponseDTO.GetSolutionsDTO.ProblemSolution(problem.getId(), problem.getCommentary()))
                         .toList()).build();
     }
 

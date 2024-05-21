@@ -13,7 +13,7 @@ public interface MemberChoiceRepository extends JpaRepository<MemberChoice, Long
 
     List<MemberChoice> findAllByMemberExamIdAndStatus(Long memberExamId, Status status);
 
-    @Query(value = "select ma from MemberChoice ma where ma.memberExam = ?1 and ma.questionChoice.id <> ma.question.answer")
+    @Query(value = "select ma from MemberChoice ma where ma.memberExam = ?1 and ma.problemChoice.id <> ma.problem.answer")
     List<MemberChoice> findIncorrectChoices(MemberExam memberExam, Status status);
 
 }

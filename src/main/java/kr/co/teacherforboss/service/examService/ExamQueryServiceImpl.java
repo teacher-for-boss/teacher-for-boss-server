@@ -10,14 +10,14 @@ import kr.co.teacherforboss.domain.Exam;
 import kr.co.teacherforboss.domain.ExamCategory;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.MemberExam;
-import kr.co.teacherforboss.domain.Question;
+import kr.co.teacherforboss.domain.Problem;
 import kr.co.teacherforboss.domain.ExamTag;
 import kr.co.teacherforboss.domain.enums.ExamQuarter;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.ExamCategoryRepository;
 import kr.co.teacherforboss.repository.ExamRepository;
 import kr.co.teacherforboss.repository.MemberExamRepository;
-import kr.co.teacherforboss.repository.QuestionRepository;
+import kr.co.teacherforboss.repository.ProblemRepository;
 import kr.co.teacherforboss.repository.ExamTagRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.web.dto.ExamResponseDTO;
@@ -32,7 +32,7 @@ public class ExamQueryServiceImpl implements ExamQueryService {
 
     private final ExamRepository examRepository;
     private final ExamCategoryRepository examCategoryRepository;
-    private final QuestionRepository questionRepository;
+    private final ProblemRepository problemRepository;
     private final MemberExamRepository memberExamRepository;
     private final AuthCommandService authCommandService;
     private final ExamTagRepository examTagRepository;
@@ -79,11 +79,11 @@ public class ExamQueryServiceImpl implements ExamQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Question> getQuestions(Long examId) {
+    public List<Problem> getProblems(Long examId) {
         if (!examRepository.existsByIdAndStatus(examId, Status.ACTIVE))
             throw new ExamHandler(ErrorStatus.EXAM_NOT_FOUND);
 
-        return questionRepository.findAllByExamIdAndStatus(examId, Status.ACTIVE, Sort.by(Sort.Order.asc("sequence")));
+        return problemRepository.findAllByExamIdAndStatus(examId, Status.ACTIVE, Sort.by(Sort.Order.asc("sequence")));
     }
 
     @Override

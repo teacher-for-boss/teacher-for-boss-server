@@ -48,9 +48,9 @@ public class Exam extends BaseEntity {
     private ExamType examType;
 
     @OneToMany(mappedBy = "exam")
-    private List<Question> questionList;
+    private List<Problem> problemList;
 
-    public void setQuestionList(List<Question> questionList) {
-        this.questionList = questionList;
+    public void setProblemList(List<Problem> problemList) {
+        this.problemList = problemList;
     }
 }

@@ -18,17 +18,17 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class QuestionChoice extends BaseEntity {
+public class ProblemChoice extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "questionId")
-    private Question question;
+    @JoinColumn(name = "problemId")
+    private Problem problem;
 
     @NotNull
     @Column(length = 30)
     private String choice;
 
     public boolean isCorrect() {
-        return question.getAnswer().equals(this.getId());
+        return problem.getAnswer().equals(this.getId());
     }
 }
