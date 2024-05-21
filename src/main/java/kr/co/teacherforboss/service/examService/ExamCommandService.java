@@ -11,5 +11,5 @@ public interface ExamCommandService {
 
     ExamResponseDTO.GetExamResultDTO getExamResult(Long memberExamId);
 
-    List<Question> getExamIncorrectAnswers(Long memberExamId);
+    List<Question> getExamIncorrectChoices(Long memberExamId);
 }

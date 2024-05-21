@@ -85,7 +85,7 @@ public class ExamResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class GetExamIncorrectAnswersResultDTO {
+    public static class GetExamIncorrectChoicesResultDTO {
         List<ExamIncorrectQuestion> examIncorrectQuestionList;
 
         @Getter

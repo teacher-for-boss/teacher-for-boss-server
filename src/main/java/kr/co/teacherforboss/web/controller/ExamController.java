@@ -67,8 +67,8 @@ public class ExamController {
     }
 
     @GetMapping("/member-exams/{memberExamId}/result/incorrect/list")
-    public ApiResponse<ExamResponseDTO.GetExamIncorrectAnswersResultDTO> getExamIncorrectAnswers(@PathVariable("memberExamId") Long memberExamId) {
-        List<Question> questions = examCommandService.getExamIncorrectAnswers(memberExamId);
+    public ApiResponse<ExamResponseDTO.GetExamIncorrectChoicesResultDTO> getExamIncorrectChoices(@PathVariable("memberExamId") Long memberExamId) {
+        List<Question> questions = examCommandService.getExamIncorrectChoices(memberExamId);
         return ApiResponse.onSuccess(ExamConverter.toGetExamAnsNotesDTO(questions));
     }
 

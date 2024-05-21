@@ -10,7 +10,7 @@ import kr.co.teacherforboss.config.ExamConfig;
 import kr.co.teacherforboss.domain.Exam;
 import kr.co.teacherforboss.domain.ExamCategory;
 import kr.co.teacherforboss.domain.Member;
-import kr.co.teacherforboss.domain.MemberAnswer;
+import kr.co.teacherforboss.domain.MemberChoice;
 import kr.co.teacherforboss.domain.MemberExam;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionChoice;
@@ -26,8 +26,8 @@ public class ExamConverter {
                 .build();
     }
 
-    public static MemberAnswer toMemberAnswer(MemberExam memberExam, Question question, QuestionChoice questionChoice) {
-        return MemberAnswer.builder()
+    public static MemberChoice toMemberChoice(MemberExam memberExam, Question question, QuestionChoice questionChoice) {
+        return MemberChoice.builder()
                 .memberExam(memberExam)
                 .question(question)
                 .questionChoice(questionChoice)
@@ -97,10 +97,10 @@ public class ExamConverter {
                 .build();
     }
 
-    public static ExamResponseDTO.GetExamIncorrectAnswersResultDTO toGetExamAnsNotesDTO(List<Question> questions) {
-        return ExamResponseDTO.GetExamIncorrectAnswersResultDTO.builder()
+    public static ExamResponseDTO.GetExamIncorrectChoicesResultDTO toGetExamAnsNotesDTO(List<Question> questions) {
+        return ExamResponseDTO.GetExamIncorrectChoicesResultDTO.builder()
                 .examIncorrectQuestionList(questions.stream().map(q ->
-                        new ExamResponseDTO.GetExamIncorrectAnswersResultDTO.ExamIncorrectQuestion(
+                        new ExamResponseDTO.GetExamIncorrectChoicesResultDTO.ExamIncorrectQuestion(
                                 q.getId(), q.getSequence(), q.getName()))
                         .toList()).build();
     }

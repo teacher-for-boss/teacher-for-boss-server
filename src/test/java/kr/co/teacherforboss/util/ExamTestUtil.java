@@ -3,10 +3,8 @@ package kr.co.teacherforboss.util;
 import kr.co.teacherforboss.domain.Exam;
 import kr.co.teacherforboss.domain.ExamCategory;
 import kr.co.teacherforboss.domain.Member;
-import kr.co.teacherforboss.domain.MemberAnswer;
 import kr.co.teacherforboss.domain.MemberExam;
 import kr.co.teacherforboss.domain.Question;
-import kr.co.teacherforboss.domain.QuestionChoice;
 import kr.co.teacherforboss.domain.enums.ExamType;
 
 public class ExamTestUtil {
