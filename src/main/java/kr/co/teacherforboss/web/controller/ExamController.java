@@ -4,21 +4,19 @@ import jakarta.validation.Valid;
 import java.util.List;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.config.ExamConfig;
-import kr.co.teacherforboss.config.jwt.PrincipalDetails;
 import kr.co.teacherforboss.converter.ExamConverter;
 import kr.co.teacherforboss.domain.Exam;
 import kr.co.teacherforboss.domain.ExamCategory;
 import kr.co.teacherforboss.domain.MemberExam;
 import kr.co.teacherforboss.domain.Question;
-import kr.co.teacherforboss.domain.Tag;
+import kr.co.teacherforboss.domain.ExamTag;
 import kr.co.teacherforboss.service.examService.ExamCommandService;
 import kr.co.teacherforboss.service.examService.ExamQueryService;
-import kr.co.teacherforboss.validation.annotation.ExistPrincipalDetails;
 import kr.co.teacherforboss.web.dto.ExamRequestDTO;
 import kr.co.teacherforboss.web.dto.ExamResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,16 +52,16 @@ public class ExamController {
         return ApiResponse.onSuccess(ExamConverter.toGetExamCategoriesDTO(examCategories));
     }
 
-    @GetMapping("/{examCategoryId}/tags")
-    public ApiResponse<ExamResponseDTO.GetTagsDTO> getTags(@PathVariable("examCategoryId") Long examCategoryId) {
-        List<Tag> tags = examQueryService.getTags(examCategoryId);
-        return ApiResponse.onSuccess(ExamConverter.toGetTagsDTO(tags));
+    @GetMapping("/{examCategoryId}/exam-tags")
+    public ApiResponse<ExamResponseDTO.GetExamTagsDTO> getExamTags(@PathVariable("examCategoryId") Long examCategoryId) {
+        List<ExamTag> examTags = examQueryService.getExamTags(examCategoryId);
+        return ApiResponse.onSuccess(ExamConverter.toGetExamTagsDTO(examTags));
     }
 
     @GetMapping("/list/{examCategoryId}")
     public ApiResponse<ExamResponseDTO.GetExamsDTO> getExams(@PathVariable("examCategoryId") Long examCategoryId,
-                                                             @RequestParam(value = "tagId", required = false) Long tagId) {
-        List<Exam> exams = examQueryService.getExams(examCategoryId, tagId);
+                                                             @RequestParam(value = "examTagId", required = false) Long examTagId) {
+        List<Exam> exams = examQueryService.getExams(examCategoryId, examTagId);
         List<MemberExam> memberExams = examQueryService.getMemberExams();
         return ApiResponse.onSuccess(ExamConverter.toGetExamsDTO(exams, memberExams));
     }

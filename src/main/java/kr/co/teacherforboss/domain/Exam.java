@@ -31,8 +31,8 @@ public class Exam extends BaseEntity {
     private ExamCategory examCategory;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tagId")
-    private Tag tag;
+    @JoinColumn(name = "examTagId")
+    private ExamTag examTag;
 
     @NotNull
     @Column(length = 60)

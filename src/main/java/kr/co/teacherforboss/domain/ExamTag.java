@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Tag extends BaseEntity {
+public class ExamTag extends BaseEntity {
 
     @NotNull
     @Column(length = 10)

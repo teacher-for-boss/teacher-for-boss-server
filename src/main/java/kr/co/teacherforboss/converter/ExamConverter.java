@@ -14,7 +14,7 @@ import kr.co.teacherforboss.domain.MemberAnswer;
 import kr.co.teacherforboss.domain.MemberExam;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionChoice;
-import kr.co.teacherforboss.domain.Tag;
+import kr.co.teacherforboss.domain.ExamTag;
 import kr.co.teacherforboss.web.dto.ExamResponseDTO;
 
 public class ExamConverter {
@@ -61,10 +61,10 @@ public class ExamConverter {
                 .build();
     }
 
-    public static ExamResponseDTO.GetTagsDTO toGetTagsDTO(List<Tag> tags) {
-        return ExamResponseDTO.GetTagsDTO.builder()
-                .tagsList(tags.stream().map(tag ->
-                        new ExamResponseDTO.GetTagsDTO.TagInfo(tag.getId(), tag.getName()))
+    public static ExamResponseDTO.GetExamTagsDTO toGetExamTagsDTO(List<ExamTag> examTags) {
+        return ExamResponseDTO.GetExamTagsDTO.builder()
+                .examTagsList(examTags.stream().map(examTag ->
+                        new ExamResponseDTO.GetExamTagsDTO.ExamTagInfo(examTag.getId(), examTag.getName()))
                         .toList()).build();
     }
 
@@ -88,8 +88,8 @@ public class ExamConverter {
     public static ExamResponseDTO.GetExamsDTO.ExamInfo toGetExamInfo(Exam exam, boolean isTakenExam, Boolean isPassed, Integer score) {
         return ExamResponseDTO.GetExamsDTO.ExamInfo.builder()
                 .id(exam.getId())
-                .tag(exam.getTag().getName())
-                .name(exam.getName())
+                .examTag(exam.getExamTag().getName())
+                .title(exam.getName())
                 .description(exam.getDescription())
                 .isTaken(isTakenExam)
                 .isPassed(isPassed)

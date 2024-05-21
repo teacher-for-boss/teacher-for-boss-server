@@ -6,14 +6,14 @@ import kr.co.teacherforboss.domain.Exam;
 import kr.co.teacherforboss.domain.ExamCategory;
 import kr.co.teacherforboss.domain.MemberExam;
 import kr.co.teacherforboss.domain.Question;
-import kr.co.teacherforboss.domain.Tag;
+import kr.co.teacherforboss.domain.ExamTag;
 import kr.co.teacherforboss.domain.enums.ExamQuarter;
 import kr.co.teacherforboss.web.dto.ExamResponseDTO;
 
 public interface ExamQueryService {
     List<ExamCategory> getExamCategories();
-    List<Tag> getTags(Long categoryId);
-    List<Exam> getExams(Long examCategoryId, Long tagId);
+    List<ExamTag> getExamTags(Long categoryId);
+    List<Exam> getExams(Long examCategoryId, Long examTagId);
     List<MemberExam> getMemberExams();
     List<Question> getQuestions(Long examId);
     List<ExamResponseDTO.GetExamRankInfoDTO.ExamRankInfo> getExamRankInfo(Long examId);

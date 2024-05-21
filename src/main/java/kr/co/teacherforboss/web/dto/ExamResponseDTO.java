@@ -48,14 +48,14 @@ public class ExamResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class GetTagsDTO {
-        List<TagInfo> tagsList;
+    public static class GetExamTagsDTO {
+        List<ExamTagInfo> examTagsList;
 
         @Builder
         @Getter
         @AllArgsConstructor
-        public static class TagInfo {
-            Long tagId;
+        public static class ExamTagInfo {
+            Long examTagId;
             String name;
         }
     }
@@ -72,8 +72,7 @@ public class ExamResponseDTO {
         @AllArgsConstructor
         public static class ExamInfo {
             Long id;
-            String tag;
-            String name;
+            String examTag;
             String title;
             String description;
             boolean isTaken;
