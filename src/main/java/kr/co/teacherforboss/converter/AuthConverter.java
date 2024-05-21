@@ -4,7 +4,6 @@ import kr.co.teacherforboss.domain.BusinessAuth;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.EmailAuth;
 import kr.co.teacherforboss.domain.PhoneAuth;
-import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.Gender;
 import kr.co.teacherforboss.domain.enums.LoginType;
 import kr.co.teacherforboss.domain.enums.Role;
@@ -60,7 +59,6 @@ public class AuthConverter {
     public static BusinessAuth toBusinessAuth(AuthRequestDTO.BusinessCheckDTO request) {
         return BusinessAuth.builder()
                 .businessNumber(request.getBusinessNumber())
-                .isChecked(BooleanType.F)
                 .build();
     }
 

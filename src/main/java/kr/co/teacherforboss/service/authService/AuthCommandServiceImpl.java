@@ -251,7 +251,6 @@ public class AuthCommandServiceImpl implements AuthCommandService {
             throw new AuthHandler(ErrorStatus.INVALID_BUSINESS_INFO);
         } else {
             BusinessAuth businessAuth = AuthConverter.toBusinessAuth(request);
-            businessAuth.setIsChecked(isChecked);
             businessAuthRepository.save(businessAuth);
         }
         return isChecked;
