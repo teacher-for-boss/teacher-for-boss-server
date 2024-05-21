@@ -3,21 +3,13 @@ package kr.co.teacherforboss.util;
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import lombok.RequiredArgsConstructor;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.DefaultUriBuilderFactory;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,74 +19,66 @@ public class BusinessUtil {
 
     private static final String STATUS_CODE_OK = "OK";
     private static final String VALID_CODE = "01";
+    private static final String DATE_PATTERN = "yyyyMMdd";
+    private static final Pattern BUSINESS_NUMBER_PATTERN = Pattern.compile("\\d{3}-\\d{2}-\\d{5}");
 
     @Value("${business.api.url}")
-    private String url;
+    private String apiUrl;
 
     @Value("${business.api.key}")
     private String apiKey;
 
-    public JSONObject getBusinessInfo(String businessNum, LocalDate openDate, String representative) {
-        try {
-            return requestBusinessAPI(businessNum, openDate, representative);
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public boolean requestBusinessAPI(String businessNumber, LocalDate openDate, String representative) {
+        String parsedBusinessNumber = parseBusinessNumber(businessNumber);
+        String formattedDate = openDate.format(DateTimeFormatter.ofPattern(DATE_PATTERN));
+
+        Map<String, Object> requestBody = createRequestBody(parsedBusinessNumber, formattedDate, representative);
+        String responseBody = sendPostRequest(apiUrl, apiKey, requestBody);
+
+        String valid = parseResponseField(responseBody, "valid");
+        String statusCode = parseResponseField(responseBody, "status_code");
+
+        return STATUS_CODE_OK.equals(statusCode) && VALID_CODE.equals(valid);
     }
 
-    private JSONObject requestBusinessAPI(String businessNum, LocalDate openDate, String representative) throws IOException, ParseException {
-        OkHttpClient client = new OkHttpClient().newBuilder().build();
-        MediaType mediaType = MediaType.parse("application/json");
+    private Map<String, Object> createRequestBody(String businessNumber, String startDate, String representative) {
+        Map<String, String> business = new HashMap<>();
+        business.put("b_no", businessNumber);
+        business.put("start_dt", startDate);
+        business.put("p_nm", representative);
 
-        JSONObject businessObject = new JSONObject();
-        JSONArray businessArray = new JSONArray();
-        JSONObject requestBody = new JSONObject();
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("businesses", Collections.singletonList(business));
 
-        String parseBusinessNum = BusinessUtil.parseBusinessNum(businessNum);
-        businessObject.put("b_no", parseBusinessNum);
-        businessObject.put("start_dt", openDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-        businessObject.put("p_nm", representative);
-
-        businessArray.add(businessObject);
-
-        requestBody.put("businesses", businessArray);
-
-        RequestBody body = RequestBody.create(mediaType, requestBody.toString());
-        Request request = new Request.Builder()
-                .url(url + "?serviceKey=" + apiKey)
-                .post(body)
-                .addHeader("Content-Type", "application/json")
-                .build();
-
-        Response response = client.newCall(request).execute();
-        String responseBodyString = response.body().string();
-
-        if (response.isSuccessful()) {
-            JSONParser parser = new JSONParser();
-            return (JSONObject) parser.parse(responseBodyString);
-        }
-        return null;
+        return requestBody;
     }
 
-    public static String parseBusinessNum(String businessNum) {
-        Pattern pattern = Pattern.compile("\\d{3}-\\d{2}-\\d{5}");
-        Matcher matcher = pattern.matcher(businessNum);
+    private String sendPostRequest(String url, String apiKey, Map<String, Object> requestBody) {
+        DefaultUriBuilderFactory factory = new DefaultUriBuilderFactory();
+        factory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
 
+        return WebClient.builder()
+                .uriBuilderFactory(factory)
+                .build()
+                .post()
+                .uri(url + "?serviceKey=" + apiKey)
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+    }
+
+    public static String parseBusinessNumber(String businessNumber) {
+        Matcher matcher = BUSINESS_NUMBER_PATTERN.matcher(businessNumber);
         if (!matcher.matches()) {
             throw new AuthHandler(ErrorStatus.INVALID_BUSINESS_INFO);
         }
-
-        return businessNum.replaceAll("-", "");
+        return businessNumber.replaceAll("-", "");
     }
 
-    public boolean isStatusCodeOk(JSONObject response) {
-        String statusCode = response.get("status_code").toString();
-        return STATUS_CODE_OK.equals(statusCode);
-    }
-
-    public boolean isValidCode(JSONObject response) {
-        String validCode = response.get("valid").toString();
-        return VALID_CODE.equals(validCode);
+    private String parseResponseField(String responseBody, String field) {
+        Pattern pattern = Pattern.compile("\"" + field + "\"\\s*:\\s*\"(.*?)\"");
+        Matcher matcher = pattern.matcher(responseBody);
+        return matcher.find() ? matcher.group(1) : null;
     }
 }

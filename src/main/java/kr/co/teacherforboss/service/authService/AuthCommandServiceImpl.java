@@ -31,8 +31,6 @@ import kr.co.teacherforboss.repository.EmailAuthRepository;
 import kr.co.teacherforboss.service.mailService.MailCommandService;
 import kr.co.teacherforboss.web.dto.AuthResponseDTO;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -248,21 +246,14 @@ public class AuthCommandServiceImpl implements AuthCommandService {
             throw new AuthHandler(ErrorStatus.BUSINESS_NUM_DUPLICATE);
         }
 
-        JSONObject response = businessUtil.getBusinessInfo(request.getBusinessNumber(), request.getOpenDate(), request.getRepresentative());
-        if(response == null || !businessUtil.isStatusCodeOk(response)) {
+        boolean isChecked = businessUtil.requestBusinessAPI(request.getBusinessNumber(), request.getOpenDate(), request.getRepresentative());
+        if(!isChecked) {
             throw new AuthHandler(ErrorStatus.INVALID_BUSINESS_INFO);
-        }
-
-        JSONArray businessDataArray = (JSONArray) response.get("data");
-        JSONObject businessData = (JSONObject) businessDataArray.get(0);
-
-        boolean isChecked = businessUtil.isValidCode(businessData);
-        if(isChecked) {
+        } else {
             BusinessAuth businessAuth = AuthConverter.toBusinessAuth(request);
             businessAuth.setIsChecked(isChecked);
             businessAuthRepository.save(businessAuth);
         }
-
         return isChecked;
     }
 }

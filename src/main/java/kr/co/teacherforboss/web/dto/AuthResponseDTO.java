@@ -97,13 +97,4 @@ public class AuthResponseDTO {
         String email;
         LocalDateTime createdAt;
     }
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class BusinessCheckResultDTO {
-        boolean isChecked;
-        LocalDateTime createdAt;
-    }
 }
