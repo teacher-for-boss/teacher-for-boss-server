@@ -25,17 +25,8 @@ public class AuthConverter {
     }
 
     public static Member toMember(AuthRequestDTO.JoinDTO request){
-        Gender gender = switch (request.getGender()) {
-            case 1 -> Gender.MALE;
-            case 2 -> Gender.FEMALE;
-            default -> Gender.NONE;
-        };
-
-        Role role = switch (request.getRole()) {
-            case 2 -> Role.TEACHER;
-            case 3 -> Role.ADMIN;
-            default -> Role.BOSS;
-        };
+        Gender gender = Gender.of(request.getGender());
+        Role role = Role.of(request.getRole());
 
         return Member.builder()
                 .name(request.getName())
@@ -50,7 +41,7 @@ public class AuthConverter {
 
     public static TeacherInfo toTeacher(AuthRequestDTO.JoinCommonDTO request){
         return TeacherInfo.builder()
-                .businessNum(request.getBusinessNum())
+                .businessNumber(request.getBusinessNum())
                 .representative(request.getRepresentative())
                 .openDate(request.getOpenDate())
                 .field(request.getField())
@@ -59,7 +50,7 @@ public class AuthConverter {
                 .keywords(request.getKeywords())
                 .level(Level.LEVEL1)
                 .bank(request.getBank())
-                .accountNum(request.getAccountNum())
+                .accountNumber(request.getAccountNum())
                 .accountHolder(request.getAccountHolder())
                 .build();
     }
@@ -129,17 +120,8 @@ public class AuthConverter {
     }
   
     public static Member toSocialMember(AuthRequestDTO.SocialLoginDTO request, int socialType){
-        Gender gender = switch (request.getGender()) {
-            case 1 -> Gender.MALE;
-            case 2 -> Gender.FEMALE;
-            default -> Gender.NONE;
-        };
-
-        Role role = switch (request.getRole()) {
-            case 2 -> Role.TEACHER;
-            case 3 -> Role.ADMIN;
-            default -> Role.BOSS;
-        };
+        Gender gender = Gender.of(request.getGender());
+        Role role = Role.of(request.getRole());
 
         return Member.builder()
                 .name(request.getName())
