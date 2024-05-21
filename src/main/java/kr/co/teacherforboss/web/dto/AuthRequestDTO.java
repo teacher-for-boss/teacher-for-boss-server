@@ -188,11 +188,11 @@ public class AuthRequestDTO {
     @AllArgsConstructor
     public static class BusinessCheckDTO {
 
-        @NotNull(message = "사업자등록번호가 없습니다.")
-        @Pattern(regexp = "\\d{10}", message = "사업자등록번호는 10자리 숫자여야 합니다.")
-        String businessNum;
+        @NotBlank(message = "사업자등록번호가 없습니다.")
+        @Pattern(regexp = "^\\d{3}-\\d{2}-\\d{5}$", message = "사업자등록번호는 하이픈('-')을 포함한 10글자로 입력해주세요.")
+        String businessNumber;
 
-        @NotNull(message = "대표자명이 없습니다.")
+        @NotBlank(message = "대표자명이 없습니다.")
         String representative;
 
         @NotNull(message = "개업연월일이 없습니다.")

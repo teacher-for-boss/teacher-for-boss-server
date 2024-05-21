@@ -2,7 +2,6 @@ package kr.co.teacherforboss.service.authService;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.GeneralException;
 import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
@@ -244,12 +243,12 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
     @Override
     @Transactional
-    public boolean businessCheck(AuthRequestDTO.BusinessCheckDTO request) {
-        if (businessAuthRepository.existsByBusinessNum(request.getBusinessNum())) {
+    public boolean checkBusiness(AuthRequestDTO.BusinessCheckDTO request) {
+        if (businessAuthRepository.existsByBusinessNumber(request.getBusinessNumber())) {
             throw new AuthHandler(ErrorStatus.BUSINESS_NUM_DUPLICATE);
         }
 
-        JSONObject response = businessUtil.getBusinessInfo(request.getBusinessNum(), request.getOpenDate(), request.getRepresentative());
+        JSONObject response = businessUtil.getBusinessInfo(request.getBusinessNumber(), request.getOpenDate(), request.getRepresentative());
         if(response == null || !businessUtil.isStatusCodeOk(response)) {
             throw new AuthHandler(ErrorStatus.INVALID_BUSINESS_INFO);
         }
