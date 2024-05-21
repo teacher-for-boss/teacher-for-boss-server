@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.web.dto;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import kr.co.teacherforboss.validation.annotation.CheckPurpose;
 import jakarta.validation.constraints.Email;
@@ -13,6 +14,7 @@ import lombok.Getter;
 import lombok.extern.jackson.Jacksonized;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class AuthRequestDTO {
     @Getter
@@ -25,7 +27,7 @@ public class AuthRequestDTO {
         @NotNull(message = "이메일이 없습니다.")
         String email;
 
-        @NotNull(message = "이름이 없습니다.")
+        @NotBlank(message = "이름이 없습니다.")
         String name;
 
         @NotNull(message = "닉네임을 입력해주세요.")
@@ -43,19 +45,25 @@ public class AuthRequestDTO {
         @NotNull(message = "프로필 이미지를 선택해주세요.")
         String profileImg;
 
+        @Pattern(regexp = "^\\d{3}-\\d{2}-\\d{5}$", message = "사업자 등록 번호는 최대 10자 이내로 입력 가능합니다.")
         String businessNum;
 
+        @Size(max = 20, message = "대표자명은 최대 20자 이내로 입력 가능합니다.")
         String representative;
 
         LocalDate openDate;
 
+        @Size(max = 20, message = "분야는 최대 20자 이내로 입력 가능합니다.")
         String field;
 
+        @Max(value = 2, message = "경력은 십의 자리 수 이내로 입력 가능합니다.")
         Integer career;
 
+        @Size(max = 40, message = "한 줄 소개는 최대 40자 이내로 입력 가능합니다.")
         String introduction;
 
-        String keywords;
+        @Size(max = 5)
+        List<String> keywords;
 
         String bank;
 

@@ -65,17 +65,16 @@ public class AuthCommandServiceImpl implements AuthCommandService {
             throw new AuthHandler(ErrorStatus.PASSWORD_NOT_CORRECT);
         if (!(request.getAgreementUsage().equals("T") && request.getAgreementInfo().equals("T") && request.getAgreementAge().equals("T")))
             throw new AuthHandler(ErrorStatus.INVALID_AGREEMENT_TERM);
+        if (memberRepository.existsByNicknameAndStatus(request.getNickname(), Status.ACTIVE))
+            throw new AuthHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATE);
 
         Member newMember = AuthConverter.toMember(request);
         passwordUtil.setMemberPassword(newMember, request.getPassword());
 
         AgreementTerm newAgreement = AuthConverter.toAgreementTerm(request, newMember);
 
-        if (memberRepository.existsByNicknameAndStatus(request.getNickname(), Status.ACTIVE))
-            throw new AuthHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATE);
-
-        if (request.getRole().equals(1)) enterBossInfo(request, newMember);
-        else if (request.getRole().equals(2)) enterTeacherInfo(request, newMember);
+        newMember.setProfile(request.getNickname(), request.getProfileImg());
+        if (Role.of(request.getRole()).equals(Role.BOSS)) saveTeacherInfo(request, newMember);
 
         agreementTermRepository.save(newAgreement);
         return memberRepository.save(newMember);
@@ -239,33 +238,28 @@ public class AuthCommandServiceImpl implements AuthCommandService {
             throw new MemberHandler(ErrorStatus.MEMBER_EMAIL_DUPLICATE);
         if (memberRepository.existsByPhoneAndStatus(request.getPhone(), Status.ACTIVE))
             throw new MemberHandler(ErrorStatus.MEMBER_PHONE_DUPLICATE);
-        Member newMember = AuthConverter.toSocialMember(request, socialType);
-        passwordUtil.setSocialMemberPassword(newMember);
-
         if (memberRepository.existsByNicknameAndStatus(request.getNickname(), Status.ACTIVE))
             throw new AuthHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATE);
 
-        if (request.getRole().equals(1)) enterBossInfo(request, newMember);
-        else if (request.getRole().equals(2)) enterTeacherInfo(request, newMember);
+        Member newMember = AuthConverter.toSocialMember(request, socialType);
+        passwordUtil.setSocialMemberPassword(newMember);
+
+        newMember.setProfile(request.getNickname(), request.getProfileImg());
+        if (request.getRole().equals(2)) saveTeacherInfo(request, newMember);
 
         return memberRepository.save(newMember);
     }
 
     @Override
-    public void enterBossInfo(AuthRequestDTO.JoinCommonDTO request, Member member) {
-        member.setProfile(request.getNickname(), request.getProfileImg());
-    }
-
-    @Override
     @Transactional
-    public void enterTeacherInfo(AuthRequestDTO.JoinCommonDTO request, Member member) {
+    public void saveTeacherInfo(AuthRequestDTO.JoinCommonDTO request, Member member) {
         // TODO : 사업자 인증 여부 확인 로직 추가
 
         if (request.getBusinessNum() == null)
             throw new AuthHandler(ErrorStatus.MEMBER_BUSINESS_NUM_EMPTY);
         if (request.getRepresentative() == null)
             throw new AuthHandler(ErrorStatus.MEMBER_REPRESENTATIVE_EMPTY);
-        if (request.getOpenDate() == null || request.getOpenDate().toString().isEmpty())
+        if (request.getOpenDate().toString().isBlank())
             throw new AuthHandler(ErrorStatus.MEMBER_OPEN_DATE_EMPTY);
         if (request.getBank() == null)
             throw new AuthHandler(ErrorStatus.MEMBER_BANK_EMPTY);
@@ -279,10 +273,9 @@ public class AuthCommandServiceImpl implements AuthCommandService {
             throw new AuthHandler(ErrorStatus.MEMBER_CAREER_EMPTY);
         if (request.getIntroduction() == null)
             throw new AuthHandler(ErrorStatus.MEMBER_INTRODUCTION_EMPTY);
-        if (request.getKeywords().length() < 2)
+        if (request.getKeywords().isEmpty())
             throw new AuthHandler(ErrorStatus.MEMBER_KEYWORDS_EMPTY);
 
-        member.setProfile(request.getNickname(), request.getProfileImg());
         TeacherInfo newTeacher = AuthConverter.toTeacher(request);
         teacherInfoRepository.save(newTeacher);
     }
