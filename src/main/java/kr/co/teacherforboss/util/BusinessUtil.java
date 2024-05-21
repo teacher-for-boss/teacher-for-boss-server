@@ -1,5 +1,7 @@
 package kr.co.teacherforboss.util;
 
+import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
+import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import lombok.RequiredArgsConstructor;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -16,6 +18,8 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
 @Component
@@ -31,39 +35,57 @@ public class BusinessUtil {
     private String apiKey;
 
     public JSONObject getBusinessInfo(String businessNum, LocalDate openDate, String representative) {
+        try {
+            return requestBusinessAPI(businessNum, openDate, representative);
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private JSONObject requestBusinessAPI(String businessNum, LocalDate openDate, String representative) throws IOException, ParseException {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         MediaType mediaType = MediaType.parse("application/json");
 
         JSONObject businessObject = new JSONObject();
-        businessObject.put("b_no", businessNum);
+        JSONArray businessArray = new JSONArray();
+        JSONObject requestBody = new JSONObject();
+
+        String parseBusinessNum = BusinessUtil.parseBusinessNum(businessNum);
+        businessObject.put("b_no", parseBusinessNum);
         businessObject.put("start_dt", openDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
         businessObject.put("p_nm", representative);
 
-        JSONArray businessArray = new JSONArray();
         businessArray.add(businessObject);
 
-        JSONObject requestBody = new JSONObject();
         requestBody.put("businesses", businessArray);
 
         RequestBody body = RequestBody.create(mediaType, requestBody.toString());
-
         Request request = new Request.Builder()
                 .url(url + "?serviceKey=" + apiKey)
                 .post(body)
                 .addHeader("Content-Type", "application/json")
                 .build();
 
-        try {
-            Response response = client.newCall(request).execute();
-            String responseBodyString = response.body().string();
-            if (response.isSuccessful()) {
-                JSONParser parser = new JSONParser();
-                return (JSONObject) parser.parse(responseBodyString);
-            }
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
+        Response response = client.newCall(request).execute();
+        String responseBodyString = response.body().string();
+
+        if (response.isSuccessful()) {
+            JSONParser parser = new JSONParser();
+            return (JSONObject) parser.parse(responseBodyString);
         }
         return null;
+    }
+
+    public static String parseBusinessNum(String businessNum) {
+        Pattern pattern = Pattern.compile("\\d{3}-\\d{2}-\\d{5}");
+        Matcher matcher = pattern.matcher(businessNum);
+
+        if (!matcher.matches()) {
+            throw new AuthHandler(ErrorStatus.INVALID_BUSINESS_INFO);
+        }
+
+        return businessNum.replaceAll("-", "");
     }
 
     public boolean isStatusCodeOk(JSONObject response) {
