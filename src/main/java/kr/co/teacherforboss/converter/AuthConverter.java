@@ -53,7 +53,7 @@ public class AuthConverter {
         return EmailAuth.builder()
                 .email(request.getEmail())
                 .purpose(Purpose.of(request.getPurpose()))
-                .isChecked("F")
+                .isChecked(BooleanType.F)
                 .build();
     }
 
@@ -75,7 +75,7 @@ public class AuthConverter {
         return PhoneAuth.builder()
                 .phone(request.getPhone())
                 .purpose(Purpose.of(request.getPurpose()))
-                .isChecked("F")
+                .isChecked(BooleanType.F)
                 .build();
     }
 

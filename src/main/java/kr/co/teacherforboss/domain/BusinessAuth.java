@@ -27,7 +27,6 @@ public class BusinessAuth extends BaseEntity {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "VARCHAR(1)")
     @ColumnDefault("'F'")
     private BooleanType isChecked;
 
