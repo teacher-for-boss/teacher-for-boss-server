@@ -57,14 +57,14 @@ public class ExamConverter {
     public static ExamResponseDTO.GetExamCategoriesDTO toGetExamCategoriesDTO(List<ExamCategory> examCategories) {
         return ExamResponseDTO.GetExamCategoriesDTO.builder()
                 .examCategoryList(examCategories.stream().map(examCategory ->
-                        new ExamResponseDTO.GetExamCategoriesDTO.ExamCategoryInfo(examCategory.getId(), examCategory.getCategoryName())).toList())
+                        new ExamResponseDTO.GetExamCategoriesDTO.ExamCategoryInfo(examCategory.getId(), examCategory.getName())).toList())
                 .build();
     }
 
     public static ExamResponseDTO.GetTagsDTO toGetTagsDTO(List<Tag> tags) {
         return ExamResponseDTO.GetTagsDTO.builder()
                 .tagsList(tags.stream().map(tag ->
-                        new ExamResponseDTO.GetTagsDTO.TagInfo(tag.getId(), tag.getTagName()))
+                        new ExamResponseDTO.GetTagsDTO.TagInfo(tag.getId(), tag.getName()))
                         .toList()).build();
     }
 
@@ -88,7 +88,7 @@ public class ExamConverter {
     public static ExamResponseDTO.GetExamsDTO.ExamInfo toGetExamInfo(Exam exam, boolean isTakenExam, Boolean isPassed, Integer score) {
         return ExamResponseDTO.GetExamsDTO.ExamInfo.builder()
                 .id(exam.getId())
-                .tag(exam.getTag().getTagName())
+                .tag(exam.getTag().getName())
                 .name(exam.getName())
                 .description(exam.getDescription())
                 .isTaken(isTakenExam)
@@ -101,7 +101,7 @@ public class ExamConverter {
         return ExamResponseDTO.GetExamIncorrectAnswersResultDTO.builder()
                 .examIncorrectQuestionList(questions.stream().map(q ->
                         new ExamResponseDTO.GetExamIncorrectAnswersResultDTO.ExamIncorrectQuestion(
-                                q.getId(), q.getQuestionSequence(), q.getQuestionName()))
+                                q.getId(), q.getSequence(), q.getName()))
                         .toList()).build();
     }
 
@@ -120,7 +120,7 @@ public class ExamConverter {
                 .map(choice -> new ExamResponseDTO.GetQuestionsDTO.QuestionInfo.QuestionChoiceInfo(choice.getId(), choice.getChoice()))
                 .toList();
 
-        return new ExamResponseDTO.GetQuestionsDTO.QuestionInfo(question.getId(), question.getQuestionSequence(), question.getQuestionName(), choiceInfos);
+        return new ExamResponseDTO.GetQuestionsDTO.QuestionInfo(question.getId(), question.getSequence(), question.getName(), choiceInfos);
     }
 
     public static ExamResponseDTO.GetSolutionsDTO toGetSolutionsDTO(List<Question> questions) {

@@ -29,7 +29,7 @@ public class Question extends BaseEntity {
 
     @NotNull
     @Column(length = 50)
-    private String questionName;
+    private String name;
 
     @NotNull
     @Column
@@ -45,7 +45,7 @@ public class Question extends BaseEntity {
 
     @NotNull
     @Column
-    private Integer questionSequence;
+    private Integer sequence;
 
     @OneToMany(mappedBy = "question")
     private List<QuestionChoice> questionOptionList;

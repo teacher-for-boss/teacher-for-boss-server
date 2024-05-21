@@ -83,7 +83,7 @@ public class ExamQueryServiceImpl implements ExamQueryService {
         if (!examRepository.existsByIdAndStatus(examId, Status.ACTIVE))
             throw new ExamHandler(ErrorStatus.EXAM_NOT_FOUND);
 
-        return questionRepository.findAllByExamIdAndStatus(examId, Status.ACTIVE, Sort.by(Sort.Order.asc("questionSequence")));
+        return questionRepository.findAllByExamIdAndStatus(examId, Status.ACTIVE, Sort.by(Sort.Order.asc("sequence")));
     }
 
     @Override

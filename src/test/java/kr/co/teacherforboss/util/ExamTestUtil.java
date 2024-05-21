@@ -13,7 +13,7 @@ public class ExamTestUtil {
 
     public ExamCategory generateExamCategory() {
         return ExamCategory.builder()
-                .categoryName("카테고리")
+                .name("카테고리")
                 .build();
     }
     public Exam generateExam(ExamType examType) {
@@ -28,7 +28,7 @@ public class ExamTestUtil {
     public Question generateQuestion(Exam exam, String questionName, Long answer) {
         return Question.builder()
                 .exam(exam)
-                .questionName(questionName)
+                .name(questionName)
                 .answer(answer)
                 .points(10)
                 .commentary("해설")

@@ -40,7 +40,7 @@ public class ExamResponseDTO {
         @AllArgsConstructor
         public static class ExamCategoryInfo {
             Long examCategoryId;
-            String categoryName;
+            String name;
         }
     }
 
@@ -56,7 +56,7 @@ public class ExamResponseDTO {
         @AllArgsConstructor
         public static class TagInfo {
             Long tagId;
-            String tagName;
+            String name;
         }
     }
 
@@ -74,6 +74,7 @@ public class ExamResponseDTO {
             Long id;
             String tag;
             String name;
+            String title;
             String description;
             boolean isTaken;
             Boolean isPassed;
@@ -92,8 +93,8 @@ public class ExamResponseDTO {
         @AllArgsConstructor
         public static class ExamIncorrectQuestion {
             Long questionId;
-            int questionSequence;
-            String questionName;
+            int sequence;
+            String name;
         }
     }
 
@@ -108,8 +109,8 @@ public class ExamResponseDTO {
         @AllArgsConstructor
         public static class QuestionInfo {
             Long questionId;
-            Integer questionSequence;
-            String questionName;
+            Integer sequence;
+            String name;
             List<QuestionChoiceInfo> choiceList;
 
             @Getter

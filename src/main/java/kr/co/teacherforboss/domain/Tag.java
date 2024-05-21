@@ -22,7 +22,7 @@ public class Tag extends BaseEntity {
 
     @NotNull
     @Column(length = 10)
-    private String tagName;
+    private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "examCategoryId")
