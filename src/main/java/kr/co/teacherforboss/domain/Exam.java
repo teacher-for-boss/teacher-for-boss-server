@@ -40,7 +40,7 @@ public class Exam extends BaseEntity {
 
     @NotNull
     @Column(length = 30)
-    private String name;
+    private String title;
 
     @NotNull
     @Enumerated(EnumType.STRING)
