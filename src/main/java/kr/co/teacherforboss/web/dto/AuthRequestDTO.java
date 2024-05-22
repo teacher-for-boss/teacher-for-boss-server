@@ -46,7 +46,7 @@ public class AuthRequestDTO {
         String profileImg;
 
         @Pattern(regexp = "^\\d{3}-\\d{2}-\\d{5}$", message = "사업자 등록 번호는 최대 10자 이내로 입력 가능합니다.")
-        String businessNum;
+        String businessNumber;
 
         @Size(max = 20, message = "대표자명은 최대 20자 이내로 입력 가능합니다.")
         String representative;
@@ -67,7 +67,7 @@ public class AuthRequestDTO {
 
         String bank;
 
-        String accountNum;
+        String accountNumber;
 
         String accountHolder;
     }
