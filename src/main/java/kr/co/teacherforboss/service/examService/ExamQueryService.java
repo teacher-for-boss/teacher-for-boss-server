@@ -19,4 +19,6 @@ public interface ExamQueryService {
     List<ExamResponseDTO.GetExamRankInfoDTO.ExamRankInfo> getExamRankInfo(Long examId);
     ExamResponseDTO.GetAverageDTO getAverage(ExamQuarter examQuarter);
     List<Exam> getTakenExams();
+    ExamResponseDTO.GetExamResultDTO getExamResult(Long memberExamId);
+    List<Problem> getExamIncorrectChoices(Long memberExamId);
 }

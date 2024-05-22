@@ -90,33 +90,4 @@ public class ExamCommandServiceImpl implements ExamCommandService {
         return memberExamRepository.save(memberExam);
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public ExamResponseDTO.GetExamResultDTO getExamResult(Long memberExamId) {
-        Member member = authCommandService.getMember();
-
-        MemberExam memberExam = memberExamRepository.findByIdAndMemberAndStatus(memberExamId, member, Status.ACTIVE)
-                .orElseThrow(() -> new ExamHandler(ErrorStatus.MEMBER_EXAM_NOT_FOUND));
-
-        int problemsCount =  memberExam.getExam().getProblemList().size();
-        int score = memberExam.getScore();
-
-        List<MemberChoice> memberChoices = memberChoiceRepository.findAllByMemberExamIdAndStatus(memberExam.getId(), Status.ACTIVE);
-        int correctChoicesCount = memberChoices.stream()
-                .filter(q -> q.getProblemChoice().isCorrect()).mapToInt(e -> 1).sum();
-        int incorrectChoicesCount = memberChoices.size() - correctChoicesCount;
-
-        return ExamConverter.toGetExamResultDTO(memberExam.getId(), score, problemsCount, correctChoicesCount, incorrectChoicesCount);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<Problem> getExamIncorrectChoices(Long memberExamId) {
-        Member member = authCommandService.getMember();
-        MemberExam memberExam = memberExamRepository.findByIdAndMemberAndStatus(memberExamId, member, Status.ACTIVE)
-                .orElseThrow(() -> new ExamHandler(ErrorStatus.MEMBER_EXAM_NOT_FOUND));
-
-        List<MemberChoice> memberIncorrectChoices = memberChoiceRepository.findIncorrectMemberChoices(memberExam, Status.ACTIVE);
-        return memberIncorrectChoices.stream().map(MemberChoice::getProblem).toList();
-    }
 }

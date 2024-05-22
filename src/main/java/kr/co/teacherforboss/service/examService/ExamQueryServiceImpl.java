@@ -9,6 +9,7 @@ import kr.co.teacherforboss.converter.ExamConverter;
 import kr.co.teacherforboss.domain.Exam;
 import kr.co.teacherforboss.domain.ExamCategory;
 import kr.co.teacherforboss.domain.Member;
+import kr.co.teacherforboss.domain.MemberChoice;
 import kr.co.teacherforboss.domain.MemberExam;
 import kr.co.teacherforboss.domain.Problem;
 import kr.co.teacherforboss.domain.ExamTag;
@@ -16,6 +17,7 @@ import kr.co.teacherforboss.domain.enums.ExamQuarter;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.ExamCategoryRepository;
 import kr.co.teacherforboss.repository.ExamRepository;
+import kr.co.teacherforboss.repository.MemberChoiceRepository;
 import kr.co.teacherforboss.repository.MemberExamRepository;
 import kr.co.teacherforboss.repository.ProblemRepository;
 import kr.co.teacherforboss.repository.ExamTagRepository;
@@ -36,6 +38,7 @@ public class ExamQueryServiceImpl implements ExamQueryService {
     private final MemberExamRepository memberExamRepository;
     private final AuthCommandService authCommandService;
     private final ExamTagRepository examTagRepository;
+    private final MemberChoiceRepository memberChoiceRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -143,5 +146,35 @@ public class ExamQueryServiceImpl implements ExamQueryService {
         Member member = authCommandService.getMember();
         List<Exam> exams = examRepository.findAllTakenExamByMemberId(member.getId());
         return exams;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ExamResponseDTO.GetExamResultDTO getExamResult(Long memberExamId) {
+        Member member = authCommandService.getMember();
+
+        MemberExam memberExam = memberExamRepository.findByIdAndMemberAndStatus(memberExamId, member, Status.ACTIVE)
+                .orElseThrow(() -> new ExamHandler(ErrorStatus.MEMBER_EXAM_NOT_FOUND));
+
+        int problemsCount =  memberExam.getExam().getProblemList().size();
+        int score = memberExam.getScore();
+
+        List<MemberChoice> memberChoices = memberChoiceRepository.findAllByMemberExamIdAndStatus(memberExam.getId(), Status.ACTIVE);
+        int correctChoicesCount = memberChoices.stream()
+                .filter(q -> q.getProblemChoice().isCorrect()).mapToInt(e -> 1).sum();
+        int incorrectChoicesCount = memberChoices.size() - correctChoicesCount;
+
+        return ExamConverter.toGetExamResultDTO(memberExam.getId(), score, problemsCount, correctChoicesCount, incorrectChoicesCount);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Problem> getExamIncorrectChoices(Long memberExamId) {
+        Member member = authCommandService.getMember();
+        MemberExam memberExam = memberExamRepository.findByIdAndMemberAndStatus(memberExamId, member, Status.ACTIVE)
+                .orElseThrow(() -> new ExamHandler(ErrorStatus.MEMBER_EXAM_NOT_FOUND));
+
+        List<MemberChoice> memberIncorrectChoices = memberChoiceRepository.findIncorrectMemberChoices(memberExam, Status.ACTIVE);
+        return memberIncorrectChoices.stream().map(MemberChoice::getProblem).toList();
     }
 }

@@ -43,7 +43,7 @@ public class ExamController {
 
     @GetMapping(" /member-exams/{memberExamId}/result")
     public ApiResponse<ExamResponseDTO.GetExamResultDTO> getExamResult(@PathVariable("memberExamId") Long memberExamId) {
-        return ApiResponse.onSuccess(examCommandService.getExamResult(memberExamId));
+        return ApiResponse.onSuccess(examQueryService.getExamResult(memberExamId));
     }
   
     @GetMapping("/category")
@@ -68,7 +68,7 @@ public class ExamController {
 
     @GetMapping("/member-exams/{memberExamId}/result/incorrect/list")
     public ApiResponse<ExamResponseDTO.GetExamIncorrectChoicesResultDTO> getExamIncorrectChoices(@PathVariable("memberExamId") Long memberExamId) {
-        List<Problem> problems = examCommandService.getExamIncorrectChoices(memberExamId);
+        List<Problem> problems = examQueryService.getExamIncorrectChoices(memberExamId);
         return ApiResponse.onSuccess(ExamConverter.toGetExamAnsNotesDTO(problems));
     }
 
