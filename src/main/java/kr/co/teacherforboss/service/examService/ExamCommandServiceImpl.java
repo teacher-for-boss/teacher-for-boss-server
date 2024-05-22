@@ -46,10 +46,10 @@ public class ExamCommandServiceImpl implements ExamCommandService {
         Exam exam = examRepository.findByIdAndStatus(examId, Status.ACTIVE)
                 .orElseThrow(() -> new ExamHandler(ErrorStatus.EXAM_NOT_FOUND));
 
-        if (problemRepository.countByExamIdAndStatus(examId, Status.ACTIVE) != request.getProblemAnsList().size())
+        if (problemRepository.countByExamIdAndStatus(examId, Status.ACTIVE) != request.getProblemChoiceList().size())
             throw new ExamHandler(ErrorStatus.INVALID_EXAM_TAKE);
 
-        List<Long> problemIds = request.getProblemAnsList().stream()
+        List<Long> problemIds = request.getProblemChoiceList().stream()
                 .map(ExamRequestDTO.TakeExamChoiceDTO::getProblemId)
                 .toList();
         List<Problem> problems = problemRepository.findByIdInAndStatus(problemIds, Status.ACTIVE);
@@ -58,7 +58,7 @@ public class ExamCommandServiceImpl implements ExamCommandService {
         Map<Long, Problem> problemMap = problems.stream()
                 .collect(Collectors.toMap(Problem::getId, Function.identity()));
 
-        List<Long> problemChoiceIds = request.getProblemAnsList().stream()
+        List<Long> problemChoiceIds = request.getProblemChoiceList().stream()
                 .map(ExamRequestDTO.TakeExamChoiceDTO::getProblemChoiceId)
                 .toList();
         List<ProblemChoice> choices = problemChoiceRepository.findByIdInAndStatus(problemChoiceIds, Status.ACTIVE);
@@ -68,7 +68,7 @@ public class ExamCommandServiceImpl implements ExamCommandService {
                 .collect(Collectors.toMap(ProblemChoice::getId, Function.identity()));
 
         AtomicInteger score = new AtomicInteger(0);
-        request.getProblemAnsList().forEach(q -> {
+        request.getProblemChoiceList().forEach(q -> {
             Problem problem = problemMap.get(q.getProblemId());
             ProblemChoice problemChoice = problemChoiceMap.get(q.getProblemChoiceId());
             if (!problemChoice.getProblem().getId().equals(problem.getId()))
@@ -80,7 +80,7 @@ public class ExamCommandServiceImpl implements ExamCommandService {
 
         MemberExam memberExam = ExamConverter.toMemberExam(member, exam, score.intValue(), request.getLeftTime());
 
-        List<MemberChoice> memberChoiceList = request.getProblemAnsList().stream().map(p -> {
+        List<MemberChoice> memberChoiceList = request.getProblemChoiceList().stream().map(p -> {
             Problem problem = problemMap.get(p.getProblemId());
             ProblemChoice problemChoice = problemChoiceMap.get(p.getProblemChoiceId());
             return ExamConverter.toMemberChoice(memberExam, problem, problemChoice);
@@ -116,7 +116,7 @@ public class ExamCommandServiceImpl implements ExamCommandService {
         MemberExam memberExam = memberExamRepository.findByIdAndMemberAndStatus(memberExamId, member, Status.ACTIVE)
                 .orElseThrow(() -> new ExamHandler(ErrorStatus.MEMBER_EXAM_NOT_FOUND));
 
-        List<MemberChoice> memberIncorrectChoices = memberChoiceRepository.findIncorrectChoices(memberExam, Status.ACTIVE);
+        List<MemberChoice> memberIncorrectChoices = memberChoiceRepository.findIncorrectMemberChoices(memberExam, Status.ACTIVE);
         return memberIncorrectChoices.stream().map(MemberChoice::getProblem).toList();
     }
 }
