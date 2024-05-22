@@ -89,7 +89,7 @@ public class ExamConverter {
         return ExamResponseDTO.GetExamsDTO.ExamInfo.builder()
                 .id(exam.getId())
                 .examTag(exam.getExamTag().getName())
-                .title(exam.getName())
+                .title(exam.getTitle())
                 .description(exam.getDescription())
                 .isTaken(isTakenExam)
                 .isPassed(isPassed)
