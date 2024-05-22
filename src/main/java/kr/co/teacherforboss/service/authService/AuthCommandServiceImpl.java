@@ -250,12 +250,10 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         return memberRepository.save(newMember);
     }
 
-    @Override
-    @Transactional
-    public void saveTeacherInfo(AuthRequestDTO.JoinCommonDTO request, Member member) {
+    private void saveTeacherInfo(AuthRequestDTO.JoinCommonDTO request, Member member) {
         // TODO : 사업자 인증 여부 확인 로직 추가
 
-        if (request.getBusinessNum() == null)
+        if (request.getBusinessNumber() == null)
             throw new AuthHandler(ErrorStatus.MEMBER_BUSINESS_NUM_EMPTY);
         if (request.getRepresentative() == null)
             throw new AuthHandler(ErrorStatus.MEMBER_REPRESENTATIVE_EMPTY);
@@ -263,7 +261,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
             throw new AuthHandler(ErrorStatus.MEMBER_OPEN_DATE_EMPTY);
         if (request.getBank() == null)
             throw new AuthHandler(ErrorStatus.MEMBER_BANK_EMPTY);
-        if (request.getAccountNum() == null)
+        if (request.getAccountNumber() == null)
             throw new AuthHandler(ErrorStatus.MEMBER_ACCOUNT_NUM_EMPTY);
         if (request.getAccountHolder() == null)
             throw new AuthHandler(ErrorStatus.MEMBER_ACCOUNT_HOLDER_EMPTY);

@@ -42,7 +42,7 @@ public class AuthConverter {
     public static TeacherInfo toTeacher(AuthRequestDTO.JoinCommonDTO request){
         String keywords = String.join(";", request.getKeywords());
         return TeacherInfo.builder()
-                .businessNumber(request.getBusinessNum())
+                .businessNumber(request.getBusinessNumber())
                 .representative(request.getRepresentative())
                 .openDate(request.getOpenDate())
                 .field(request.getField())
@@ -51,7 +51,7 @@ public class AuthConverter {
                 .keywords(keywords)
                 .level(Level.LEVEL1)
                 .bank(request.getBank())
-                .accountNumber(request.getAccountNum())
+                .accountNumber(request.getAccountNumber())
                 .accountHolder(request.getAccountHolder())
                 .build();
     }
