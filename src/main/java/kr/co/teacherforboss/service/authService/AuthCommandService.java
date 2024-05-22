@@ -19,5 +19,5 @@ public interface AuthCommandService {
     Member findEmail(AuthRequestDTO.FindEmailDTO request);
     Member getMember();
     Member socialLogin(AuthRequestDTO.SocialLoginDTO request, int socialType);
-    boolean checkBusiness(AuthRequestDTO.BusinessCheckDTO request);
+    boolean checkBusinessNumber(AuthRequestDTO.CheckBusinessNumberDTO request);
 }

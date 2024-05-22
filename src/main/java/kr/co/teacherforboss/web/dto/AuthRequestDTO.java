@@ -186,7 +186,7 @@ public class AuthRequestDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class BusinessCheckDTO {
+    public static class CheckBusinessNumberDTO {
 
         @NotBlank(message = "사업자등록번호가 없습니다.")
         @Pattern(regexp = "^\\d{3}-\\d{2}-\\d{5}$", message = "사업자등록번호는 하이픈('-')을 포함한 10글자로 입력해주세요.")

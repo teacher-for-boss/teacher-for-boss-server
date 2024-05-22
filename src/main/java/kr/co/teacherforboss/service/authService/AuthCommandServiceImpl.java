@@ -241,12 +241,12 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
     @Override
     @Transactional
-    public boolean checkBusiness(AuthRequestDTO.BusinessCheckDTO request) {
+    public boolean checkBusinessNumber(AuthRequestDTO.CheckBusinessNumberDTO request) {
         if (businessAuthRepository.existsByBusinessNumber(request.getBusinessNumber())) {
             throw new AuthHandler(ErrorStatus.BUSINESS_NUM_DUPLICATE);
         }
 
-        boolean isChecked = businessUtil.requestBusinessAPI(request.getBusinessNumber(), request.getOpenDate(), request.getRepresentative());
+        boolean isChecked = businessUtil.validateBusinessNumber(request.getBusinessNumber(), request.getOpenDate(), request.getRepresentative());
         if(!isChecked) {
             throw new AuthHandler(ErrorStatus.INVALID_BUSINESS_INFO);
         } else {

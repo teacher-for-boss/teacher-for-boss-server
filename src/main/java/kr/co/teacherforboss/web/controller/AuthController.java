@@ -66,9 +66,9 @@ public class AuthController {
         return ApiResponse.onSuccess(AuthConverter.toCheckResultDTO(isChecked));
     }
 
-    @PostMapping("/teacher/business/check")
-    public ApiResponse<AuthResponseDTO.CheckResultDTO> checkBusiness(@RequestBody @Valid AuthRequestDTO.BusinessCheckDTO request) {
-        boolean isChecked = authCommandService.checkBusiness(request);
+    @PostMapping("/teacher/business-number/check")
+    public ApiResponse<AuthResponseDTO.CheckResultDTO> checkBusinessNumber(@RequestBody @Valid AuthRequestDTO.CheckBusinessNumberDTO request) {
+        boolean isChecked = authCommandService.checkBusinessNumber(request);
         return ApiResponse.onSuccess(AuthConverter.toCheckResultDTO(isChecked));
     }
 
