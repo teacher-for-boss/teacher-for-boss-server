@@ -77,13 +77,13 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // Exam
     MEMBER_EXAM_DUPLICATE(BAD_REQUEST, "EXAM4001", "이미 치룬 시험입니다."),
-    INVALID_QUESTION_CHOICE(BAD_REQUEST, "EXAM4002", "문제에 맞지 않는 선지를 선택했습니다."),
+    INVALID_PROBLEM_CHOICE(BAD_REQUEST, "EXAM4002", "문제에 맞지 않는 선지를 선택했습니다."),
     INVALID_EXAM_TAKE(BAD_REQUEST, "EXAM4003", "풀지 않은 문제가 있거나 문제가 너무 많습니다."),
 
     MEMBER_EXAM_NOT_FOUND(NOT_FOUND, "EXAM4041", "사용자가 치루지 않은 시험입니다."),
     EXAM_NOT_FOUND(NOT_FOUND, "EXAM4042", "시험 정보를 찾을 수 없습니다."),
-    QUESTION_NOT_FOUND(NOT_FOUND, "EXAM4043", "입력한 ID 값에 해당되는 문제를 찾을 수 없습니다."),
-    QUESTION_CHOICE_NOT_FOUND(NOT_FOUND, "EXAM4044", "입력한 ID 값에 해당되는 문제 선지를 찾을 수 없습니다."),
+    PROBLEM_NOT_FOUND(NOT_FOUND, "EXAM4043", "입력한 ID 값에 해당되는 문제를 찾을 수 없습니다."),
+    PROBLEM_CHOICE_NOT_FOUND(NOT_FOUND, "EXAM4044", "입력한 ID 값에 해당되는 문제 선지를 찾을 수 없습니다."),
     EXAM_AVERAGE_NOT_FOUND(NOT_FOUND, "EXAM4045", "같은 업종 사장님 평균 점수를 내기 위한 데이터가 없습니다."),
     MEMBER_EXAM_HISTORY_NOT_FOUND(NOT_FOUND, "EXAM4046", "사용자가 시험을 치룬 내역이 없습니다."),
     EXAM_CATEGORY_NOT_FOUND(NOT_FOUND, "EXAM4047", "시험 카테고리가 존재하지 않습니다."),
