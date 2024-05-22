@@ -16,6 +16,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Getter
@@ -72,9 +73,9 @@ public class Member extends BaseEntity {
     @Column
     private LocalDate inactiveDate;
 
-    public void setPassword(String pwSalt, String pwHash){
-        this.pwSalt = pwSalt;
-        this.pwHash = pwHash;
+    public void setPassword(List<String> passwordList){
+        this.pwSalt = passwordList.get(0);
+        this.pwHash = passwordList.get(1);
     }
 
     public void setProfile(String nickname, String profileImg){

@@ -2,6 +2,7 @@ package kr.co.teacherforboss.service.authService;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.GeneralException;
@@ -69,7 +70,8 @@ public class AuthCommandServiceImpl implements AuthCommandService {
             throw new AuthHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATE);
 
         Member newMember = AuthConverter.toMember(request);
-        passwordUtil.setMemberPassword(newMember, request.getPassword());
+        List<String> passwordList = passwordUtil.generatePassword(request.getRePassword());
+        newMember.setPassword(passwordList);
 
         AgreementTerm newAgreement = AuthConverter.toAgreementTerm(request, newMember);
 
@@ -221,7 +223,8 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         if (!request.getPassword().equals(request.getRePassword()))
             throw new AuthHandler(ErrorStatus.PASSWORD_NOT_CORRECT);
 
-        passwordUtil.setMemberPassword(member, request.getRePassword());
+        List<String> passwordList = passwordUtil.generatePassword(request.getRePassword());
+        member.setPassword(passwordList);
 
         return memberRepository.save(member);
     }
@@ -242,7 +245,8 @@ public class AuthCommandServiceImpl implements AuthCommandService {
             throw new AuthHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATE);
 
         Member newMember = AuthConverter.toSocialMember(request, socialType);
-        passwordUtil.setSocialMemberPassword(newMember);
+        List<String> passwordList = passwordUtil.generateSocialMemberPassword();
+        newMember.setPassword(passwordList);
 
         newMember.setProfile(request.getNickname(), request.getProfileImg());
         if (request.getRole().equals(2)) saveTeacherInfo(request, newMember);
