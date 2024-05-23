@@ -2,6 +2,7 @@ package kr.co.teacherforboss.service.authService;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.GeneralException;
@@ -9,9 +10,12 @@ import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import kr.co.teacherforboss.apiPayload.exception.handler.MemberHandler;
 import kr.co.teacherforboss.config.jwt.TokenManager;
 import kr.co.teacherforboss.converter.AuthConverter;
+import kr.co.teacherforboss.domain.TeacherInfo;
 import kr.co.teacherforboss.domain.enums.LoginType;
 import kr.co.teacherforboss.domain.AgreementTerm;
+import kr.co.teacherforboss.domain.enums.Role;
 import kr.co.teacherforboss.repository.AgreementTermRepository;
+import kr.co.teacherforboss.repository.TeacherInfoRepository;
 import kr.co.teacherforboss.util.PasswordUtil;
 import kr.co.teacherforboss.domain.PhoneAuth;
 import kr.co.teacherforboss.domain.enums.Purpose;
@@ -43,6 +47,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private final EmailAuthRepository emailAuthRepository;
     private final PhoneAuthRepository phoneAuthRepository;
     private final AgreementTermRepository agreementTermRepository;
+    private final TeacherInfoRepository teacherInfoRepository;
     private final MailCommandService mailCommandService;
     private final PasswordEncoder passwordEncoder;
     private final TokenManager tokenManager;
@@ -61,13 +66,19 @@ public class AuthCommandServiceImpl implements AuthCommandService {
             throw new AuthHandler(ErrorStatus.PASSWORD_NOT_CORRECT);
         if (!(request.getAgreementUsage().equals("T") && request.getAgreementInfo().equals("T") && request.getAgreementAge().equals("T")))
             throw new AuthHandler(ErrorStatus.INVALID_AGREEMENT_TERM);
+        if (memberRepository.existsByNicknameAndStatus(request.getNickname(), Status.ACTIVE))
+            throw new AuthHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATE);
 
         Member newMember = AuthConverter.toMember(request);
-        passwordUtil.setMemberPassword(newMember, request.getPassword());
+        List<String> passwordList = passwordUtil.generatePassword(request.getRePassword());
+        newMember.setPassword(passwordList);
 
         AgreementTerm newAgreement = AuthConverter.toAgreementTerm(request, newMember);
-        agreementTermRepository.save(newAgreement);
 
+        newMember.setProfile(request.getNickname(), request.getProfileImg());
+        if (Role.of(request.getRole()).equals(Role.BOSS)) saveTeacherInfo(request, newMember);
+
+        agreementTermRepository.save(newAgreement);
         return memberRepository.save(newMember);
     }
 
@@ -212,7 +223,8 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         if (!request.getPassword().equals(request.getRePassword()))
             throw new AuthHandler(ErrorStatus.PASSWORD_NOT_CORRECT);
 
-        passwordUtil.setMemberPassword(member, request.getRePassword());
+        List<String> passwordList = passwordUtil.generatePassword(request.getRePassword());
+        member.setPassword(passwordList);
 
         return memberRepository.save(member);
     }
@@ -229,9 +241,44 @@ public class AuthCommandServiceImpl implements AuthCommandService {
             throw new MemberHandler(ErrorStatus.MEMBER_EMAIL_DUPLICATE);
         if (memberRepository.existsByPhoneAndStatus(request.getPhone(), Status.ACTIVE))
             throw new MemberHandler(ErrorStatus.MEMBER_PHONE_DUPLICATE);
+        if (memberRepository.existsByNicknameAndStatus(request.getNickname(), Status.ACTIVE))
+            throw new AuthHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATE);
+
         Member newMember = AuthConverter.toSocialMember(request, socialType);
-        passwordUtil.setSocialMemberPassword(newMember);
+        List<String> passwordList = passwordUtil.generateSocialMemberPassword();
+        newMember.setPassword(passwordList);
+
+        newMember.setProfile(request.getNickname(), request.getProfileImg());
+        if (request.getRole().equals(2)) saveTeacherInfo(request, newMember);
 
         return memberRepository.save(newMember);
+    }
+
+    private void saveTeacherInfo(AuthRequestDTO.JoinCommonDTO request, Member member) {
+        // TODO : 사업자 인증 여부 확인 로직 추가
+
+        if (request.getBusinessNumber() == null)
+            throw new AuthHandler(ErrorStatus.MEMBER_BUSINESS_NUM_EMPTY);
+        if (request.getRepresentative() == null)
+            throw new AuthHandler(ErrorStatus.MEMBER_REPRESENTATIVE_EMPTY);
+        if (request.getOpenDate().toString().isBlank())
+            throw new AuthHandler(ErrorStatus.MEMBER_OPEN_DATE_EMPTY);
+        if (request.getBank() == null)
+            throw new AuthHandler(ErrorStatus.MEMBER_BANK_EMPTY);
+        if (request.getAccountNumber() == null)
+            throw new AuthHandler(ErrorStatus.MEMBER_ACCOUNT_NUM_EMPTY);
+        if (request.getAccountHolder() == null)
+            throw new AuthHandler(ErrorStatus.MEMBER_ACCOUNT_HOLDER_EMPTY);
+        if (request.getField() == null)
+            throw new AuthHandler(ErrorStatus.MEMBER_FIELD_EMPTY);
+        if (request.getCareer() == null)
+            throw new AuthHandler(ErrorStatus.MEMBER_CAREER_EMPTY);
+        if (request.getIntroduction() == null)
+            throw new AuthHandler(ErrorStatus.MEMBER_INTRODUCTION_EMPTY);
+        if (request.getKeywords().isEmpty())
+            throw new AuthHandler(ErrorStatus.MEMBER_KEYWORDS_EMPTY);
+
+        TeacherInfo newTeacher = AuthConverter.toTeacher(request);
+        teacherInfoRepository.save(newTeacher);
     }
 }
