@@ -31,8 +31,8 @@ public class Exam extends BaseEntity {
     private ExamCategory examCategory;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tagId")
-    private Tag tag;
+    @JoinColumn(name = "examTagId")
+    private ExamTag examTag;
 
     @NotNull
     @Column(length = 60)
@@ -40,7 +40,7 @@ public class Exam extends BaseEntity {
 
     @NotNull
     @Column(length = 30)
-    private String name;
+    private String title;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -48,9 +48,9 @@ public class Exam extends BaseEntity {
     private ExamType examType;
 
     @OneToMany(mappedBy = "exam")
-    private List<Question> questionList;
+    private List<Problem> problemList;
 
-    public void setQuestionList(List<Question> questionList) {
-        this.questionList = questionList;
+    public void setProblemList(List<Problem> problemList) {
+        this.problemList = problemList;
     }
 }

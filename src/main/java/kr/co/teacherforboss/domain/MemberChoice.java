@@ -16,18 +16,18 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class MemberAnswer extends BaseEntity {
+public class MemberChoice extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memberExamId")
     private MemberExam memberExam;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "questionId")
-    private Question question;
+    @JoinColumn(name = "problemId")
+    private Problem problem;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "questionChoiceId")
-    private QuestionChoice questionChoice;
+    @JoinColumn(name = "problemChoiceId")
+    private ProblemChoice problemChoice;
 
 }

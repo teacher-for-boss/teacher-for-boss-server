@@ -3,17 +3,15 @@ package kr.co.teacherforboss.util;
 import kr.co.teacherforboss.domain.Exam;
 import kr.co.teacherforboss.domain.ExamCategory;
 import kr.co.teacherforboss.domain.Member;
-import kr.co.teacherforboss.domain.MemberAnswer;
 import kr.co.teacherforboss.domain.MemberExam;
-import kr.co.teacherforboss.domain.Question;
-import kr.co.teacherforboss.domain.QuestionChoice;
+import kr.co.teacherforboss.domain.Problem;
 import kr.co.teacherforboss.domain.enums.ExamType;
 
 public class ExamTestUtil {
 
     public ExamCategory generateExamCategory() {
         return ExamCategory.builder()
-                .categoryName("카테고리")
+                .name("카테고리")
                 .build();
     }
     public Exam generateExam(ExamType examType) {
@@ -25,10 +23,10 @@ public class ExamTestUtil {
                 .build();
     }
 
-    public Question generateQuestion(Exam exam, String questionName, Long answer) {
-        return Question.builder()
+    public Problem generateProblem(Exam exam, String problemName, Long answer) {
+        return Problem.builder()
                 .exam(exam)
-                .questionName(questionName)
+                .name(problemName)
                 .answer(answer)
                 .points(10)
                 .commentary("해설")

@@ -45,6 +45,19 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_PHONE_DUPLICATE(BAD_REQUEST, "MEMBER4003", "이미 존재하는 휴대전화 번호입니다."),
     GENERAL_MEMBER_DUPLICATE(BAD_REQUEST, "MEMBER4004", "일반 회원가입을 통해 진행한 이메일 계정입니다."),
     SOCIAL_MEMBER_INFO_EMPTY(BAD_REQUEST, "MEMBER4005", "소셜 회원가입에 필요한 값이 없습니다."),
+    MEMBER_FIELD_EMPTY(BAD_REQUEST, "MEMBER4006", "분야는 필수 입니다"),
+    MEMBER_CAREER_EMPTY(BAD_REQUEST, "MEMBER4007", "경력은 필수 입니다"),
+    MEMBER_INTRODUCTION_EMPTY(BAD_REQUEST, "MEMBER4008", "한줄 소개는 필수 입니다."),
+    MEMBER_KEYWORDS_EMPTY(BAD_REQUEST, "MEMBER4009", "키워드 선택은 필수 입니다."),
+    MEMBER_BUSINESS_NUM_EMPTY(BAD_REQUEST, "MEMBER40010", "사업자 등록 번호는 필수 입니다."),
+    MEMBER_REPRESENTATIVE_EMPTY(BAD_REQUEST, "MEMBER40011", "대표자명은 필수 입니다."),
+    MEMBER_OPEN_DATE_EMPTY(BAD_REQUEST, "MEMBER40012", "개업연월일은 필수 입니다."),
+    MEMBER_ROLE_INVALID(BAD_REQUEST, "MEMBER40013", "유효하지 않은 역할 값입니다."),
+    MEMBER_DATE_INVALID(BAD_REQUEST, "MEMBER40014", "날짜 형식이 옳바르지 않습니다."),
+    MEMBER_BANK_EMPTY(BAD_REQUEST, "MEMBER40015", "은행 선택은 필수 입니다."),
+    MEMBER_ACCOUNT_NUM_EMPTY(BAD_REQUEST, "MEMBER40016", "계좌번호 입력은 필수 입니다."),
+    MEMBER_ACCOUNT_HOLDER_EMPTY(BAD_REQUEST, "MEMBER40017", "예금주명 입력은 필수 입니다."),
+    MEMBER_NICKNAME_DUPLICATE(BAD_REQUEST, "MEMBER4018", "이미 존재하는 닉네임입니다."),
 
     MEMBER_NOT_FOUND(NOT_FOUND, "MEMBER4041", "사용자가 없습니다."),
 
@@ -79,13 +92,13 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // Exam
     MEMBER_EXAM_DUPLICATE(BAD_REQUEST, "EXAM4001", "이미 치룬 시험입니다."),
-    INVALID_QUESTION_CHOICE(BAD_REQUEST, "EXAM4002", "문제에 맞지 않는 선지를 선택했습니다."),
+    INVALID_PROBLEM_CHOICE(BAD_REQUEST, "EXAM4002", "문제에 맞지 않는 선지를 선택했습니다."),
     INVALID_EXAM_TAKE(BAD_REQUEST, "EXAM4003", "풀지 않은 문제가 있거나 문제가 너무 많습니다."),
 
     MEMBER_EXAM_NOT_FOUND(NOT_FOUND, "EXAM4041", "사용자가 치루지 않은 시험입니다."),
     EXAM_NOT_FOUND(NOT_FOUND, "EXAM4042", "시험 정보를 찾을 수 없습니다."),
-    QUESTION_NOT_FOUND(NOT_FOUND, "EXAM4043", "입력한 ID 값에 해당되는 문제를 찾을 수 없습니다."),
-    QUESTION_CHOICE_NOT_FOUND(NOT_FOUND, "EXAM4044", "입력한 ID 값에 해당되는 문제 선지를 찾을 수 없습니다."),
+    PROBLEM_NOT_FOUND(NOT_FOUND, "EXAM4043", "입력한 ID 값에 해당되는 문제를 찾을 수 없습니다."),
+    PROBLEM_CHOICE_NOT_FOUND(NOT_FOUND, "EXAM4044", "입력한 ID 값에 해당되는 문제 선지를 찾을 수 없습니다."),
     EXAM_AVERAGE_NOT_FOUND(NOT_FOUND, "EXAM4045", "같은 업종 사장님 평균 점수를 내기 위한 데이터가 없습니다."),
     MEMBER_EXAM_HISTORY_NOT_FOUND(NOT_FOUND, "EXAM4046", "사용자가 시험을 치룬 내역이 없습니다."),
     EXAM_CATEGORY_NOT_FOUND(NOT_FOUND, "EXAM4047", "시험 카테고리가 존재하지 않습니다."),
