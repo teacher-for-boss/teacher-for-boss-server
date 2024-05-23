@@ -41,9 +41,9 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // Member
     NICKNAME_NOT_EXIST(BAD_REQUEST, "MEMBER4001", "닉네임은 필수 입니다."),
-    MEMBER_EMAIL_DUPLICATE(BAD_REQUEST, "MEMBER4002", "이미 존재하는 이메일입니다."),
-    MEMBER_PHONE_DUPLICATE(BAD_REQUEST, "MEMBER4003", "이미 존재하는 휴대전화 번호입니다."),
-    GENERAL_MEMBER_DUPLICATE(BAD_REQUEST, "MEMBER4004", "일반 회원가입을 통해 진행한 이메일 계정입니다."),
+    MEMBER_EMAIL_DUPLICATED(BAD_REQUEST, "MEMBER4002", "이미 존재하는 이메일입니다."),
+    MEMBER_PHONE_DUPLICATED(BAD_REQUEST, "MEMBER4003", "이미 존재하는 휴대전화 번호입니다."),
+    GENERAL_MEMBER_DUPLICATED(BAD_REQUEST, "MEMBER4004", "일반 회원가입을 통해 진행한 이메일 계정입니다."),
     SOCIAL_MEMBER_INFO_EMPTY(BAD_REQUEST, "MEMBER4005", "소셜 회원가입에 필요한 값이 없습니다."),
     MEMBER_FIELD_EMPTY(BAD_REQUEST, "MEMBER4006", "분야는 필수 입니다"),
     MEMBER_CAREER_EMPTY(BAD_REQUEST, "MEMBER4007", "경력은 필수 입니다"),
@@ -57,12 +57,12 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_BANK_EMPTY(BAD_REQUEST, "MEMBER40015", "은행 선택은 필수 입니다."),
     MEMBER_ACCOUNT_NUMBER_EMPTY(BAD_REQUEST, "MEMBER40016", "계좌번호 입력은 필수 입니다."),
     MEMBER_ACCOUNT_HOLDER_EMPTY(BAD_REQUEST, "MEMBER40017", "예금주명 입력은 필수 입니다."),
-    MEMBER_NICKNAME_DUPLICATE(BAD_REQUEST, "MEMBER4018", "이미 존재하는 닉네임입니다."),
+    MEMBER_NICKNAME_DUPLICATED(BAD_REQUEST, "MEMBER4018", "이미 존재하는 닉네임입니다."),
 
     MEMBER_NOT_FOUND(NOT_FOUND, "MEMBER4041", "사용자가 없습니다."),
 
     // Survey
-    SURVEY_DUPLICATE(BAD_REQUEST, "SURVEY4001", "이미 사전정보가 존재합니다."),
+    SURVEY_DUPLICATED(BAD_REQUEST, "SURVEY4001", "이미 사전정보가 존재합니다."),
 
 
     // Auth
@@ -92,7 +92,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
 
     // Exam
-    MEMBER_EXAM_DUPLICATE(BAD_REQUEST, "EXAM4001", "이미 치룬 시험입니다."),
+    MEMBER_EXAM_DUPLICATED(BAD_REQUEST, "EXAM4001", "이미 치룬 시험입니다."),
     INVALID_PROBLEM_CHOICE(BAD_REQUEST, "EXAM4002", "문제에 맞지 않는 선지를 선택했습니다."),
     INVALID_EXAM_TAKE(BAD_REQUEST, "EXAM4003", "풀지 않은 문제가 있거나 문제가 너무 많습니다."),
 

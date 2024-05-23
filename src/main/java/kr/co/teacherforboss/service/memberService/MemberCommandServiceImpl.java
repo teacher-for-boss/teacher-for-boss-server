@@ -25,7 +25,7 @@ public class MemberCommandServiceImpl implements MemberCommandService{
         Member member = authCommandService.getMember();
 
         if (memberSurveyRepository.existsByMember(member))
-            throw new MemberHandler(ErrorStatus.SURVEY_DUPLICATE);
+            throw new MemberHandler(ErrorStatus.SURVEY_DUPLICATED);
 
         MemberSurvey memberSurvey = MemberConverter.toMemberSurvey(request, member);
         return memberSurveyRepository.save(memberSurvey);

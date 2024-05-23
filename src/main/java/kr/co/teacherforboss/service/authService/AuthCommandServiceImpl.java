@@ -63,15 +63,15 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Transactional
     public Member joinMember(AuthRequestDTO.JoinDTO request){
         if (memberRepository.existsByEmailAndStatus(request.getEmail(), Status.ACTIVE))
-            throw new AuthHandler(ErrorStatus.MEMBER_EMAIL_DUPLICATE);
+            throw new AuthHandler(ErrorStatus.MEMBER_EMAIL_DUPLICATED);
         if (memberRepository.existsByPhoneAndStatus(request.getPhone(), Status.ACTIVE))
-            throw new AuthHandler(ErrorStatus.MEMBER_PHONE_DUPLICATE);
+            throw new AuthHandler(ErrorStatus.MEMBER_PHONE_DUPLICATED);
         if (!request.getPassword().equals(request.getRePassword()))
             throw new AuthHandler(ErrorStatus.PASSWORD_NOT_CORRECT);
         if (!(request.getAgreementUsage().equals("T") && request.getAgreementInfo().equals("T") && request.getAgreementAge().equals("T")))
             throw new AuthHandler(ErrorStatus.INVALID_AGREEMENT_TERM);
         if (memberRepository.existsByNicknameAndStatus(request.getNickname(), Status.ACTIVE))
-            throw new AuthHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATE);
+            throw new AuthHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATED);
 
         Member newMember = AuthConverter.toMember(request);
         List<String> passwordList = passwordUtil.generatePassword(request.getRePassword());
@@ -242,11 +242,11 @@ public class AuthCommandServiceImpl implements AuthCommandService {
                     .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         if (memberRepository.existsByEmailAndStatus(request.getEmail(), Status.ACTIVE))
-            throw new MemberHandler(ErrorStatus.MEMBER_EMAIL_DUPLICATE);
+            throw new MemberHandler(ErrorStatus.MEMBER_EMAIL_DUPLICATED);
         if (memberRepository.existsByPhoneAndStatus(request.getPhone(), Status.ACTIVE))
-            throw new MemberHandler(ErrorStatus.MEMBER_PHONE_DUPLICATE);
+            throw new MemberHandler(ErrorStatus.MEMBER_PHONE_DUPLICATED);
         if (memberRepository.existsByNicknameAndStatus(request.getNickname(), Status.ACTIVE))
-            throw new AuthHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATE);
+            throw new AuthHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATED);
 
         Member newMember = AuthConverter.toSocialMember(request, socialType);
         List<String> passwordList = passwordUtil.generateSocialMemberPassword();
