@@ -76,7 +76,6 @@ public class AuthConverter {
     public static BusinessAuth toBusinessAuth(AuthRequestDTO.CheckBusinessNumberDTO request) {
         return BusinessAuth.builder()
                 .businessNumber(request.getBusinessNumber())
-                .isChecked(BooleanType.F)
                 .build();
     }
 
