@@ -262,7 +262,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Transactional
     public boolean checkBusinessNumber(AuthRequestDTO.CheckBusinessNumberDTO request) {
         if (businessAuthRepository.existsByBusinessNumber(request.getBusinessNumber())) {
-            throw new AuthHandler(ErrorStatus.BUSINESS_NUM_DUPLICATED);
+            throw new AuthHandler(ErrorStatus.BUSINESS_NUMBER_DUPLICATED);
         }
 
         boolean isChecked = businessUtil.validateBusinessNumber(request.getBusinessNumber(), request.getOpenDate(),
@@ -278,9 +278,9 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
     private void saveTeacherInfo(AuthRequestDTO.JoinCommonDTO request) {
         if (!businessAuthRepository.existsByBusinessNumber(request.getBusinessNumber()))
-            throw new AuthHandler(ErrorStatus.BUSINESS_NUM_NOT_CHECKED);
+            throw new AuthHandler(ErrorStatus.BUSINESS_NUMBER_NOT_CHECKED);
         if (request.getBusinessNumber() == null)
-            throw new AuthHandler(ErrorStatus.MEMBER_BUSINESS_NUM_EMPTY);
+            throw new AuthHandler(ErrorStatus.MEMBER_BUSINESS_NUMBER_EMPTY);
         if (request.getRepresentative() == null)
             throw new AuthHandler(ErrorStatus.MEMBER_REPRESENTATIVE_EMPTY);
         if (request.getOpenDate().toString().isBlank())
@@ -288,7 +288,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         if (request.getBank() == null)
             throw new AuthHandler(ErrorStatus.MEMBER_BANK_EMPTY);
         if (request.getAccountNumber() == null)
-            throw new AuthHandler(ErrorStatus.MEMBER_ACCOUNT_NUM_EMPTY);
+            throw new AuthHandler(ErrorStatus.MEMBER_ACCOUNT_NUMBER_EMPTY);
         if (request.getAccountHolder() == null)
             throw new AuthHandler(ErrorStatus.MEMBER_ACCOUNT_HOLDER_EMPTY);
         if (request.getField() == null)
