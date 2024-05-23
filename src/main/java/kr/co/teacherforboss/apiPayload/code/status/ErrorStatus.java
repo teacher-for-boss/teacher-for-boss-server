@@ -41,28 +41,28 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // Member
     NICKNAME_NOT_EXIST(BAD_REQUEST, "MEMBER4001", "닉네임은 필수 입니다."),
-    MEMBER_EMAIL_DUPLICATE(BAD_REQUEST, "MEMBER4002", "이미 존재하는 이메일입니다."),
-    MEMBER_PHONE_DUPLICATE(BAD_REQUEST, "MEMBER4003", "이미 존재하는 휴대전화 번호입니다."),
-    GENERAL_MEMBER_DUPLICATE(BAD_REQUEST, "MEMBER4004", "일반 회원가입을 통해 진행한 이메일 계정입니다."),
+    MEMBER_EMAIL_DUPLICATED(BAD_REQUEST, "MEMBER4002", "이미 존재하는 이메일입니다."),
+    MEMBER_PHONE_DUPLICATED(BAD_REQUEST, "MEMBER4003", "이미 존재하는 휴대전화 번호입니다."),
+    GENERAL_MEMBER_DUPLICATED(BAD_REQUEST, "MEMBER4004", "일반 회원가입을 통해 진행한 이메일 계정입니다."),
     SOCIAL_MEMBER_INFO_EMPTY(BAD_REQUEST, "MEMBER4005", "소셜 회원가입에 필요한 값이 없습니다."),
     MEMBER_FIELD_EMPTY(BAD_REQUEST, "MEMBER4006", "분야는 필수 입니다"),
     MEMBER_CAREER_EMPTY(BAD_REQUEST, "MEMBER4007", "경력은 필수 입니다"),
     MEMBER_INTRODUCTION_EMPTY(BAD_REQUEST, "MEMBER4008", "한줄 소개는 필수 입니다."),
     MEMBER_KEYWORDS_EMPTY(BAD_REQUEST, "MEMBER4009", "키워드 선택은 필수 입니다."),
-    MEMBER_BUSINESS_NUM_EMPTY(BAD_REQUEST, "MEMBER40010", "사업자 등록 번호는 필수 입니다."),
+    MEMBER_BUSINESS_NUMBER_EMPTY(BAD_REQUEST, "MEMBER40010", "사업자 등록 번호는 필수 입니다."),
     MEMBER_REPRESENTATIVE_EMPTY(BAD_REQUEST, "MEMBER40011", "대표자명은 필수 입니다."),
     MEMBER_OPEN_DATE_EMPTY(BAD_REQUEST, "MEMBER40012", "개업연월일은 필수 입니다."),
     MEMBER_ROLE_INVALID(BAD_REQUEST, "MEMBER40013", "유효하지 않은 역할 값입니다."),
     MEMBER_DATE_INVALID(BAD_REQUEST, "MEMBER40014", "날짜 형식이 옳바르지 않습니다."),
     MEMBER_BANK_EMPTY(BAD_REQUEST, "MEMBER40015", "은행 선택은 필수 입니다."),
-    MEMBER_ACCOUNT_NUM_EMPTY(BAD_REQUEST, "MEMBER40016", "계좌번호 입력은 필수 입니다."),
+    MEMBER_ACCOUNT_NUMBER_EMPTY(BAD_REQUEST, "MEMBER40016", "계좌번호 입력은 필수 입니다."),
     MEMBER_ACCOUNT_HOLDER_EMPTY(BAD_REQUEST, "MEMBER40017", "예금주명 입력은 필수 입니다."),
-    MEMBER_NICKNAME_DUPLICATE(BAD_REQUEST, "MEMBER4018", "이미 존재하는 닉네임입니다."),
+    MEMBER_NICKNAME_DUPLICATED(BAD_REQUEST, "MEMBER4018", "이미 존재하는 닉네임입니다."),
 
     MEMBER_NOT_FOUND(NOT_FOUND, "MEMBER4041", "사용자가 없습니다."),
 
     // Survey
-    SURVEY_DUPLICATE(BAD_REQUEST, "SURVEY4001", "이미 사전정보가 존재합니다."),
+    SURVEY_DUPLICATED(BAD_REQUEST, "SURVEY4001", "이미 사전정보가 존재합니다."),
 
 
     // Auth
@@ -79,7 +79,8 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_AGREEMENT_TERM(BAD_REQUEST, "AUTH40011", "모든 필수 이용 약관에 동의해야 합니다."),
     SOCIAL_TYPE_BAD_REQUEST(BAD_REQUEST, "AUTH40012", "기입한 소셜 로그인 유형과 일치하지 않습니다."),
     INVALID_BUSINESS_INFO(BAD_REQUEST, "AUTH40013", "사업자번호인증에 실패하였습니다. 입력 형식을 다시 확인해주세요."),
-    BUSINESS_NUM_DUPLICATE(BAD_REQUEST, "AUTH40014", "이미 인증 완료된 사업자 정보입니다."),
+    BUSINESS_NUMBER_DUPLICATED(BAD_REQUEST, "AUTH40014", "이미 인증 완료된 사업자 정보입니다."),
+    BUSINESS_NUMBER_NOT_CHECKED(BAD_REQUEST, "AUTH40015", "사업자 번호를 인증 받지 않았습니다."),
 
     TOKEN_TIME_OUT(UNAUTHORIZED, "AUTH4011", "토큰이 만료되었습니다."),
     INVALID_JWT_TOKEN(UNAUTHORIZED, "AUTH4012", "토큰 유효성 검사 실패 또는 거부된 토큰입니다."),
@@ -91,7 +92,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
 
     // Exam
-    MEMBER_EXAM_DUPLICATE(BAD_REQUEST, "EXAM4001", "이미 치룬 시험입니다."),
+    MEMBER_EXAM_DUPLICATED(BAD_REQUEST, "EXAM4001", "이미 치룬 시험입니다."),
     INVALID_PROBLEM_CHOICE(BAD_REQUEST, "EXAM4002", "문제에 맞지 않는 선지를 선택했습니다."),
     INVALID_EXAM_TAKE(BAD_REQUEST, "EXAM4003", "풀지 않은 문제가 있거나 문제가 너무 많습니다."),
 

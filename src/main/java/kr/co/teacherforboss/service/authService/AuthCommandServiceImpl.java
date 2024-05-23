@@ -63,15 +63,15 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Transactional
     public Member joinMember(AuthRequestDTO.JoinDTO request){
         if (memberRepository.existsByEmailAndStatus(request.getEmail(), Status.ACTIVE))
-            throw new AuthHandler(ErrorStatus.MEMBER_EMAIL_DUPLICATE);
+            throw new AuthHandler(ErrorStatus.MEMBER_EMAIL_DUPLICATED);
         if (memberRepository.existsByPhoneAndStatus(request.getPhone(), Status.ACTIVE))
-            throw new AuthHandler(ErrorStatus.MEMBER_PHONE_DUPLICATE);
+            throw new AuthHandler(ErrorStatus.MEMBER_PHONE_DUPLICATED);
         if (!request.getPassword().equals(request.getRePassword()))
             throw new AuthHandler(ErrorStatus.PASSWORD_NOT_CORRECT);
         if (!(request.getAgreementUsage().equals("T") && request.getAgreementInfo().equals("T") && request.getAgreementAge().equals("T")))
             throw new AuthHandler(ErrorStatus.INVALID_AGREEMENT_TERM);
         if (memberRepository.existsByNicknameAndStatus(request.getNickname(), Status.ACTIVE))
-            throw new AuthHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATE);
+            throw new AuthHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATED);
 
         Member newMember = AuthConverter.toMember(request);
         List<String> passwordList = passwordUtil.generatePassword(request.getRePassword());
@@ -80,7 +80,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         AgreementTerm newAgreement = AuthConverter.toAgreementTerm(request, newMember);
 
         newMember.setProfile(request.getNickname(), request.getProfileImg());
-        if (Role.of(request.getRole()).equals(Role.BOSS)) saveTeacherInfo(request, newMember);
+        if (Role.of(request.getRole()).equals(Role.BOSS)) saveTeacherInfo(request);
 
         agreementTermRepository.save(newAgreement);
         return memberRepository.save(newMember);
@@ -242,18 +242,18 @@ public class AuthCommandServiceImpl implements AuthCommandService {
                     .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         if (memberRepository.existsByEmailAndStatus(request.getEmail(), Status.ACTIVE))
-            throw new MemberHandler(ErrorStatus.MEMBER_EMAIL_DUPLICATE);
+            throw new MemberHandler(ErrorStatus.MEMBER_EMAIL_DUPLICATED);
         if (memberRepository.existsByPhoneAndStatus(request.getPhone(), Status.ACTIVE))
-            throw new MemberHandler(ErrorStatus.MEMBER_PHONE_DUPLICATE);
+            throw new MemberHandler(ErrorStatus.MEMBER_PHONE_DUPLICATED);
         if (memberRepository.existsByNicknameAndStatus(request.getNickname(), Status.ACTIVE))
-            throw new AuthHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATE);
+            throw new AuthHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATED);
 
         Member newMember = AuthConverter.toSocialMember(request, socialType);
         List<String> passwordList = passwordUtil.generateSocialMemberPassword();
         newMember.setPassword(passwordList);
 
         newMember.setProfile(request.getNickname(), request.getProfileImg());
-        if (request.getRole().equals(2)) saveTeacherInfo(request, newMember);
+        if (request.getRole().equals(2)) saveTeacherInfo(request);
 
         return memberRepository.save(newMember);
     }
@@ -262,7 +262,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Transactional
     public boolean checkBusinessNumber(AuthRequestDTO.CheckBusinessNumberDTO request) {
         if (businessAuthRepository.existsByBusinessNumber(request.getBusinessNumber())) {
-            throw new AuthHandler(ErrorStatus.BUSINESS_NUM_DUPLICATE);
+            throw new AuthHandler(ErrorStatus.BUSINESS_NUMBER_DUPLICATED);
         }
 
         boolean isChecked = businessUtil.validateBusinessNumber(request.getBusinessNumber(), request.getOpenDate(),
@@ -276,11 +276,11 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         return isChecked;
     }
 
-    private void saveTeacherInfo(AuthRequestDTO.JoinCommonDTO request, Member member) {
-        // TODO : 사업자 인증 여부 확인 로직 추가
-
+    private void saveTeacherInfo(AuthRequestDTO.JoinCommonDTO request) {
+        if (!businessAuthRepository.existsByBusinessNumber(request.getBusinessNumber()))
+            throw new AuthHandler(ErrorStatus.BUSINESS_NUMBER_NOT_CHECKED);
         if (request.getBusinessNumber() == null)
-            throw new AuthHandler(ErrorStatus.MEMBER_BUSINESS_NUM_EMPTY);
+            throw new AuthHandler(ErrorStatus.MEMBER_BUSINESS_NUMBER_EMPTY);
         if (request.getRepresentative() == null)
             throw new AuthHandler(ErrorStatus.MEMBER_REPRESENTATIVE_EMPTY);
         if (request.getOpenDate().toString().isBlank())
@@ -288,7 +288,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         if (request.getBank() == null)
             throw new AuthHandler(ErrorStatus.MEMBER_BANK_EMPTY);
         if (request.getAccountNumber() == null)
-            throw new AuthHandler(ErrorStatus.MEMBER_ACCOUNT_NUM_EMPTY);
+            throw new AuthHandler(ErrorStatus.MEMBER_ACCOUNT_NUMBER_EMPTY);
         if (request.getAccountHolder() == null)
             throw new AuthHandler(ErrorStatus.MEMBER_ACCOUNT_HOLDER_EMPTY);
         if (request.getField() == null)
