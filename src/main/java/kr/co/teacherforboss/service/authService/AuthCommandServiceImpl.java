@@ -80,7 +80,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         AgreementTerm newAgreement = AuthConverter.toAgreementTerm(request, newMember);
 
         newMember.setProfile(request.getNickname(), request.getProfileImg());
-        if (Role.of(request.getRole()).equals(Role.BOSS)) saveTeacherInfo(request, newMember);
+        if (Role.of(request.getRole()).equals(Role.BOSS)) saveTeacherInfo(request);
 
         agreementTermRepository.save(newAgreement);
         return memberRepository.save(newMember);
@@ -253,7 +253,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         newMember.setPassword(passwordList);
 
         newMember.setProfile(request.getNickname(), request.getProfileImg());
-        if (request.getRole().equals(2)) saveTeacherInfo(request, newMember);
+        if (request.getRole().equals(2)) saveTeacherInfo(request);
 
         return memberRepository.save(newMember);
     }
@@ -277,9 +277,9 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         return isChecked;
     }
 
-    private void saveTeacherInfo(AuthRequestDTO.JoinCommonDTO request, Member member) {
-        // TODO : 사업자 인증 여부 확인 로직 추가
-
+    private void saveTeacherInfo(AuthRequestDTO.JoinCommonDTO request) {
+        if (!businessAuthRepository.existsByBusinessNumber(request.getBusinessNumber()))
+            throw new AuthHandler(ErrorStatus.BUSINESS_NUM_NOT_CHECKED);
         if (request.getBusinessNumber() == null)
             throw new AuthHandler(ErrorStatus.MEMBER_BUSINESS_NUM_EMPTY);
         if (request.getRepresentative() == null)
