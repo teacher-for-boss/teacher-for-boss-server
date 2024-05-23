@@ -265,8 +265,9 @@ public class AuthCommandServiceImpl implements AuthCommandService {
             throw new AuthHandler(ErrorStatus.BUSINESS_NUM_DUPLICATE);
         }
 
-        boolean isChecked = businessUtil.validateBusinessNumber(request.getBusinessNumber(), request.getOpenDate(), request.getRepresentative());
-        if(!isChecked) {
+        boolean isChecked = businessUtil.validateBusinessNumber(request.getBusinessNumber(), request.getOpenDate(),
+                request.getRepresentative());
+        if (!isChecked) {
             throw new AuthHandler(ErrorStatus.INVALID_BUSINESS_INFO);
         } else {
             BusinessAuth businessAuth = AuthConverter.toBusinessAuth(request);
@@ -274,6 +275,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
             businessAuthRepository.save(businessAuth);
         }
         return isChecked;
+    }
 
     private void saveTeacherInfo(AuthRequestDTO.JoinCommonDTO request, Member member) {
         // TODO : 사업자 인증 여부 확인 로직 추가
