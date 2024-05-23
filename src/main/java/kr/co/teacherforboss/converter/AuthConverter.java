@@ -1,8 +1,10 @@
 package kr.co.teacherforboss.converter;
 
+import kr.co.teacherforboss.domain.BusinessAuth;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.EmailAuth;
 import kr.co.teacherforboss.domain.PhoneAuth;
+import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.TeacherInfo;
 import kr.co.teacherforboss.domain.enums.Gender;
 import kr.co.teacherforboss.domain.enums.Level;
@@ -67,7 +69,14 @@ public class AuthConverter {
         return EmailAuth.builder()
                 .email(request.getEmail())
                 .purpose(Purpose.of(request.getPurpose()))
-                .isChecked("F")
+                .isChecked(BooleanType.F)
+                .build();
+    }
+
+    public static BusinessAuth toBusinessAuth(AuthRequestDTO.CheckBusinessNumberDTO request) {
+        return BusinessAuth.builder()
+                .businessNumber(request.getBusinessNumber())
+                .isChecked(BooleanType.F)
                 .build();
     }
 
@@ -82,7 +91,7 @@ public class AuthConverter {
         return PhoneAuth.builder()
                 .phone(request.getPhone())
                 .purpose(Purpose.of(request.getPurpose()))
-                .isChecked("F")
+                .isChecked(BooleanType.F)
                 .build();
     }
 

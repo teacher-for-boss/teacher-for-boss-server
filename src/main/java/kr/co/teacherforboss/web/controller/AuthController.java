@@ -68,6 +68,12 @@ public class AuthController {
         return ApiResponse.onSuccess(AuthConverter.toCheckResultDTO(isChecked));
     }
 
+    @PostMapping("/teacher/business-number/check")
+    public ApiResponse<AuthResponseDTO.CheckResultDTO> checkBusinessNumber(@RequestBody @Valid AuthRequestDTO.CheckBusinessNumberDTO request) {
+        boolean isChecked = authCommandService.checkBusinessNumber(request);
+        return ApiResponse.onSuccess(AuthConverter.toCheckResultDTO(isChecked));
+    }
+
     @PostMapping("/find/password")
     public ApiResponse<AuthResponseDTO.FindPasswordResultDTO> findEmail(@RequestBody @Valid AuthRequestDTO.FindPasswordDTO request) {
         Member member = authCommandService.findPassword(request);

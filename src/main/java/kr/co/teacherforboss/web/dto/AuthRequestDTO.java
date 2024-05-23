@@ -9,8 +9,10 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import kr.co.teacherforboss.validation.annotation.CheckRole;
 import kr.co.teacherforboss.validation.annotation.CheckTrueOrFalse;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.extern.jackson.Jacksonized;
 
 import java.time.LocalDate;
@@ -213,5 +215,22 @@ public class AuthRequestDTO {
     public static class CheckNicknameDTO {
         @NotNull(message = "닉네임을 입력해주세요.")
         String nickname;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CheckBusinessNumberDTO {
+
+        @NotBlank(message = "사업자등록번호가 없습니다.")
+        @Pattern(regexp = "^\\d{3}-\\d{2}-\\d{5}$", message = "사업자등록번호는 하이픈('-')을 포함한 10글자로 입력해주세요.")
+        String businessNumber;
+
+        @NotBlank(message = "대표자명이 없습니다.")
+        String representative;
+
+        @NotNull(message = "개업연월일이 없습니다.")
+        LocalDate openDate;
     }
 }

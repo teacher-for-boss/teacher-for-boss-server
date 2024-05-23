@@ -7,7 +7,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
 import kr.co.teacherforboss.domain.common.BaseEntity;
 import kr.co.teacherforboss.domain.enums.BooleanType;
-import kr.co.teacherforboss.domain.enums.Purpose;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,29 +19,16 @@ import org.hibernate.annotations.ColumnDefault;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class EmailAuth extends BaseEntity {
+public class BusinessAuth extends BaseEntity {
 
     @NotNull
-    @Column(length = 50)
-    private String email;
-
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "VARCHAR(10)")
-    private Purpose purpose;
-
-    @NotNull
-    @Column(length = 5)
-    private String code;
+    @Column(length = 12)
+    private String businessNumber;
 
     @NotNull
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'F'")
     private BooleanType isChecked;
-
-    public void setCode(String code) {
-        this.code = code;
-    }
 
     public void setIsChecked(boolean isChecked) {
         this.isChecked = isChecked ? BooleanType.T : BooleanType.F;

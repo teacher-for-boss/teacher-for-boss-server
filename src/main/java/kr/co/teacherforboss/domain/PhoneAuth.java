@@ -6,6 +6,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
 import kr.co.teacherforboss.domain.common.BaseEntity;
+import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.Purpose;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -35,17 +36,16 @@ public class PhoneAuth extends BaseEntity {
     private String code;
 
     @NotNull
-    @Column(columnDefinition = "VARCHAR(1)")
+    @Enumerated(EnumType.STRING)
     @ColumnDefault("'F'")
-    private String isChecked;
+    private BooleanType isChecked;
 
     public void setCode(String code) {
         this.code = code;
     }
 
     public void setIsChecked(boolean isChecked) {
-        if (isChecked) this.isChecked = "T";
-        else this.isChecked = "F";
+        this.isChecked = isChecked ? BooleanType.T : BooleanType.F;
     }
     
 }
