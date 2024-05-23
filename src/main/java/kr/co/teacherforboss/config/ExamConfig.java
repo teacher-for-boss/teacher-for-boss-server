@@ -11,4 +11,5 @@ public class ExamConfig {
 
     public static final ExamType EXAM_TYPE = ExamType.MID;
     public static final ExamQuarter EXAM_QUARTER = ExamQuarter.QUARTER2;
+    public static final Integer PASS_THRESHOLD = 70;
 }

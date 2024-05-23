@@ -24,9 +24,9 @@ public class ExamResponseDTO {
     public static class GetExamResultDTO{
         long memberExamId;
         int score;
-        int questionsNum;
-        int correctAnsNum;
-        int incorrectAnsNum;
+        int problemsCount;
+        int correctChoicesCount;
+        int incorrectChoicesCount;
     }
 
     @Builder
@@ -40,7 +40,7 @@ public class ExamResponseDTO {
         @AllArgsConstructor
         public static class ExamCategoryInfo {
             Long examCategoryId;
-            String categoryName;
+            String name;
         }
     }
 
@@ -48,15 +48,15 @@ public class ExamResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class GetTagsDTO {
-        private List<TagInfo> tagsList;
+    public static class GetExamTagsDTO {
+        List<ExamTagInfo> examTagsList;
 
         @Builder
         @Getter
         @AllArgsConstructor
-        public static class TagInfo {
-            private Long tagId;
-            private String tagName;
+        public static class ExamTagInfo {
+            Long examTagId;
+            String name;
         }
     }
 
@@ -64,15 +64,20 @@ public class ExamResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class GetExamIncorrectAnswersResultDTO {
-        List<ExamIncorrectQuestion> examIncorrectQuestionList;
+    public static class GetExamsDTO {
+        List<ExamInfo> examList;
 
+        @Builder
         @Getter
         @AllArgsConstructor
-        public static class ExamIncorrectQuestion {
-            Long questionId;
-            int questionSequence;
-            String questionName;
+        public static class ExamInfo {
+            Long id;
+            String examTag;
+            String title;
+            String description;
+            boolean isTaken;
+            Boolean isPassed;
+            Integer score;
         }
     }
 
@@ -80,20 +85,36 @@ public class ExamResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class GetQuestionsDTO {
-        List<QuestionInfo> questionList;
+    public static class GetExamIncorrectChoicesResultDTO {
+        List<ExamIncorrectProblem> examIncorrectProblemList;
 
         @Getter
         @AllArgsConstructor
-        public static class QuestionInfo {
-            Long questionId;
-            Integer questionSequence;
-            String questionName;
-            List<QuestionChoiceInfo> choiceList;
+        public static class ExamIncorrectProblem {
+            Long problemId;
+            int sequence;
+            String name;
+        }
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetProblemsDTO {
+        List<ProblemInfo> problemList;
+
+        @Getter
+        @AllArgsConstructor
+        public static class ProblemInfo {
+            Long problemId;
+            Integer sequence;
+            String name;
+            List<ProblemChoiceInfo> choiceList;
 
             @Getter
             @AllArgsConstructor
-            public static class QuestionChoiceInfo {
+            public static class ProblemChoiceInfo {
                 Long choiceId;
                 String choiceName;
             }
@@ -105,12 +126,12 @@ public class ExamResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class GetSolutionsDTO {
-        List<QuestionSolution> solutionList;
+        List<ProblemSolution> solutionList;
 
         @Getter
         @AllArgsConstructor
-        public static class QuestionSolution {
-            Long questionId;
+        public static class ProblemSolution {
+            Long problemId;
             String solution;
         }
     }

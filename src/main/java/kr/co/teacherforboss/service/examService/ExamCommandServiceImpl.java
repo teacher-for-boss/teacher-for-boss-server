@@ -10,16 +10,16 @@ import kr.co.teacherforboss.apiPayload.exception.handler.ExamHandler;
 import kr.co.teacherforboss.converter.ExamConverter;
 import kr.co.teacherforboss.domain.Exam;
 import kr.co.teacherforboss.domain.Member;
-import kr.co.teacherforboss.domain.MemberAnswer;
+import kr.co.teacherforboss.domain.MemberChoice;
 import kr.co.teacherforboss.domain.MemberExam;
-import kr.co.teacherforboss.domain.Question;
-import kr.co.teacherforboss.domain.QuestionChoice;
+import kr.co.teacherforboss.domain.Problem;
+import kr.co.teacherforboss.domain.ProblemChoice;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.ExamRepository;
-import kr.co.teacherforboss.repository.MemberAnswerRepository;
+import kr.co.teacherforboss.repository.MemberChoiceRepository;
 import kr.co.teacherforboss.repository.MemberExamRepository;
-import kr.co.teacherforboss.repository.QuestionChoiceRepository;
-import kr.co.teacherforboss.repository.QuestionRepository;
+import kr.co.teacherforboss.repository.ProblemChoiceRepository;
+import kr.co.teacherforboss.repository.ProblemRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.web.dto.ExamRequestDTO;
 import kr.co.teacherforboss.web.dto.ExamResponseDTO;
@@ -31,11 +31,11 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ExamCommandServiceImpl implements ExamCommandService {
 
-    private final QuestionRepository questionRepository;
-    private final QuestionChoiceRepository questionChoiceRepository;
+    private final ProblemRepository problemRepository;
+    private final ProblemChoiceRepository problemChoiceRepository;
     private final ExamRepository examRepository;
     private final MemberExamRepository memberExamRepository;
-    private final MemberAnswerRepository memberAnswerRepository;
+    private final MemberChoiceRepository memberChoiceRepository;
     private final AuthCommandService authCommandService;
 
     @Override
@@ -46,77 +46,48 @@ public class ExamCommandServiceImpl implements ExamCommandService {
         Exam exam = examRepository.findByIdAndStatus(examId, Status.ACTIVE)
                 .orElseThrow(() -> new ExamHandler(ErrorStatus.EXAM_NOT_FOUND));
 
-        if (questionRepository.countByExamIdAndStatus(examId, Status.ACTIVE) != request.getQuestionAnsList().size())
+        if (problemRepository.countByExamIdAndStatus(examId, Status.ACTIVE) != request.getProblemChoiceList().size())
             throw new ExamHandler(ErrorStatus.INVALID_EXAM_TAKE);
 
-        List<Long> questionIds = request.getQuestionAnsList().stream()
-                .map(ExamRequestDTO.TakeExamChoiceDTO::getQuestionId)
+        List<Long> problemIds = request.getProblemChoiceList().stream()
+                .map(ExamRequestDTO.TakeExamChoiceDTO::getProblemId)
                 .toList();
-        List<Question> questions = questionRepository.findByIdInAndStatus(questionIds, Status.ACTIVE);
-        if (questions.size() != questionIds.size())
-            throw new ExamHandler(ErrorStatus.QUESTION_NOT_FOUND);
-        Map<Long, Question> questionMap = questions.stream()
-                .collect(Collectors.toMap(Question::getId, Function.identity()));
+        List<Problem> problems = problemRepository.findByIdInAndStatus(problemIds, Status.ACTIVE);
+        if (problems.size() != problemIds.size())
+            throw new ExamHandler(ErrorStatus.PROBLEM_NOT_FOUND);
+        Map<Long, Problem> problemMap = problems.stream()
+                .collect(Collectors.toMap(Problem::getId, Function.identity()));
 
-        List<Long> questionChoiceIds = request.getQuestionAnsList().stream()
-                .map(ExamRequestDTO.TakeExamChoiceDTO::getQuestionChoiceId)
+        List<Long> problemChoiceIds = request.getProblemChoiceList().stream()
+                .map(ExamRequestDTO.TakeExamChoiceDTO::getProblemChoiceId)
                 .toList();
-        List<QuestionChoice> choices = questionChoiceRepository.findByIdInAndStatus(questionChoiceIds, Status.ACTIVE);
-        if (choices.size() != questionChoiceIds.size())
-            throw new ExamHandler(ErrorStatus.QUESTION_CHOICE_NOT_FOUND);
-        Map<Long, QuestionChoice> questionChoiceMap = choices.stream()
-                .collect(Collectors.toMap(QuestionChoice::getId, Function.identity()));
+        List<ProblemChoice> choices = problemChoiceRepository.findByIdInAndStatus(problemChoiceIds, Status.ACTIVE);
+        if (choices.size() != problemChoiceIds.size())
+            throw new ExamHandler(ErrorStatus.PROBLEM_CHOICE_NOT_FOUND);
+        Map<Long, ProblemChoice> problemChoiceMap = choices.stream()
+                .collect(Collectors.toMap(ProblemChoice::getId, Function.identity()));
 
         AtomicInteger score = new AtomicInteger(0);
-        request.getQuestionAnsList().forEach(q -> {
-            Question question = questionMap.get(q.getQuestionId());
-            QuestionChoice questionChoice = questionChoiceMap.get(q.getQuestionChoiceId());
-            if (!questionChoice.getQuestion().getId().equals(question.getId()))
-                throw new ExamHandler(ErrorStatus.INVALID_QUESTION_CHOICE);
-            if (questionChoice.isCorrect()) {
-                score.addAndGet(question.getPoints());
+        request.getProblemChoiceList().forEach(q -> {
+            Problem problem = problemMap.get(q.getProblemId());
+            ProblemChoice problemChoice = problemChoiceMap.get(q.getProblemChoiceId());
+            if (!problemChoice.getProblem().getId().equals(problem.getId()))
+                throw new ExamHandler(ErrorStatus.INVALID_PROBLEM_CHOICE);
+            if (problemChoice.isCorrect()) {
+                score.addAndGet(problem.getPoints());
             }
         });
 
         MemberExam memberExam = ExamConverter.toMemberExam(member, exam, score.intValue(), request.getLeftTime());
 
-        List<MemberAnswer> memberAnswerList = request.getQuestionAnsList().stream().map(q -> {
-            Question question = questionMap.get(q.getQuestionId());
-            QuestionChoice questionChoice = questionChoiceMap.get(q.getQuestionChoiceId());
-            return ExamConverter.toMemberAnswer(memberExam, question, questionChoice);
+        List<MemberChoice> memberChoiceList = request.getProblemChoiceList().stream().map(p -> {
+            Problem problem = problemMap.get(p.getProblemId());
+            ProblemChoice problemChoice = problemChoiceMap.get(p.getProblemChoiceId());
+            return ExamConverter.toMemberChoice(memberExam, problem, problemChoice);
         }).toList();
-        memberAnswerRepository.saveAll(memberAnswerList);
+        memberChoiceRepository.saveAll(memberChoiceList);
 
         return memberExamRepository.save(memberExam);
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public ExamResponseDTO.GetExamResultDTO getExamResult(Long memberExamId) {
-        Member member = authCommandService.getMember();
-
-        MemberExam memberExam = memberExamRepository.findByIdAndMemberAndStatus(memberExamId, member, Status.ACTIVE)
-                .orElseThrow(() -> new ExamHandler(ErrorStatus.MEMBER_EXAM_NOT_FOUND));
-
-        int questionsNum =  memberExam.getExam().getQuestionList().size();
-        int score = memberExam.getScore();
-
-        List<MemberAnswer> memberAnswers = memberAnswerRepository.findAllByMemberExamIdAndStatus(memberExam.getId(), Status.ACTIVE);
-        int correctAnsNum = memberAnswers.stream()
-                .filter(q -> q.getQuestionChoice().isCorrect()).mapToInt(e -> 1).sum();
-        int incorrectAnsNum = memberAnswers.size() - correctAnsNum;
-
-        return ExamConverter.toGetExamResultDTO(memberExam.getId(), score, questionsNum, correctAnsNum, incorrectAnsNum);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<Question> getExamIncorrectAnswers(Long memberExamId) {
-        Member member = authCommandService.getMember();
-        MemberExam memberExam = memberExamRepository.findByIdAndMemberAndStatus(memberExamId, member, Status.ACTIVE)
-                .orElseThrow(() -> new ExamHandler(ErrorStatus.MEMBER_EXAM_NOT_FOUND));
-
-        List<MemberAnswer> memberIncorrectAnswers = memberAnswerRepository.findIncorrectAnswers(memberExam, Status.ACTIVE);
-        return memberIncorrectAnswers.stream().map(MemberAnswer::getQuestion).toList();
-    }
 }

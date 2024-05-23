@@ -4,6 +4,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import kr.co.teacherforboss.domain.common.BaseEntity;
 import kr.co.teacherforboss.domain.enums.Gender;
@@ -16,17 +18,26 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Table(uniqueConstraints = {
+        @UniqueConstraint(name= "member_email_uk", columnNames={ "email" }),
+        @UniqueConstraint(name= "member_phone_uk", columnNames={ "phone" })
+})
 public class Member extends BaseEntity {
 
     @NotNull
     @Column(length = 20)
     private String name;
+
+    @NotNull
+    @Column(length = 10)
+    private String nickname;
 
     @NotNull
     @Column(length = 100)
@@ -68,9 +79,13 @@ public class Member extends BaseEntity {
     @Column
     private LocalDate inactiveDate;
 
-    public void setPassword(String pwSalt, String pwHash){
-        this.pwSalt = pwSalt;
-        this.pwHash = pwHash;
+    public void setPassword(List<String> passwordList){
+        this.pwSalt = passwordList.get(0);
+        this.pwHash = passwordList.get(1);
     }
 
+    public void setProfile(String nickname, String profileImg){
+        this.nickname = nickname;
+        this.profileImg = profileImg;
+    }
 }

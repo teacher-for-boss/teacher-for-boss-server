@@ -10,6 +10,7 @@ import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.EmailAuth;
 import kr.co.teacherforboss.domain.PhoneAuth;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
+import kr.co.teacherforboss.service.authService.AuthQueryService;
 import kr.co.teacherforboss.validation.annotation.CheckSocialType;
 import kr.co.teacherforboss.validation.annotation.ExistPrincipalDetails;
 import kr.co.teacherforboss.web.dto.AuthRequestDTO;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthCommandService authCommandService;
+    private final AuthQueryService authQueryService;
     private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/signup")
@@ -66,9 +68,9 @@ public class AuthController {
         return ApiResponse.onSuccess(AuthConverter.toCheckResultDTO(isChecked));
     }
 
-    @PostMapping("/teacher/business/check")
-    public ApiResponse<AuthResponseDTO.CheckResultDTO> checkBusiness(@RequestBody @Valid AuthRequestDTO.BusinessCheckDTO request) {
-        boolean isChecked = authCommandService.checkBusiness(request);
+    @PostMapping("/teacher/business-number/check")
+    public ApiResponse<AuthResponseDTO.CheckResultDTO> checkBusinessNumber(@RequestBody @Valid AuthRequestDTO.CheckBusinessNumberDTO request) {
+        boolean isChecked = authCommandService.checkBusinessNumber(request);
         return ApiResponse.onSuccess(AuthConverter.toCheckResultDTO(isChecked));
     }
 
@@ -118,5 +120,11 @@ public class AuthController {
         Member member = authCommandService.socialLogin(request, socialType);
         AuthResponseDTO.TokenResponseDTO tokenResponseDTO = jwtTokenProvider.createTokenResponse(member.getEmail(), member.getName(), member.getRole());
         return ApiResponse.onSuccess(tokenResponseDTO);
+    }
+
+    @PostMapping("/nickname/check")
+    public ApiResponse<AuthResponseDTO.CheckNicknameResultDTO> checkNickname(@RequestBody @Valid AuthRequestDTO.CheckNicknameDTO request) {
+        Boolean nicknameCheck = authQueryService.checkNickname(request);
+        return ApiResponse.onSuccess(AuthConverter.toCheckNicknameDTO(nicknameCheck));
     }
 }

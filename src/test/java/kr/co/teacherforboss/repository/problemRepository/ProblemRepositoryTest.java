@@ -1,11 +1,11 @@
-package kr.co.teacherforboss.repository.questionRepository;
+package kr.co.teacherforboss.repository.problemRepository;
 
 import kr.co.teacherforboss.domain.Exam;
-import kr.co.teacherforboss.domain.Question;
+import kr.co.teacherforboss.domain.Problem;
 import kr.co.teacherforboss.domain.enums.ExamType;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.ExamRepository;
-import kr.co.teacherforboss.repository.QuestionRepository;
+import kr.co.teacherforboss.repository.ProblemRepository;
 import kr.co.teacherforboss.util.ExamTestUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,12 +20,12 @@ import java.util.stream.LongStream;
 
 
 @ExtendWith(MockitoExtension.class)
-class QuestionRepositoryTest {
+class ProblemRepositoryTest {
 
     @Mock
     private ExamRepository examRepository;
     @Mock
-    private QuestionRepository questionRepository;
+    private ProblemRepository problemRepository;
     @InjectMocks
     private ExamTestUtil examTestUtil;
 
@@ -37,28 +37,28 @@ class QuestionRepositoryTest {
     void countByExamIdAndStatus() {
         // given
         Exam exam = examTestUtil.generateExam(ExamType.MID);
-        List<Question> questionList = new ArrayList<>();
+        List<Problem> problemList = new ArrayList<>();
         LongStream.rangeClosed(1, 1000000)
-                .forEach(i -> questionList.add(examTestUtil.generateQuestion(exam, "문제" + i, i)));
-        exam.setQuestionList(questionList);
+                .forEach(i -> problemList.add(examTestUtil.generateProblem(exam, "문제" + i, i)));
+        exam.setProblemList(problemList);
 
         examRepository.save(exam);
-        questionRepository.saveAll(questionList);
+        problemRepository.saveAll(problemList);
 
         // when
         long start0 = System.currentTimeMillis();
-        questionRepository.findAll();
+        problemRepository.findAll();
         long end0 = System.currentTimeMillis();
         long elapsedTime0 = end0 - start0;
 
         long start1 = System.currentTimeMillis();
         if (examRepository.findByIdAndStatus(exam.getId(), Status.ACTIVE).isPresent())
-            examRepository.findByIdAndStatus(exam.getId(), Status.ACTIVE).get().getQuestionList(); // 시험 Id 조회 -> 시험의 question list 조회
+            examRepository.findByIdAndStatus(exam.getId(), Status.ACTIVE).get().getProblemList(); // 시험 Id 조회 -> 시험의 problem list 조회
         long end1 = System.currentTimeMillis();
         long elapsedTime1 = end1 - start1;
 
         long start2 = System.currentTimeMillis();
-        questionRepository.countByExamIdAndStatus(exam.getId(), Status.ACTIVE); // 시험 Id가 동일한 문제들 조회
+        problemRepository.countByExamIdAndStatus(exam.getId(), Status.ACTIVE); // 시험 Id가 동일한 문제들 조회
         long end2 = System.currentTimeMillis();
         long elapsedTime2 = end2 - start2;
 

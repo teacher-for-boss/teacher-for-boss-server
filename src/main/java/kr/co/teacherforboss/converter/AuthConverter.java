@@ -4,7 +4,10 @@ import kr.co.teacherforboss.domain.BusinessAuth;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.EmailAuth;
 import kr.co.teacherforboss.domain.PhoneAuth;
+import kr.co.teacherforboss.domain.enums.BooleanType;
+import kr.co.teacherforboss.domain.TeacherInfo;
 import kr.co.teacherforboss.domain.enums.Gender;
+import kr.co.teacherforboss.domain.enums.Level;
 import kr.co.teacherforboss.domain.enums.LoginType;
 import kr.co.teacherforboss.domain.enums.Role;
 import kr.co.teacherforboss.domain.enums.Purpose;
@@ -24,23 +27,37 @@ public class AuthConverter {
     }
 
     public static Member toMember(AuthRequestDTO.JoinDTO request){
-        Gender gender = switch (request.getGender()) {
-            case 1 -> Gender.MALE;
-            case 2 -> Gender.FEMALE;
-            default -> Gender.NONE;
-        };
+        Gender gender = Gender.of(request.getGender());
+        Role role = Role.of(request.getRole());
 
         return Member.builder()
                 .name(request.getName())
                 .email(request.getEmail())
                 .loginType(LoginType.GENERAL)
-                .role(Role.USER)
+                .role(role)
                 .gender(gender)
                 .birthDate(request.getBirthDate())
                 .phone(request.getPhone())
                 .build();
     }
-    
+
+    public static TeacherInfo toTeacher(AuthRequestDTO.JoinCommonDTO request){
+        String keywords = String.join(";", request.getKeywords());
+        return TeacherInfo.builder()
+                .businessNumber(request.getBusinessNumber())
+                .representative(request.getRepresentative())
+                .openDate(request.getOpenDate())
+                .field(request.getField())
+                .career(request.getCareer())
+                .introduction(request.getIntroduction())
+                .keywords(keywords)
+                .level(Level.LEVEL1)
+                .bank(request.getBank())
+                .accountNumber(request.getAccountNumber())
+                .accountHolder(request.getAccountHolder())
+                .build();
+    }
+
     public static AuthResponseDTO.SendCodeMailResultDTO toSendCodeMailResultDTO(EmailAuth emailAuth) {
         return AuthResponseDTO.SendCodeMailResultDTO.builder()
                 .emailAuthId(emailAuth.getId())
@@ -52,11 +69,11 @@ public class AuthConverter {
         return EmailAuth.builder()
                 .email(request.getEmail())
                 .purpose(Purpose.of(request.getPurpose()))
-                .isChecked("F")
+                .isChecked(BooleanType.F)
                 .build();
     }
 
-    public static BusinessAuth toBusinessAuth(AuthRequestDTO.BusinessCheckDTO request) {
+    public static BusinessAuth toBusinessAuth(AuthRequestDTO.CheckBusinessNumberDTO request) {
         return BusinessAuth.builder()
                 .businessNumber(request.getBusinessNumber())
                 .build();
@@ -73,7 +90,7 @@ public class AuthConverter {
         return PhoneAuth.builder()
                 .phone(request.getPhone())
                 .purpose(Purpose.of(request.getPurpose()))
-                .isChecked("F")
+                .isChecked(BooleanType.F)
                 .build();
     }
 
@@ -102,7 +119,7 @@ public class AuthConverter {
                 .memberId(member.getId())
                 .isChanged(true)
                 .build();
-  }
+    }
   
     public static AuthResponseDTO.FindEmailResultDTO toFindEmailResultDTO(Member member) {
         return AuthResponseDTO.FindEmailResultDTO.builder()
@@ -112,16 +129,13 @@ public class AuthConverter {
     }
   
     public static Member toSocialMember(AuthRequestDTO.SocialLoginDTO request, int socialType){
-        Gender gender = switch (request.getGender()) {
-            case 1 -> Gender.MALE;
-            case 2 -> Gender.FEMALE;
-            default -> Gender.NONE;
-        };
+        Gender gender = Gender.of(request.getGender());
+        Role role = Role.of(request.getRole());
 
         return Member.builder()
                 .name(request.getName())
                 .email(request.getEmail())
-                .role(Role.USER)
+                .role(role)
                 .gender(gender)
                 .loginType(LoginType.of(socialType))
                 .birthDate(request.getBirthDate())
@@ -136,6 +150,12 @@ public class AuthConverter {
                 .agreementSms(request.getAgreementSms())
                 .agreementEmail(request.getAgreementEmail())
                 .agreementLocation(request.getAgreementLocation())
+                .build();
+    }
+
+    public static AuthResponseDTO.CheckNicknameResultDTO toCheckNicknameDTO(Boolean nicknameCheck) {
+        return AuthResponseDTO.CheckNicknameResultDTO.builder()
+                .nicknameCheck(nicknameCheck)
                 .build();
     }
 }

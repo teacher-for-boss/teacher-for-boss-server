@@ -3,6 +3,7 @@ package kr.co.teacherforboss.repository;
 import java.util.Optional;
 import java.util.List;
 
+import jakarta.persistence.QueryHint;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.MemberExam;
 import kr.co.teacherforboss.domain.enums.Status;
@@ -13,9 +14,20 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MemberExamRepository extends JpaRepository<MemberExam, Long> {
+    @Query(value = "select me.* "
+            + "from member_exam me, "
+            + "    (select exam_id, MAX(created_at) as created_at "
+            + "    from member_exam "
+            + "    where member_id = :memberId "
+            + "    group by exam_id"
+            + "     ) as latest "
+            + "where me.member_id = :memberId "
+            + "and me.exam_id = latest.exam_id  "
+            + "and me.created_at = latest.created_at "
+            + "and me.status = 'ACTIVE'", nativeQuery = true)
+    List<MemberExam> findAllRecentByMemberId(@Param("memberId") Long memberId);
+
     Optional<MemberExam> findByIdAndMemberAndStatus(Long memberExamId, Member member, Status status);
-    boolean existsByMemberIdAndExamId(Long memberId, Long examId);
-    Optional<MemberExam> findByMemberIdAndExamIdAndStatus(Long memberId, Long examId, Status status);
 
     @Query(value = "select *"
             + "from member_exam me "
@@ -61,13 +73,13 @@ public interface MemberExamRepository extends JpaRepository<MemberExam, Long> {
 
     @Query(value = "select round(avg(me.score)) from member_exam me " +
             "where me.member_id = :memberId " +
-            "and month(me.created_at) between :first and :last " +
+            "and month(me.created_at) >= :first and month(me.created_at) <= :last " +
             "and me.status = 'ACTIVE'", nativeQuery = true)
     Optional<Integer> getAverageByMemberId(@Param("memberId") Long memberId, @Param("first") int first, @Param("last") int last);
 
     @Query(value = "select round(avg(me.score)) from member_exam me " +
             "where me.member_id <> :memberId " +
-            "and month(me.created_at) between :first and :last " +
+            "and month(me.created_at) >= :first and month(me.created_at) <= :last " +
             "and me.status = 'ACTIVE'", nativeQuery = true)
     Optional<Integer> getAverageByMemberIdNot(@Param("memberId") Long memberId, @Param("first") int first, @Param("last") int last);
 }

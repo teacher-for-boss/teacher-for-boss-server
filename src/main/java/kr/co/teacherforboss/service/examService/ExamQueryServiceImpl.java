@@ -9,16 +9,18 @@ import kr.co.teacherforboss.converter.ExamConverter;
 import kr.co.teacherforboss.domain.Exam;
 import kr.co.teacherforboss.domain.ExamCategory;
 import kr.co.teacherforboss.domain.Member;
+import kr.co.teacherforboss.domain.MemberChoice;
 import kr.co.teacherforboss.domain.MemberExam;
-import kr.co.teacherforboss.domain.Question;
-import kr.co.teacherforboss.domain.Tag;
+import kr.co.teacherforboss.domain.Problem;
+import kr.co.teacherforboss.domain.ExamTag;
 import kr.co.teacherforboss.domain.enums.ExamQuarter;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.ExamCategoryRepository;
 import kr.co.teacherforboss.repository.ExamRepository;
+import kr.co.teacherforboss.repository.MemberChoiceRepository;
 import kr.co.teacherforboss.repository.MemberExamRepository;
-import kr.co.teacherforboss.repository.QuestionRepository;
-import kr.co.teacherforboss.repository.TagRepository;
+import kr.co.teacherforboss.repository.ProblemRepository;
+import kr.co.teacherforboss.repository.ExamTagRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.web.dto.ExamResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -32,10 +34,11 @@ public class ExamQueryServiceImpl implements ExamQueryService {
 
     private final ExamRepository examRepository;
     private final ExamCategoryRepository examCategoryRepository;
-    private final QuestionRepository questionRepository;
+    private final ProblemRepository problemRepository;
     private final MemberExamRepository memberExamRepository;
     private final AuthCommandService authCommandService;
-    private final TagRepository tagRepository;
+    private final ExamTagRepository examTagRepository;
+    private final MemberChoiceRepository memberChoiceRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -45,20 +48,45 @@ public class ExamQueryServiceImpl implements ExamQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Tag> getTags(Long examCategoryId) {
+    public List<ExamTag> getExamTags(Long examCategoryId) {
         if (!examCategoryRepository.existsByIdAndStatus(examCategoryId, Status.ACTIVE))
             throw new ExamHandler(ErrorStatus.EXAM_CATEGORY_NOT_FOUND);
 
-        return tagRepository.findTagsByExamCategoryIdAndStatus(examCategoryId, Status.ACTIVE);
+        return examTagRepository.findExamTagsByExamCategoryIdAndStatus(examCategoryId, Status.ACTIVE);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Question> getQuestions(Long examId) {
+    public List<Exam> getExams(Long examCategoryId, Long examTagId) {
+        if(!examCategoryRepository.existsByIdAndStatus(examCategoryId, Status.ACTIVE))
+            throw new ExamHandler(ErrorStatus.EXAM_CATEGORY_NOT_FOUND);
+
+        List<Exam> examList;
+
+        if (examTagId == null) {
+            examList = examRepository.findByExamCategoryIdAndStatus(examCategoryId, Status.ACTIVE);
+        } else {
+            if(!examTagRepository.existsByIdAndExamCategoryIdAndStatus(examTagId, examCategoryId, Status.ACTIVE))
+                throw new ExamHandler(ErrorStatus.EXAM_TAG_NOT_FOUND);
+            examList = examRepository.findByExamCategoryIdAndExamTagIdAndStatus(examCategoryId, examTagId, Status.ACTIVE);
+        }
+        return examList;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<MemberExam> getMemberExams() {
+        Member member = authCommandService.getMember();
+        return memberExamRepository.findAllRecentByMemberId(member.getId());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Problem> getProblems(Long examId) {
         if (!examRepository.existsByIdAndStatus(examId, Status.ACTIVE))
             throw new ExamHandler(ErrorStatus.EXAM_NOT_FOUND);
 
-        return questionRepository.findAllByExamIdAndStatus(examId, Status.ACTIVE, Sort.by(Sort.Order.asc("questionSequence")));
+        return problemRepository.findAllByExamIdAndStatus(examId, Status.ACTIVE, Sort.by(Sort.Order.asc("sequence")));
     }
 
     @Override
@@ -118,5 +146,35 @@ public class ExamQueryServiceImpl implements ExamQueryService {
         Member member = authCommandService.getMember();
         List<Exam> exams = examRepository.findAllTakenExamByMemberId(member.getId());
         return exams;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ExamResponseDTO.GetExamResultDTO getExamResult(Long memberExamId) {
+        Member member = authCommandService.getMember();
+
+        MemberExam memberExam = memberExamRepository.findByIdAndMemberAndStatus(memberExamId, member, Status.ACTIVE)
+                .orElseThrow(() -> new ExamHandler(ErrorStatus.MEMBER_EXAM_NOT_FOUND));
+
+        int problemsCount =  memberExam.getExam().getProblemList().size();
+        int score = memberExam.getScore();
+
+        List<MemberChoice> memberChoices = memberChoiceRepository.findAllByMemberExamIdAndStatus(memberExam.getId(), Status.ACTIVE);
+        int correctChoicesCount = memberChoices.stream()
+                .filter(q -> q.getProblemChoice().isCorrect()).mapToInt(e -> 1).sum();
+        int incorrectChoicesCount = memberChoices.size() - correctChoicesCount;
+
+        return ExamConverter.toGetExamResultDTO(memberExam.getId(), score, problemsCount, correctChoicesCount, incorrectChoicesCount);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Problem> getExamIncorrectChoices(Long memberExamId) {
+        Member member = authCommandService.getMember();
+        MemberExam memberExam = memberExamRepository.findByIdAndMemberAndStatus(memberExamId, member, Status.ACTIVE)
+                .orElseThrow(() -> new ExamHandler(ErrorStatus.MEMBER_EXAM_NOT_FOUND));
+
+        List<MemberChoice> memberIncorrectChoices = memberChoiceRepository.findIncorrectMemberChoices(memberExam, Status.ACTIVE);
+        return memberIncorrectChoices.stream().map(MemberChoice::getProblem).toList();
     }
 }

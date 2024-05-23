@@ -28,7 +28,7 @@ public class BusinessUtil {
     @Value("${business.api.key}")
     private String apiKey;
 
-    public boolean requestBusinessAPI(String businessNumber, LocalDate openDate, String representative) {
+    public boolean validateBusinessNumber(String businessNumber, LocalDate openDate, String representative) {
         String parsedBusinessNumber = parseBusinessNumber(businessNumber);
         String formattedDate = openDate.format(DateTimeFormatter.ofPattern(DATE_PATTERN));
 

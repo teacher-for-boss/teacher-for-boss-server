@@ -6,6 +6,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -13,10 +15,13 @@ public class PasswordUtil {
 
     private final PasswordEncoder passwordEncoder;
 
-    public void setMemberPassword(Member member, String password) {
+    public List<String> generatePassword(String password) {
+        List<String> passwordList = new ArrayList<>();
         String pwSalt = generateSalt();
         String pwHash = generatePwHash(password, pwSalt);
-        member.setPassword(pwSalt, pwHash);
+        passwordList.add(pwSalt);
+        passwordList.add(pwHash);
+        return passwordList;
     }
 
     // hash 생성
@@ -40,10 +45,13 @@ public class PasswordUtil {
         return sb.toString();
     }
 
-    public void setSocialMemberPassword(Member member){
+    public List<String> generateSocialMemberPassword(){
+        List<String> passwordList = new ArrayList<>();
         String pwSalt = generateSalt();
         String pwHash = generatePwHash(getRandomPassword(20), pwSalt);
-        member.setPassword(pwSalt, pwHash);
+        passwordList.add(pwSalt);
+        passwordList.add(pwHash);
+        return passwordList;
     }
 
     private static final char[] rndAllCharacters = new char[]{
