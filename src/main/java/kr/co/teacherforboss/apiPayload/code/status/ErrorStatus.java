@@ -79,7 +79,7 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_AGREEMENT_TERM(BAD_REQUEST, "AUTH40011", "모든 필수 이용 약관에 동의해야 합니다."),
     SOCIAL_TYPE_BAD_REQUEST(BAD_REQUEST, "AUTH40012", "기입한 소셜 로그인 유형과 일치하지 않습니다."),
     INVALID_BUSINESS_INFO(BAD_REQUEST, "AUTH40013", "사업자번호인증에 실패하였습니다. 입력 형식을 다시 확인해주세요."),
-    BUSINESS_NUM_DUPLICATE(BAD_REQUEST, "AUTH40014", "이미 인증 완료된 사업자 정보입니다."),
+    BUSINESS_NUM_DUPLICATED(BAD_REQUEST, "AUTH40014", "이미 인증 완료된 사업자 정보입니다."),
     BUSINESS_NUM_NOT_CHECKED(BAD_REQUEST, "AUTH40015", "사업자 번호를 인증 받지 않았습니다."),
 
     TOKEN_TIME_OUT(UNAUTHORIZED, "AUTH4011", "토큰이 만료되었습니다."),

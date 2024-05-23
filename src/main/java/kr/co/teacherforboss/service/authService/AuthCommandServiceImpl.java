@@ -262,7 +262,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Transactional
     public boolean checkBusinessNumber(AuthRequestDTO.CheckBusinessNumberDTO request) {
         if (businessAuthRepository.existsByBusinessNumber(request.getBusinessNumber())) {
-            throw new AuthHandler(ErrorStatus.BUSINESS_NUM_DUPLICATE);
+            throw new AuthHandler(ErrorStatus.BUSINESS_NUM_DUPLICATED);
         }
 
         boolean isChecked = businessUtil.validateBusinessNumber(request.getBusinessNumber(), request.getOpenDate(),
