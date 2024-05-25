@@ -1,10 +1,6 @@
 package kr.co.teacherforboss.service.examService;
 
-import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
-import kr.co.teacherforboss.apiPayload.exception.GeneralException;
 import kr.co.teacherforboss.domain.Member;
-import kr.co.teacherforboss.domain.enums.ExamQuarter;
-import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.MemberExamRepository;
 import kr.co.teacherforboss.util.AuthTestUtil;
 import org.junit.jupiter.api.DisplayName;

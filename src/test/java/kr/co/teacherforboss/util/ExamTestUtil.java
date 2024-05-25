@@ -18,7 +18,7 @@ public class ExamTestUtil {
         ExamCategory examCategory = generateExamCategory();
         return Exam.builder()
                 .examType(examType)
-                .name("시험 1")
+                .title("시험 1")
                 .examCategory(examCategory)
                 .build();
     }

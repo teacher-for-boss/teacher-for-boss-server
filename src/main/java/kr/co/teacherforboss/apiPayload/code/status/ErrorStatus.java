@@ -38,6 +38,10 @@ public enum ErrorStatus implements BaseErrorCode {
     // Sms
     SMS_SEND_FAIL(INTERNAL_SERVER_ERROR, "SMS5001", "sms 전송에 실패했습니다."),
 
+    // AES256 encrypt
+    ENCRYPT_FAIL(INTERNAL_SERVER_ERROR, "ENCRYPT5001", "암호화에 실패하였습니다."),
+    DECRYPT_FAIL(INTERNAL_SERVER_ERROR, "DECRYPT5001", "복호화에 실패하였습니다."),
+
 
     // Member
     NICKNAME_NOT_EXIST(BAD_REQUEST, "MEMBER4001", "닉네임은 필수 입니다."),
