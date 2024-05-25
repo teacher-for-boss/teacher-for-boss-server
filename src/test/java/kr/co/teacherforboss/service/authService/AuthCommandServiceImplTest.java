@@ -187,13 +187,13 @@ public class AuthCommandServiceImplTest {
     private AuthRequestDTO.JoinDTO request(String name, String email, String pw, String rePw, Integer gender, String phone, String agreement){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return AuthRequestDTO.JoinDTO.builder()
-                .name(name)
-                .email(email)
+//                .name(name)
+//                .email(email)
                 .password(pw)
                 .rePassword(rePw)
-                .birthDate(LocalDate.parse("2000-04-22", formatter))
-                .phone(phone)
-                .gender(gender)
+//                .birthDate(LocalDate.parse("2000-04-22", formatter))
+//                .phone(phone)
+//                .gender(gender)
                 .emailAuthId(1L)
                 .phoneAuthId(1L)
                 .agreementAge(agreement)

@@ -4,6 +4,7 @@ import kr.co.teacherforboss.domain.AgreementTerm;
 import kr.co.teacherforboss.domain.EmailAuth;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.PhoneAuth;
+import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.Gender;
 import kr.co.teacherforboss.domain.enums.LoginType;
 import kr.co.teacherforboss.domain.enums.Purpose;
@@ -19,7 +20,7 @@ public class AuthTestUtil {
                     .email(email)
                     .purpose(Purpose.SIGNUP)
                     .code("12345")
-                    .isChecked("F")
+                    .isChecked(BooleanType.F)
                     .build();
 
     }
@@ -42,7 +43,7 @@ public class AuthTestUtil {
     public PhoneAuth generatePhoneAuthDummy(){
         return PhoneAuth.builder()
                 .phone("01012341234")
-                .isChecked("T")
+                .isChecked(BooleanType.T)
                 .purpose(Purpose.of(2))
                 .code("12345")
                 .build();
@@ -51,7 +52,7 @@ public class AuthTestUtil {
     public PhoneAuth generateNotCheckPhoneAuthDummy(){
         return PhoneAuth.builder()
                 .phone("01012341234")
-                .isChecked("F")
+                .isChecked(BooleanType.F)
                 .purpose(Purpose.of(2))
                 .code("12345")
                 .build();
@@ -70,7 +71,7 @@ public class AuthTestUtil {
                 .email(email)
                 .purpose(Purpose.FIND_PW)
                 .code("12345")
-                .isChecked("T")
+                .isChecked(BooleanType.T)
                 .build();
     }
 
@@ -79,7 +80,7 @@ public class AuthTestUtil {
                 .email(email)
                 .purpose(Purpose.FIND_PW)
                 .code("12345")
-                .isChecked("F")
+                .isChecked(BooleanType.F)
                 .build();
     }
   

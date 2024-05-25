@@ -37,7 +37,7 @@ public class TeacherInfo extends BaseEntity {
     private String bank;
 
     @NotNull
-    @Column(length = 200)
+    @Column(length = 32)
     private String accountNumber;
 
     @NotNull

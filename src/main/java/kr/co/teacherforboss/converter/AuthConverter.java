@@ -12,6 +12,7 @@ import kr.co.teacherforboss.domain.enums.LoginType;
 import kr.co.teacherforboss.domain.enums.Role;
 import kr.co.teacherforboss.domain.enums.Purpose;
 import kr.co.teacherforboss.domain.AgreementTerm;
+import kr.co.teacherforboss.util.AES256Util;
 import kr.co.teacherforboss.web.dto.AuthRequestDTO;
 import kr.co.teacherforboss.web.dto.AuthResponseDTO;
 
@@ -53,7 +54,7 @@ public class AuthConverter {
                 .keywords(keywords)
                 .level(Level.LEVEL1)
                 .bank(request.getBank())
-                .accountNumber(request.getAccountNumber())
+                .accountNumber(AES256Util.encrypt(request.getAccountNumber()))
                 .accountHolder(request.getAccountHolder())
                 .build();
     }
