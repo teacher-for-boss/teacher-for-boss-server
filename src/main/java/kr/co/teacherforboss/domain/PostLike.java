@@ -33,5 +33,5 @@ public class PostLike extends BaseEntity {
     @NotNull
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'F'")
-    private BooleanType postlike;
+    private BooleanType liked;
 }
