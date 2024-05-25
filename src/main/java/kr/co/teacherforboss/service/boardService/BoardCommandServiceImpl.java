@@ -16,11 +16,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
-public class BoardCommandServiceImpl implements BoardCommandService{
+public class BoardCommandServiceImpl implements BoardCommandService {
     private final AuthCommandService authCommandService;
     private final PostRepository postRepository;
     private final HashtagRepository hashtagRepository;
@@ -34,13 +36,11 @@ public class BoardCommandServiceImpl implements BoardCommandService{
         List<PostHashtag> postHashtags = new ArrayList<>();
         // TODO: 유저가 동시에 같은 해시태그 값을 저장하면?
         if (request.getHashtagList() != null) {
-            for (String tag : request.getHashtagList()) {
-                Hashtag hashtag;
-                if (hashtagRepository.existsByNameAndStatus(tag, Status.ACTIVE)) {
-                    hashtag = hashtagRepository.findByNameAndStatus(tag, Status.ACTIVE);
-                } else {
-                    hashtag = BoardConverter.toHashtag(tag);
-                    hashtagRepository.save(hashtag);
+            Set<String> uniqueHashtags = new HashSet<>(request.getHashtagList());
+            for (String tag : uniqueHashtags) {
+                Hashtag hashtag = hashtagRepository.findByNameAndStatus(tag, Status.ACTIVE);
+                if (hashtag == null) {
+                    hashtag = hashtagRepository.save(BoardConverter.toHashtag(tag));
                 }
                 PostHashtag postHashtag = BoardConverter.toPostHashtag(post, hashtag);
                 postHashtags.add(postHashtag);
