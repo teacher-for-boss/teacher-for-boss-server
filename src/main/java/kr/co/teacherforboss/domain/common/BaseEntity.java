@@ -40,7 +40,7 @@ public abstract class BaseEntity {
     @Getter
     private LocalDateTime createdAt;
 
-    @Column(updatable = false, nullable = false)
+    @Column(nullable = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @LastModifiedDate
     @Getter
