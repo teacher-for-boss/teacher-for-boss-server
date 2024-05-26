@@ -26,8 +26,8 @@ public class BoardResponseDTO {
         String content;
         List<String> hashtagList;
         MemberInfo memberInfo;
-        String like;
-        String bookmark;
+        String liked;
+        String bookmarked;
         Integer likeCount;
         Integer bookmarkCount;
         LocalDateTime createdAt;
