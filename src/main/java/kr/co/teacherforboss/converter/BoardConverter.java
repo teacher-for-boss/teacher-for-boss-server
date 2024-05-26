@@ -3,7 +3,9 @@ package kr.co.teacherforboss.converter;
 import kr.co.teacherforboss.domain.Hashtag;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.Post;
+import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostHashtag;
+import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 
@@ -74,5 +76,20 @@ public class BoardConverter {
                 .stream().map(hashtag ->
                         hashtag.getHashtag().getName())
                 .toList();
+    }
+
+    public static PostBookmark toBookmark(Post post, Member member) {
+        return PostBookmark.builder()
+                .bookmarked(BooleanType.T)
+                .member(member)
+                .post(post)
+                .build();
+    }
+
+    public static BoardResponseDTO.SaveBookmarkDTO toSaveBookmarkDTO(PostBookmark bookmark) {
+        return BoardResponseDTO.SaveBookmarkDTO.builder()
+                .bookmarkId(bookmark.getId())
+                .updatedAt(bookmark.getUpdatedAt())
+                .build();
     }
 }

@@ -1,12 +1,17 @@
 package kr.co.teacherforboss.service.boardService;
 
+import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
+import kr.co.teacherforboss.apiPayload.exception.handler.BoardHandler;
 import kr.co.teacherforboss.converter.BoardConverter;
 import kr.co.teacherforboss.domain.Hashtag;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.Post;
+import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostHashtag;
+import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.HashtagRepository;
+import kr.co.teacherforboss.repository.PostBookmarkRepository;
 import kr.co.teacherforboss.repository.PostHashtagRepository;
 import kr.co.teacherforboss.repository.PostRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
@@ -27,6 +32,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     private final PostRepository postRepository;
     private final HashtagRepository hashtagRepository;
     private final PostHashtagRepository postHashtagRepository;
+    private final PostBookmarkRepository postBookmarkRepository;
 
     @Override
     @Transactional
@@ -49,5 +55,24 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         postRepository.save(post);
         postHashtagRepository.saveAll(postHashtags);
         return post;
+    }
+
+    @Override
+    @Transactional
+    public PostBookmark saveBookmark(Long postId) {
+        Member member = authCommandService.getMember();
+        Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
+        PostBookmark bookmark = postBookmarkRepository.findByPostAndMemberAndStatus(post, member, Status.ACTIVE);
+
+        if (bookmark == null) {
+            bookmark = BoardConverter.toBookmark(post, member);
+        }
+        else {
+            if (bookmark.getBookmarked().equals(BooleanType.T)) bookmark.setBookmarked(BooleanType.F);
+            else bookmark.setBookmarked(BooleanType.T);
+        }
+        postBookmarkRepository.save(bookmark);
+        return bookmark;
     }
 }

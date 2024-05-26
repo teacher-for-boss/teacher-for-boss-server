@@ -17,6 +17,7 @@ public class BoardResponseDTO {
         Long postId;
         LocalDateTime createdAt;
     }
+
     @Builder
     @Getter
     @NoArgsConstructor
@@ -41,5 +42,14 @@ public class BoardResponseDTO {
         Long memberId;
         String name;
         String profileImg;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SaveBookmarkDTO {
+        Long bookmarkId;
+        LocalDateTime updatedAt;
     }
 }

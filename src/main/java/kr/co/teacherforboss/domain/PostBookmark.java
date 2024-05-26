@@ -34,4 +34,8 @@ public class PostBookmark extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'F'")
     private BooleanType bookmarked;
+
+    public void setBookmarked(BooleanType bookmarked) {
+        this.bookmarked = bookmarked;
+    }
 }
