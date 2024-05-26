@@ -264,21 +264,19 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         boolean isChecked = businessUtil.validateBusinessNumber(request.getBusinessNumber(), request.getOpenDate(),
                 request.getRepresentative());
 
-        if (isChecked) {
-            BusinessAuth businessAuth;
-            if (businessAuthRepository.existsByBusinessNumber(request.getBusinessNumber())) {
-                businessAuth = businessAuthRepository.findByBusinessNumber(request.getBusinessNumber());
-                businessAuth.setUpdatedAt(LocalDateTime.now());
-            } else {
-                businessAuth = AuthConverter.toBusinessAuth(request);
-            }
-            businessAuthRepository.save(businessAuth);
-        } else {
+        if(!isChecked) {
             throw new AuthHandler(ErrorStatus.INVALID_BUSINESS_INFO);
         }
+
+        BusinessAuth businessAuth = businessAuthRepository.findByBusinessNumber(request.getBusinessNumber());
+        if (businessAuth == null) {
+            businessAuth = AuthConverter.toBusinessAuth(request);
+        }
+        businessAuth.setUpdatedAt(LocalDateTime.now());
+        businessAuthRepository.save(businessAuth);
+
         return isChecked;
     }
-
 
     private void saveTeacherInfo(AuthRequestDTO.JoinCommonDTO request) {
         if (!businessAuthRepository.existsByBusinessNumber(request.getBusinessNumber()))
