@@ -42,4 +42,13 @@ public class BoardResponseDTO {
         String name;
         String profileImg;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SaveLikeDTO {
+        Boolean like;
+        LocalDateTime updatedAt;
+    }
 }

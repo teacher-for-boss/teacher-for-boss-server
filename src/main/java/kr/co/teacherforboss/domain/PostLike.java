@@ -34,4 +34,8 @@ public class PostLike extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'F'")
     private BooleanType liked;
+
+    public void setLiked(BooleanType liked) {
+        this.liked = liked;
+    }
 }

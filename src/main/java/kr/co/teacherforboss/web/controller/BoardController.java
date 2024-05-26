@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.converter.BoardConverter;
 import kr.co.teacherforboss.domain.Post;
+import kr.co.teacherforboss.domain.PostLike;
 import kr.co.teacherforboss.service.boardService.BoardCommandService;
 import kr.co.teacherforboss.service.boardService.BoardQueryService;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
@@ -37,5 +38,11 @@ public class BoardController {
     @GetMapping("/boss/posts/{postId}")
     public ApiResponse<BoardResponseDTO.GetPostDTO> getPost(@PathVariable("postId") Long postId){
         return ApiResponse.onSuccess(boardQueryService.getPost(postId));
+    }
+
+    @PostMapping("/board/boss/posts/{postId}/likes")
+    public ApiResponse<BoardResponseDTO.SaveLikeDTO> saveLike(@PathVariable("postId") Long postId){
+        PostLike like = boardCommandService.saveLike(postId);
+        return ApiResponse.onSuccess(BoardConverter.toSaveLikeDTO(like));
     }
 }

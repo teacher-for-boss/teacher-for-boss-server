@@ -4,6 +4,8 @@ import kr.co.teacherforboss.domain.Hashtag;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostHashtag;
+import kr.co.teacherforboss.domain.PostLike;
+import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 
@@ -74,5 +76,20 @@ public class BoardConverter {
                 .stream().map(hashtag ->
                         hashtag.getHashtag().getName())
                 .toList();
+    }
+
+    public static PostLike toLike(Post post, Member member) {
+        return PostLike.builder()
+                .liked(BooleanType.T)
+                .member(member)
+                .post(post)
+                .build();
+    }
+
+    public static BoardResponseDTO.SaveLikeDTO toSaveLikeDTO(PostLike like) {
+        return BoardResponseDTO.SaveLikeDTO.builder()
+                .like(BooleanType.of(like.getLiked()))
+                .updatedAt(like.getUpdatedAt())
+                .build();
     }
 }
