@@ -49,7 +49,7 @@ public class BoardResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SaveBookmarkDTO {
-        Long bookmarkId;
+        Boolean bookmark;
         LocalDateTime updatedAt;
     }
 }

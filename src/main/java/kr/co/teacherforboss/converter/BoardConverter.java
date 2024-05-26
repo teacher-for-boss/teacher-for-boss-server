@@ -88,7 +88,7 @@ public class BoardConverter {
 
     public static BoardResponseDTO.SaveBookmarkDTO toSaveBookmarkDTO(PostBookmark bookmark) {
         return BoardResponseDTO.SaveBookmarkDTO.builder()
-                .bookmarkId(bookmark.getId())
+                .bookmark(BooleanType.of(bookmark.getBookmarked()))
                 .updatedAt(bookmark.getUpdatedAt())
                 .build();
     }
