@@ -30,4 +30,20 @@ public class BoardRequestDTO {
         @Size(max = 5, message = "해시태그는 최대 5개까지 등록 가능합니다.")
         List<String> hashtagList;
     }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class GetPresignedUrlDTO {
+
+        @NotNull(message = "이미지 저장 목적은 필수 입력값입니다.")
+        String type;
+
+        @NotNull(message = "고유번호는 필수 입력값입니다.")
+        Long id;
+
+        @NotNull(message = "저장할 이미지 개수는 필수 입력값입니다.")
+        Integer imageCount;
+    }
 }

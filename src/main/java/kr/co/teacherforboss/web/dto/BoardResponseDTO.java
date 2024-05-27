@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.web.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -41,5 +42,13 @@ public class BoardResponseDTO {
         Long memberId;
         String name;
         String profileImg;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class GetPresignedUrlDTO {
+        List<String> presignedUrlList;
     }
 }
