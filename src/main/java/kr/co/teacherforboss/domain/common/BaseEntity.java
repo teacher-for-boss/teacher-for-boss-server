@@ -40,11 +40,11 @@ public abstract class BaseEntity {
     @Getter
     private LocalDateTime createdAt;
 
-    @Column(updatable = false, nullable = false)
+    @Column(nullable = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @LastModifiedDate
     @Getter
-    private LocalDateTime updatedAt;
+    protected LocalDateTime updatedAt;
 
     public boolean softDelete() {
         if (status == Status.ACTIVE)
