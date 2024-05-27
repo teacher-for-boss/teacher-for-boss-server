@@ -6,6 +6,7 @@ import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.config.jwt.JwtTokenProvider;
 import kr.co.teacherforboss.config.jwt.PrincipalDetails;
 import kr.co.teacherforboss.converter.AuthConverter;
+import kr.co.teacherforboss.domain.BusinessAuth;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.EmailAuth;
 import kr.co.teacherforboss.domain.PhoneAuth;
@@ -69,9 +70,9 @@ public class AuthController {
     }
 
     @PostMapping("/teacher/business-number/check")
-    public ApiResponse<AuthResponseDTO.CheckResultDTO> checkBusinessNumber(@RequestBody @Valid AuthRequestDTO.CheckBusinessNumberDTO request) {
-        boolean isChecked = authCommandService.checkBusinessNumber(request);
-        return ApiResponse.onSuccess(AuthConverter.toCheckResultDTO(isChecked));
+    public ApiResponse<AuthResponseDTO.CheckBusinessNumberResultDTO> checkBusinessNumber(@RequestBody @Valid AuthRequestDTO.CheckBusinessNumberDTO request) {
+        BusinessAuth businessAuth = authCommandService.checkBusinessNumber(request);
+        return ApiResponse.onSuccess(AuthConverter.toCheckBusinessNumberResultDTO(businessAuth));
     }
 
     @PostMapping("/find/password")

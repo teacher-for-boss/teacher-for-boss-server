@@ -260,7 +260,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
     @Override
     @Transactional
-    public boolean checkBusinessNumber(AuthRequestDTO.CheckBusinessNumberDTO request) {
+    public BusinessAuth checkBusinessNumber(AuthRequestDTO.CheckBusinessNumberDTO request) {
         boolean isChecked = businessUtil.validateBusinessNumber(request.getBusinessNumber(), request.getOpenDate(),
                 request.getRepresentative());
 
@@ -273,9 +273,8 @@ public class AuthCommandServiceImpl implements AuthCommandService {
             businessAuth = AuthConverter.toBusinessAuth(request);
         }
         businessAuth.setUpdatedAt(LocalDateTime.now());
-        businessAuthRepository.save(businessAuth);
 
-        return isChecked;
+        return businessAuthRepository.save(businessAuth);
     }
 
     private void saveTeacherInfo(AuthRequestDTO.JoinCommonDTO request) {
