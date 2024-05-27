@@ -6,5 +6,5 @@ import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 
 public interface BoardCommandService {
     Post savePost(BoardRequestDTO.SavePostDTO request);
-    PostLike saveLike(long postId);
+    PostLike savePostLike(long postId);
 }

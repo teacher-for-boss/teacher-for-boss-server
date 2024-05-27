@@ -86,9 +86,9 @@ public class BoardConverter {
                 .build();
     }
 
-    public static BoardResponseDTO.SaveLikeDTO toSaveLikeDTO(PostLike like) {
-        return BoardResponseDTO.SaveLikeDTO.builder()
-                .like(BooleanType.of(like.getLiked()))
+    public static BoardResponseDTO.SavePostLikeDTO toSavePostLikeDTO(PostLike like) {
+        return BoardResponseDTO.SavePostLikeDTO.builder()
+                .like(like.getLiked().isIdentifier())
                 .updatedAt(like.getUpdatedAt())
                 .build();
     }

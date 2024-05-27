@@ -47,7 +47,7 @@ public class BoardResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SaveLikeDTO {
+    public static class SavePostLikeDTO {
         Boolean like;
         LocalDateTime updatedAt;
     }

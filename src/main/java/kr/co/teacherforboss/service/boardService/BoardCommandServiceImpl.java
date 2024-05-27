@@ -59,7 +59,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
     @Override
     @Transactional
-    public PostLike saveLike(long postId) {
+    public PostLike savePostLike(long postId) {
         Member member = authCommandService.getMember();
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
@@ -68,10 +68,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         if (like == null) {
             like = BoardConverter.toLike(post, member);
         }
-        else {
-            if (like.getLiked().equals(BooleanType.T)) like.setLiked(BooleanType.F);
-            else like.setLiked(BooleanType.T);
-        }
+        like.togglePostLiked();
         postLikeRepository.save(like);
         return like;
     }

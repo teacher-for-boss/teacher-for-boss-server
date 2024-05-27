@@ -41,8 +41,8 @@ public class BoardController {
     }
 
     @PostMapping("/board/boss/posts/{postId}/likes")
-    public ApiResponse<BoardResponseDTO.SaveLikeDTO> saveLike(@PathVariable("postId") Long postId){
-        PostLike like = boardCommandService.saveLike(postId);
-        return ApiResponse.onSuccess(BoardConverter.toSaveLikeDTO(like));
+    public ApiResponse<BoardResponseDTO.SavePostLikeDTO> savePostLike(@PathVariable("postId") Long postId){
+        PostLike like = boardCommandService.savePostLike(postId);
+        return ApiResponse.onSuccess(BoardConverter.toSavePostLikeDTO(like));
     }
 }
