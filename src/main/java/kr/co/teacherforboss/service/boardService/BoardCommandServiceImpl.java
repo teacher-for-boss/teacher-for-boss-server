@@ -59,19 +59,16 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
     @Override
     @Transactional
-    public PostBookmark saveBookmark(Long postId) {
+    public PostBookmark savePostBookmark(Long postId) {
         Member member = authCommandService.getMember();
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
         PostBookmark bookmark = postBookmarkRepository.findByPostAndMemberAndStatus(post, member, Status.ACTIVE);
 
         if (bookmark == null) {
-            bookmark = BoardConverter.toBookmark(post, member);
+            bookmark = BoardConverter.toSavePostBookmark(post, member);
         }
-        else {
-            if (bookmark.getBookmarked().equals(BooleanType.T)) bookmark.setBookmarked(BooleanType.F);
-            else bookmark.setBookmarked(BooleanType.T);
-        }
+        bookmark.toggleBookmarked();
         postBookmarkRepository.save(bookmark);
         return bookmark;
     }

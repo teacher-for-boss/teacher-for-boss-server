@@ -78,17 +78,17 @@ public class BoardConverter {
                 .toList();
     }
 
-    public static PostBookmark toBookmark(Post post, Member member) {
+    public static PostBookmark toSavePostBookmark(Post post, Member member) {
         return PostBookmark.builder()
-                .bookmarked(BooleanType.T)
+                .bookmarked(BooleanType.F)
                 .member(member)
                 .post(post)
                 .build();
     }
 
-    public static BoardResponseDTO.SaveBookmarkDTO toSaveBookmarkDTO(PostBookmark bookmark) {
-        return BoardResponseDTO.SaveBookmarkDTO.builder()
-                .bookmark(BooleanType.of(bookmark.getBookmarked()))
+    public static BoardResponseDTO.SavePostBookmarkDTO toSavePostBookmarkDTO(PostBookmark bookmark) {
+        return BoardResponseDTO.SavePostBookmarkDTO.builder()
+                .bookmark(BooleanType.T.isIdentifier())
                 .updatedAt(bookmark.getUpdatedAt())
                 .build();
     }

@@ -35,7 +35,8 @@ public class PostBookmark extends BaseEntity {
     @ColumnDefault("'F'")
     private BooleanType bookmarked;
 
-    public void setBookmarked(BooleanType bookmarked) {
-        this.bookmarked = bookmarked;
+    public void toggleBookmarked() {
+        if (this.bookmarked.equals(BooleanType.T)) this.bookmarked = BooleanType.F;
+        else this.bookmarked = BooleanType.T;
     }
 }

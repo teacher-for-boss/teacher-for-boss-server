@@ -6,5 +6,5 @@ import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 
 public interface BoardCommandService {
     Post savePost(BoardRequestDTO.SavePostDTO request);
-    PostBookmark saveBookmark(Long postId);
+    PostBookmark savePostBookmark(Long postId);
 }

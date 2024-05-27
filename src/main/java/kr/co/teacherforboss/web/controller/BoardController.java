@@ -41,8 +41,8 @@ public class BoardController {
     }
 
     @PostMapping("/board/boss/posts/{postId}/bookmark")
-    public ApiResponse<BoardResponseDTO.SaveBookmarkDTO> saveBookmark(@PathVariable("postId") Long postId){
-        PostBookmark bookmark = boardCommandService.saveBookmark(postId);
-        return ApiResponse.onSuccess(BoardConverter.toSaveBookmarkDTO(bookmark));
+    public ApiResponse<BoardResponseDTO.SavePostBookmarkDTO> savePostBookmark(@PathVariable("postId") Long postId){
+        PostBookmark bookmark = boardCommandService.savePostBookmark(postId);
+        return ApiResponse.onSuccess(BoardConverter.toSavePostBookmarkDTO(bookmark));
     }
 }
