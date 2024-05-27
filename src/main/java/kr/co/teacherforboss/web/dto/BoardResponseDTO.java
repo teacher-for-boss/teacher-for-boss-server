@@ -44,11 +44,4 @@ public class BoardResponseDTO {
         String profileImg;
     }
 
-    @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Builder
-    public static class GetPresignedUrlDTO {
-        List<String> presignedUrlList;
-    }
 }

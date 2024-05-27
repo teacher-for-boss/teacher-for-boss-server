@@ -44,8 +44,4 @@ public class BoardController {
         return ApiResponse.onSuccess(boardQueryService.getPost(postId));
     }
 
-    @GetMapping("/presigned-url")
-    public ApiResponse<BoardResponseDTO.GetPresignedUrlDTO> getPresignedUrl(@RequestBody @Valid BoardRequestDTO.GetPresignedUrlDTO request) {
-        return ApiResponse.onSuccess(boardQueryService.getPresignedUrl(request));
-    }
 }

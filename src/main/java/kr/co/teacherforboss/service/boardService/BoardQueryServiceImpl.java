@@ -44,10 +44,7 @@ public class BoardQueryServiceImpl implements BoardQueryService {
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
     private final PostBookmarkRepository postBookmarkRepository;
-    private final AmazonS3 amazonS3;
 
-    @Value("${cloud.s3.bucket}")
-    private String bucket;
 
     @Override
     @Transactional(readOnly = true)
@@ -75,53 +72,4 @@ public class BoardQueryServiceImpl implements BoardQueryService {
 
         return BoardConverter.toGetPostDTO(post, hashtagList, liked, bookmarked);
     }
-
-    @Override
-    @Transactional
-    public BoardResponseDTO.GetPresignedUrlDTO getPresignedUrl(BoardRequestDTO.GetPresignedUrlDTO request) {
-        LocalDateTime timestamp = LocalDateTime.now();
-        String type = request.getType();
-        // log.info("image file pattern timestamp => " + timestamp);
-
-        List<String> presignedUrlList = new ArrayList<>();
-
-        for (int index = 1; index <= request.getImageCount(); index++) {
-
-            String fileName = String.format("%s/%s/%s_%d", type, request.getId(), timestamp.format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss")), index);
-
-            GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePresignedUrlRequest(bucket, fileName);
-            URL url = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
-
-            // log.info("File Name => " + fileName);
-
-            presignedUrlList.add(url.toString());
-        }
-
-        return BoardResponseDTO.GetPresignedUrlDTO.builder()
-                .presignedUrlList(presignedUrlList)
-                .build();
-    }
-
-    private GeneratePresignedUrlRequest getGeneratePresignedUrlRequest(String bucket, String fileName) {
-        GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucket, fileName)
-                .withMethod(HttpMethod.PUT)
-                .withExpiration(getPresignedUrlExpiration());
-
-        generatePresignedUrlRequest.addRequestParameter(
-                Headers.S3_CANNED_ACL,
-                CannedAccessControlList.PublicRead.toString()
-        );
-
-        return generatePresignedUrlRequest;
-    }
-
-    private Date getPresignedUrlExpiration() {
-        Date expiration = new Date();
-        long expTimeMillis = expiration.getTime();
-        expTimeMillis += 1000 * 60 * 2; // 120 s
-        expiration.setTime(expTimeMillis);
-
-        return expiration;
-    }
-
 }
