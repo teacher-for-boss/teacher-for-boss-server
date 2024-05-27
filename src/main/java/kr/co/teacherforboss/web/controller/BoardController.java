@@ -1,5 +1,7 @@
 package kr.co.teacherforboss.web.controller;
 
+import java.util.Map;
+
 import jakarta.validation.Valid;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.converter.BoardConverter;
@@ -10,12 +12,15 @@ import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.data.repository.query.Param;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -37,5 +42,10 @@ public class BoardController {
     @GetMapping("/boss/posts/{postId}")
     public ApiResponse<BoardResponseDTO.GetPostDTO> getPost(@PathVariable("postId") Long postId){
         return ApiResponse.onSuccess(boardQueryService.getPost(postId));
+    }
+
+    @GetMapping("/presigned-url")
+    public ApiResponse<BoardResponseDTO.GetPresignedUrlDTO> getPresignedUrl(@RequestBody @Valid BoardRequestDTO.GetPresignedUrlDTO request) {
+        return ApiResponse.onSuccess(boardQueryService.getPresignedUrl(request));
     }
 }
