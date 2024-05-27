@@ -9,9 +9,5 @@ public enum BooleanType {
     T(true),
     F(false);
 
-    private final Boolean identifier;
-
-    public static Boolean of(BooleanType type) {
-        return type.equals(T);
-    }
+    private final boolean identifier;
 }
