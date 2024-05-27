@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BusinessAuthRepository extends JpaRepository<BusinessAuth, Long> {
     boolean existsByBusinessNumber(String businessNumber);
+    BusinessAuth findByBusinessNumber(String businessNumber);
 }
