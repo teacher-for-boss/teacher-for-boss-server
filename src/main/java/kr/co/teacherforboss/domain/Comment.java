@@ -34,7 +34,7 @@ public class Comment extends BaseEntity {
     private Long parentId;
 
     @NotNull
-    @Column(length = 50) // TODO: 기획 픽스되면 수정
+    @Column(length = 400)
     private String content;
 
     @NotNull
