@@ -44,7 +44,7 @@ public abstract class BaseEntity {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @LastModifiedDate
     @Getter
-    private LocalDateTime updatedAt;
+    protected LocalDateTime updatedAt;
 
     public boolean softDelete() {
         if (status == Status.ACTIVE)
