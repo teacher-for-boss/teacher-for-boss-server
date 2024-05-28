@@ -54,12 +54,4 @@ public class BoardQueryServiceImpl implements BoardQueryService {
 
         return BoardConverter.toGetPostDTO(post, hashtagList, liked, bookmarked);
     }
-
-    @Override
-    @Transactional
-    public List<Post> getPostList(int page, int size, String sort) {
-        Member member = authCommandService.getMember();
-        // page, size, sort에 따라 전체 post 조회
-        return postRepository.findAll(); // TODO: 조건 추가해서 수정하기
-    }
 }

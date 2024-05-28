@@ -7,5 +7,4 @@ import java.util.List;
 
 public interface BoardQueryService {
     BoardResponseDTO.GetPostDTO getPost(Long postId);
-    List<Post> getPostList(int page, int size, String sort);
 }
