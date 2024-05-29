@@ -67,4 +67,5 @@ public class BoardController {
         Question question = boardCommandService.editQuestion(questionId, request);
         return ApiResponse.onSuccess(BoardConverter.toEditQuestionDTO(question));
     }
+
 }
