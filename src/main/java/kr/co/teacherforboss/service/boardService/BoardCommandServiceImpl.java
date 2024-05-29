@@ -6,11 +6,13 @@ import kr.co.teacherforboss.converter.BoardConverter;
 import kr.co.teacherforboss.domain.Hashtag;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.Post;
+import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostHashtag;
 import kr.co.teacherforboss.domain.PostLike;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.HashtagRepository;
+import kr.co.teacherforboss.repository.PostBookmarkRepository;
 import kr.co.teacherforboss.repository.PostHashtagRepository;
 import kr.co.teacherforboss.repository.PostLikeRepository;
 import kr.co.teacherforboss.repository.PostRepository;
@@ -32,6 +34,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     private final PostRepository postRepository;
     private final HashtagRepository hashtagRepository;
     private final PostHashtagRepository postHashtagRepository;
+    private final PostBookmarkRepository postBookmarkRepository;
     private final PostLikeRepository postLikeRepository;
 
     @Override
@@ -55,6 +58,22 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         postRepository.save(post);
         postHashtagRepository.saveAll(postHashtags);
         return post;
+    }
+
+    @Override
+    @Transactional
+    public PostBookmark savePostBookmark(Long postId) {
+        Member member = authCommandService.getMember();
+        Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
+        PostBookmark bookmark = postBookmarkRepository.findByPostAndMemberAndStatus(post, member, Status.ACTIVE);
+
+        if (bookmark == null) {
+            bookmark = BoardConverter.toSavePostBookmark(post, member);
+        }
+        bookmark.toggleBookmarked();
+        postBookmarkRepository.save(bookmark);
+        return bookmark;
     }
 
     @Override

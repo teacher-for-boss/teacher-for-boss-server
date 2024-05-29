@@ -9,6 +9,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PostBookmarkRepository extends JpaRepository<PostBookmark, Long> {
-    Boolean existsByPostAndMemberAndStatus(Post post, Member member, Status status);
     PostBookmark findByPostAndMemberAndStatus(Post post, Member member, Status status);
 }
