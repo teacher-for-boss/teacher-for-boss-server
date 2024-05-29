@@ -1,14 +1,20 @@
 package kr.co.teacherforboss.service.boardService;
 
 import kr.co.teacherforboss.converter.BoardConverter;
+import kr.co.teacherforboss.domain.Category;
 import kr.co.teacherforboss.domain.Hashtag;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostHashtag;
+import kr.co.teacherforboss.domain.Question;
+import kr.co.teacherforboss.domain.QuestionHashtag;
 import kr.co.teacherforboss.domain.enums.Status;
+import kr.co.teacherforboss.repository.CategoryRepository;
 import kr.co.teacherforboss.repository.HashtagRepository;
 import kr.co.teacherforboss.repository.PostHashtagRepository;
 import kr.co.teacherforboss.repository.PostRepository;
+import kr.co.teacherforboss.repository.QuestionHashtagRepository;
+import kr.co.teacherforboss.repository.QuestionRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +31,11 @@ import java.util.Set;
 public class BoardCommandServiceImpl implements BoardCommandService {
     private final AuthCommandService authCommandService;
     private final PostRepository postRepository;
+    private final QuestionRepository questionRepository;
     private final HashtagRepository hashtagRepository;
     private final PostHashtagRepository postHashtagRepository;
+    private final QuestionHashtagRepository questionHashtagRepository;
+    private final CategoryRepository categoryRepository;
 
     @Override
     @Transactional
@@ -49,5 +58,29 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         postRepository.save(post);
         postHashtagRepository.saveAll(postHashtags);
         return post;
+    }
+
+    @Override
+    public Question saveQuestion(BoardRequestDTO.SaveQuestionDTO request) {
+        Member member = authCommandService.getMember();
+        Category category = categoryRepository.findAllByIdAndStatus(request.getCategoryId(), Status.ACTIVE);
+        Question question = BoardConverter.toQuestion(request, member, category);
+
+        List<QuestionHashtag> questionHashtags = new ArrayList<>();
+        if (request.getHashtagList() != null) {
+            Set<String> hashtags = new HashSet<>(request.getHashtagList());
+            for (String tag : hashtags) {
+                Hashtag hashtag = hashtagRepository.findByNameAndStatus(tag, Status.ACTIVE);
+                if (hashtag == null) {
+                    hashtag = hashtagRepository.save(BoardConverter.toHashtag(tag));
+                }
+                QuestionHashtag questionHashtag = BoardConverter.toQuestionHashtag(question, hashtag);
+                questionHashtags.add(questionHashtag);
+            }
+        }
+        questionRepository.save(question);
+        questionHashtagRepository.saveAll(questionHashtags);
+
+        return question;
     }
 }
