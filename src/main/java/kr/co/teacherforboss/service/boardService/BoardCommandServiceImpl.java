@@ -66,9 +66,9 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         PostLike like = postLikeRepository.findByPostAndMemberAndStatus(post, member, Status.ACTIVE);
 
         if (like == null) {
-            like = BoardConverter.toLike(post, member);
+            like = BoardConverter.toPostLike(post, member);
         }
-        like.togglePostLiked();
+        like.toggleLiked();
         postLikeRepository.save(like);
         return like;
     }

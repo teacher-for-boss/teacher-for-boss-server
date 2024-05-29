@@ -78,7 +78,7 @@ public class BoardConverter {
                 .toList();
     }
 
-    public static PostLike toLike(Post post, Member member) {
+    public static PostLike toPostLike(Post post, Member member) {
         return PostLike.builder()
                 .liked(BooleanType.T)
                 .member(member)
