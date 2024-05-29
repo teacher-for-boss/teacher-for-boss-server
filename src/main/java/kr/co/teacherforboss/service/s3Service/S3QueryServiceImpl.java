@@ -16,7 +16,6 @@ import com.amazonaws.services.s3.Headers;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 
-import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import kr.co.teacherforboss.web.dto.S3RequestDTO;
 import kr.co.teacherforboss.web.dto.S3ResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -31,12 +30,13 @@ public class S3QueryServiceImpl implements S3QueryService{
 
 	@Value("${cloud.s3.bucket}")
 	private String bucket;
+	private final long EXPIRATION = 1000 * 60 * 2;	// 120s
 
 	@Override
 	public S3ResponseDTO.GetPresignedUrlDTO getPresignedUrl(S3RequestDTO.GetPresignedUrlDTO request) {
 		LocalDateTime timestamp = LocalDateTime.now();
 		String type = request.getType();
-		// log.info("image file pattern timestamp => " + timestamp);
+		// log.info("Image File Pattern Timestamp => " + timestamp);
 
 		List<String> presignedUrlList = new ArrayList<>();
 
@@ -71,11 +71,6 @@ public class S3QueryServiceImpl implements S3QueryService{
 	}
 
 	private Date getPresignedUrlExpiration() {
-		Date expiration = new Date();
-		long expTimeMillis = expiration.getTime();
-		expTimeMillis += 1000 * 60 * 2; // 120 s
-		expiration.setTime(expTimeMillis);
-
-		return expiration;
+		return new Date(System.currentTimeMillis() + EXPIRATION);
 	}
 }

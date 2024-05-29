@@ -1,5 +1,10 @@
 package kr.co.teacherforboss.service.boardService;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.BoardHandler;
 import kr.co.teacherforboss.converter.BoardConverter;
@@ -12,32 +17,11 @@ import kr.co.teacherforboss.repository.PostBookmarkRepository;
 import kr.co.teacherforboss.repository.PostLikeRepository;
 import kr.co.teacherforboss.repository.PostRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
-import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.net.URL;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import com.amazonaws.HttpMethod;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.Headers;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class BoardQueryServiceImpl implements BoardQueryService {
 
     private final AuthCommandService authCommandService;

@@ -30,5 +30,4 @@ public class BoardRequestDTO {
         @Size(max = 5, message = "해시태그는 최대 5개까지 등록 가능합니다.")
         List<String> hashtagList;
     }
-
 }
