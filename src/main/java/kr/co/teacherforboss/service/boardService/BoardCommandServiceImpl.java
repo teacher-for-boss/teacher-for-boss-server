@@ -10,6 +10,8 @@ import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostHashtag;
 import kr.co.teacherforboss.domain.PostLike;
+import kr.co.teacherforboss.domain.Question;
+import kr.co.teacherforboss.domain.QuestionHashtag;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionHashtag;
@@ -102,12 +104,13 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     }
 
     @Override
+    @Transactional
     public Question saveQuestion(BoardRequestDTO.SaveQuestionDTO request) {
         Member member = authCommandService.getMember();
         Category category = categoryRepository.findAllByIdAndStatus(request.getCategoryId(), Status.ACTIVE);
         Question saveQuestion = BoardConverter.toSaveQuestion(request, member, category);
 
-        List<QuestionHashtag> questionHashtags = new ArrayList<>();
+        List<QuestionHashtag> saveQuestionHashtags = new ArrayList<>();
         if (request.getHashtagList() != null) {
             Set<String> hashtags = new HashSet<>(request.getHashtagList());
             for (String tag : hashtags) {
@@ -116,38 +119,39 @@ public class BoardCommandServiceImpl implements BoardCommandService {
                     hashtag = hashtagRepository.save(BoardConverter.toHashtag(tag));
                 }
                 QuestionHashtag questionHashtag = BoardConverter.toQuestionHashtag(saveQuestion, hashtag);
-                questionHashtags.add(questionHashtag);
+                saveQuestionHashtags.add(questionHashtag);
             }
         }
         questionRepository.save(saveQuestion);
-        questionHashtagRepository.saveAll(questionHashtags);
+        questionHashtagRepository.saveAll(saveQuestionHashtags);
 
         return saveQuestion;
     }
 
     @Override
+    @Transactional
     public Question editQuestion(Long questionId, BoardRequestDTO.EditQuestionDTO request) {
         Member member = authCommandService.getMember();
         Category category = categoryRepository.findAllByIdAndStatus(request.getCategoryId(), Status.ACTIVE);
-        Question editQuestion = BoardConverter.toEditQuestion(request, member, category);
+        Question editQuestion = questionRepository.findById(questionId).get().editQuestion(request, category);
 
         // TODO : 수정되고 난 후 아예 안 쓰이는 해시태그 비활성화?
-
-        List<QuestionHashtag> questionHashtags = new ArrayList<>();
+        questionHashtagRepository.deleteAllByQuestionId(questionId);
+        List<QuestionHashtag> editQuestionHashtags = new ArrayList<>();
         if (request.getHashtagList() != null) {
-            Set<String> hashtags = new HashSet<>(request.getHashtagList());
-            for (String tag : hashtags) {
+            Set<String> editHashtags = new HashSet<>(request.getHashtagList());
+            for (String tag : editHashtags) {
                 Hashtag hashtag = hashtagRepository.findByNameAndStatus(tag, Status.ACTIVE);
                 if (hashtag == null) {
                     hashtag = hashtagRepository.save(BoardConverter.toHashtag(tag));
                 }
                 QuestionHashtag questionHashtag = BoardConverter.toQuestionHashtag(editQuestion, hashtag);
-                questionHashtags.add(questionHashtag);
+                editQuestionHashtags.add(questionHashtag);
             }
         }
 
         questionRepository.save(editQuestion);
-        questionHashtagRepository.saveAll(questionHashtags);
+        questionHashtagRepository.saveAll(editQuestionHashtags);
 
         return editQuestion;
     }

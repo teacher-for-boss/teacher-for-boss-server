@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kr.co.teacherforboss.domain.common.BaseEntity;
 import kr.co.teacherforboss.domain.enums.BooleanType;
+import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -79,5 +80,13 @@ public class Question extends BaseEntity {
     @OneToMany(mappedBy = "question")
     private List<QuestionHashtag> hashtagList;
 
+    public Question editQuestion(BoardRequestDTO.EditQuestionDTO editQuestion, Category category) {
+        this.category = category;
+        this.title = editQuestion.getTitle();
+        this.content = editQuestion.getContent();
+        this.imageCount = editQuestion.getImageCount();
+        this.imageTimestamp = editQuestion.getImageTimestamp();
+        return this;
+    }
 }
 

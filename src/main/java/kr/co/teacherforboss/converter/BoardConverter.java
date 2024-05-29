@@ -155,10 +155,6 @@ public class BoardConverter {
                 .member(member)
                 .title(request.getTitle())
                 .content(request.getContent())
-                .solved(BooleanType.F)
-                .likeCount(0)
-                .viewCount(0)
-                .bookmarkCount(0)
                 .imageCount(request.getImageCount())
                 .imageTimestamp(request.getImageTimestamp())
                 .build();
