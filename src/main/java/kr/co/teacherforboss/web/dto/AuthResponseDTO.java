@@ -105,4 +105,13 @@ public class AuthResponseDTO {
     public static class CheckNicknameResultDTO {
         boolean nicknameCheck;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CheckBusinessNumberResultDTO {
+        Long businessAuthId;
+        boolean isChecked;
+    }
 }

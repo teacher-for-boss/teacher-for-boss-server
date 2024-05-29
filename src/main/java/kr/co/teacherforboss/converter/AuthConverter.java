@@ -159,4 +159,11 @@ public class AuthConverter {
                 .nicknameCheck(nicknameCheck)
                 .build();
     }
+
+    public static AuthResponseDTO.CheckBusinessNumberResultDTO toCheckBusinessNumberResultDTO(BusinessAuth businessAuth) {
+        return AuthResponseDTO.CheckBusinessNumberResultDTO.builder()
+                .businessAuthId(businessAuth.getId())
+                .isChecked(true)
+                .build();
+    }
 }
