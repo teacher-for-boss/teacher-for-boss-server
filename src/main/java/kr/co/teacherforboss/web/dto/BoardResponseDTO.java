@@ -52,4 +52,13 @@ public class BoardResponseDTO {
         Boolean bookmark;
         LocalDateTime updatedAt;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SavePostLikeDTO {
+        Boolean like;
+        LocalDateTime updatedAt;
+    }
 }
