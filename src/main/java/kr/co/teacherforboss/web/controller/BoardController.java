@@ -2,6 +2,7 @@ package kr.co.teacherforboss.web.controller;
 
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -59,5 +60,11 @@ public class BoardController {
     public ApiResponse<BoardResponseDTO.SaveQuestionDTO> saveQuestion(@RequestBody @Valid BoardRequestDTO.SaveQuestionDTO request) {
         Question question = boardCommandService.saveQuestion(request);
         return ApiResponse.onSuccess(BoardConverter.toSaveQuestionDTO(question));
+    }
+
+    @PatchMapping("/teacher/questions/{questionId}")
+    public ApiResponse<BoardResponseDTO.EditQuestionDTO> editQuestion(@PathVariable("questionId") Long questionId, @RequestBody @Valid BoardRequestDTO.EditQuestionDTO request) {
+        Question question = boardCommandService.editQuestion(questionId, request);
+        return ApiResponse.onSuccess(BoardConverter.toEditQuestionDTO(question));
     }
 }

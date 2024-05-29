@@ -105,7 +105,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     public Question saveQuestion(BoardRequestDTO.SaveQuestionDTO request) {
         Member member = authCommandService.getMember();
         Category category = categoryRepository.findAllByIdAndStatus(request.getCategoryId(), Status.ACTIVE);
-        Question question = BoardConverter.toQuestion(request, member, category);
+        Question saveQuestion = BoardConverter.toSaveQuestion(request, member, category);
 
         List<QuestionHashtag> questionHashtags = new ArrayList<>();
         if (request.getHashtagList() != null) {
@@ -115,13 +115,40 @@ public class BoardCommandServiceImpl implements BoardCommandService {
                 if (hashtag == null) {
                     hashtag = hashtagRepository.save(BoardConverter.toHashtag(tag));
                 }
-                QuestionHashtag questionHashtag = BoardConverter.toQuestionHashtag(question, hashtag);
+                QuestionHashtag questionHashtag = BoardConverter.toQuestionHashtag(saveQuestion, hashtag);
                 questionHashtags.add(questionHashtag);
             }
         }
-        questionRepository.save(question);
+        questionRepository.save(saveQuestion);
         questionHashtagRepository.saveAll(questionHashtags);
 
-        return question;
+        return saveQuestion;
+    }
+
+    @Override
+    public Question editQuestion(Long questionId, BoardRequestDTO.EditQuestionDTO request) {
+        Member member = authCommandService.getMember();
+        Category category = categoryRepository.findAllByIdAndStatus(request.getCategoryId(), Status.ACTIVE);
+        Question editQuestion = BoardConverter.toEditQuestion(request, member, category);
+
+        // TODO : 수정되고 난 후 아예 안 쓰이는 해시태그 비활성화?
+
+        List<QuestionHashtag> questionHashtags = new ArrayList<>();
+        if (request.getHashtagList() != null) {
+            Set<String> hashtags = new HashSet<>(request.getHashtagList());
+            for (String tag : hashtags) {
+                Hashtag hashtag = hashtagRepository.findByNameAndStatus(tag, Status.ACTIVE);
+                if (hashtag == null) {
+                    hashtag = hashtagRepository.save(BoardConverter.toHashtag(tag));
+                }
+                QuestionHashtag questionHashtag = BoardConverter.toQuestionHashtag(editQuestion, hashtag);
+                questionHashtags.add(questionHashtag);
+            }
+        }
+
+        questionRepository.save(editQuestion);
+        questionHashtagRepository.saveAll(questionHashtags);
+
+        return editQuestion;
     }
 }
