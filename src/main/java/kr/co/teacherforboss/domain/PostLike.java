@@ -34,4 +34,9 @@ public class PostLike extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'F'")
     private BooleanType liked;
+
+    public void toggleLiked() {
+        if (this.liked.equals(BooleanType.T)) this.liked = BooleanType.F;
+        else this.liked = BooleanType.T;
+    }
 }

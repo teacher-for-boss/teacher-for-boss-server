@@ -21,10 +21,10 @@ import org.hibernate.annotations.ColumnDefault;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class PostBookmark extends BaseEntity {
+public class QuestionBookmark extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "postId")
-    private Post post;
+    @JoinColumn(name = "questionId")
+    private Question question;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memberId")
@@ -34,9 +34,4 @@ public class PostBookmark extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'F'")
     private BooleanType bookmarked;
-
-    public void toggleBookmarked() {
-        if (this.bookmarked.equals(BooleanType.T)) this.bookmarked = BooleanType.F;
-        else this.bookmarked = BooleanType.T;
-    }
 }

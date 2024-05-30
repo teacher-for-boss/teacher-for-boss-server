@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -21,22 +22,32 @@ import org.hibernate.annotations.ColumnDefault;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class PostBookmark extends BaseEntity {
+public class Answer extends BaseEntity {
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "postId")
-    private Post post;
+    @JoinColumn(name = "questionId")
+    private Question question;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memberId")
     private Member member;
 
     @NotNull
+    @Column(length = 5000)
+    String content;
+
+    @NotNull
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'F'")
-    private BooleanType bookmarked;
+    private BooleanType selected;
 
-    public void toggleBookmarked() {
-        if (this.bookmarked.equals(BooleanType.T)) this.bookmarked = BooleanType.F;
-        else this.bookmarked = BooleanType.T;
-    }
+    @NotNull
+    @Column
+    @ColumnDefault("0")
+    private Integer likeCount;
+
+    @NotNull
+    @Column
+    @ColumnDefault("0")
+    private Integer dislikeCount;
 }
