@@ -5,4 +5,5 @@ import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 
 public interface BoardCommandService {
     Post savePost(BoardRequestDTO.SavePostDTO request);
+    Post modifyPost(Long postId, BoardRequestDTO.SavePostDTO request);
 }

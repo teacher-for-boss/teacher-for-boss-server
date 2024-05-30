@@ -38,4 +38,11 @@ public class BoardController {
     public ApiResponse<BoardResponseDTO.GetPostDTO> getPost(@PathVariable("postId") Long postId){
         return ApiResponse.onSuccess(boardQueryService.getPost(postId));
     }
+
+    @PostMapping("/boss/posts/{postId}")
+    public ApiResponse<BoardResponseDTO.SavePostDTO> modifyPost(@PathVariable("postId") Long postId,
+                                                                @RequestBody @Valid BoardRequestDTO.SavePostDTO request) {
+        Post post = boardCommandService.modifyPost(postId, request);
+        return ApiResponse.onSuccess(BoardConverter.toSavePostDTO(post));
+    }
 }

@@ -56,4 +56,16 @@ public class Post extends BaseEntity {
 
     @OneToMany(mappedBy = "post")
     private List<PostHashtag> hashtagList;
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }
