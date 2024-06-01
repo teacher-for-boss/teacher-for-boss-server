@@ -21,8 +21,9 @@ import org.jetbrains.annotations.NotNull;
 @AllArgsConstructor
 public class Comment extends BaseEntity {
 
-    @NotNull
-    private Long parentId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parentId")
+    private Comment comment;
 
     @NotNull
     @Column(length = 400)
