@@ -28,7 +28,7 @@ public class S3QueryServiceImpl implements S3QueryService{
 
 	private final AmazonS3 amazonS3;
 
-	@Value("${cloud.s3.bucket}")
+	@Value("${cloud.aws.s3.bucket}")
 	private String bucket;
 	private final long EXPIRATION = 1000 * 60 * 2;	// 120s
 
