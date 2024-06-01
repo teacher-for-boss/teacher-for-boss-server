@@ -1,5 +1,15 @@
 package kr.co.teacherforboss.web.controller;
 
+import jakarta.validation.Valid;
+import kr.co.teacherforboss.apiPayload.ApiResponse;
+import kr.co.teacherforboss.converter.BoardConverter;
+import kr.co.teacherforboss.domain.Post;
+import kr.co.teacherforboss.service.boardService.BoardCommandService;
+import kr.co.teacherforboss.service.boardService.BoardQueryService;
+import kr.co.teacherforboss.web.dto.BoardRequestDTO;
+import kr.co.teacherforboss.web.dto.BoardResponseDTO;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -7,19 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import jakarta.validation.Valid;
-import kr.co.teacherforboss.apiPayload.ApiResponse;
-import kr.co.teacherforboss.converter.BoardConverter;
-import kr.co.teacherforboss.domain.Post;
-import kr.co.teacherforboss.domain.PostBookmark;
-import kr.co.teacherforboss.domain.PostLike;
-import kr.co.teacherforboss.service.boardService.BoardCommandService;
-import kr.co.teacherforboss.service.boardService.BoardQueryService;
-import kr.co.teacherforboss.web.dto.BoardRequestDTO;
-import kr.co.teacherforboss.web.dto.BoardResponseDTO;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Validated
@@ -42,15 +39,10 @@ public class BoardController {
         return ApiResponse.onSuccess(boardQueryService.getPost(postId));
     }
 
-    @PostMapping("/board/boss/posts/{postId}/bookmark")
-    public ApiResponse<BoardResponseDTO.SavePostBookmarkDTO> savePostBookmark(@PathVariable("postId") Long postId){
-        PostBookmark bookmark = boardCommandService.savePostBookmark(postId);
-        return ApiResponse.onSuccess(BoardConverter.toSavePostBookmarkDTO(bookmark));
-    }
-
-    @PostMapping("/board/boss/posts/{postId}/likes")
-    public ApiResponse<BoardResponseDTO.SavePostLikeDTO> savePostLike(@PathVariable("postId") Long postId){
-        PostLike like = boardCommandService.savePostLike(postId);
-        return ApiResponse.onSuccess(BoardConverter.toSavePostLikeDTO(like));
+    @PostMapping("/boss/posts/{postId}")
+    public ApiResponse<BoardResponseDTO.SavePostDTO> modifyPost(@PathVariable("postId") Long postId,
+                                                                @RequestBody @Valid BoardRequestDTO.SavePostDTO request) {
+        Post post = boardCommandService.modifyPost(postId, request);
+        return ApiResponse.onSuccess(BoardConverter.toSavePostDTO(post));
     }
 }

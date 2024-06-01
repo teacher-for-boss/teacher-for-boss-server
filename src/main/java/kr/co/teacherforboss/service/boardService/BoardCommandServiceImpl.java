@@ -1,20 +1,16 @@
 package kr.co.teacherforboss.service.boardService;
 
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
+import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import kr.co.teacherforboss.apiPayload.exception.handler.BoardHandler;
 import kr.co.teacherforboss.converter.BoardConverter;
 import kr.co.teacherforboss.domain.Hashtag;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.Post;
-import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostHashtag;
-import kr.co.teacherforboss.domain.PostLike;
-import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.HashtagRepository;
-import kr.co.teacherforboss.repository.PostBookmarkRepository;
 import kr.co.teacherforboss.repository.PostHashtagRepository;
-import kr.co.teacherforboss.repository.PostLikeRepository;
 import kr.co.teacherforboss.repository.PostRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
@@ -34,8 +30,6 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     private final PostRepository postRepository;
     private final HashtagRepository hashtagRepository;
     private final PostHashtagRepository postHashtagRepository;
-    private final PostBookmarkRepository postBookmarkRepository;
-    private final PostLikeRepository postLikeRepository;
 
     @Override
     @Transactional
@@ -62,33 +56,54 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
     @Override
     @Transactional
-    public PostBookmark savePostBookmark(Long postId) {
-        Member member = authCommandService.getMember();
+    public Post modifyPost(Long postId, BoardRequestDTO.SavePostDTO request) {
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
-        PostBookmark bookmark = postBookmarkRepository.findByPostAndMemberAndStatus(post, member, Status.ACTIVE);
 
-        if (bookmark == null) {
-            bookmark = BoardConverter.toSavePostBookmark(post, member);
+        Member member = authCommandService.getMember();
+
+        if(post.getMember().getId() != member.getId()) {
+            throw new AuthHandler(ErrorStatus.ACCESS_DENIED);
         }
-        bookmark.toggleBookmarked();
-        postBookmarkRepository.save(bookmark);
-        return bookmark;
+
+        Post modifyPost = BoardConverter.toPost(request, member);
+        post.setTitle(modifyPost.getTitle());
+        post.setContent(modifyPost.getContent());
+        post.setImageUrl(modifyPost.getImageUrl());
+
+        modifyPostHashtags(post, request.getHashtagList());
+
+        return post;
     }
 
-    @Override
-    @Transactional
-    public PostLike savePostLike(long postId) {
-        Member member = authCommandService.getMember();
-        Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
-                .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
-        PostLike like = postLikeRepository.findByPostAndMemberAndStatus(post, member, Status.ACTIVE);
+    private void modifyPostHashtags(Post post, List<String> newHashtagList) {
+        List<PostHashtag> postHashtagList = post.getHashtagList();
 
-        if (like == null) {
-            like = BoardConverter.toPostLike(post, member);
+        List<PostHashtag> newPostHashtagList = new ArrayList<>();
+        for (String tag : newHashtagList) {
+            Hashtag hashtag = BoardConverter.toHashtag(tag);
+            PostHashtag postHashtag = BoardConverter.toPostHashtag(post, hashtag);
+            if (!hashtagRepository.existsByNameAndStatus(tag, Status.ACTIVE)) {
+                hashtagRepository.save(hashtag);
+                postHashtagRepository.save(postHashtag);
+            } else if (hashtagRepository.existsByNameAndStatus(tag, Status.INACTIVE)) {
+                hashtag.setStatus(Status.ACTIVE);
+                postHashtag.setStatus(Status.ACTIVE);
+            }
+            newPostHashtagList.add(postHashtag);
         }
-        like.toggleLiked();
-        postLikeRepository.save(like);
-        return like;
+
+        for (PostHashtag newPostHashtag : newPostHashtagList) {
+            newPostHashtag.setStatus(Status.ACTIVE);
+            newPostHashtag.getHashtag().setStatus(Status.ACTIVE);
+        }
+
+        postHashtagList.removeAll(newPostHashtagList);
+        for (PostHashtag postHashtag : postHashtagList) {
+            if (postHashtag.getStatus() == Status.ACTIVE) {
+                postHashtag.setStatus(Status.INACTIVE);
+                postHashtag.getHashtag().setStatus(Status.INACTIVE);
+            }
+        }
     }
 }
