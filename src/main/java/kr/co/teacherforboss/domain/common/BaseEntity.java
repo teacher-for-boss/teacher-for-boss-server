@@ -49,7 +49,7 @@ public abstract class BaseEntity {
     public boolean softDelete() {
         if (status == Status.INACTIVE)
             throw new GeneralException(ErrorStatus.ALREADY_DELETED);
-        this.status = Status.ACTIVE;
+        this.status = Status.INACTIVE;
         return true;
     }
 }
