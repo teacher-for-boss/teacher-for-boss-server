@@ -20,13 +20,6 @@ import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @Validated
@@ -49,19 +42,19 @@ public class BoardController {
         return ApiResponse.onSuccess(boardQueryService.getPost(postId));
     }
 
-    @PostMapping("/board/boss/posts/{postId}/bookmark")
+    @PostMapping("/boss/posts/{postId}/bookmark")
     public ApiResponse<BoardResponseDTO.SavePostBookmarkDTO> savePostBookmark(@PathVariable("postId") Long postId){
         PostBookmark bookmark = boardCommandService.savePostBookmark(postId);
         return ApiResponse.onSuccess(BoardConverter.toSavePostBookmarkDTO(bookmark));
     }
 
-    @PostMapping("/board/boss/posts/{postId}/likes")
+    @PostMapping("/boss/posts/{postId}/likes")
     public ApiResponse<BoardResponseDTO.SavePostLikeDTO> savePostLike(@PathVariable("postId") Long postId){
         PostLike like = boardCommandService.savePostLike(postId);
         return ApiResponse.onSuccess(BoardConverter.toSavePostLikeDTO(like));
     }
 
-    @PostMapping("/board/boss/posts/{postId}")
+    @PostMapping("/boss/posts/{postId}")
     public ApiResponse<BoardResponseDTO.DeletePostDTO> deletePost(@PathVariable("postId") Long postId){
         Post post = boardCommandService.deletePost(postId);
         return ApiResponse.onSuccess(BoardConverter.toDeletePostDTO(post));
