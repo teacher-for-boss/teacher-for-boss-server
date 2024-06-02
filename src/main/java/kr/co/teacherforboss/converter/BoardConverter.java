@@ -7,6 +7,7 @@ import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostHashtag;
 import kr.co.teacherforboss.domain.PostLike;
+import kr.co.teacherforboss.domain.QuestionLike;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionHashtag;
@@ -164,6 +165,22 @@ public class BoardConverter {
         return BoardResponseDTO.DeleteQuestionDTO.builder()
                 .questionId(question.getId())
                 .deletedAt(question.getUpdatedAt())
+                .build();
+    }
+
+    public static QuestionLike toQuestionLike(Question questionToLike, Member member) {
+        return QuestionLike.builder()
+                .question(questionToLike)
+                .member(member)
+                .liked(BooleanType.T)
+                .build();
+    }
+
+    public static BoardResponseDTO.LikeQuestionDTO toLikeQuestionDTO(QuestionLike questionLike) {
+        return BoardResponseDTO.LikeQuestionDTO.builder()
+                .questionId(questionLike.getId())
+                .like(questionLike.getLiked())
+                .updatedAt(questionLike.getUpdatedAt())
                 .build();
     }
 }

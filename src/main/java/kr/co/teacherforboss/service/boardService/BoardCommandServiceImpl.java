@@ -12,9 +12,7 @@ import kr.co.teacherforboss.domain.PostHashtag;
 import kr.co.teacherforboss.domain.PostLike;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionHashtag;
-import kr.co.teacherforboss.domain.enums.BooleanType;
-import kr.co.teacherforboss.domain.Question;
-import kr.co.teacherforboss.domain.QuestionHashtag;
+import kr.co.teacherforboss.domain.QuestionLike;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.CategoryRepository;
 import kr.co.teacherforboss.repository.HashtagRepository;
@@ -23,6 +21,7 @@ import kr.co.teacherforboss.repository.PostHashtagRepository;
 import kr.co.teacherforboss.repository.PostLikeRepository;
 import kr.co.teacherforboss.repository.PostRepository;
 import kr.co.teacherforboss.repository.QuestionHashtagRepository;
+import kr.co.teacherforboss.repository.QuestionLikeRepository;
 import kr.co.teacherforboss.repository.QuestionRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
@@ -47,6 +46,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     private final PostLikeRepository postLikeRepository;
     private final QuestionHashtagRepository questionHashtagRepository;
     private final CategoryRepository categoryRepository;
+    private final QuestionLikeRepository questionLikeRepository;
 
     @Override
     @Transactional
@@ -168,5 +168,20 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         questionRepository.save(deleteQuestion);
 
         return deleteQuestion;
+    }
+
+    @Override
+    public QuestionLike likeQuestion(Long questionId) {
+        Member member = authCommandService.getMember();
+        Question questionToLike = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
+        QuestionLike questionLike = questionLikeRepository.findByQuestionAndMemberAndStatus(questionToLike, member, Status.ACTIVE);
+
+        if (questionLike == null) questionLike = BoardConverter.toQuestionLike(questionToLike, member);
+        else questionLike.toggleLiked();
+        
+        questionLikeRepository.save(questionLike);
+
+        return questionLike;
     }
 }

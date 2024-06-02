@@ -16,6 +16,7 @@ import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostLike;
 import kr.co.teacherforboss.domain.Question;
+import kr.co.teacherforboss.domain.QuestionLike;
 import kr.co.teacherforboss.service.boardService.BoardCommandService;
 import kr.co.teacherforboss.service.boardService.BoardQueryService;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
@@ -72,6 +73,12 @@ public class BoardController {
     public ApiResponse<BoardResponseDTO.DeleteQuestionDTO> deleteQuestion(@PathVariable("questionId") Long questionId) {
         Question question = boardCommandService.deleteQuestion(questionId);
         return ApiResponse.onSuccess(BoardConverter.toDeleteQuestionDTO(question));
+    }
+
+    @PostMapping("/teacher/questions/{questionId}/likes")
+    public ApiResponse<BoardResponseDTO.LikeQuestionDTO> likeQuestion(@PathVariable("questionId") Long questionId) {
+        QuestionLike questionLike = boardCommandService.likeQuestion(questionId);
+        return ApiResponse.onSuccess(BoardConverter.toLikeQuestionDTO(questionLike));
     }
 
 }
