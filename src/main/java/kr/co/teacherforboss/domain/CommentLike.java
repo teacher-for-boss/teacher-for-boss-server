@@ -23,8 +23,8 @@ import org.hibernate.annotations.ColumnDefault;
 @AllArgsConstructor
 public class CommentLike extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "postId")
-    private Post post;
+    @JoinColumn(name = "memberId")
+    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "commentId")
