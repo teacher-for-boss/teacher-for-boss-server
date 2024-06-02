@@ -96,7 +96,7 @@ public class BoardResponseDTO {
     @AllArgsConstructor
     public static class LikeQuestionDTO {
         Long questionId;
-        BooleanType like;
+        BooleanType liked;
         LocalDateTime updatedAt;
     }
 }

@@ -11,7 +11,6 @@ import kr.co.teacherforboss.domain.QuestionLike;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionHashtag;
-import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 
@@ -179,7 +178,7 @@ public class BoardConverter {
     public static BoardResponseDTO.LikeQuestionDTO toLikeQuestionDTO(QuestionLike questionLike) {
         return BoardResponseDTO.LikeQuestionDTO.builder()
                 .questionId(questionLike.getId())
-                .like(questionLike.getLiked())
+                .liked(questionLike.getLiked())
                 .updatedAt(questionLike.getUpdatedAt())
                 .build();
     }
