@@ -110,9 +110,8 @@ public enum ErrorStatus implements BaseErrorCode {
     EXAM_TAG_NOT_FOUND(NOT_FOUND, "EXAM4048", "시험 카테고리가 존재하지 않습니다."),
 
     // Board
-    MUST_NOT_BE_NULL(BAD_REQUEST, "BOARD4002", "Must not be null"),
-
     POST_NOT_FOUND(NOT_FOUND, "BOARD4041", "게시물을 찾을 수 없습니다."),
+    QUESTION_NOT_FOUND(NOT_FOUND, "BOARD4042", "티쳐톡 게시물을 찾을 수 없습니다."),
 
     // For test
     TEMP_EXCEPTION(BAD_REQUEST, "TEMP4001", "이거는 테스트");

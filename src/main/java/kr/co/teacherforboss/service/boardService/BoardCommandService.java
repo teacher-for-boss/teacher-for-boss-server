@@ -12,4 +12,5 @@ public interface BoardCommandService {
     PostBookmark savePostBookmark(Long postId);
     PostLike savePostLike(long postId);
     Question editQuestion(Long questionId, BoardRequestDTO.EditQuestionDTO request);
+    Question deleteQuestion(Long questionId);
 }

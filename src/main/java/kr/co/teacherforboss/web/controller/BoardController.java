@@ -68,4 +68,10 @@ public class BoardController {
         return ApiResponse.onSuccess(BoardConverter.toEditQuestionDTO(question));
     }
 
+    @PostMapping("/teacher/questions/{questionId}")
+    public ApiResponse<BoardResponseDTO.DeleteQuestionDTO> deleteQuestion(@PathVariable("questionId") Long questionId) {
+        Question question = boardCommandService.deleteQuestion(questionId);
+        return ApiResponse.onSuccess(BoardConverter.toDeleteQuestionDTO(question));
+    }
+
 }

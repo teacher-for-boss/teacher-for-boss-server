@@ -155,4 +155,18 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
         return editQuestion;
     }
+
+    @Override
+    public Question deleteQuestion(Long questionId) {
+        Member member = authCommandService.getMember();
+        Question deleteQuestion = questionRepository.findByIdAndMember(questionId, member)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
+
+        // TODO: 해당 글에 달린 댓글들도 전부 INACTIVE 처리
+
+        deleteQuestion.softDelete();
+        questionRepository.save(deleteQuestion);
+
+        return deleteQuestion;
+    }
 }

@@ -159,4 +159,11 @@ public class BoardConverter {
                 .imageTimestamp(request.getImageTimestamp())
                 .build();
     }
+
+    public static BoardResponseDTO.DeleteQuestionDTO toDeleteQuestionDTO(Question question) {
+        return BoardResponseDTO.DeleteQuestionDTO.builder()
+                .questionId(question.getId())
+                .deletedAt(question.getUpdatedAt())
+                .build();
+    }
 }
