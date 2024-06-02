@@ -8,6 +8,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 public class BoardResponseDTO {
     @Getter
     @Builder
@@ -42,6 +45,28 @@ public class BoardResponseDTO {
         Long memberId;
         String name;
         String profileImg;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetPostListDTO {
+        Integer totalCount;
+        List<PostInfo> postList;
+
+        @Getter
+        @AllArgsConstructor
+        public static class PostInfo {
+            String title;
+            String content;
+            Integer bookmarkCount;
+            Integer commentCount;
+            Integer likeCount;
+            Boolean like;
+            Boolean bookmark;
+            LocalDateTime createdAt;
+        }
     }
 
     @Getter

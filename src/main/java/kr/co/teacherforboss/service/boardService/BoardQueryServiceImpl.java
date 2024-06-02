@@ -13,12 +13,20 @@ import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostLike;
 import kr.co.teacherforboss.domain.enums.Status;
+import kr.co.teacherforboss.repository.CommentRepository;
 import kr.co.teacherforboss.repository.PostBookmarkRepository;
 import kr.co.teacherforboss.repository.PostLikeRepository;
 import kr.co.teacherforboss.repository.PostRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +36,7 @@ public class BoardQueryServiceImpl implements BoardQueryService {
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
     private final PostBookmarkRepository postBookmarkRepository;
+    private final CommentRepository commentRepository;
 
 
     @Override
@@ -55,5 +64,32 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         }
 
         return BoardConverter.toGetPostDTO(post, hashtagList, liked, bookmarked);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public BoardResponseDTO.GetPostListDTO getPostList(Long lastPostId, int size, String sortBy) {
+        Member member = authCommandService.getMember();
+        PageRequest pageRequest = PageRequest.of(0, size);
+        Integer totalCount = postRepository.countAllByStatus(Status.ACTIVE);
+        Slice<Post> postsPage = switch (sortBy) {
+            case "likes" -> postRepository.findSliceByIdLessThanOrderByLikeCountDesc(lastPostId, pageRequest);
+            case "views" -> postRepository.findSliceByIdLessThanOrderByViewCountDesc(lastPostId, pageRequest);
+            default -> postRepository.findSliceByIdLessThanOrderByCreatedAtDesc(lastPostId, pageRequest);
+        };
+
+        List<BoardResponseDTO.GetPostListDTO.PostInfo> postInfos = new ArrayList<>();
+        // TODO : 좋아요 수, 북마크 수, 조회수 동시성 제어
+        postsPage.getContent().forEach(post -> {
+            boolean like = false;
+            boolean bookmark = false;
+            PostLike postLike = postLikeRepository.findByPostAndMemberAndStatus(post, member, Status.ACTIVE);
+            PostBookmark postBookmark = postBookmarkRepository.findByPostAndMemberAndStatus(post, member, Status.ACTIVE);
+            if (postLike != null) like = postLike.getLiked().isIdentifier();
+            if (postBookmark != null) bookmark = postBookmark.getBookmarked().isIdentifier();
+            Integer commentCount = commentRepository.countAllByPostAndStatus(post, Status.ACTIVE);
+            postInfos.add(BoardConverter.toGetPostInfo(post, bookmark, like, commentCount));
+        });
+        return BoardConverter.toGetPostListDTO(totalCount, postInfos);
     }
 }

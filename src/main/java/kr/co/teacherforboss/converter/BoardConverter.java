@@ -115,4 +115,16 @@ public class BoardConverter {
                 .deletedAt(post.getUpdatedAt())
                 .build();
     }
+
+    public static BoardResponseDTO.GetPostListDTO.PostInfo toGetPostInfo(Post post, boolean bookmark, boolean like, Integer commentCount) {
+        return new BoardResponseDTO.GetPostListDTO.PostInfo(post.getTitle(), post.getContent(), post.getBookmarkCount(), commentCount, post.getLikeCount(),
+                like, bookmark, post.getCreatedAt());
+    }
+
+    public static BoardResponseDTO.GetPostListDTO toGetPostListDTO(int postsCount, List<BoardResponseDTO.GetPostListDTO.PostInfo> postInfos) {
+        return BoardResponseDTO.GetPostListDTO.builder()
+                .totalCount(postsCount)
+                .postList(postInfos)
+                .build();
+    }
 }
