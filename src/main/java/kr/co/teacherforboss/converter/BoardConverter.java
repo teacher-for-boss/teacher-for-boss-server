@@ -195,7 +195,7 @@ public class BoardConverter {
 
     public static BoardResponseDTO.BookmarkQuestionDTO toBookmarkQuestionDTO(QuestionBookmark questionBookmark) {
         return BoardResponseDTO.BookmarkQuestionDTO.builder()
-                .questionId(questionBookmark.getId())
+                .questionId(questionBookmark.getQuestion().getId())
                 .bookmarked(questionBookmark.getBookmarked())
                 .updatedAt(questionBookmark.getUpdatedAt())
                 .build();
