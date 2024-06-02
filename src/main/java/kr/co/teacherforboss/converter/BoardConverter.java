@@ -177,7 +177,7 @@ public class BoardConverter {
 
     public static BoardResponseDTO.LikeQuestionDTO toLikeQuestionDTO(QuestionLike questionLike) {
         return BoardResponseDTO.LikeQuestionDTO.builder()
-                .questionId(questionLike.getId())
+                .questionId(questionLike.getQuestion().getId())
                 .liked(questionLike.getLiked())
                 .updatedAt(questionLike.getUpdatedAt())
                 .build();
