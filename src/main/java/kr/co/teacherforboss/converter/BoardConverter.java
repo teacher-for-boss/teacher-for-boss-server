@@ -108,4 +108,11 @@ public class BoardConverter {
                 .updatedAt(like.getUpdatedAt())
                 .build();
     }
+
+    public static BoardResponseDTO.DeletePostDTO toDeletePostDTO(Post post) {
+        return BoardResponseDTO.DeletePostDTO.builder()
+                .postId(post.getId())
+                .deletedAt(post.getUpdatedAt())
+                .build();
+    }
 }

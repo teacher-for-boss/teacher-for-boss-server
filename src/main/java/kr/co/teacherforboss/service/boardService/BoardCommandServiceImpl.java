@@ -91,4 +91,16 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         postLikeRepository.save(like);
         return like;
     }
+
+    @Override
+    @Transactional
+    public Post deletePost(Long postId) {
+        Member member = authCommandService.getMember();
+        Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
+        if (post.getMember() != member) throw new BoardHandler(ErrorStatus.POST_MEMBER_NOT_FOUND);
+
+        post.softDelete();
+        return postRepository.save(post);
+    }
 }

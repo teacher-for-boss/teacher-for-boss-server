@@ -9,4 +9,5 @@ public interface BoardCommandService {
     Post savePost(BoardRequestDTO.SavePostDTO request);
     PostBookmark savePostBookmark(Long postId);
     PostLike savePostLike(long postId);
+    Post deletePost(Long postId);
 }

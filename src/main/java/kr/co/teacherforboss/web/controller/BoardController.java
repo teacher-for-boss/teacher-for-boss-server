@@ -53,4 +53,10 @@ public class BoardController {
         PostLike like = boardCommandService.savePostLike(postId);
         return ApiResponse.onSuccess(BoardConverter.toSavePostLikeDTO(like));
     }
+
+    @PostMapping("/board/boss/posts/{postId}")
+    public ApiResponse<BoardResponseDTO.DeletePostDTO> deletePost(@PathVariable("postId") Long postId){
+        Post post = boardCommandService.deletePost(postId);
+        return ApiResponse.onSuccess(BoardConverter.toDeletePostDTO(post));
+    }
 }

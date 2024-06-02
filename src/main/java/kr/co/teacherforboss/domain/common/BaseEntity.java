@@ -47,9 +47,9 @@ public abstract class BaseEntity {
     protected LocalDateTime updatedAt;
 
     public boolean softDelete() {
-        if (status == Status.ACTIVE)
+        if (status == Status.INACTIVE)
             throw new GeneralException(ErrorStatus.ALREADY_DELETED);
-        this.status = Status.INACTIVE;
+        this.status = Status.ACTIVE;
         return true;
     }
 }
