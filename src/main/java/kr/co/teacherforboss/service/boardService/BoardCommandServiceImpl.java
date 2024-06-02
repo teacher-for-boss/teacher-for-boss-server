@@ -3,6 +3,7 @@ package kr.co.teacherforboss.service.boardService;
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.BoardHandler;
 import kr.co.teacherforboss.converter.BoardConverter;
+import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.Category;
 import kr.co.teacherforboss.domain.Hashtag;
 import kr.co.teacherforboss.domain.Member;
@@ -16,6 +17,7 @@ import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionHashtag;
 import kr.co.teacherforboss.domain.enums.Status;
+import kr.co.teacherforboss.repository.AnswerRepository;
 import kr.co.teacherforboss.repository.CategoryRepository;
 import kr.co.teacherforboss.repository.HashtagRepository;
 import kr.co.teacherforboss.repository.PostBookmarkRepository;
@@ -47,6 +49,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     private final PostLikeRepository postLikeRepository;
     private final QuestionHashtagRepository questionHashtagRepository;
     private final CategoryRepository categoryRepository;
+    private final AnswerRepository answerRepository;
 
     @Override
     @Transactional
@@ -162,7 +165,8 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         Question deleteQuestion = questionRepository.findByIdAndMember(questionId, member)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
 
-        // TODO: 해당 글에 달린 댓글들도 전부 INACTIVE 처리
+        // TODO: 해당 글에 달린 댓글들도 전부 INACTIVE 처리 -> test는 아직 못 해봄
+        answerRepository.updateStatusByQuestion(questionId);
 
         deleteQuestion.softDelete();
         questionRepository.save(deleteQuestion);
