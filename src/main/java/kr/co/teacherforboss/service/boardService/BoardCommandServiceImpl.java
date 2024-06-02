@@ -3,14 +3,17 @@ package kr.co.teacherforboss.service.boardService;
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.BoardHandler;
 import kr.co.teacherforboss.converter.BoardConverter;
+import kr.co.teacherforboss.domain.Comment;
+import kr.co.teacherforboss.domain.CommentLike;
 import kr.co.teacherforboss.domain.Hashtag;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostHashtag;
 import kr.co.teacherforboss.domain.PostLike;
-import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.Status;
+import kr.co.teacherforboss.repository.CommentLikeRepository;
+import kr.co.teacherforboss.repository.CommentRepository;
 import kr.co.teacherforboss.repository.HashtagRepository;
 import kr.co.teacherforboss.repository.PostBookmarkRepository;
 import kr.co.teacherforboss.repository.PostHashtagRepository;
@@ -36,6 +39,8 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     private final PostHashtagRepository postHashtagRepository;
     private final PostBookmarkRepository postBookmarkRepository;
     private final PostLikeRepository postLikeRepository;
+    private final CommentRepository commentRepository;
+    private final CommentLikeRepository commentLikeRepository;
 
     @Override
     @Transactional
@@ -98,9 +103,57 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         Member member = authCommandService.getMember();
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
+
         if (post.getMember() != member) throw new BoardHandler(ErrorStatus.POST_MEMBER_NOT_FOUND);
+
+        softDeletePostHashtags(post);
+        softDeletePostLikes(post);
+        softDeletePostBookmarks(post);
+        softDeleteComments(post);
 
         post.softDelete();
         return postRepository.save(post);
+    }
+
+    private void softDeletePostHashtags(Post post) {
+        List<PostHashtag> postHashtags = postHashtagRepository.findAllByPostAndStatus(post, Status.ACTIVE);
+        if (postHashtags != null) {
+            postHashtags.forEach(PostHashtag::softDelete);
+            postHashtagRepository.saveAll(postHashtags);
+        }
+    }
+
+    private void softDeleteCommentLikes(Comment comment) {
+        List<CommentLike> commentLikes = commentLikeRepository.findAllByCommentAndStatus(comment, Status.ACTIVE);
+        if (commentLikes != null) {
+            commentLikes.forEach(CommentLike::softDelete);
+            commentLikeRepository.saveAll(commentLikes);
+        }
+        comment.softDelete();
+    }
+
+
+    private void softDeletePostLikes(Post post) {
+        List<PostLike> postLikes = postLikeRepository.findAllByPostAndStatus(post, Status.ACTIVE);
+        if (postLikes != null) {
+            postLikes.forEach(PostLike::softDelete);
+            postLikeRepository.saveAll(postLikes);
+        }
+    }
+
+    private void softDeletePostBookmarks(Post post) {
+        List<PostBookmark> postBookmarks = postBookmarkRepository.findAllByPostAndStatus(post, Status.ACTIVE);
+        if (postBookmarks != null) {
+            postBookmarks.forEach(PostBookmark::softDelete);
+            postBookmarkRepository.saveAll(postBookmarks);
+        }
+    }
+
+    private void softDeleteComments(Post post) {
+        List<Comment> comments = commentRepository.findAllByPostAndStatus(post, Status.ACTIVE);
+        if (comments != null) {
+            comments.forEach(this::softDeleteCommentLikes);
+            commentRepository.saveAll(comments);
+        }
     }
 }
