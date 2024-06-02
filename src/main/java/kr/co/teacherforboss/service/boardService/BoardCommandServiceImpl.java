@@ -11,6 +11,7 @@ import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostHashtag;
 import kr.co.teacherforboss.domain.PostLike;
 import kr.co.teacherforboss.domain.Question;
+import kr.co.teacherforboss.domain.QuestionBookmark;
 import kr.co.teacherforboss.domain.QuestionHashtag;
 import kr.co.teacherforboss.domain.QuestionLike;
 import kr.co.teacherforboss.domain.enums.Status;
@@ -20,6 +21,7 @@ import kr.co.teacherforboss.repository.PostBookmarkRepository;
 import kr.co.teacherforboss.repository.PostHashtagRepository;
 import kr.co.teacherforboss.repository.PostLikeRepository;
 import kr.co.teacherforboss.repository.PostRepository;
+import kr.co.teacherforboss.repository.QuestionBookmarkRepository;
 import kr.co.teacherforboss.repository.QuestionHashtagRepository;
 import kr.co.teacherforboss.repository.QuestionLikeRepository;
 import kr.co.teacherforboss.repository.QuestionRepository;
@@ -47,6 +49,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     private final QuestionHashtagRepository questionHashtagRepository;
     private final CategoryRepository categoryRepository;
     private final QuestionLikeRepository questionLikeRepository;
+    private final QuestionBookmarkRepository questionBookmarkRepository;
 
     @Override
     @Transactional
@@ -183,5 +186,20 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         questionLikeRepository.save(questionLike);
 
         return questionLike;
+    }
+
+    @Override
+    public QuestionBookmark bookmarkQuestion(Long questionId) {
+        Member member = authCommandService.getMember();
+        Question questionToBookmark = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
+        QuestionBookmark questionBookmark = questionBookmarkRepository.findByQuestionAndMemberAndStatus(questionToBookmark, member, Status.ACTIVE);
+
+        if (questionBookmark == null) questionBookmark = BoardConverter.toQuestionBookmark(questionToBookmark, member);
+        else questionBookmark.toggleLiked();
+
+        questionBookmarkRepository.save(questionBookmark);
+
+        return questionBookmark;
     }
 }

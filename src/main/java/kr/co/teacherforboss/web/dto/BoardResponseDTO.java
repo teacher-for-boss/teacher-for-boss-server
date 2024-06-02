@@ -99,4 +99,14 @@ public class BoardResponseDTO {
         BooleanType like;
         LocalDateTime updatedAt;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class BookmarkQuestionDTO {
+        Long questionId;
+        BooleanType bookmarked;
+        LocalDateTime updatedAt;
+    }
 }

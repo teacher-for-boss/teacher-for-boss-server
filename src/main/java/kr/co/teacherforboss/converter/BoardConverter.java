@@ -7,6 +7,7 @@ import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostHashtag;
 import kr.co.teacherforboss.domain.PostLike;
+import kr.co.teacherforboss.domain.QuestionBookmark;
 import kr.co.teacherforboss.domain.QuestionLike;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.Question;
@@ -181,6 +182,21 @@ public class BoardConverter {
                 .questionId(questionLike.getId())
                 .like(questionLike.getLiked())
                 .updatedAt(questionLike.getUpdatedAt())
+                .build();
+    }
+
+    public static QuestionBookmark toQuestionBookmark(Question questionToBookmark, Member member) {
+        return QuestionBookmark.builder()
+                .question(questionToBookmark)
+                .member(member)
+                .bookmarked(BooleanType.T)
+                .build();
+    }
+
+    public static BoardResponseDTO.BookmarkQuestionDTO toBookmarkQuestionDTO(QuestionBookmark questionBookmark) {
+        return BoardResponseDTO.BookmarkQuestionDTO.builder()
+                .questionId(questionBookmark.getId())
+                .updatedAt(questionBookmark.getUpdatedAt())
                 .build();
     }
 }
