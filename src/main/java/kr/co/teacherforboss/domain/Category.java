@@ -10,20 +10,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class BusinessAuth extends BaseEntity {
+public class Category extends BaseEntity {
 
     @NotNull
-    @Column(length = 12)
-    private String businessNumber;
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+    @Column(length = 10)
+    private String name;
 }

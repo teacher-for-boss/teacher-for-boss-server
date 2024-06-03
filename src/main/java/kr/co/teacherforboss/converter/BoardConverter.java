@@ -3,7 +3,10 @@ package kr.co.teacherforboss.converter;
 import kr.co.teacherforboss.domain.Hashtag;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.Post;
+import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostHashtag;
+import kr.co.teacherforboss.domain.PostLike;
+import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 
@@ -80,10 +83,41 @@ public class BoardConverter {
         return new BoardResponseDTO.GetPostListDTO.PostInfo(post.getId(), post.getTitle(), post.getContent(), post.getBookmarkCount(), commentCount, post.getLikeCount(),
                 like, bookmark, post.getCreatedAt());
     }
+    
     public static BoardResponseDTO.GetPostListDTO toGetPostListDTO(int postsCount, List<BoardResponseDTO.GetPostListDTO.PostInfo> postInfos) {
         return BoardResponseDTO.GetPostListDTO.builder()
                 .totalCount(postsCount)
                 .postList(postInfos)
+                .build();
+    }
+
+    public static PostBookmark toSavePostBookmark(Post post, Member member) {
+        return PostBookmark.builder()
+                .bookmarked(BooleanType.F)
+                .member(member)
+                .post(post)
+                .build();
+    }
+
+    public static BoardResponseDTO.SavePostBookmarkDTO toSavePostBookmarkDTO(PostBookmark bookmark) {
+        return BoardResponseDTO.SavePostBookmarkDTO.builder()
+                .bookmark(BooleanType.T.isIdentifier())
+                .updatedAt(bookmark.getUpdatedAt())
+                .build();
+    }
+
+    public static PostLike toPostLike(Post post, Member member) {
+        return PostLike.builder()
+                .liked(BooleanType.T)
+                .member(member)
+                .post(post)
+                .build();
+    }
+
+    public static BoardResponseDTO.SavePostLikeDTO toSavePostLikeDTO(PostLike like) {
+        return BoardResponseDTO.SavePostLikeDTO.builder()
+                .like(like.getLiked().isIdentifier())
+                .updatedAt(like.getUpdatedAt())
                 .build();
     }
 }
