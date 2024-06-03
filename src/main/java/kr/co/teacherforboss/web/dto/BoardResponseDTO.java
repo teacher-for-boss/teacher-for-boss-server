@@ -54,6 +54,7 @@ public class BoardResponseDTO {
         @Getter
         @AllArgsConstructor
         public static class PostInfo {
+            Long postId;
             String title;
             String content;
             Integer bookmarkCount;
