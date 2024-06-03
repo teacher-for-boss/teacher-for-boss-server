@@ -17,6 +17,7 @@ import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,11 +67,22 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         Member member = authCommandService.getMember();
         PageRequest pageRequest = PageRequest.of(0, size);
         Integer totalCount = postRepository.countAllByStatus(Status.ACTIVE);
-        Slice<Post> postsPage = switch (sortBy) {
-            case "likes" -> postRepository.findSliceByIdLessThanOrderByLikeCountDesc(lastPostId, pageRequest);
-            case "views" -> postRepository.findSliceByIdLessThanOrderByViewCountDesc(lastPostId, pageRequest);
-            default -> postRepository.findSliceByIdLessThanOrderByCreatedAtDesc(lastPostId, pageRequest);
-        };
+        Slice<Post> postsPage;
+
+        if (lastPostId == 0) {
+            postsPage = switch (sortBy) {
+                case "likes" -> postRepository.findSliceByIdLessThanOrderByLikeCountDesc(lastPostId, pageRequest);
+                case "views" -> postRepository.findSliceByIdLessThanOrderByViewCountDesc(lastPostId, pageRequest);
+                default -> postRepository.findSliceByIdLessThanOrderByCreatedAtDesc(lastPostId, pageRequest);
+            };
+        }
+        else {
+            postsPage = switch (sortBy) {
+                case "likes" -> postRepository.findSliceByIdLessThanOrderByLikeCountDescWithLastPostId(lastPostId, pageRequest);
+                case "views" -> postRepository.findSliceByIdLessThanOrderByViewCountDescWithLastPostId(lastPostId, pageRequest);
+                default -> postRepository.findSliceByIdLessThanOrderByCreatedAtDescWithLastPostId(lastPostId, pageRequest);
+            };
+        }
 
         List<BoardResponseDTO.GetPostListDTO.PostInfo> postInfos = new ArrayList<>();
         // TODO : 좋아요 수, 북마크 수, 조회수 동시성 제어
@@ -84,6 +96,7 @@ public class BoardQueryServiceImpl implements BoardQueryService {
             Integer commentCount = commentRepository.countAllByPostAndStatus(post, Status.ACTIVE);
             postInfos.add(BoardConverter.toGetPostInfo(post, bookmark, like, commentCount));
         });
+
         return BoardConverter.toGetPostListDTO(totalCount, postInfos);
     }
 }
