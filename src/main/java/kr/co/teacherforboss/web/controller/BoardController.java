@@ -5,6 +5,7 @@ import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.converter.BoardConverter;
 import kr.co.teacherforboss.converter.CommentConverter;
 import kr.co.teacherforboss.domain.Comment;
+import kr.co.teacherforboss.domain.CommentLike;
 import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.service.boardService.BoardCommandService;
 import kr.co.teacherforboss.service.boardService.BoardQueryService;
@@ -57,5 +58,12 @@ public class BoardController {
                                                                             @RequestBody @Valid CommentRequestDTO.SaveCommentDTO request) {
         Comment comment = commentCommandService.saveComment(request, postId);
         return ApiResponse.onSuccess(CommentConverter.toSaveCommentResultDTO(comment));
+    }
+
+    @PostMapping("boss/posts/{postId}/comments/{commentId}/likes")
+    public ApiResponse<CommentResponseDTO.SaveCommentLikedResultDTO> saveCommentLike(@PathVariable("postId") Long postId,
+                                                                                     @PathVariable("commentId") Long commentsId) {
+        CommentLike commentLike = commentCommandService.saveCommentLike(postId, commentsId);
+        return ApiResponse.onSuccess(CommentConverter.toSaveCommentLikedResultDTO(commentLike));
     }
 }

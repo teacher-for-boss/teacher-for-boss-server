@@ -18,4 +18,13 @@ public class CommentResponseDTO {
         Long parentId;
         LocalDateTime createdAt;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SaveCommentLikedResultDTO {
+        Boolean like;
+        LocalDateTime updatedAt;
+    }
 }
