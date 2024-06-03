@@ -82,7 +82,7 @@ public class BoardController {
         return ApiResponse.onSuccess(BoardConverter.toLikeQuestionDTO(questionLike));
     }
 
-    @PostMapping("/teacher/questions/{questionId}/bookmarks")
+    @PostMapping("/teacher/questions/{questionId}/bookmark")
     public ApiResponse<BoardResponseDTO.BookmarkQuestionDTO> bookmarkQuestion(@PathVariable("questionId") Long questionId) {
         QuestionBookmark questionBookmark = boardCommandService.bookmarkQuestion(questionId);
         return ApiResponse.onSuccess(BoardConverter.toBookmarkQuestionDTO(questionBookmark));
