@@ -12,7 +12,6 @@ import kr.co.teacherforboss.domain.PostHashtag;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionHashtag;
 import kr.co.teacherforboss.domain.PostLike;
-import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.CategoryRepository;
 import kr.co.teacherforboss.repository.HashtagRepository;
@@ -72,7 +71,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     @Override
     public Question saveQuestion(BoardRequestDTO.SaveQuestionDTO request) {
         Member member = authCommandService.getMember();
-        Category category = categoryRepository.findAllByIdAndStatus(request.getCategoryId(), Status.ACTIVE);
+        Category category = categoryRepository.findByIdAndStatus(request.getCategoryId(), Status.ACTIVE);
         Question question = BoardConverter.toQuestion(request, member, category);
 
         List<QuestionHashtag> questionHashtags = new ArrayList<>();
