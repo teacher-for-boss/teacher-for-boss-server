@@ -12,10 +12,17 @@ import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostLike;
+import kr.co.teacherforboss.domain.Question;
+import kr.co.teacherforboss.domain.QuestionBookmark;
+import kr.co.teacherforboss.domain.QuestionLike;
+import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.PostBookmarkRepository;
 import kr.co.teacherforboss.repository.PostLikeRepository;
 import kr.co.teacherforboss.repository.PostRepository;
+import kr.co.teacherforboss.repository.QuestionBookmarkRepository;
+import kr.co.teacherforboss.repository.QuestionLikeRepository;
+import kr.co.teacherforboss.repository.QuestionRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +35,9 @@ public class BoardQueryServiceImpl implements BoardQueryService {
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
     private final PostBookmarkRepository postBookmarkRepository;
+    private final QuestionRepository questionRepository;
+    private final QuestionLikeRepository questionLikeRepository;
+    private final QuestionBookmarkRepository questionBookmarkRepository;
 
 
     @Override
@@ -55,5 +65,35 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         }
 
         return BoardConverter.toGetPostDTO(post, hashtagList, liked, bookmarked);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public BoardResponseDTO.GetQuestionDTO getQuestion(Long questionId) {
+        Member member = authCommandService.getMember();
+        Question question = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
+
+        BooleanType liked = BooleanType.F;
+        BooleanType bookmarked = BooleanType.F;
+        List<String> hashtagList = null;
+
+        QuestionLike questionLike = questionLikeRepository.findByQuestionAndMemberAndStatus(question, member, Status.ACTIVE);
+        if (questionLike != null) {
+            liked = questionLike.getLiked();
+        }
+
+        QuestionBookmark questionBookmark = questionBookmarkRepository.findByQuestionAndMemberAndStatus(question, member, Status.ACTIVE);
+        if (questionBookmark != null) {
+            bookmarked = questionBookmark.getBookmarked();
+        }
+
+        if (!question.getHashtagList().isEmpty()) {
+            hashtagList = question.getHashtagList()
+                    .stream().map(questionHashtag -> questionHashtag.getHashtag().getName())
+                    .toList();
+        }
+
+        return BoardConverter.toGetQuestionDTO(question, liked, bookmarked, hashtagList);
     }
 }

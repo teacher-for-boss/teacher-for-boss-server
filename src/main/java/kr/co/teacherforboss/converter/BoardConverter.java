@@ -200,4 +200,19 @@ public class BoardConverter {
                 .updatedAt(questionBookmark.getUpdatedAt())
                 .build();
     }
+
+    public static BoardResponseDTO.GetQuestionDTO toGetQuestionDTO(Question question, BooleanType liked, BooleanType bookmarked, List<String> hashtagList) {
+        return BoardResponseDTO.GetQuestionDTO.builder()
+                .title(question.getTitle())
+                .content(question.getContent())
+                .category(question.getCategory().getName())
+                .hashtagList(hashtagList)
+                .memberInfo(toMemberInfo(question.getMember()))
+                .liked(liked)
+                .bookmarked(bookmarked)
+                .likeCount(question.getLikeCount())
+                .bookmarkCount(question.getBookmarkCount())
+                .createdAt(question.getCreatedAt())
+                .build();
+    }
 }
