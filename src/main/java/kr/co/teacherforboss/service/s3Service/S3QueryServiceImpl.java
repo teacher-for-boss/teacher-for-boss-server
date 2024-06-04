@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -28,30 +29,48 @@ public class S3QueryServiceImpl implements S3QueryService{
 
 	private final AmazonS3 amazonS3;
 
-	@Value("${cloud.s3.bucket}")
+	@Value("${cloud.aws.s3.bucket}")
 	private String bucket;
 	private final long URL_EXPIRATION = 1000 * 60 * 2;	// 120s
 	private final String FILE_DATETIME_PATTERN = "yyyy-MM-dd-HH-mm-ss";
 
 	@Override
 	public S3ResponseDTO.GetPresignedUrlDTO getPresignedUrl(S3RequestDTO.GetPresignedUrlDTO request) {
-		LocalDateTime timestamp = LocalDateTime.now();
 		String type = request.getType();
-		// log.info("Image File Pattern Timestamp => " + timestamp);
 
 		List<String> presignedUrlList = new ArrayList<>();
+		String fileName;
+		GeneratePresignedUrlRequest generatePresignedUrlRequest;
+		URL url;
 
-		for (int index = 1; index <= request.getImageCount(); index++) {
+		switch (type) {
+			case "profile":
+				fileName = String.format("%s/%s", type, createFileId());
 
-			String fileName = String.format("%s/%s/%s_%d", type, request.getId(), timestamp.format(DateTimeFormatter.ofPattern(FILE_DATETIME_PATTERN)), index);
+				generatePresignedUrlRequest = getGeneratePresignedUrlRequest(bucket, fileName);
+				url = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
 
-			GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePresignedUrlRequest(bucket, fileName);
-			URL url = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
+				log.info("File Name => " + fileName);
 
-			// log.info("File Name => " + fileName);
+				presignedUrlList.add(url.toString());
+				break;
+			default:
+				for (int index = 1; index <= request.getImageCount(); index++) {
+					LocalDateTime timestamp = LocalDateTime.now();
 
-			presignedUrlList.add(url.toString());
+					log.info("Image File Pattern Timestamp => " + timestamp);
+
+					fileName = String.format("%s/%s/%s_%d", type, request.getId(), timestamp.format(DateTimeFormatter.ofPattern(FILE_DATETIME_PATTERN)), index);
+
+					generatePresignedUrlRequest = getGeneratePresignedUrlRequest(bucket, fileName);
+					url = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
+
+					log.info("File Name => " + fileName);
+
+					presignedUrlList.add(url.toString());
+				}
 		}
+
 
 		return S3ResponseDTO.GetPresignedUrlDTO.builder()
 				.presignedUrlList(presignedUrlList)
@@ -73,5 +92,9 @@ public class S3QueryServiceImpl implements S3QueryService{
 
 	private Date getPresignedUrlExpiration() {
 		return new Date(System.currentTimeMillis() + URL_EXPIRATION);
+	}
+
+	private String createFileId() {
+		return UUID.randomUUID().toString();
 	}
 }
