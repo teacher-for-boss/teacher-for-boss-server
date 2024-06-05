@@ -50,13 +50,13 @@ public class BoardController {
         return ApiResponse.onSuccess(BoardConverter.toSaveQuestionDTO(question));
     }
 
-    @PostMapping("/board/boss/posts/{postId}/bookmark")
+    @PostMapping("/boss/posts/{postId}/bookmark")
     public ApiResponse<BoardResponseDTO.SavePostBookmarkDTO> savePostBookmark(@PathVariable("postId") Long postId){
         PostBookmark bookmark = boardCommandService.savePostBookmark(postId);
         return ApiResponse.onSuccess(BoardConverter.toSavePostBookmarkDTO(bookmark));
     }
 
-    @PostMapping("/board/boss/posts/{postId}/likes")
+    @PostMapping("/boss/posts/{postId}/likes")
     public ApiResponse<BoardResponseDTO.SavePostLikeDTO> savePostLike(@PathVariable("postId") Long postId){
         PostLike like = boardCommandService.savePostLike(postId);
         return ApiResponse.onSuccess(BoardConverter.toSavePostLikeDTO(like));
