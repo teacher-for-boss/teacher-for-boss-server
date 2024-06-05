@@ -9,6 +9,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import kr.co.teacherforboss.domain.common.BaseEntity;
 import kr.co.teacherforboss.domain.enums.BooleanType;
@@ -18,6 +20,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Getter
@@ -62,8 +66,15 @@ public class Question extends BaseEntity {
     @ColumnDefault("0")
     private Integer bookmarkCount;
 
+    @NotNull
     @Column
-    private String imageUrl;
+    @ColumnDefault("0")
+    private Integer imageCount;
+
+    @NotNull
+    @Column
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    protected LocalDateTime imageTimestamp;
 
     @OneToMany(mappedBy = "question")
     private List<QuestionHashtag> hashtagList;
