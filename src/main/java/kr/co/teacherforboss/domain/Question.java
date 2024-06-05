@@ -71,7 +71,6 @@ public class Question extends BaseEntity {
     @ColumnDefault("0")
     private Integer imageCount;
 
-    @NotNull
     @Column
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     protected LocalDateTime imageTimestamp;
