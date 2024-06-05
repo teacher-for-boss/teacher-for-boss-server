@@ -8,11 +8,10 @@ import kr.co.teacherforboss.domain.Comment;
 import kr.co.teacherforboss.domain.CommentLike;
 import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.Question;
-import kr.co.teacherforboss.domain.PostBookmark;
-import kr.co.teacherforboss.domain.PostLike;
 import kr.co.teacherforboss.service.boardService.BoardCommandService;
 import kr.co.teacherforboss.service.boardService.BoardQueryService;
 import kr.co.teacherforboss.service.commentService.CommentCommandService;
+import kr.co.teacherforboss.service.commentService.CommentQueryService;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import kr.co.teacherforboss.web.dto.CommentRequestDTO;
@@ -37,6 +36,7 @@ public class BoardController {
     private final BoardCommandService boardCommandService;
     private final BoardQueryService boardQueryService;
     private final CommentCommandService commentCommandService;
+    private final CommentQueryService commentQueryService;
 
     @PostMapping("/boss/posts")
     public ApiResponse<BoardResponseDTO.SavePostDTO> savePost(@RequestBody @Valid BoardRequestDTO.SavePostDTO request){
@@ -83,9 +83,8 @@ public class BoardController {
         return ApiResponse.onSuccess(BoardConverter.toSaveQuestionDTO(question));
     }
 
-    @PostMapping("/board/boss/posts/{postId}/bookmark")
-    public ApiResponse<BoardResponseDTO.SavePostBookmarkDTO> savePostBookmark(@PathVariable("postId") Long postId){
-        PostBookmark bookmark = boardCommandService.savePostBookmark(postId);
-        return ApiResponse.onSuccess(BoardConverter.toSavePostBookmarkDTO(bookmark));
+    @GetMapping("/boss/posts/{postId}/comments")
+    public ApiResponse<CommentResponseDTO.GetCommentListDTO> getCommentList(@PathVariable("postId") Long postId) {
+        return ApiResponse.onSuccess(commentQueryService.getCommentListDTO(postId));
     }
 }

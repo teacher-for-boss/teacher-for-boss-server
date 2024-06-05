@@ -11,11 +11,12 @@ import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostHashtag;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionHashtag;
-import kr.co.teacherforboss.domain.PostLike;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.CategoryRepository;
 import kr.co.teacherforboss.repository.HashtagRepository;
+import kr.co.teacherforboss.repository.PostBookmarkRepository;
 import kr.co.teacherforboss.repository.PostHashtagRepository;
+import kr.co.teacherforboss.repository.PostLikeRepository;
 import kr.co.teacherforboss.repository.PostRepository;
 import kr.co.teacherforboss.repository.QuestionHashtagRepository;
 import kr.co.teacherforboss.repository.QuestionRepository;
@@ -89,7 +90,6 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
         return question;
     }
-
 
     @Override
     @Transactional
