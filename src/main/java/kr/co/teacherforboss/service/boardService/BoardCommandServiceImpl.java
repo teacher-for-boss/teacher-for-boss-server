@@ -72,6 +72,9 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
     @Override
     public Question saveQuestion(BoardRequestDTO.SaveQuestionDTO request) {
+        if (request.getImageCount() > 0 && request.getImageTimestamp() == null)
+            throw new BoardHandler(ErrorStatus.INVALID_IMAGE_TIMESTAMP);
+
         Member member = authCommandService.getMember();
         Category category = categoryRepository.findByIdAndStatus(request.getCategoryId(), Status.ACTIVE);
         Question question = BoardConverter.toQuestion(request, member, category);
