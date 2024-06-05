@@ -37,4 +37,9 @@ public class CommentLike extends BaseEntity {
         if (this.liked == BooleanType.T) liked = null;
         else this.liked = BooleanType.T;
     }
+
+    public void setDisliked() {
+        if (this.liked == BooleanType.F) liked = null;
+        else this.liked = BooleanType.F;
+    }
 }

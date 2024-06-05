@@ -37,19 +37,19 @@ public class CommentConverter {
                 .build();
     }
 
-    public static CommentResponseDTO.SaveCommentLikedResultDTO toSaveCommentLikedResultDTO(CommentLike like) {
-        Boolean likeStatus = (like.getLiked() != null) ? like.getLiked().isIdentifier() : null;
+    public static CommentResponseDTO.SaveCommentLikedResultDTO toSaveCommentLikedResultDTO(CommentLike liked) {
+        Boolean likeStatus = (liked.getLiked() != null) ? liked.getLiked().isIdentifier() : null;
         return CommentResponseDTO.SaveCommentLikedResultDTO.builder()
-                .like(likeStatus)
+                .liked(likeStatus)
                 .updatedAt(LocalDateTime.now())
                 .build();
     }
 
-    public static CommentLike toCommentLike(Comment comment, Member member) {
+    public static CommentLike toCommentLiked(Comment comment, Member member, BooleanType liked) {
         return CommentLike.builder()
                 .comment(comment)
                 .member(member)
-                .liked(BooleanType.T)
+                .liked(liked)
                 .build();
     }
 }

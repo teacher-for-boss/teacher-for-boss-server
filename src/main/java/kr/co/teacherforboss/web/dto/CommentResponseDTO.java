@@ -24,7 +24,7 @@ public class CommentResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SaveCommentLikedResultDTO {
-        Boolean like;
+        Boolean liked;
         LocalDateTime updatedAt;
     }
 }

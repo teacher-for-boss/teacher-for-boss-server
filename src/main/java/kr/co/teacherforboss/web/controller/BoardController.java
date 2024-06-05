@@ -66,4 +66,11 @@ public class BoardController {
         CommentLike commentLike = commentCommandService.saveCommentLike(postId, commentsId);
         return ApiResponse.onSuccess(CommentConverter.toSaveCommentLikedResultDTO(commentLike));
     }
+
+    @PostMapping("boss/posts/{postId}/comments/{commentId}/dislikes")
+    public ApiResponse<CommentResponseDTO.SaveCommentLikedResultDTO> saveCommentDislike(@PathVariable("postId") Long postId,
+                                                                                        @PathVariable("commentId") Long commentsId) {
+        CommentLike commentLike = commentCommandService.saveCommentDislike(postId, commentsId);
+        return ApiResponse.onSuccess(CommentConverter.toSaveCommentLikedResultDTO(commentLike));
+    }
 }

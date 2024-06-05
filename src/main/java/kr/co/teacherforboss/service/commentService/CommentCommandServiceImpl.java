@@ -7,6 +7,7 @@ import kr.co.teacherforboss.domain.Comment;
 import kr.co.teacherforboss.domain.CommentLike;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.Post;
+import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.CommentLikeRepository;
 import kr.co.teacherforboss.repository.CommentRepository;
@@ -45,17 +46,28 @@ public class CommentCommandServiceImpl implements CommentCommandService {
     @Override
     @Transactional
     public CommentLike saveCommentLike(Long postId, Long commentId) {
+        return saveCommentLikeOrDislike(postId, commentId, BooleanType.T);
+    }
+
+    @Override
+    @Transactional
+    public CommentLike saveCommentDislike(Long postId, Long commentId) {
+        return saveCommentLikeOrDislike(postId, commentId, BooleanType.F);
+    }
+
+    private CommentLike saveCommentLikeOrDislike(Long postId, Long commentId, BooleanType type) {
         Member member = authCommandService.getMember();
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
         Comment comment = commentRepository.findByIdAndPostAndStatus(commentId, post, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.COMMENT_NOT_FOUND));
 
-        CommentLike like = commentLikeRepository.findByCommentAndMemberAndStatus(comment, member, Status.ACTIVE);
+        CommentLike commentLike = commentLikeRepository.findByCommentAndMemberAndStatus(comment, member, Status.ACTIVE);
+        if (commentLike == null) commentLike = CommentConverter.toCommentLiked(comment, member, type);
 
-        if (like == null) like = CommentConverter.toCommentLike(comment, member);
-        like.setLiked();
+        if (type == BooleanType.T) commentLike.setLiked();
+        else commentLike.setDisliked();
 
-        return commentLikeRepository.save(like);
+        return commentLikeRepository.save(commentLike);
     }
 }
