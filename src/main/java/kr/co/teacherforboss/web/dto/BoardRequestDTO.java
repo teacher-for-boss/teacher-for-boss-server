@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.web.dto;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -53,10 +54,26 @@ public class BoardRequestDTO {
         List<String> hashtagList;
 
         @NotNull(message = "첨부 이미지 개수는 필수 입력값입니다.")
-        @Size(max = 3, message = "이미지 첨부는 최대 3개까지 가능합니다.")
+        @Max(value = 3, message = "이미지 첨부는 최대 3개까지 가능합니다.")
         Integer imageCount;
 
-        @NotNull
+        LocalDateTime imageTimestamp;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class SaveAnswerDTO {
+
+        @NotNull(message = "댓글 내용은 필수 입력값입니다.")
+        @Size(max = 3000, message = "댓글 내용은 최대 3000자 입력 가능합니다.")
+        String content;
+
+        @NotNull(message = "첨부 이미지 개수는 필수 입력값입니다.")
+        @Max(value = 3, message = "이미지 첨부는 최대 3개까지 가능합니다.")
+        Integer imageCount;
+
         LocalDateTime imageTimestamp;
     }
 }

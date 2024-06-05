@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.web.controller;
 
+import kr.co.teacherforboss.domain.Answer;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,5 +60,12 @@ public class BoardController {
     public ApiResponse<BoardResponseDTO.SavePostLikeDTO> savePostLike(@PathVariable("postId") Long postId){
         PostLike like = boardCommandService.savePostLike(postId);
         return ApiResponse.onSuccess(BoardConverter.toSavePostLikeDTO(like));
+    }
+
+    @PostMapping("/teacher/questions/{questionId}/answers")
+    public ApiResponse<BoardResponseDTO.SaveAnswerDTO> saveAnswer(@PathVariable("questionId") Long questionId,
+                                                                  @RequestBody @Valid BoardRequestDTO.SaveAnswerDTO request) {
+        Answer answer = boardCommandService.saveAnswer(questionId, request);
+        return ApiResponse.onSuccess(BoardConverter.toSaveAnswerDTO(answer));
     }
 }

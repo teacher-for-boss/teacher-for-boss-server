@@ -110,7 +110,9 @@ public enum ErrorStatus implements BaseErrorCode {
     EXAM_TAG_NOT_FOUND(NOT_FOUND, "EXAM4048", "시험 카테고리가 존재하지 않습니다."),
 
     // Board
+    INVALID_IMAGE_TIMESTAMP(BAD_REQUEST, "BOARD4001", "이미지 타임스탬프 값이 없습니다."),
     POST_NOT_FOUND(NOT_FOUND, "BOARD4041", "게시물을 찾을 수 없습니다."),
+    QUESTION_NOT_FOUND(NOT_FOUND, "BOARD4042", "질문을 찾을 수 없습니다."),
 
     // For test
     TEMP_EXCEPTION(BAD_REQUEST, "TEMP4001", "이거는 테스트");

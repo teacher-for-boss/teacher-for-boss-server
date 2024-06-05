@@ -1,18 +1,24 @@
 package kr.co.teacherforboss.service.boardService;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.BoardHandler;
 import kr.co.teacherforboss.converter.BoardConverter;
+import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.Category;
 import kr.co.teacherforboss.domain.Hashtag;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostHashtag;
+import kr.co.teacherforboss.domain.PostLike;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionHashtag;
-import kr.co.teacherforboss.domain.PostLike;
 import kr.co.teacherforboss.domain.enums.Status;
+import kr.co.teacherforboss.repository.AnswerRepository;
 import kr.co.teacherforboss.repository.CategoryRepository;
 import kr.co.teacherforboss.repository.HashtagRepository;
 import kr.co.teacherforboss.repository.PostBookmarkRepository;
@@ -27,11 +33,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 @Service
 @RequiredArgsConstructor
 public class BoardCommandServiceImpl implements BoardCommandService {
@@ -44,6 +45,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     private final CategoryRepository categoryRepository;
     private final PostBookmarkRepository postBookmarkRepository;
     private final PostLikeRepository postLikeRepository;
+    private final AnswerRepository answerRepository;
 
     @Override
     @Transactional
@@ -123,5 +125,19 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         like.toggleLiked();
         postLikeRepository.save(like);
         return like;
+    }
+
+    @Override
+    @Transactional
+    public Answer saveAnswer(long questionId, BoardRequestDTO.SaveAnswerDTO request) {
+        if (request.getImageCount() > 0 && request.getImageTimestamp() == null)
+            throw new BoardHandler(ErrorStatus.INVALID_IMAGE_TIMESTAMP);
+
+        Member member = authCommandService.getMember();
+        Question question = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
+
+        Answer answer = BoardConverter.toAnswer(question, member, request);
+        return answerRepository.save(answer);
     }
 }
