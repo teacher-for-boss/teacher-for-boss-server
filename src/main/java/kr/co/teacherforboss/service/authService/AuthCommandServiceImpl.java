@@ -80,7 +80,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         AgreementTerm newAgreement = AuthConverter.toAgreementTerm(request, newMember);
 
         newMember.setProfile(request.getNickname(), request.getProfileImg());
-        if (Role.of(request.getRole()).equals(Role.BOSS)) saveTeacherInfo(request);
+        if (Role.of(request.getRole()).equals(Role.TEACHER)) saveTeacherInfo(request);
 
         agreementTermRepository.save(newAgreement);
         return memberRepository.save(newMember);
@@ -253,7 +253,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         newMember.setPassword(passwordList);
 
         newMember.setProfile(request.getNickname(), request.getProfileImg());
-        if (request.getRole().equals(2)) saveTeacherInfo(request);
+        if (Role.of(request.getRole()).equals(Role.TEACHER)) saveTeacherInfo(request);
 
         return memberRepository.save(newMember);
     }
