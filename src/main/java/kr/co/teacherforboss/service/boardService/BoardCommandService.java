@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.service.boardService;
 
+import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.PostBookmark;
@@ -11,4 +12,5 @@ public interface BoardCommandService {
     Question saveQuestion(BoardRequestDTO.SaveQuestionDTO request);
     PostBookmark savePostBookmark(Long postId);
     PostLike savePostLike(long postId);
+    Answer saveAnswer(long questionId, BoardRequestDTO.SaveAnswerDTO request);
 }

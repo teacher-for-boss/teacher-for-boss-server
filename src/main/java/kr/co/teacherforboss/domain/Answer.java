@@ -8,6 +8,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import kr.co.teacherforboss.domain.common.BaseEntity;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import lombok.AccessLevel;
@@ -16,6 +17,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Getter
@@ -50,4 +52,13 @@ public class Answer extends BaseEntity {
     @Column
     @ColumnDefault("0")
     private Integer dislikeCount;
+
+    @NotNull
+    @Column
+    @ColumnDefault("0")
+    private Integer imageCount;
+
+    @Column
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    protected LocalDateTime imageTimestamp;
 }
