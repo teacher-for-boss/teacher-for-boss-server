@@ -135,7 +135,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
                 .editQuestion(category, request.getTitle(), request.getContent(), request.getImageCount(), request.getImageTimestamp());
 
         // TODO : 수정되고 난 후 아예 안 쓰이는 해시태그 비활성화?
-        questionHashtagRepository.softdeleteAllByQuestionId(questionId);
+        questionHashtagRepository.softDeleteAllByQuestionId(questionId);
         List<QuestionHashtag> editQuestionHashtags = new ArrayList<>();
         if (request.getHashtagList() != null) {
             Set<String> editHashtags = new HashSet<>(request.getHashtagList());
