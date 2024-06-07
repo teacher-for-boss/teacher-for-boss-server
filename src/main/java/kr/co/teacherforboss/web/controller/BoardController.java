@@ -63,12 +63,6 @@ public class BoardController {
         return ApiResponse.onSuccess(BoardConverter.toSavePostLikeDTO(like));
     }
 
-    @PostMapping("/teacher/questions")
-    public ApiResponse<BoardResponseDTO.SaveQuestionDTO> saveQuestion(@RequestBody @Valid BoardRequestDTO.SaveQuestionDTO request) {
-        Question question = boardCommandService.saveQuestion(request);
-        return ApiResponse.onSuccess(BoardConverter.toSaveQuestionDTO(question));
-    }
-
     @PatchMapping("/teacher/questions/{questionId}")
     public ApiResponse<BoardResponseDTO.EditQuestionDTO> editQuestion(@PathVariable("questionId") Long questionId, @RequestBody @Valid BoardRequestDTO.EditQuestionDTO request) {
         Question question = boardCommandService.editQuestion(questionId, request);

@@ -145,13 +145,6 @@ public class BoardConverter {
                 .build();
     }
 
-	public static BoardResponseDTO.SaveQuestionDTO toSaveQuestionDTO(Question question) {
-        return BoardResponseDTO.SaveQuestionDTO.builder()
-                .questionId(question.getId())
-                .createdAt(question.getCreatedAt())
-                .build();
-	}
-
     public static Question toSaveQuestion(BoardRequestDTO.SaveQuestionDTO request, Member member, Category category) {
         return Question.builder()
                 .category(category)
@@ -164,13 +157,6 @@ public class BoardConverter {
                 .bookmarkCount(0)
                 .imageCount(request.getImageCount())
                 .imageTimestamp(request.getImageTimestamp())
-                .build();
-    }
-
-    public static QuestionHashtag toQuestionHashtag(Question question, Hashtag hashtag) {
-        return QuestionHashtag.builder()
-                .question(question)
-                .hashtag(hashtag)
                 .build();
     }
 

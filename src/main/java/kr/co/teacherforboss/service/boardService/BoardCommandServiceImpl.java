@@ -49,8 +49,6 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     private final CategoryRepository categoryRepository;
     private final PostBookmarkRepository postBookmarkRepository;
     private final PostLikeRepository postLikeRepository;
-    private final QuestionHashtagRepository questionHashtagRepository;
-    private final CategoryRepository categoryRepository;
 
     @Override
     @Transactional
@@ -130,31 +128,6 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         like.toggleLiked();
         postLikeRepository.save(like);
         return like;
-    }
-
-    @Override
-    @Transactional
-    public Question saveQuestion(BoardRequestDTO.SaveQuestionDTO request) {
-        Member member = authCommandService.getMember();
-        Category category = categoryRepository.findAllByIdAndStatus(request.getCategoryId(), Status.ACTIVE);
-        Question saveQuestion = BoardConverter.toSaveQuestion(request, member, category);
-
-        List<QuestionHashtag> saveQuestionHashtags = new ArrayList<>();
-        if (request.getHashtagList() != null) {
-            Set<String> hashtags = new HashSet<>(request.getHashtagList());
-            for (String tag : hashtags) {
-                Hashtag hashtag = hashtagRepository.findByNameAndStatus(tag, Status.ACTIVE);
-                if (hashtag == null) {
-                    hashtag = hashtagRepository.save(BoardConverter.toHashtag(tag));
-                }
-                QuestionHashtag questionHashtag = BoardConverter.toQuestionHashtag(saveQuestion, hashtag);
-                saveQuestionHashtags.add(questionHashtag);
-            }
-        }
-        questionRepository.save(saveQuestion);
-        questionHashtagRepository.saveAll(saveQuestionHashtags);
-
-        return saveQuestion;
     }
 
     @Override
