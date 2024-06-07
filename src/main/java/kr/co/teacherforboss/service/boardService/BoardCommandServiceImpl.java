@@ -12,11 +12,6 @@ import kr.co.teacherforboss.domain.PostHashtag;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionHashtag;
 import kr.co.teacherforboss.domain.PostLike;
-import kr.co.teacherforboss.domain.Question;
-import kr.co.teacherforboss.domain.QuestionHashtag;
-import kr.co.teacherforboss.domain.enums.BooleanType;
-import kr.co.teacherforboss.domain.Question;
-import kr.co.teacherforboss.domain.QuestionHashtag;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.CategoryRepository;
 import kr.co.teacherforboss.repository.HashtagRepository;
@@ -140,7 +135,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
                 .editQuestion(category, request.getTitle(), request.getContent(), request.getImageCount(), request.getImageTimestamp());
 
         // TODO : 수정되고 난 후 아예 안 쓰이는 해시태그 비활성화?
-        questionHashtagRepository.deleteAllByQuestionId(questionId);
+        questionHashtagRepository.softdeleteAllByQuestionId(questionId);
         List<QuestionHashtag> editQuestionHashtags = new ArrayList<>();
         if (request.getHashtagList() != null) {
             Set<String> editHashtags = new HashSet<>(request.getHashtagList());

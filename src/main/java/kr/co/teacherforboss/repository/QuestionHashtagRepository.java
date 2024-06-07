@@ -16,5 +16,5 @@ public interface QuestionHashtagRepository extends JpaRepository<QuestionHashtag
 			SET qh.status = 'INACTIVE'
 			WHERE qh.question_id = :questionId
 			""", nativeQuery = true)
-	void deleteAllByQuestionId(@Param("questionId") Long questionId);
+	void softDeleteAllByQuestionId(@Param("questionId") Long questionId);
 }
