@@ -1,5 +1,10 @@
 package kr.co.teacherforboss.web.controller;
 
+import kr.co.teacherforboss.converter.CommentConverter;
+import kr.co.teacherforboss.domain.Comment;
+import kr.co.teacherforboss.service.commentService.CommentCommandService;
+import kr.co.teacherforboss.web.dto.CommentRequestDTO;
+import kr.co.teacherforboss.web.dto.CommentResponseDTO;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -31,15 +36,16 @@ public class BoardController {
 
     private final BoardCommandService boardCommandService;
     private final BoardQueryService boardQueryService;
+    private final CommentCommandService commentCommandService;
 
     @PostMapping("/boss/posts")
-    public ApiResponse<BoardResponseDTO.SavePostDTO> savePost(@RequestBody @Valid BoardRequestDTO.SavePostDTO request){
+    public ApiResponse<BoardResponseDTO.SavePostDTO> savePost(@RequestBody @Valid BoardRequestDTO.SavePostDTO request) {
         Post post = boardCommandService.savePost(request);
         return ApiResponse.onSuccess(BoardConverter.toSavePostDTO(post));
     }
 
     @GetMapping("/boss/posts/{postId}")
-    public ApiResponse<BoardResponseDTO.GetPostDTO> getPost(@PathVariable("postId") Long postId){
+    public ApiResponse<BoardResponseDTO.GetPostDTO> getPost(@PathVariable("postId") Long postId) {
         return ApiResponse.onSuccess(boardQueryService.getPost(postId));
     }
 
@@ -57,13 +63,13 @@ public class BoardController {
     }
 
     @PostMapping("/board/boss/posts/{postId}/bookmark")
-    public ApiResponse<BoardResponseDTO.SavePostBookmarkDTO> savePostBookmark(@PathVariable("postId") Long postId){
+    public ApiResponse<BoardResponseDTO.SavePostBookmarkDTO> savePostBookmark(@PathVariable("postId") Long postId) {
         PostBookmark bookmark = boardCommandService.savePostBookmark(postId);
         return ApiResponse.onSuccess(BoardConverter.toSavePostBookmarkDTO(bookmark));
     }
 
     @PostMapping("/board/boss/posts/{postId}/likes")
-    public ApiResponse<BoardResponseDTO.SavePostLikeDTO> savePostLike(@PathVariable("postId") Long postId){
+    public ApiResponse<BoardResponseDTO.SavePostLikeDTO> savePostLike(@PathVariable("postId") Long postId) {
         PostLike like = boardCommandService.savePostLike(postId);
         return ApiResponse.onSuccess(BoardConverter.toSavePostLikeDTO(like));
     }
@@ -74,4 +80,10 @@ public class BoardController {
         return ApiResponse.onSuccess(BoardConverter.toEditQuestionDTO(question));
     }
 
+    @PostMapping("/boss/posts/{postId}/comments")
+    public ApiResponse<CommentResponseDTO.SaveCommentResultDTO> saveComment(@PathVariable("postId") Long postId,
+                                                                            @RequestBody @Valid CommentRequestDTO.SaveCommentDTO request) {
+        Comment comment = commentCommandService.saveComment(request, postId);
+        return ApiResponse.onSuccess(CommentConverter.toSaveCommentResultDTO(comment));
+    }
 }
