@@ -135,7 +135,9 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     public Question editQuestion(Long questionId, BoardRequestDTO.EditQuestionDTO request) {
         Member member = authCommandService.getMember();
         Category category = categoryRepository.findAllByIdAndStatus(request.getCategoryId(), Status.ACTIVE);
-        Question editQuestion = questionRepository.findById(questionId).get().editQuestion(request, category);
+        Question editQuestion = questionRepository.findById(questionId)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND))
+                .editQuestion(category, request.getTitle(), request.getContent(), request.getImageCount(), request.getImageTimestamp());
 
         // TODO : 수정되고 난 후 아예 안 쓰이는 해시태그 비활성화?
         questionHashtagRepository.deleteAllByQuestionId(questionId);
