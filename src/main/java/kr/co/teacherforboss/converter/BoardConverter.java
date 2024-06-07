@@ -1,11 +1,18 @@
 package kr.co.teacherforboss.converter;
 
+import kr.co.teacherforboss.domain.Category;
 import kr.co.teacherforboss.domain.Hashtag;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostHashtag;
+import kr.co.teacherforboss.domain.Question;
+import kr.co.teacherforboss.domain.QuestionHashtag;
+import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.PostLike;
+import kr.co.teacherforboss.domain.enums.BooleanType;
+import kr.co.teacherforboss.domain.Question;
+import kr.co.teacherforboss.domain.QuestionHashtag;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
@@ -79,6 +86,35 @@ public class BoardConverter {
                 .toList();
     }
 
+	public static BoardResponseDTO.SaveQuestionDTO toSaveQuestionDTO(Question question) {
+        return BoardResponseDTO.SaveQuestionDTO.builder()
+                .questionId(question.getId())
+                .createdAt(question.getCreatedAt())
+                .build();
+	}
+
+    public static Question toQuestion(BoardRequestDTO.SaveQuestionDTO request, Member member, Category category) {
+        return Question.builder()
+                .category(category)
+                .member(member)
+                .title(request.getTitle())
+                .content(request.getContent())
+                .solved(BooleanType.F)
+                .likeCount(0)
+                .viewCount(0)
+                .bookmarkCount(0)
+                .imageCount(request.getImageCount())
+                .imageTimestamp(request.getImageTimestamp())
+                .build();
+    }
+
+    public static QuestionHashtag toQuestionHashtag(Question question, Hashtag hashtag) {
+        return QuestionHashtag.builder()
+                .question(question)
+                .hashtag(hashtag)
+                .build();
+    }
+
     public static PostBookmark toSavePostBookmark(Post post, Member member) {
         return PostBookmark.builder()
                 .bookmarked(BooleanType.F)
@@ -106,6 +142,39 @@ public class BoardConverter {
         return BoardResponseDTO.SavePostLikeDTO.builder()
                 .like(like.getLiked().isIdentifier())
                 .updatedAt(like.getUpdatedAt())
+                .build();
+    }
+
+    public static Question toSaveQuestion(BoardRequestDTO.SaveQuestionDTO request, Member member, Category category) {
+        return Question.builder()
+                .category(category)
+                .member(member)
+                .title(request.getTitle())
+                .content(request.getContent())
+                .solved(BooleanType.F)
+                .likeCount(0)
+                .viewCount(0)
+                .bookmarkCount(0)
+                .imageCount(request.getImageCount())
+                .imageTimestamp(request.getImageTimestamp())
+                .build();
+    }
+
+    public static BoardResponseDTO.EditQuestionDTO toEditQuestionDTO(Question question) {
+        return BoardResponseDTO.EditQuestionDTO.builder()
+                .questionId(question.getId())
+                .createdAt(question.getCreatedAt())
+                .build();
+    }
+
+    public static Question toEditQuestion(BoardRequestDTO.EditQuestionDTO request, Member member, Category category) {
+        return Question.builder()
+                .category(category)
+                .member(member)
+                .title(request.getTitle())
+                .content(request.getContent())
+                .imageCount(request.getImageCount())
+                .imageTimestamp(request.getImageTimestamp())
                 .build();
     }
 }
