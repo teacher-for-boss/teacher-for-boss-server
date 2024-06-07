@@ -29,12 +29,8 @@ public class CommentCommandServiceImpl implements CommentCommandService {
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
 
-        if(request.getParentId() != null) {
-            boolean checkParentId = commentRepository.existsByIdAndStatus(request.getParentId(), Status.ACTIVE);
-            if(!checkParentId) throw new BoardHandler(ErrorStatus.COMMENT_NOT_FOUND);
-        }
-
         Comment parentComment = commentRepository.findByIdAndStatus(request.getParentId(), Status.ACTIVE);
+        if(request.getParentId() != null && parentComment == null) throw new BoardHandler(ErrorStatus.COMMENT_NOT_FOUND);
         Comment comment = CommentConverter.toCommentDTO(request, member, post, parentComment);
         return commentRepository.save(comment);
     }
