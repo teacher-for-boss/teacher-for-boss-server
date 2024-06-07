@@ -1,5 +1,13 @@
 package kr.co.teacherforboss.web.controller;
 
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.converter.BoardConverter;
@@ -9,6 +17,7 @@ import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostLike;
+import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.service.boardService.BoardCommandService;
 import kr.co.teacherforboss.service.boardService.BoardQueryService;
 import kr.co.teacherforboss.service.commentService.CommentCommandService;
@@ -49,9 +58,9 @@ public class BoardController {
     }
 
     @PostMapping("/boss/posts/{postId}")
-    public ApiResponse<BoardResponseDTO.SavePostDTO> modifyPost(@PathVariable("postId") Long postId,
-                                                                @RequestBody @Valid BoardRequestDTO.SavePostDTO request) {
-        Post post = boardCommandService.modifyPost(postId, request);
+    public ApiResponse<BoardResponseDTO.SavePostDTO> editPost(@PathVariable("postId") Long postId,
+                                                              @RequestBody @Valid BoardRequestDTO.SavePostDTO request) {
+        Post post = boardCommandService.editPost(postId, request);
         return ApiResponse.onSuccess(BoardConverter.toSavePostDTO(post));
     }
   
@@ -72,5 +81,11 @@ public class BoardController {
                                                                             @RequestBody @Valid CommentRequestDTO.SaveCommentDTO request) {
         Comment comment = commentCommandService.saveComment(request, postId);
         return ApiResponse.onSuccess(CommentConverter.toSaveCommentResultDTO(comment));
+    }
+
+    @PatchMapping("/teacher/questions/{questionId}")
+    public ApiResponse<BoardResponseDTO.EditQuestionDTO> editQuestion(@PathVariable("questionId") Long questionId, @RequestBody @Valid BoardRequestDTO.EditQuestionDTO request) {
+        Question question = boardCommandService.editQuestion(questionId, request);
+        return ApiResponse.onSuccess(BoardConverter.toEditQuestionDTO(question));
     }
 }

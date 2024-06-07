@@ -93,7 +93,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
     @Override
     @Transactional
-    public Post modifyPost(Long postId, BoardRequestDTO.SavePostDTO request) {
+    public Post editPost(Long postId, BoardRequestDTO.SavePostDTO request) {
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
 
@@ -108,39 +108,60 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         post.setContent(modifyPost.getContent());
         post.setImageUrl(modifyPost.getImageUrl());
 
-        modifyPostHashtags(post, request.getHashtagList());
+        editPostHashtags(post, request.getHashtagList());
 
         return post;
     }
 
-    private void modifyPostHashtags(Post post, List<String> newHashtagList) {
+    private void editPostHashtags(Post post, List<String> newHashtagList) {
         List<PostHashtag> postHashtagList = post.getHashtagList();
 
         List<PostHashtag> newPostHashtagList = new ArrayList<>();
         for (String tag : newHashtagList) {
-            Hashtag hashtag = BoardConverter.toHashtag(tag);
-            PostHashtag postHashtag = BoardConverter.toPostHashtag(post, hashtag);
+            Hashtag newHashtag = BoardConverter.toHashtag(tag);
+            PostHashtag newPostHashtag = BoardConverter.toPostHashtag(post, newHashtag);
             if (!hashtagRepository.existsByNameAndStatus(tag, Status.ACTIVE)) {
-                hashtagRepository.save(hashtag);
-                postHashtagRepository.save(postHashtag);
-            } else if (hashtagRepository.existsByNameAndStatus(tag, Status.INACTIVE)) {
-                hashtag.setStatus(Status.ACTIVE);
-                postHashtag.setStatus(Status.ACTIVE);
+                hashtagRepository.save(newHashtag);
+                postHashtagRepository.save(newPostHashtag);
             }
-            newPostHashtagList.add(postHashtag);
-        }
-
-        for (PostHashtag newPostHashtag : newPostHashtagList) {
-            newPostHashtag.setStatus(Status.ACTIVE);
-            newPostHashtag.getHashtag().setStatus(Status.ACTIVE);
+            newPostHashtagList.add(newPostHashtag);
         }
 
         postHashtagList.removeAll(newPostHashtagList);
         for (PostHashtag postHashtag : postHashtagList) {
             if (postHashtag.getStatus() == Status.ACTIVE) {
                 postHashtag.setStatus(Status.INACTIVE);
-                postHashtag.getHashtag().setStatus(Status.INACTIVE);
             }
         }
+    }
+
+    @Override
+    @Transactional
+    public Question editQuestion(Long questionId, BoardRequestDTO.EditQuestionDTO request) {
+        Member member = authCommandService.getMember();
+        Category category = categoryRepository.findByIdAndStatus(request.getCategoryId(), Status.ACTIVE);
+        Question editQuestion = questionRepository.findById(questionId)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND))
+                .editQuestion(category, request.getTitle(), request.getContent(), request.getImageCount(), request.getImageTimestamp());
+
+        // TODO : 수정되고 난 후 아예 안 쓰이는 해시태그 비활성화?
+        questionHashtagRepository.softDeleteAllByQuestionId(questionId);
+        List<QuestionHashtag> editQuestionHashtags = new ArrayList<>();
+        if (request.getHashtagList() != null) {
+            Set<String> editHashtags = new HashSet<>(request.getHashtagList());
+            for (String tag : editHashtags) {
+                Hashtag hashtag = hashtagRepository.findByNameAndStatus(tag, Status.ACTIVE);
+                if (hashtag == null) {
+                    hashtag = hashtagRepository.save(BoardConverter.toHashtag(tag));
+                }
+                QuestionHashtag questionHashtag = BoardConverter.toQuestionHashtag(editQuestion, hashtag);
+                editQuestionHashtags.add(questionHashtag);
+            }
+        }
+
+        questionRepository.save(editQuestion);
+        questionHashtagRepository.saveAll(editQuestionHashtags);
+
+        return editQuestion;
     }
 }
