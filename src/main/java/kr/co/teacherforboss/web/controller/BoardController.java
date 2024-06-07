@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.converter.BoardConverter;
 import kr.co.teacherforboss.domain.Post;
+import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostLike;
 import kr.co.teacherforboss.domain.Question;
@@ -42,6 +43,12 @@ public class BoardController {
     @GetMapping("/boss/posts/{postId}")
     public ApiResponse<BoardResponseDTO.GetPostDTO> getPost(@PathVariable("postId") Long postId){
         return ApiResponse.onSuccess(boardQueryService.getPost(postId));
+    }
+
+    @PostMapping("/teacher/questions")
+    public ApiResponse<BoardResponseDTO.SaveQuestionDTO> saveQuestion(@RequestBody @Valid BoardRequestDTO.SaveQuestionDTO request) {
+        Question question = boardCommandService.saveQuestion(request);
+        return ApiResponse.onSuccess(BoardConverter.toSaveQuestionDTO(question));
     }
 
     @PostMapping("/board/boss/posts/{postId}/bookmark")

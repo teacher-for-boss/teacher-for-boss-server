@@ -9,6 +9,8 @@ import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostHashtag;
+import kr.co.teacherforboss.domain.Question;
+import kr.co.teacherforboss.domain.QuestionHashtag;
 import kr.co.teacherforboss.domain.PostLike;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionHashtag;
@@ -43,6 +45,8 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     private final QuestionRepository questionRepository;
     private final HashtagRepository hashtagRepository;
     private final PostHashtagRepository postHashtagRepository;
+    private final QuestionHashtagRepository questionHashtagRepository;
+    private final CategoryRepository categoryRepository;
     private final PostBookmarkRepository postBookmarkRepository;
     private final PostLikeRepository postLikeRepository;
     private final QuestionHashtagRepository questionHashtagRepository;
@@ -70,6 +74,31 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         postHashtagRepository.saveAll(postHashtags);
         return post;
     }
+
+    @Override
+    public Question saveQuestion(BoardRequestDTO.SaveQuestionDTO request) {
+        Member member = authCommandService.getMember();
+        Category category = categoryRepository.findByIdAndStatus(request.getCategoryId(), Status.ACTIVE);
+        Question question = BoardConverter.toQuestion(request, member, category);
+
+        List<QuestionHashtag> questionHashtags = new ArrayList<>();
+        if (request.getHashtagList() != null) {
+            Set<String> hashtags = new HashSet<>(request.getHashtagList());
+            for (String tag : hashtags) {
+                Hashtag hashtag = hashtagRepository.findByNameAndStatus(tag, Status.ACTIVE);
+                if (hashtag == null) {
+                    hashtag = hashtagRepository.save(BoardConverter.toHashtag(tag));
+                }
+                QuestionHashtag questionHashtag = BoardConverter.toQuestionHashtag(question, hashtag);
+                questionHashtags.add(questionHashtag);
+            }
+        }
+        questionRepository.save(question);
+        questionHashtagRepository.saveAll(questionHashtags);
+
+        return question;
+    }
+
 
     @Override
     @Transactional
