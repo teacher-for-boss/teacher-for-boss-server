@@ -11,6 +11,7 @@ import kr.co.teacherforboss.config.jwt.TokenManager;
 import kr.co.teacherforboss.converter.AuthConverter;
 import kr.co.teacherforboss.domain.BusinessAuth;
 import kr.co.teacherforboss.domain.TeacherInfo;
+import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.LoginType;
 import kr.co.teacherforboss.domain.AgreementTerm;
 import kr.co.teacherforboss.domain.enums.Role;
@@ -64,10 +65,16 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     public Member joinMember(AuthRequestDTO.JoinDTO request){
         if (memberRepository.existsByEmailAndStatus(request.getEmail(), Status.ACTIVE))
             throw new AuthHandler(ErrorStatus.MEMBER_EMAIL_DUPLICATED);
+        if (!emailAuthRepository.existsByIdAndEmailAndPurposeAndIsChecked(request.getEmailAuthId(), request.getEmail(),
+                Purpose.of(1), BooleanType.T))
+            throw new AuthHandler(ErrorStatus.MAIL_NOT_CHECKED);
         if (memberRepository.existsByPhoneAndStatus(request.getPhone(), Status.ACTIVE))
             throw new AuthHandler(ErrorStatus.MEMBER_PHONE_DUPLICATED);
         if (!request.getPassword().equals(request.getRePassword()))
             throw new AuthHandler(ErrorStatus.PASSWORD_NOT_CORRECT);
+        if (!phoneAuthRepository.existsByIdAndPhoneAndPurposeAndIsChecked(request.getPhoneAuthId(), request.getPhone(),
+                Purpose.of(1), BooleanType.T))
+            throw new AuthHandler(ErrorStatus.PHONE_NOT_CHECKED);
         if (!(request.getAgreementUsage().equals("T") && request.getAgreementInfo().equals("T") && request.getAgreementAge().equals("T")))
             throw new AuthHandler(ErrorStatus.INVALID_AGREEMENT_TERM);
         if (memberRepository.existsByNicknameAndStatus(request.getNickname(), Status.ACTIVE))
@@ -80,7 +87,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         AgreementTerm newAgreement = AuthConverter.toAgreementTerm(request, newMember);
 
         newMember.setProfile(request.getNickname(), request.getProfileImg());
-        if (Role.of(request.getRole()).equals(Role.BOSS)) saveTeacherInfo(request);
+        if (Role.of(request.getRole()).equals(Role.TEACHER)) saveTeacherInfo(request);
 
         agreementTermRepository.save(newAgreement);
         return memberRepository.save(newMember);
@@ -253,7 +260,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         newMember.setPassword(passwordList);
 
         newMember.setProfile(request.getNickname(), request.getProfileImg());
-        if (request.getRole().equals(2)) saveTeacherInfo(request);
+        if (Role.of(request.getRole()).equals(Role.TEACHER)) saveTeacherInfo(request);
 
         return memberRepository.save(newMember);
     }
