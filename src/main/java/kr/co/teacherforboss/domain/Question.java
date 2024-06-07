@@ -80,12 +80,12 @@ public class Question extends BaseEntity {
     @OneToMany(mappedBy = "question")
     private List<QuestionHashtag> hashtagList;
 
-    public Question editQuestion(BoardRequestDTO.EditQuestionDTO editQuestion, Category category) {
+    public Question editQuestion(Category category, String title, String content, Integer imageCount, LocalDateTime imageTimestamp) {
         this.category = category;
-        this.title = editQuestion.getTitle();
-        this.content = editQuestion.getContent();
-        this.imageCount = editQuestion.getImageCount();
-        this.imageTimestamp = editQuestion.getImageTimestamp();
+        this.title = title;
+        this.content = content;
+        this.imageCount = imageCount;
+        this.imageTimestamp = imageTimestamp;
         return this;
     }
 }

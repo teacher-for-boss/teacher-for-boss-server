@@ -1,9 +1,16 @@
 package kr.co.teacherforboss.service.boardService;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.BoardHandler;
 import kr.co.teacherforboss.converter.BoardConverter;
-import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.Category;
 import kr.co.teacherforboss.domain.Hashtag;
 import kr.co.teacherforboss.domain.Member;
@@ -11,9 +18,6 @@ import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostHashtag;
 import kr.co.teacherforboss.domain.PostLike;
-import kr.co.teacherforboss.domain.Question;
-import kr.co.teacherforboss.domain.QuestionHashtag;
-import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionHashtag;
 import kr.co.teacherforboss.domain.enums.Status;
@@ -29,13 +33,6 @@ import kr.co.teacherforboss.repository.QuestionRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -45,10 +42,10 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     private final QuestionRepository questionRepository;
     private final HashtagRepository hashtagRepository;
     private final PostHashtagRepository postHashtagRepository;
-    private final PostBookmarkRepository postBookmarkRepository;
-    private final PostLikeRepository postLikeRepository;
     private final QuestionHashtagRepository questionHashtagRepository;
     private final CategoryRepository categoryRepository;
+    private final PostBookmarkRepository postBookmarkRepository;
+    private final PostLikeRepository postLikeRepository;
     private final AnswerRepository answerRepository;
 
     @Override
@@ -73,6 +70,31 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         postHashtagRepository.saveAll(postHashtags);
         return post;
     }
+
+    @Override
+    public Question saveQuestion(BoardRequestDTO.SaveQuestionDTO request) {
+        Member member = authCommandService.getMember();
+        Category category = categoryRepository.findByIdAndStatus(request.getCategoryId(), Status.ACTIVE);
+        Question question = BoardConverter.toQuestion(request, member, category);
+
+        List<QuestionHashtag> questionHashtags = new ArrayList<>();
+        if (request.getHashtagList() != null) {
+            Set<String> hashtags = new HashSet<>(request.getHashtagList());
+            for (String tag : hashtags) {
+                Hashtag hashtag = hashtagRepository.findByNameAndStatus(tag, Status.ACTIVE);
+                if (hashtag == null) {
+                    hashtag = hashtagRepository.save(BoardConverter.toHashtag(tag));
+                }
+                QuestionHashtag questionHashtag = BoardConverter.toQuestionHashtag(question, hashtag);
+                questionHashtags.add(questionHashtag);
+            }
+        }
+        questionRepository.save(question);
+        questionHashtagRepository.saveAll(questionHashtags);
+
+        return question;
+    }
+
 
     @Override
     @Transactional
@@ -108,38 +130,15 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
     @Override
     @Transactional
-    public Question saveQuestion(BoardRequestDTO.SaveQuestionDTO request) {
-        Member member = authCommandService.getMember();
-        Category category = categoryRepository.findAllByIdAndStatus(request.getCategoryId(), Status.ACTIVE);
-        Question saveQuestion = BoardConverter.toSaveQuestion(request, member, category);
-
-        List<QuestionHashtag> saveQuestionHashtags = new ArrayList<>();
-        if (request.getHashtagList() != null) {
-            Set<String> hashtags = new HashSet<>(request.getHashtagList());
-            for (String tag : hashtags) {
-                Hashtag hashtag = hashtagRepository.findByNameAndStatus(tag, Status.ACTIVE);
-                if (hashtag == null) {
-                    hashtag = hashtagRepository.save(BoardConverter.toHashtag(tag));
-                }
-                QuestionHashtag questionHashtag = BoardConverter.toQuestionHashtag(saveQuestion, hashtag);
-                saveQuestionHashtags.add(questionHashtag);
-            }
-        }
-        questionRepository.save(saveQuestion);
-        questionHashtagRepository.saveAll(saveQuestionHashtags);
-
-        return saveQuestion;
-    }
-
-    @Override
-    @Transactional
     public Question editQuestion(Long questionId, BoardRequestDTO.EditQuestionDTO request) {
         Member member = authCommandService.getMember();
-        Category category = categoryRepository.findAllByIdAndStatus(request.getCategoryId(), Status.ACTIVE);
-        Question editQuestion = questionRepository.findById(questionId).get().editQuestion(request, category);
+        Category category = categoryRepository.findByIdAndStatus(request.getCategoryId(), Status.ACTIVE);
+        Question editQuestion = questionRepository.findById(questionId)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND))
+                .editQuestion(category, request.getTitle(), request.getContent(), request.getImageCount(), request.getImageTimestamp());
 
         // TODO : 수정되고 난 후 아예 안 쓰이는 해시태그 비활성화?
-        questionHashtagRepository.deleteAllByQuestionId(questionId);
+        questionHashtagRepository.softDeleteAllByQuestionId(questionId);
         List<QuestionHashtag> editQuestionHashtags = new ArrayList<>();
         if (request.getHashtagList() != null) {
             Set<String> editHashtags = new HashSet<>(request.getHashtagList());

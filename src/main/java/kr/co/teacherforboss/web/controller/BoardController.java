@@ -13,9 +13,9 @@ import jakarta.validation.Valid;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.converter.BoardConverter;
 import kr.co.teacherforboss.domain.Post;
+import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostLike;
-import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.service.boardService.BoardCommandService;
 import kr.co.teacherforboss.service.boardService.BoardQueryService;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
@@ -44,6 +44,12 @@ public class BoardController {
         return ApiResponse.onSuccess(boardQueryService.getPost(postId));
     }
 
+    @PostMapping("/teacher/questions")
+    public ApiResponse<BoardResponseDTO.SaveQuestionDTO> saveQuestion(@RequestBody @Valid BoardRequestDTO.SaveQuestionDTO request) {
+        Question question = boardCommandService.saveQuestion(request);
+        return ApiResponse.onSuccess(BoardConverter.toSaveQuestionDTO(question));
+    }
+
     @PostMapping("/board/boss/posts/{postId}/bookmark")
     public ApiResponse<BoardResponseDTO.SavePostBookmarkDTO> savePostBookmark(@PathVariable("postId") Long postId){
         PostBookmark bookmark = boardCommandService.savePostBookmark(postId);
@@ -54,12 +60,6 @@ public class BoardController {
     public ApiResponse<BoardResponseDTO.SavePostLikeDTO> savePostLike(@PathVariable("postId") Long postId){
         PostLike like = boardCommandService.savePostLike(postId);
         return ApiResponse.onSuccess(BoardConverter.toSavePostLikeDTO(like));
-    }
-
-    @PostMapping("/teacher/questions")
-    public ApiResponse<BoardResponseDTO.SaveQuestionDTO> saveQuestion(@RequestBody @Valid BoardRequestDTO.SaveQuestionDTO request) {
-        Question question = boardCommandService.saveQuestion(request);
-        return ApiResponse.onSuccess(BoardConverter.toSaveQuestionDTO(question));
     }
 
     @PatchMapping("/teacher/questions/{questionId}")
