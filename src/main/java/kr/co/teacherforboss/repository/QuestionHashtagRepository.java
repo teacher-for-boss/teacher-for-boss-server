@@ -10,8 +10,11 @@ import kr.co.teacherforboss.domain.QuestionHashtag;
 
 @Repository
 public interface QuestionHashtagRepository extends JpaRepository<QuestionHashtag, Long> {
-	@Modifying
-	@Query(value = "delete from question_hashtag qh "
-			+ "where qh.question_id = :questionId", nativeQuery = true)
+	@Modifying(clearAutomatically = true)
+	@Query(value = """
+			UPDATE question_hashtag qh 
+			SET qh.status = 'INACTIVE'
+			WHERE qh.question_id = :questionId
+			""", nativeQuery = true)
 	void deleteAllByQuestionId(@Param("questionId") Long questionId);
 }
