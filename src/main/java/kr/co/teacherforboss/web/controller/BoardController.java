@@ -40,9 +40,9 @@ public class BoardController {
     }
 
     @PostMapping("/boss/posts/{postId}")
-    public ApiResponse<BoardResponseDTO.SavePostDTO> modifyPost(@PathVariable("postId") Long postId,
-                                                                @RequestBody @Valid BoardRequestDTO.SavePostDTO request) {
-        Post post = boardCommandService.modifyPost(postId, request);
+    public ApiResponse<BoardResponseDTO.SavePostDTO> editPost(@PathVariable("postId") Long postId,
+                                                              @RequestBody @Valid BoardRequestDTO.SavePostDTO request) {
+        Post post = boardCommandService.editPost(postId, request);
         return ApiResponse.onSuccess(BoardConverter.toSavePostDTO(post));
     }
 }
