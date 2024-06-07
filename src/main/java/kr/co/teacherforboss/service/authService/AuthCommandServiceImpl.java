@@ -3,6 +3,8 @@ package kr.co.teacherforboss.service.authService;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.GeneralException;
 import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
@@ -244,9 +246,8 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Transactional
     public Member socialLogin(AuthRequestDTO.SocialLoginDTO request, int socialType) {
         // TODO: 전화번호가 변경되었을 때 어떻게 처리할지
-        if (memberRepository.existsByEmailAndLoginTypeAndStatus(request.getEmail(), LoginType.of(socialType), Status.ACTIVE))
-            return memberRepository.findByEmailAndLoginTypeAndStatus(request.getEmail(), LoginType.of(socialType), Status.ACTIVE)
-                    .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Optional<Member> member = memberRepository.findByEmailAndLoginTypeAndStatus(request.getEmail(), LoginType.of(socialType), Status.ACTIVE);
+        if (member.isPresent()) return member.get();
 
         if (memberRepository.existsByEmailAndStatus(request.getEmail(), Status.ACTIVE))
             throw new MemberHandler(ErrorStatus.MEMBER_EMAIL_DUPLICATED);
