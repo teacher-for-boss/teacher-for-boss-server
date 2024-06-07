@@ -50,27 +50,20 @@ public class S3QueryServiceImpl implements S3QueryService{
 				generatePresignedUrlRequest = getGeneratePresignedUrlRequest(bucket, fileName);
 				url = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
 
-				log.info("File Name => " + fileName);
-
 				presignedUrlList.add(url.toString());
 				break;
 			default:
 				for (int index = 1; index <= request.getImageCount(); index++) {
 					LocalDateTime timestamp = LocalDateTime.now();
 
-					log.info("Image File Pattern Timestamp => " + timestamp);
-
 					fileName = String.format("%s/%s/%s_%d", type, request.getId(), timestamp.format(DateTimeFormatter.ofPattern(FILE_DATETIME_PATTERN)), index);
 
 					generatePresignedUrlRequest = getGeneratePresignedUrlRequest(bucket, fileName);
 					url = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
 
-					log.info("File Name => " + fileName);
-
 					presignedUrlList.add(url.toString());
 				}
 		}
-
 
 		return S3ResponseDTO.GetPresignedUrlDTO.builder()
 				.presignedUrlList(presignedUrlList)
