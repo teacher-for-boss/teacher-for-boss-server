@@ -64,10 +64,14 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     public Member joinMember(AuthRequestDTO.JoinDTO request){
         if (memberRepository.existsByEmailAndStatus(request.getEmail(), Status.ACTIVE))
             throw new AuthHandler(ErrorStatus.MEMBER_EMAIL_DUPLICATED);
+        if (!emailAuthRepository.existsByIdAndEmailAndPurposeAndIsChecked(request.getEmailAuthId(), request.getEmail(), Purpose.of(1), "T"))
+            throw new AuthHandler(ErrorStatus.MAIL_NOT_CHECKED);
         if (memberRepository.existsByPhoneAndStatus(request.getPhone(), Status.ACTIVE))
             throw new AuthHandler(ErrorStatus.MEMBER_PHONE_DUPLICATED);
         if (!request.getPassword().equals(request.getRePassword()))
             throw new AuthHandler(ErrorStatus.PASSWORD_NOT_CORRECT);
+        if (!phoneAuthRepository.existsByIdAndPhoneAndPurposeAndIsChecked(request.getPhoneAuthId(), request.getPhone(), Purpose.of(1), "T"))
+            throw new AuthHandler(ErrorStatus.PHONE_NOT_CHECKED);
         if (!(request.getAgreementUsage().equals("T") && request.getAgreementInfo().equals("T") && request.getAgreementAge().equals("T")))
             throw new AuthHandler(ErrorStatus.INVALID_AGREEMENT_TERM);
         if (memberRepository.existsByNicknameAndStatus(request.getNickname(), Status.ACTIVE))
