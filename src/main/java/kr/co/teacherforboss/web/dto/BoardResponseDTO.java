@@ -79,4 +79,13 @@ public class BoardResponseDTO {
         Boolean like;
         LocalDateTime updatedAt;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DeleteQuestionDTO {
+        Long questionId;
+        LocalDateTime deletedAt;
+    }
 }

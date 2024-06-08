@@ -8,11 +8,7 @@ import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostHashtag;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionHashtag;
-import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.PostLike;
-import kr.co.teacherforboss.domain.enums.BooleanType;
-import kr.co.teacherforboss.domain.Question;
-import kr.co.teacherforboss.domain.QuestionHashtag;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
@@ -175,6 +171,13 @@ public class BoardConverter {
                 .content(request.getContent())
                 .imageCount(request.getImageCount())
                 .imageTimestamp(request.getImageTimestamp())
+                .build();
+    }
+
+    public static BoardResponseDTO.DeleteQuestionDTO toDeleteQuestionDTO(Question question) {
+        return BoardResponseDTO.DeleteQuestionDTO.builder()
+                .questionId(question.getId())
+                .deletedAt(question.getUpdatedAt())
                 .build();
     }
 }
