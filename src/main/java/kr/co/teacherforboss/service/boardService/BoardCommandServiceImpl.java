@@ -1,13 +1,5 @@
 package kr.co.teacherforboss.service.boardService;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.BoardHandler;
 import kr.co.teacherforboss.converter.BoardConverter;
@@ -17,11 +9,10 @@ import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostHashtag;
-import kr.co.teacherforboss.domain.PostLike;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionHashtag;
+import kr.co.teacherforboss.domain.PostLike;
 import kr.co.teacherforboss.domain.enums.Status;
-import kr.co.teacherforboss.repository.AnswerRepository;
 import kr.co.teacherforboss.repository.CategoryRepository;
 import kr.co.teacherforboss.repository.HashtagRepository;
 import kr.co.teacherforboss.repository.PostBookmarkRepository;
@@ -33,6 +24,13 @@ import kr.co.teacherforboss.repository.QuestionRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +44,6 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     private final CategoryRepository categoryRepository;
     private final PostBookmarkRepository postBookmarkRepository;
     private final PostLikeRepository postLikeRepository;
-    private final AnswerRepository answerRepository;
 
     @Override
     @Transactional
@@ -156,19 +153,5 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         questionHashtagRepository.saveAll(editQuestionHashtags);
 
         return editQuestion;
-    }
-
-    @Override
-    public Question deleteQuestion(Long questionId) {
-        Member member = authCommandService.getMember();
-        Question deleteQuestion = questionRepository.findByIdAndMember(questionId, member)
-                .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
-
-        // TODO: 해당 글에 달린 댓글들도 전부 INACTIVE 처리 -> test는 아직 못 해봄
-        answerRepository.softDeleteByQuestionId(questionId);
-
-        deleteQuestion.softDelete();
-
-        return deleteQuestion;
     }
 }
