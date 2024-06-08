@@ -1,14 +1,11 @@
 package kr.co.teacherforboss.repository;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import kr.co.teacherforboss.domain.Answer;
-import kr.co.teacherforboss.domain.Question;
 
 @Repository
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
@@ -17,5 +14,5 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
 			SET a.status = 'INACTIVE'
 			WHERE a.question_id = :questionId
 			""", nativeQuery = true)
-	void updateStatusByQuestion(@Param("questionId") Long questionId);
+	void softDeleteByQuestionId(@Param("questionId") Long questionId);
 }

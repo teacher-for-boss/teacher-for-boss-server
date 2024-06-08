@@ -165,10 +165,9 @@ public class BoardCommandServiceImpl implements BoardCommandService {
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
 
         // TODO: 해당 글에 달린 댓글들도 전부 INACTIVE 처리 -> test는 아직 못 해봄
-        answerRepository.updateStatusByQuestion(questionId);
+        answerRepository.softDeleteByQuestionId(questionId);
 
         deleteQuestion.softDelete();
-        questionRepository.save(deleteQuestion);
 
         return deleteQuestion;
     }
