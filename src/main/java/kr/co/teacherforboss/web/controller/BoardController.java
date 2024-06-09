@@ -1,6 +1,7 @@
 package kr.co.teacherforboss.web.controller;
 
 import kr.co.teacherforboss.converter.CommentConverter;
+import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.Comment;
 import kr.co.teacherforboss.service.commentService.CommentCommandService;
 import kr.co.teacherforboss.web.dto.CommentRequestDTO;
@@ -39,21 +40,14 @@ public class BoardController {
     private final CommentCommandService commentCommandService;
 
     @PostMapping("/boss/posts")
-    public ApiResponse<BoardResponseDTO.SavePostDTO> savePost(@RequestBody @Valid BoardRequestDTO.SavePostDTO request) {
+    public ApiResponse<BoardResponseDTO.SavePostDTO> savePost(@RequestBody @Valid BoardRequestDTO.SavePostDTO request){
         Post post = boardCommandService.savePost(request);
         return ApiResponse.onSuccess(BoardConverter.toSavePostDTO(post));
     }
 
     @GetMapping("/boss/posts/{postId}")
-    public ApiResponse<BoardResponseDTO.GetPostDTO> getPost(@PathVariable("postId") Long postId) {
+    public ApiResponse<BoardResponseDTO.GetPostDTO> getPost(@PathVariable("postId") Long postId){
         return ApiResponse.onSuccess(boardQueryService.getPost(postId));
-    }
-
-    @PostMapping("/boss/posts/{postId}")
-    public ApiResponse<BoardResponseDTO.SavePostDTO> editPost(@PathVariable("postId") Long postId,
-                                                              @RequestBody @Valid BoardRequestDTO.SavePostDTO request) {
-        Post post = boardCommandService.editPost(postId, request);
-        return ApiResponse.onSuccess(BoardConverter.toSavePostDTO(post));
     }
 
     @PostMapping("/teacher/questions")
@@ -62,14 +56,14 @@ public class BoardController {
         return ApiResponse.onSuccess(BoardConverter.toSaveQuestionDTO(question));
     }
 
-    @PostMapping("/board/boss/posts/{postId}/bookmark")
-    public ApiResponse<BoardResponseDTO.SavePostBookmarkDTO> savePostBookmark(@PathVariable("postId") Long postId) {
+    @PostMapping("/boss/posts/{postId}/bookmark")
+    public ApiResponse<BoardResponseDTO.SavePostBookmarkDTO> savePostBookmark(@PathVariable("postId") Long postId){
         PostBookmark bookmark = boardCommandService.savePostBookmark(postId);
         return ApiResponse.onSuccess(BoardConverter.toSavePostBookmarkDTO(bookmark));
     }
 
-    @PostMapping("/board/boss/posts/{postId}/likes")
-    public ApiResponse<BoardResponseDTO.SavePostLikeDTO> savePostLike(@PathVariable("postId") Long postId) {
+    @PostMapping("/boss/posts/{postId}/likes")
+    public ApiResponse<BoardResponseDTO.SavePostLikeDTO> savePostLike(@PathVariable("postId") Long postId){
         PostLike like = boardCommandService.savePostLike(postId);
         return ApiResponse.onSuccess(BoardConverter.toSavePostLikeDTO(like));
     }
@@ -78,6 +72,21 @@ public class BoardController {
     public ApiResponse<BoardResponseDTO.EditQuestionDTO> editQuestion(@PathVariable("questionId") Long questionId, @RequestBody @Valid BoardRequestDTO.EditQuestionDTO request) {
         Question question = boardCommandService.editQuestion(questionId, request);
         return ApiResponse.onSuccess(BoardConverter.toEditQuestionDTO(question));
+    }
+
+
+    @PostMapping("/teacher/questions/{questionId}/answers")
+    public ApiResponse<BoardResponseDTO.SaveAnswerDTO> saveAnswer(@PathVariable("questionId") Long questionId,
+                                                                  @RequestBody @Valid BoardRequestDTO.SaveAnswerDTO request) {
+        Answer answer = boardCommandService.saveAnswer(questionId, request);
+        return ApiResponse.onSuccess(BoardConverter.toSaveAnswerDTO(answer));
+    }
+
+    @PostMapping("/boss/posts/{postId}")
+    public ApiResponse<BoardResponseDTO.SavePostDTO> editPost(@PathVariable("postId") Long postId,
+                                                              @RequestBody @Valid BoardRequestDTO.SavePostDTO request) {
+        Post post = boardCommandService.editPost(postId, request);
+        return ApiResponse.onSuccess(BoardConverter.toSavePostDTO(post));
     }
 
     @PostMapping("/boss/posts/{postId}/comments")
