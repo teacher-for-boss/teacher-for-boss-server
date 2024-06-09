@@ -47,13 +47,22 @@ public class BoardResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class EditQuestionDTO {
+        Long questionId;
+        LocalDateTime createdAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class SaveAnswerDTO {
         Long answerId;
         LocalDateTime createdAt;
     }
 
-    @Builder
     @Getter
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class MemberInfo {

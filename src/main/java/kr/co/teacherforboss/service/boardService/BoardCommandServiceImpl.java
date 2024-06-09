@@ -132,6 +132,36 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
     @Override
     @Transactional
+    public Question editQuestion(Long questionId, BoardRequestDTO.EditQuestionDTO request) {
+        Member member = authCommandService.getMember();
+        Category category = categoryRepository.findByIdAndStatus(request.getCategoryId(), Status.ACTIVE);
+        Question editQuestion = questionRepository.findById(questionId)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND))
+                .editQuestion(category, request.getTitle(), request.getContent(), request.getImageCount(), request.getImageTimestamp());
+
+        // TODO : 수정되고 난 후 아예 안 쓰이는 해시태그 비활성화?
+        questionHashtagRepository.softDeleteAllByQuestionId(questionId);
+        List<QuestionHashtag> editQuestionHashtags = new ArrayList<>();
+        if (request.getHashtagList() != null) {
+            Set<String> editHashtags = new HashSet<>(request.getHashtagList());
+            for (String tag : editHashtags) {
+                Hashtag hashtag = hashtagRepository.findByNameAndStatus(tag, Status.ACTIVE);
+                if (hashtag == null) {
+                    hashtag = hashtagRepository.save(BoardConverter.toHashtag(tag));
+                }
+                QuestionHashtag questionHashtag = BoardConverter.toQuestionHashtag(editQuestion, hashtag);
+                editQuestionHashtags.add(questionHashtag);
+            }
+        }
+
+        questionRepository.save(editQuestion);
+        questionHashtagRepository.saveAll(editQuestionHashtags);
+
+        return editQuestion;
+    }
+
+    @Override
+    @Transactional
     public Answer saveAnswer(long questionId, BoardRequestDTO.SaveAnswerDTO request) {
         if (request.getImageCount() > 0 && request.getImageTimestamp() == null)
             throw new BoardHandler(ErrorStatus.INVALID_IMAGE_TIMESTAMP);

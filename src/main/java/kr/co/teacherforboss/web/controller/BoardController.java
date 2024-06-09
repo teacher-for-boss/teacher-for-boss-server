@@ -3,6 +3,7 @@ package kr.co.teacherforboss.web.controller;
 import kr.co.teacherforboss.domain.Answer;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +17,7 @@ import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostLike;
+import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.service.boardService.BoardCommandService;
 import kr.co.teacherforboss.service.boardService.BoardQueryService;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
@@ -61,6 +63,13 @@ public class BoardController {
         PostLike like = boardCommandService.savePostLike(postId);
         return ApiResponse.onSuccess(BoardConverter.toSavePostLikeDTO(like));
     }
+
+    @PatchMapping("/teacher/questions/{questionId}")
+    public ApiResponse<BoardResponseDTO.EditQuestionDTO> editQuestion(@PathVariable("questionId") Long questionId, @RequestBody @Valid BoardRequestDTO.EditQuestionDTO request) {
+        Question question = boardCommandService.editQuestion(questionId, request);
+        return ApiResponse.onSuccess(BoardConverter.toEditQuestionDTO(question));
+    }
+
 
     @PostMapping("/teacher/questions/{questionId}/answers")
     public ApiResponse<BoardResponseDTO.SaveAnswerDTO> saveAnswer(@PathVariable("questionId") Long questionId,

@@ -58,7 +58,7 @@ public class AuthRequestDTO {
         @Size(max = 20, message = "분야는 최대 20자 이내로 입력 가능합니다.")
         String field;
 
-        @Max(value = 2, message = "경력은 십의 자리 수 이내로 입력 가능합니다.")
+        @Max(value = 99, message = "경력은 십의 자리 수 이내로 입력 가능합니다.")
         Integer career;
 
         @Size(max = 40, message = "한 줄 소개는 최대 40자 이내로 입력 가능합니다.")
