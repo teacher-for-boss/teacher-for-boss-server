@@ -5,6 +5,7 @@ import kr.co.teacherforboss.domain.Comment;
 import kr.co.teacherforboss.service.commentService.CommentCommandService;
 import kr.co.teacherforboss.web.dto.CommentRequestDTO;
 import kr.co.teacherforboss.web.dto.CommentResponseDTO;
+import kr.co.teacherforboss.domain.Answer;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -64,12 +65,20 @@ public class BoardController {
 
     @PostMapping("/board/boss/posts/{postId}/bookmark")
     public ApiResponse<BoardResponseDTO.SavePostBookmarkDTO> savePostBookmark(@PathVariable("postId") Long postId) {
+    }
+  
+    @PostMapping("/boss/posts/{postId}/bookmark")
+    public ApiResponse<BoardResponseDTO.SavePostBookmarkDTO> savePostBookmark(@PathVariable("postId") Long postId){
         PostBookmark bookmark = boardCommandService.savePostBookmark(postId);
         return ApiResponse.onSuccess(BoardConverter.toSavePostBookmarkDTO(bookmark));
     }
 
     @PostMapping("/board/boss/posts/{postId}/likes")
     public ApiResponse<BoardResponseDTO.SavePostLikeDTO> savePostLike(@PathVariable("postId") Long postId) {
+    }
+  
+    @PostMapping("/boss/posts/{postId}/likes")
+    public ApiResponse<BoardResponseDTO.SavePostLikeDTO> savePostLike(@PathVariable("postId") Long postId){
         PostLike like = boardCommandService.savePostLike(postId);
         return ApiResponse.onSuccess(BoardConverter.toSavePostLikeDTO(like));
     }
@@ -85,5 +94,12 @@ public class BoardController {
                                                                             @RequestBody @Valid CommentRequestDTO.SaveCommentDTO request) {
         Comment comment = commentCommandService.saveComment(request, postId);
         return ApiResponse.onSuccess(CommentConverter.toSaveCommentResultDTO(comment));
+    }
+  
+    @PostMapping("/teacher/questions/{questionId}/answers")
+    public ApiResponse<BoardResponseDTO.SaveAnswerDTO> saveAnswer(@PathVariable("questionId") Long questionId,
+                                                                  @RequestBody @Valid BoardRequestDTO.SaveAnswerDTO request) {
+        Answer answer = boardCommandService.saveAnswer(questionId, request);
+        return ApiResponse.onSuccess(BoardConverter.toSaveAnswerDTO(answer));
     }
 }
