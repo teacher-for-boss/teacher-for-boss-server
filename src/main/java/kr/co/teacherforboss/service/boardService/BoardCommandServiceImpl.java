@@ -3,6 +3,7 @@ package kr.co.teacherforboss.service.boardService;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
@@ -94,23 +95,27 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     }
 
     private void editPostHashtags(Post post, List<String> newHashtagList) {
-        List<PostHashtag> postHashtagList = post.getHashtagList();
+        List<PostHashtag> existPostHashtags = post.getHashtagList();
+        existPostHashtags.forEach(ph -> ph.setStatus(Status.INACTIVE));
 
-        List<PostHashtag> newPostHashtagList = new ArrayList<>();
         for (String tag : newHashtagList) {
-            Hashtag newHashtag = BoardConverter.toHashtag(tag);
-            PostHashtag newPostHashtag = BoardConverter.toPostHashtag(post, newHashtag);
-            if (!hashtagRepository.existsByNameAndStatus(tag, Status.ACTIVE)) {
-                hashtagRepository.save(newHashtag);
-                postHashtagRepository.save(newPostHashtag);
-            }
-            newPostHashtagList.add(newPostHashtag);
-        }
+            Hashtag hashtag = hashtagRepository.findOptionalByNameAndStatus(tag, Status.ACTIVE)
+                    .orElseGet(() -> {
+                        Hashtag newHashtag = BoardConverter.toHashtag(tag);
+                        hashtagRepository.save(newHashtag);
+                        return newHashtag;
+                    });
 
-        postHashtagList.removeAll(newPostHashtagList);
-        for (PostHashtag postHashtag : postHashtagList) {
-            if (postHashtag.getStatus() == Status.ACTIVE) {
-                postHashtag.setStatus(Status.INACTIVE);
+            Optional<PostHashtag> existingPostHashtag = existPostHashtags.stream()
+                    .filter(ph -> ph.getHashtag().equals(hashtag))
+                    .findFirst();
+
+            existingPostHashtag.ifPresent(ph -> ph.setStatus(Status.ACTIVE));
+
+            if (existingPostHashtag.isEmpty()) {
+                PostHashtag newPostHashtag = BoardConverter.toPostHashtag(post, hashtag);
+                existPostHashtags.add(newPostHashtag);
+                postHashtagRepository.save(newPostHashtag);
             }
         }
     }
