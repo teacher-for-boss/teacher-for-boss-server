@@ -7,7 +7,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import kr.co.teacherforboss.validation.annotation.CheckRole;
 import kr.co.teacherforboss.validation.annotation.CheckTrueOrFalse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,22 +20,22 @@ import java.util.List;
 public class AuthRequestDTO {
     @Getter
     public static abstract class JoinCommonDTO{
-        @CheckRole
-        @NotNull(message = "보스(1)/티쳐(2) 중 선택해주세요.")
+//        @CheckRole
+//        @NotNull(message = "보스(1)/티쳐(2) 중 선택해주세요.")
         Integer role;
 
         @Email(message = "이메일 형식이 아닙니다.")
         @NotNull(message = "이메일이 없습니다.")
         String email;
 
-        @NotBlank(message = "이름이 없습니다.")
+//        @NotBlank(message = "이름이 없습니다.")
         String name;
 
-        @NotNull(message = "닉네임을 입력해주세요.")
+//        @NotNull(message = "닉네임을 입력해주세요.")
         @Pattern(regexp = "^[가-힣a-zA-Z0-9]{1,10}$", message = "닉네임은 한국어/영어/숫자로 최대 10자 입력 가능합니다.")
         String nickname;
 
-        @NotNull(message = "전화번호가 없습니다.")
+//        @NotNull(message = "전화번호가 없습니다.")
         @Pattern(regexp = "010([2-9])\\d{7,8}", message = "전화번호는 10 ~ 11 자리의 숫자만 입력 가능합니다.")
         String phone;
 
@@ -44,7 +43,7 @@ public class AuthRequestDTO {
 
         LocalDate birthDate;
 
-        @NotNull(message = "프로필 이미지를 선택해주세요.")
+//        @NotNull(message = "프로필 이미지를 선택해주세요.")
         String profileImg;
 
         @Pattern(regexp = "^\\d{3}-\\d{2}-\\d{5}$", message = "사업자 등록 번호는 최대 10자 이내로 입력 가능합니다.")

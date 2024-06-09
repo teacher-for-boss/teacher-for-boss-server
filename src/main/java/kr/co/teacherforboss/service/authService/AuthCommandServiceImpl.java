@@ -65,6 +65,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Override
     @Transactional
     public Member joinMember(AuthRequestDTO.JoinDTO request){
+        checkJoinDTO(request);
         if (memberRepository.existsByEmailAndStatus(request.getEmail(), Status.ACTIVE))
             throw new AuthHandler(ErrorStatus.MEMBER_EMAIL_DUPLICATED);
         if (!emailAuthRepository.existsByIdAndEmailAndPurposeAndIsChecked(request.getEmailAuthId(), request.getEmail(),
@@ -249,6 +250,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         Optional<Member> member = memberRepository.findByEmailAndLoginTypeAndStatus(request.getEmail(), LoginType.of(socialType), Status.ACTIVE);
         if (member.isPresent()) return member.get();
 
+        checkJoinDTO(request);
         if (memberRepository.existsByEmailAndStatus(request.getEmail(), Status.ACTIVE))
             throw new MemberHandler(ErrorStatus.MEMBER_EMAIL_DUPLICATED);
         if (memberRepository.existsByPhoneAndStatus(request.getPhone(), Status.ACTIVE))
@@ -311,5 +313,20 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
         TeacherInfo newTeacher = AuthConverter.toTeacher(request);
         teacherInfoRepository.save(newTeacher);
+    }
+
+    private void checkJoinDTO (AuthRequestDTO.JoinCommonDTO request) {
+        if (request.getRole() == null)
+            throw new AuthHandler(ErrorStatus.MEMBER_ROLE_EMPTY);
+        if (!(Role.of(request.getRole()).equals(Role.BOSS) || Role.of(request.getRole()).equals(Role.TEACHER)))
+            throw new AuthHandler(ErrorStatus.MEMBER_ROLE_INVALID);
+        if (request.getName() == null)
+            throw new AuthHandler(ErrorStatus.MEMBER_NAME_EMPTY);
+        if (request.getNickname() == null)
+            throw new AuthHandler(ErrorStatus.MEMBER_NICKNAME_EMPTY);
+        if (request.getPhone() == null)
+            throw new AuthHandler(ErrorStatus.MEMBER_PHONE_EMPTY);
+        if (request.getProfileImg() == null)
+            throw new AuthHandler(ErrorStatus.MEMBER_PROFILE_IMG_EMPTY);
     }
 }
