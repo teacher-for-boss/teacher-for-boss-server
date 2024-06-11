@@ -23,7 +23,7 @@ public class S3Controller {
     private final S3QueryService s3QueryService;
 
     @GetMapping("/presigned-url")
-    public ApiResponse<S3ResponseDTO.GetPresignedUrlDTO> getPresignedUrl(@RequestParam String uuid, @RequestParam(defaultValue = "0") Integer lastIndex, @RequestParam Integer imageCount) {
+    public ApiResponse<S3ResponseDTO.GetPresignedUrlDTO> getPresignedUrl(@RequestParam(defaultValue = "new") String uuid, @RequestParam(defaultValue = "0") Integer lastIndex, @RequestParam Integer imageCount) {
         return ApiResponse.onSuccess(s3QueryService.getPresignedUrl(S3RequestDTO.GetPresignedUrlDTO.builder()
                         .uuid(uuid)
                         .lastIndex(lastIndex)
