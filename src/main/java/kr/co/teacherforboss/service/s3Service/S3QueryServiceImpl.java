@@ -34,15 +34,13 @@ public class S3QueryServiceImpl implements S3QueryService{
 	@Override
 	public S3ResponseDTO.GetPresignedUrlDTO getPresignedUrl(String uuid, Integer lastIndex, Integer imageCount) {
 		List<String> presignedUrlList = new ArrayList<>();
-		String fileName;
-		GeneratePresignedUrlRequest generatePresignedUrlRequest;
-		URL url;
+		String imageUuid = (uuid == null) ? createUuid() : uuid;
 
 		for (int index = lastIndex + 1; index <= lastIndex + imageCount; index++) {
-			fileName = String.format("%s_%d", uuid, index);
+			String fileName = String.format("%s_%d", imageUuid, index);
 
-			generatePresignedUrlRequest = getGeneratePresignedUrlRequest(bucket, fileName);
-			url = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
+			GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePresignedUrlRequest(bucket, fileName);
+			URL url = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
 
 			presignedUrlList.add(url.toString());
 		}
@@ -69,7 +67,7 @@ public class S3QueryServiceImpl implements S3QueryService{
 		return new Date(System.currentTimeMillis() + URL_EXPIRATION);
 	}
 
-	private String createFileId() {
+	private String createUuid() {
 		return UUID.randomUUID().toString();
 	}
 }
