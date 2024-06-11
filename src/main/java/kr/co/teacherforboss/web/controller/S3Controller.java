@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.service.s3Service.S3QueryService;
-import kr.co.teacherforboss.web.dto.S3RequestDTO;
 import kr.co.teacherforboss.web.dto.S3ResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,21 +23,6 @@ public class S3Controller {
 
     @GetMapping("/presigned-url")
     public ApiResponse<S3ResponseDTO.GetPresignedUrlDTO> getPresignedUrl(@RequestParam(required = false) String uuid, @RequestParam(defaultValue = "0") Integer lastIndex, @RequestParam Integer imageCount) {
-        S3ResponseDTO.GetPresignedUrlDTO result;
-
-        if (uuid == null) {
-            result = s3QueryService.getPresignedUrl(S3RequestDTO.GetPresignedUrlDTO.builder()
-                    .lastIndex(lastIndex)
-                    .imageCount(imageCount)
-                    .build());
-        } else {
-            result = s3QueryService.getPresignedUrl(S3RequestDTO.GetPresignedUrlDTO.builder()
-                    .uuid(uuid)
-                    .lastIndex(lastIndex)
-                    .imageCount(imageCount)
-                    .build());
-        }
-
-        return ApiResponse.onSuccess(result);
+        return ApiResponse.onSuccess(s3QueryService.getPresignedUrl(uuid, lastIndex, imageCount));
     }
 }

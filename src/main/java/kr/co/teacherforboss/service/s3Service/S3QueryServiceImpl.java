@@ -15,7 +15,6 @@ import com.amazonaws.services.s3.Headers;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 
-import kr.co.teacherforboss.web.dto.S3RequestDTO;
 import kr.co.teacherforboss.web.dto.S3ResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,14 +32,13 @@ public class S3QueryServiceImpl implements S3QueryService{
 	private final long URL_EXPIRATION = 1000 * 60 * 10;	// 600s
 
 	@Override
-	public S3ResponseDTO.GetPresignedUrlDTO getPresignedUrl(S3RequestDTO.GetPresignedUrlDTO request) {
+	public S3ResponseDTO.GetPresignedUrlDTO getPresignedUrl(String uuid, Integer lastIndex, Integer imageCount) {
 		List<String> presignedUrlList = new ArrayList<>();
 		String fileName;
-		String uuid = (request.getUuid() == null ? createFileId() : request.getUuid());
 		GeneratePresignedUrlRequest generatePresignedUrlRequest;
 		URL url;
 
-		for (int index = request.getLastIndex() + 1; index <= request.getLastIndex() + request.getImageCount(); index++) {
+		for (int index = lastIndex + 1; index <= lastIndex + imageCount; index++) {
 			fileName = String.format("%s_%d", uuid, index);
 
 			generatePresignedUrlRequest = getGeneratePresignedUrlRequest(bucket, fileName);
