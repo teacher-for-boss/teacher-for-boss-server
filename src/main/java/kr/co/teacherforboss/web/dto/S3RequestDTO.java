@@ -14,11 +14,11 @@ public class S3RequestDTO {
 	@Builder
 	public static class GetPresignedUrlDTO {
 
-		@NotNull(message = "이미지 저장 목적은 필수 입력값입니다.")
-		String type;
+		@NotNull(message = "이미지 고유값은 필수 입력값입니다.")
+		String uuid;
 
-		@NotNull(message = "고유번호는 필수 입력값입니다.")
-		Long id;
+		@NotNull(message = "마지막 저장 인덱스는 필수 입력값입니다.")
+		Integer lastIndex;
 
 		@NotNull(message = "저장할 이미지 개수는 필수 입력값입니다.")
 		Integer imageCount;
