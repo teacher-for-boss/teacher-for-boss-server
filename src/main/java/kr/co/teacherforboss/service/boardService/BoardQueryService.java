@@ -4,4 +4,5 @@ import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 
 public interface BoardQueryService {
     BoardResponseDTO.GetPostDTO getPost(Long postId);
+    BoardResponseDTO.GetAnswersDTO getAnswers(Long questionId);
 }

@@ -1,24 +1,22 @@
 package kr.co.teacherforboss.converter;
 
+import java.util.HashMap;
+import java.util.List;
 import kr.co.teacherforboss.domain.Answer;
+import kr.co.teacherforboss.domain.AnswerLike;
 import kr.co.teacherforboss.domain.Category;
 import kr.co.teacherforboss.domain.Hashtag;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostHashtag;
-import kr.co.teacherforboss.domain.Question;
-import kr.co.teacherforboss.domain.QuestionHashtag;
-import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.PostLike;
-import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionHashtag;
+import kr.co.teacherforboss.domain.TeacherInfo;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
-
-import java.util.List;
 
 public class BoardConverter {
 
@@ -48,6 +46,15 @@ public class BoardConverter {
                 .memberId(member.getId())
                 .name(member.getName())
                 .profileImg(member.getProfileImg())
+                .build();
+    }
+
+    public static BoardResponseDTO.MemberInfo toMemberInfo(Member member, TeacherInfo teacherInfo) {
+        return BoardResponseDTO.MemberInfo.builder()
+                .memberId(member.getId())
+                .name(member.getName())
+                .profileImg(member.getProfileImg())
+                .level((teacherInfo == null) ? null : teacherInfo.getLevel().getLevel())
                 .build();
     }
 
@@ -196,6 +203,34 @@ public class BoardConverter {
         return BoardResponseDTO.SaveAnswerDTO.builder()
                 .answerId(answer.getId())
                 .createdAt(answer.getCreatedAt())
+                .build();
+    }
+
+    public static BoardResponseDTO.GetAnswersDTO toGetAnswersDTO(List<Answer> answers, List<AnswerLike> answerLikes,
+                                                                 List<TeacherInfo> teacherInfos) {
+        HashMap<Long, BooleanType> answerLiked = new HashMap<>();
+        answerLikes.forEach(answerLike -> answerLiked.put(answerLike.getAnswer().getId(), answerLike.getLiked()));
+
+        HashMap<Long, TeacherInfo> teacherInfoMap = new HashMap<>();
+        teacherInfos.forEach(teacherInfo -> teacherInfoMap.put(teacherInfo.getId(), teacherInfo));
+
+        List<BoardResponseDTO.GetAnswersDTO.AnswerInfo> answerInfos = answers.stream()
+                .map(answer -> BoardResponseDTO.GetAnswersDTO.AnswerInfo.builder()
+                        .answerId(answer.getId())
+                        .content(answer.getContent())
+                        .likeCount(answer.getLikeCount())
+                        .dislikeCount(answer.getDislikeCount())
+                        .liked(answerLiked.get(answer.getId()) == BooleanType.T)
+                        .disliked(answerLiked.get(answer.getId()) == BooleanType.F)
+                        .selected(answer.getSelected().isIdentifier())
+                        .createdAt(answer.getCreatedAt())
+                        .memberInfo(toMemberInfo(answer.getMember(), teacherInfoMap.get(answer.getMember().getId())))
+                        .build())
+                .toList();
+
+        return BoardResponseDTO.GetAnswersDTO.builder()
+                .totalCount(0)
+                .answerList(answerInfos)
                 .build();
     }
 }

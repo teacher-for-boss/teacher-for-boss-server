@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, Long> {
     Optional<Question> findByIdAndStatus(Long questionId, Status status);
+    boolean existsByIdAndStatus(Long questionId, Status status);
 }

@@ -65,10 +65,35 @@ public class BoardResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class GetAnswersDTO {
+        int totalCount;
+        List<AnswerInfo> answerList;
+
+        @Getter
+        @Builder
+        @AllArgsConstructor
+        public static class AnswerInfo {
+            Long answerId;
+            String content;
+            int likeCount;
+            int dislikeCount;
+            boolean liked;
+            boolean disliked;
+            boolean selected;
+            LocalDateTime createdAt;
+            MemberInfo memberInfo;
+        }
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class MemberInfo {
         Long memberId;
         String name;
         String profileImg;
+        String level;
     }
 
     @Getter

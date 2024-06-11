@@ -1,20 +1,10 @@
 package kr.co.teacherforboss.web.controller;
 
-import kr.co.teacherforboss.domain.Answer;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import jakarta.validation.Valid;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.converter.BoardConverter;
+import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.Post;
-import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostLike;
 import kr.co.teacherforboss.domain.Question;
@@ -24,6 +14,14 @@ import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @Validated
@@ -70,11 +68,15 @@ public class BoardController {
         return ApiResponse.onSuccess(BoardConverter.toEditQuestionDTO(question));
     }
 
-
     @PostMapping("/teacher/questions/{questionId}/answers")
     public ApiResponse<BoardResponseDTO.SaveAnswerDTO> saveAnswer(@PathVariable("questionId") Long questionId,
                                                                   @RequestBody @Valid BoardRequestDTO.SaveAnswerDTO request) {
         Answer answer = boardCommandService.saveAnswer(questionId, request);
         return ApiResponse.onSuccess(BoardConverter.toSaveAnswerDTO(answer));
+    }
+
+    @GetMapping("/teacher/questions/{questionId}/answers")
+    public ApiResponse<BoardResponseDTO.GetAnswersDTO> getAnswers(@PathVariable("questionId") Long questionId) {
+        return ApiResponse.onSuccess(boardQueryService.getAnswers(questionId));
     }
 }
