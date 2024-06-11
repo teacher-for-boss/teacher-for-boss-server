@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.web.dto;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +15,7 @@ public class S3RequestDTO {
 	@Builder
 	public static class GetPresignedUrlDTO {
 
-		@NotNull(message = "이미지 고유값은 필수 입력값입니다.")
+		@Nullable
 		String uuid;
 
 		@NotNull(message = "마지막 저장 인덱스는 필수 입력값입니다.")

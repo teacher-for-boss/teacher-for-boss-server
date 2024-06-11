@@ -30,15 +30,17 @@ public class S3QueryServiceImpl implements S3QueryService{
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucket;
 
+	private final long URL_EXPIRATION = 1000 * 60 * 10;	// 600s
+
 	@Override
 	public S3ResponseDTO.GetPresignedUrlDTO getPresignedUrl(S3RequestDTO.GetPresignedUrlDTO request) {
 		List<String> presignedUrlList = new ArrayList<>();
 		String fileName;
-		String uuid = (request.getUuid().equals("new") ? createFileId() : request.getUuid());
+		String uuid = (request.getUuid() == null ? createFileId() : request.getUuid());
 		GeneratePresignedUrlRequest generatePresignedUrlRequest;
 		URL url;
 
-		for (int index = request.getLastIndex() + 1; index <= request.getLastIndex() + 3; index++) {
+		for (int index = request.getLastIndex() + 1; index <= request.getLastIndex() + request.getImageCount(); index++) {
 			fileName = String.format("%s_%d", uuid, index);
 
 			generatePresignedUrlRequest = getGeneratePresignedUrlRequest(bucket, fileName);
@@ -66,7 +68,6 @@ public class S3QueryServiceImpl implements S3QueryService{
 	}
 
 	private Date getPresignedUrlExpiration() {
-		long URL_EXPIRATION = 1000 * 60 * 10;	// 600s
 		return new Date(System.currentTimeMillis() + URL_EXPIRATION);
 	}
 
