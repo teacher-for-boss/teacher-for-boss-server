@@ -116,7 +116,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
     @Override
     @Transactional
-    public PostLike savePostLike(long postId) {
+    public PostLike savePostLike(Long postId) {
         Member member = authCommandService.getMember();
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
@@ -162,7 +162,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
     @Override
     @Transactional
-    public Answer saveAnswer(long questionId, BoardRequestDTO.SaveAnswerDTO request) {
+    public Answer saveAnswer(Long questionId, BoardRequestDTO.SaveAnswerDTO request) {
         if (request.getImageCount() > 0 && request.getImageTimestamp() == null)
             throw new BoardHandler(ErrorStatus.INVALID_IMAGE_TIMESTAMP);
 
