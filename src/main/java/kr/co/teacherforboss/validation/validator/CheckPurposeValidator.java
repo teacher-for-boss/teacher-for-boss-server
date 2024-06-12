@@ -2,7 +2,6 @@ package kr.co.teacherforboss.validation.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.domain.enums.Purpose;
 import kr.co.teacherforboss.validation.annotation.CheckPurpose;
 import lombok.RequiredArgsConstructor;
