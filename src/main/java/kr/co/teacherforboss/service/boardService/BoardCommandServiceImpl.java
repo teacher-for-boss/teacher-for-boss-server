@@ -72,9 +72,6 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
     @Override
     public Question saveQuestion(BoardRequestDTO.SaveQuestionDTO request) {
-        if (request.getImageCount() > 0 && request.getImageTimestamp() == null)
-            throw new BoardHandler(ErrorStatus.INVALID_IMAGE_TIMESTAMP);
-
         Member member = authCommandService.getMember();
         Category category = categoryRepository.findByIdAndStatus(request.getCategoryId(), Status.ACTIVE);
         Question question = BoardConverter.toQuestion(request, member, category);
@@ -134,10 +131,11 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     @Transactional
     public Question editQuestion(Long questionId, BoardRequestDTO.EditQuestionDTO request) {
         Member member = authCommandService.getMember();
+        // 여기 findByIdAndStatus 말고 findByIdAndMemberAndStatus로 해서 내가 쓴 질문인지 확인하는 로직 필요없나?
         Category category = categoryRepository.findByIdAndStatus(request.getCategoryId(), Status.ACTIVE);
-        Question editQuestion = questionRepository.findById(questionId)
+        Question editedQuestion = questionRepository.findById(questionId)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND))
-                .editQuestion(category, request.getTitle(), request.getContent(), request.getImageCount(), request.getImageTimestamp());
+                .editQuestion(category, request.getTitle(), request.getContent(), BoardConverter.extractImageIndexs(request.getImageUrlList()));
 
         // TODO : 수정되고 난 후 아예 안 쓰이는 해시태그 비활성화?
         questionHashtagRepository.softDeleteAllByQuestionId(questionId);
@@ -149,23 +147,20 @@ public class BoardCommandServiceImpl implements BoardCommandService {
                 if (hashtag == null) {
                     hashtag = hashtagRepository.save(BoardConverter.toHashtag(tag));
                 }
-                QuestionHashtag questionHashtag = BoardConverter.toQuestionHashtag(editQuestion, hashtag);
+                QuestionHashtag questionHashtag = BoardConverter.toQuestionHashtag(editedQuestion, hashtag);
                 editQuestionHashtags.add(questionHashtag);
             }
         }
 
-        questionRepository.save(editQuestion);
+        questionRepository.save(editedQuestion);
         questionHashtagRepository.saveAll(editQuestionHashtags);
 
-        return editQuestion;
+        return editedQuestion;
     }
 
     @Override
     @Transactional
     public Answer saveAnswer(long questionId, BoardRequestDTO.SaveAnswerDTO request) {
-        if (request.getImageCount() > 0 && request.getImageTimestamp() == null)
-            throw new BoardHandler(ErrorStatus.INVALID_IMAGE_TIMESTAMP);
-
         Member member = authCommandService.getMember();
         Question question = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));

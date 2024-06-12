@@ -1,6 +1,7 @@
 package kr.co.teacherforboss.domain;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -12,6 +13,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import kr.co.teacherforboss.converter.StringConverter;
 import kr.co.teacherforboss.domain.common.BaseEntity;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
@@ -67,24 +69,21 @@ public class Question extends BaseEntity {
     @ColumnDefault("0")
     private Integer bookmarkCount;
 
-    @NotNull
-    @Column
-    @ColumnDefault("0")
-    private Integer imageCount;
+    @Column(length = 36)
+    private String imageUuid;
 
     @Column
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    protected LocalDateTime imageTimestamp;
+    @Convert(converter = StringConverter.class)
+    private List<String> imageIndex;
 
     @OneToMany(mappedBy = "question")
     private List<QuestionHashtag> hashtagList;
 
-    public Question editQuestion(Category category, String title, String content, Integer imageCount, LocalDateTime imageTimestamp) {
+    public Question editQuestion(Category category, String title, String content, List<String> imageIndex) {
         this.category = category;
         this.title = title;
         this.content = content;
-        this.imageCount = imageCount;
-        this.imageTimestamp = imageTimestamp;
+        this.imageIndex = imageIndex;
         return this;
     }
 }
