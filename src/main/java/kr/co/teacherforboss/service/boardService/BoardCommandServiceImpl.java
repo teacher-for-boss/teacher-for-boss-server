@@ -131,9 +131,8 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     @Transactional
     public Question editQuestion(Long questionId, BoardRequestDTO.EditQuestionDTO request) {
         Member member = authCommandService.getMember();
-        // 여기 findByIdAndStatus 말고 findByIdAndMemberAndStatus로 해서 내가 쓴 질문인지 확인하는 로직 필요없나?
         Category category = categoryRepository.findByIdAndStatus(request.getCategoryId(), Status.ACTIVE);
-        Question editedQuestion = questionRepository.findById(questionId)
+        Question editedQuestion = questionRepository.findByIdAndMemberIdAndStatus(questionId, member.getId(), Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND))
                 .editQuestion(category, request.getTitle(), request.getContent(), BoardConverter.extractImageIndexs(request.getImageUrlList()));
 
