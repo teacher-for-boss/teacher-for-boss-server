@@ -1,19 +1,20 @@
 package kr.co.teacherforboss.converter;
 
+import java.util.List;
+
+import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.Category;
 import kr.co.teacherforboss.domain.Hashtag;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostHashtag;
+import kr.co.teacherforboss.domain.PostLike;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionHashtag;
-import kr.co.teacherforboss.domain.PostLike;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
-
-import java.util.List;
 
 public class BoardConverter {
 
@@ -171,6 +172,26 @@ public class BoardConverter {
                 .content(request.getContent())
                 .imageCount(request.getImageCount())
                 .imageTimestamp(request.getImageTimestamp())
+                .build();
+    }
+
+    public static Answer toAnswer(Question question, Member member, BoardRequestDTO.SaveAnswerDTO request) {
+        return Answer.builder()
+                .question(question)
+                .member(member)
+                .content(request.getContent())
+                .selected(BooleanType.F)
+                .likeCount(0)
+                .dislikeCount(0)
+                .imageCount(request.getImageCount())
+                .imageTimestamp(request.getImageTimestamp())
+                .build();
+    }
+
+    public static BoardResponseDTO.SaveAnswerDTO toSaveAnswerDTO(Answer answer) {
+        return BoardResponseDTO.SaveAnswerDTO.builder()
+                .answerId(answer.getId())
+                .createdAt(answer.getCreatedAt())
                 .build();
     }
 

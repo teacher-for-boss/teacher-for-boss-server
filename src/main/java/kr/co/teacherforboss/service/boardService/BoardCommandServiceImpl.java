@@ -4,13 +4,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.BoardHandler;
 import kr.co.teacherforboss.converter.BoardConverter;
+import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.Category;
 import kr.co.teacherforboss.domain.Hashtag;
 import kr.co.teacherforboss.domain.Member;
@@ -33,6 +30,8 @@ import kr.co.teacherforboss.repository.QuestionRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -73,6 +72,9 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
     @Override
     public Question saveQuestion(BoardRequestDTO.SaveQuestionDTO request) {
+        if (request.getImageCount() > 0 && request.getImageTimestamp() == null)
+            throw new BoardHandler(ErrorStatus.INVALID_IMAGE_TIMESTAMP);
+
         Member member = authCommandService.getMember();
         Category category = categoryRepository.findByIdAndStatus(request.getCategoryId(), Status.ACTIVE);
         Question question = BoardConverter.toQuestion(request, member, category);
@@ -156,6 +158,20 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         questionHashtagRepository.saveAll(editQuestionHashtags);
 
         return editQuestion;
+    }
+
+    @Override
+    @Transactional
+    public Answer saveAnswer(long questionId, BoardRequestDTO.SaveAnswerDTO request) {
+        if (request.getImageCount() > 0 && request.getImageTimestamp() == null)
+            throw new BoardHandler(ErrorStatus.INVALID_IMAGE_TIMESTAMP);
+
+        Member member = authCommandService.getMember();
+        Question question = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
+
+        Answer answer = BoardConverter.toAnswer(question, member, request);
+        return answerRepository.save(answer);
     }
 
     @Override
