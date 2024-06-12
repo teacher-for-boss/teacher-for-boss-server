@@ -30,9 +30,12 @@ import kr.co.teacherforboss.repository.QuestionRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BoardCommandServiceImpl implements BoardCommandService {
@@ -175,15 +178,16 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     }
 
     @Override
+    @Transactional
     public Question deleteQuestion(Long questionId) {
         Member member = authCommandService.getMember();
         Question deleteQuestion = questionRepository.findByIdAndMember(questionId, member)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
 
-        // TODO: 해당 글에 달린 댓글들도 전부 INACTIVE 처리 -> test는 아직 못 해봄
         answerRepository.softDeleteByQuestionId(questionId);
 
         deleteQuestion.softDelete();
+        questionRepository.save(deleteQuestion);
 
         return deleteQuestion;
     }
