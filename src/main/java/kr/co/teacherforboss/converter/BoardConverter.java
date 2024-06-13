@@ -1,7 +1,6 @@
 package kr.co.teacherforboss.converter;
 
 import java.util.List;
-
 import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.Category;
 import kr.co.teacherforboss.domain.Hashtag;
@@ -48,19 +47,28 @@ public class BoardConverter {
     }
 
     public static Post toPost(BoardRequestDTO.SavePostDTO request, Member member) {
-        String imageUrlList = null;
-        if (request.getImageUrlList() != null) {
-            imageUrlList = String.join(";", request.getImageUrlList());
-        }
         return Post.builder()
                 .title(request.getTitle())
                 .content(request.getContent())
                 .member(member)
-                .imageUrl(imageUrlList)
+                .imageUuid(extractImageUuid(request.getImageUrlList()))
+                .imageIndex(extractImageIndexs(request.getImageUrlList()))
                 .likeCount(0)
                 .bookmarkCount(0)
                 .viewCount(0)
                 .build();
+    }
+
+    public static String extractImageUuid(List<String> imageUrls) {
+        return (imageUrls == null || imageUrls.isEmpty())
+                ? null
+                : imageUrls.get(0).substring(imageUrls.get(0).lastIndexOf("/") + 1, imageUrls.get(0).indexOf("_"));
+    }
+
+    public static List<String> extractImageIndexs(List<String> imageUrls) {
+        return (imageUrls == null || imageUrls.isEmpty())
+                ? null
+                : imageUrls.stream().map(imageUrl -> imageUrl.split("_")[1]).toList();
     }
 
     public static Hashtag toHashtag(String hashtag) {
@@ -100,8 +108,8 @@ public class BoardConverter {
                 .likeCount(0)
                 .viewCount(0)
                 .bookmarkCount(0)
-                .imageCount(request.getImageCount())
-                .imageTimestamp(request.getImageTimestamp())
+                .imageUuid(extractImageUuid(request.getImageUrlList()))
+                .imageIndex(extractImageIndexs(request.getImageUrlList()))
                 .build();
     }
 
@@ -142,36 +150,10 @@ public class BoardConverter {
                 .build();
     }
 
-    public static Question toSaveQuestion(BoardRequestDTO.SaveQuestionDTO request, Member member, Category category) {
-        return Question.builder()
-                .category(category)
-                .member(member)
-                .title(request.getTitle())
-                .content(request.getContent())
-                .solved(BooleanType.F)
-                .likeCount(0)
-                .viewCount(0)
-                .bookmarkCount(0)
-                .imageCount(request.getImageCount())
-                .imageTimestamp(request.getImageTimestamp())
-                .build();
-    }
-
     public static BoardResponseDTO.EditQuestionDTO toEditQuestionDTO(Question question) {
         return BoardResponseDTO.EditQuestionDTO.builder()
                 .questionId(question.getId())
                 .createdAt(question.getCreatedAt())
-                .build();
-    }
-
-    public static Question toEditQuestion(BoardRequestDTO.EditQuestionDTO request, Member member, Category category) {
-        return Question.builder()
-                .category(category)
-                .member(member)
-                .title(request.getTitle())
-                .content(request.getContent())
-                .imageCount(request.getImageCount())
-                .imageTimestamp(request.getImageTimestamp())
                 .build();
     }
 
@@ -183,8 +165,8 @@ public class BoardConverter {
                 .selected(BooleanType.F)
                 .likeCount(0)
                 .dislikeCount(0)
-                .imageCount(request.getImageCount())
-                .imageTimestamp(request.getImageTimestamp())
+                .imageUuid(extractImageUuid(request.getImageUrlList()))
+                .imageIndex(extractImageIndexs(request.getImageUrlList()))
                 .build();
     }
 
