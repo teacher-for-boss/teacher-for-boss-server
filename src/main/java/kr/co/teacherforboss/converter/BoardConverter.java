@@ -25,7 +25,7 @@ public class BoardConverter {
                 .build();
     }
 
-    public static BoardResponseDTO.GetPostDTO toGetPostDTO(Post post, List<String> hashtagList, String liked, String bookmarked) {;
+    public static BoardResponseDTO.GetPostDTO toGetPostDTO(Post post, List<String> hashtagList, String liked, String bookmarked) {
         return BoardResponseDTO.GetPostDTO.builder()
                 .title(post.getTitle())
                 .content(post.getContent())
@@ -182,14 +182,6 @@ public class BoardConverter {
         return BoardResponseDTO.DeleteQuestionDTO.builder()
                 .questionId(question.getId())
                 .deletedAt(question.getUpdatedAt())
-                .build();
-    }
-
-    public static QuestionLike toQuestionLike(Question questionToLike, Member member) {
-        return QuestionLike.builder()
-                .question(questionToLike)
-                .member(member)
-                .liked(BooleanType.T)
                 .build();
     }
 

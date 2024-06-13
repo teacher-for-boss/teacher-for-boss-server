@@ -12,6 +12,4 @@ import kr.co.teacherforboss.domain.enums.Status;
 public interface QuestionRepository extends JpaRepository<Question, Long> {
     Optional<Question> findByIdAndStatus(Long questionId, Status status);
     Optional<Question> findByIdAndMemberIdAndStatus(Long questionId, Long memberId, Status status);
-	Optional<Question> findByIdAndMember(Long questionId, Member member);
-	Optional<Question> findByIdAndStatus(Long questionId, Status status);
 }

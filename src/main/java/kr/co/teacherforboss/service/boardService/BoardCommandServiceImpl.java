@@ -19,6 +19,7 @@ import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionHashtag;
 import kr.co.teacherforboss.domain.common.BaseEntity;
 import kr.co.teacherforboss.domain.QuestionLike;
+import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.AnswerRepository;
 import kr.co.teacherforboss.repository.CategoryRepository;
@@ -193,10 +194,10 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         Member member = authCommandService.getMember();
         Question questionToLike = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
-        QuestionLike questionLike = questionLikeRepository.findByQuestionAndMemberAndStatus(questionToLike, member, Status.ACTIVE);
+        QuestionLike questionLike = questionLikeRepository.findByQuestionIdAndMemberIdAndStatus(questionToLike.getId(), member.getId(), Status.ACTIVE)
+                .orElse(new QuestionLike(questionToLike, member, BooleanType.F));
 
-        if (questionLike == null) questionLike = BoardConverter.toQuestionLike(questionToLike, member);
-        else questionLike.toggleLiked();
+        questionLike.toggleLiked();
 
         questionLikeRepository.save(questionLike);
 
