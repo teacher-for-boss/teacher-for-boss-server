@@ -17,6 +17,7 @@ import kr.co.teacherforboss.domain.PostHashtag;
 import kr.co.teacherforboss.domain.PostLike;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionHashtag;
+import kr.co.teacherforboss.domain.common.BaseEntity;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.AnswerRepository;
 import kr.co.teacherforboss.repository.CategoryRepository;
@@ -141,7 +142,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
                 .editQuestion(category, request.getTitle(), request.getContent(), BoardConverter.extractImageIndexs(request.getImageUrlList()));
 
         questionHashtagRepository.softDeleteAllByQuestionId(questionId);
-        List<QuestionHashtag> editQuestionHashtags = new ArrayList<>();
+        List<QuestionHashtag> editedQuestionHashtags = new ArrayList<>();
         if (request.getHashtagList() != null) {
             Set<String> editHashtags = new HashSet<>(request.getHashtagList());
             for (String tag : editHashtags) {
@@ -150,12 +151,12 @@ public class BoardCommandServiceImpl implements BoardCommandService {
                     hashtag = hashtagRepository.save(BoardConverter.toHashtag(tag));
                 }
                 QuestionHashtag questionHashtag = BoardConverter.toQuestionHashtag(editedQuestion, hashtag);
-                editQuestionHashtags.add(questionHashtag);
+                editedQuestionHashtags.add(questionHashtag);
             }
         }
 
         questionRepository.save(editedQuestion);
-        questionHashtagRepository.saveAll(editQuestionHashtags);
+        questionHashtagRepository.saveAll(editedQuestionHashtags);
 
         return editedQuestion;
     }
@@ -177,11 +178,10 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         Member member = authCommandService.getMember();
         Question questionToDelete = questionRepository.findByIdAndMemberIdAndStatus(questionId, member.getId(), Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
+        List<Answer> answersToDelete = answerRepository.findAllByQuestionIdAndStatus(questionId, Status.ACTIVE);
 
-        answerRepository.softDeleteByQuestionId(questionId);
-
+        answersToDelete.forEach(BaseEntity::softDelete);
         questionToDelete.softDelete();
-        questionRepository.save(questionToDelete);
 
         return questionToDelete;
     }
