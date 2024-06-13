@@ -141,7 +141,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND))
                 .editQuestion(category, request.getTitle(), request.getContent(), BoardConverter.extractImageIndexs(request.getImageUrlList()));
 
-        questionHashtagRepository.softDeleteAllByQuestionId(questionId);
+        editedQuestion.getHashtagList().forEach(BaseEntity::softDelete);
         List<QuestionHashtag> editedQuestionHashtags = new ArrayList<>();
         if (request.getHashtagList() != null) {
             Set<String> editHashtags = new HashSet<>(request.getHashtagList());
@@ -178,9 +178,8 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         Member member = authCommandService.getMember();
         Question questionToDelete = questionRepository.findByIdAndMemberIdAndStatus(questionId, member.getId(), Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
-        List<Answer> answersToDelete = answerRepository.findAllByQuestionIdAndStatus(questionId, Status.ACTIVE);
 
-        answersToDelete.forEach(BaseEntity::softDelete);
+        questionToDelete.getAnswerList().forEach(BaseEntity::softDelete);
         questionToDelete.softDelete();
 
         return questionToDelete;
