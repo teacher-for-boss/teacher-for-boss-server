@@ -53,8 +53,17 @@ public class BoardResponseDTO {
         LocalDateTime createdAt;
     }
 
-    @Builder
     @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SaveAnswerDTO {
+        Long answerId;
+        LocalDateTime createdAt;
+    }
+
+    @Getter
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class MemberInfo {
