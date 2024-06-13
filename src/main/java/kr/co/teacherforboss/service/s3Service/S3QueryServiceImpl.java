@@ -32,12 +32,12 @@ public class S3QueryServiceImpl implements S3QueryService{
 	private final long URL_EXPIRATION = 1000 * 60 * 10;	// 600s
 
 	@Override
-	public S3ResponseDTO.GetPresignedUrlDTO getPresignedUrl(String uuid, Integer lastIndex, Integer imageCount) {
+	public S3ResponseDTO.GetPresignedUrlDTO getPresignedUrl(String origin, String uuid, Integer lastIndex, Integer imageCount) {
 		List<String> presignedUrlList = new ArrayList<>();
 		String imageUuid = (uuid == null) ? createUuid() : uuid;
 
 		for (int index = lastIndex + 1; index <= lastIndex + imageCount; index++) {
-			String fileName = String.format("%s_%d", imageUuid, index);
+			String fileName = String.format("%s/%s_%d", origin, imageUuid, index);
 
 			GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePresignedUrlRequest(bucket, fileName);
 			URL url = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);

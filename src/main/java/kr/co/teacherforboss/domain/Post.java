@@ -1,12 +1,14 @@
 package kr.co.teacherforboss.domain;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
+import kr.co.teacherforboss.converter.StringConverter;
 import kr.co.teacherforboss.domain.common.BaseEntity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -51,8 +53,12 @@ public class Post extends BaseEntity {
     @ColumnDefault("0")
     private Integer bookmarkCount;
 
+    @Column(length = 36)
+    private String imageUuid;
+
     @Column
-    private String imageUrl;
+    @Convert(converter = StringConverter.class)
+    private List<String> imageIndex;
 
     @OneToMany(mappedBy = "post")
     private List<PostHashtag> hashtagList;

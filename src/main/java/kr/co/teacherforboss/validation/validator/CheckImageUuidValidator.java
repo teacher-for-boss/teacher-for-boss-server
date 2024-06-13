@@ -2,26 +2,31 @@ package kr.co.teacherforboss.validation.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import kr.co.teacherforboss.domain.enums.Purpose;
-import kr.co.teacherforboss.validation.annotation.CheckPurpose;
+import java.util.List;
+import java.util.stream.Collectors;
+import kr.co.teacherforboss.validation.annotation.CheckImageUuid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class CheckPurposeValidator implements ConstraintValidator<CheckPurpose, Integer> {
+public class CheckImageUuidValidator implements ConstraintValidator<CheckImageUuid, List<String>> {
 
     private String message;
 
     @Override
-    public void initialize(CheckPurpose constraintAnnotation) {
+    public void initialize(CheckImageUuid constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);
         this.message = constraintAnnotation.message();
     }
 
     @Override
-    public boolean isValid(Integer value, ConstraintValidatorContext context) {
-        boolean isValid = !Purpose.of(value).equals(Purpose.NONE);
+    public boolean isValid(List<String> value, ConstraintValidatorContext context) {
+        if (value == null || value.isEmpty()) {
+            return true;
+        }
+
+        boolean isValid = value.stream().map(imageUrl -> imageUrl.split("_")[0]).collect(Collectors.toSet()).size() == 1;
 
         if (!isValid) {
             context.disableDefaultConstraintViolation();
@@ -29,6 +34,5 @@ public class CheckPurposeValidator implements ConstraintValidator<CheckPurpose, 
         }
 
         return isValid;
-
     }
 }
