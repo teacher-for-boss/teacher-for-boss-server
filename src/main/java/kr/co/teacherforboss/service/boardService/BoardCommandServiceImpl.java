@@ -74,6 +74,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     }
 
     @Override
+    @Transactional
     public Question saveQuestion(BoardRequestDTO.SaveQuestionDTO request) {
         Member member = authCommandService.getMember();
         Category category = categoryRepository.findByIdAndStatus(request.getCategoryId(), Status.ACTIVE);
@@ -174,14 +175,14 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     @Transactional
     public Question deleteQuestion(Long questionId) {
         Member member = authCommandService.getMember();
-        Question deleteQuestion = questionRepository.findByIdAndMember(questionId, member)
+        Question questionToDelete = questionRepository.findByIdAndMemberIdAndStatus(questionId, member.getId(), Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
 
         answerRepository.softDeleteByQuestionId(questionId);
 
-        deleteQuestion.softDelete();
-        questionRepository.save(deleteQuestion);
+        questionToDelete.softDelete();
+        questionRepository.save(questionToDelete);
 
-        return deleteQuestion;
+        return questionToDelete;
     }
 }
