@@ -17,6 +17,7 @@ import kr.co.teacherforboss.domain.PostHashtag;
 import kr.co.teacherforboss.domain.PostLike;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionHashtag;
+import kr.co.teacherforboss.domain.common.BaseEntity;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.AnswerRepository;
 import kr.co.teacherforboss.repository.CategoryRepository;
@@ -30,9 +31,12 @@ import kr.co.teacherforboss.repository.QuestionRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BoardCommandServiceImpl implements BoardCommandService {
@@ -71,6 +75,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     }
 
     @Override
+    @Transactional
     public Question saveQuestion(BoardRequestDTO.SaveQuestionDTO request) {
         Member member = authCommandService.getMember();
         Category category = categoryRepository.findByIdAndStatus(request.getCategoryId(), Status.ACTIVE);
@@ -136,8 +141,8 @@ public class BoardCommandServiceImpl implements BoardCommandService {
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND))
                 .editQuestion(category, request.getTitle(), request.getContent(), BoardConverter.extractImageIndexs(request.getImageUrlList()));
 
-        questionHashtagRepository.softDeleteAllByQuestionId(questionId);
-        List<QuestionHashtag> editQuestionHashtags = new ArrayList<>();
+        editedQuestion.getHashtagList().forEach(BaseEntity::softDelete);
+        List<QuestionHashtag> editedQuestionHashtags = new ArrayList<>();
         if (request.getHashtagList() != null) {
             Set<String> editHashtags = new HashSet<>(request.getHashtagList());
             for (String tag : editHashtags) {
@@ -146,12 +151,12 @@ public class BoardCommandServiceImpl implements BoardCommandService {
                     hashtag = hashtagRepository.save(BoardConverter.toHashtag(tag));
                 }
                 QuestionHashtag questionHashtag = BoardConverter.toQuestionHashtag(editedQuestion, hashtag);
-                editQuestionHashtags.add(questionHashtag);
+                editedQuestionHashtags.add(questionHashtag);
             }
         }
 
         questionRepository.save(editedQuestion);
-        questionHashtagRepository.saveAll(editQuestionHashtags);
+        questionHashtagRepository.saveAll(editedQuestionHashtags);
 
         return editedQuestion;
     }
@@ -165,5 +170,18 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
         Answer answer = BoardConverter.toAnswer(question, member, request);
         return answerRepository.save(answer);
+    }
+
+    @Override
+    @Transactional
+    public Question deleteQuestion(Long questionId) {
+        Member member = authCommandService.getMember();
+        Question questionToDelete = questionRepository.findByIdAndMemberIdAndStatus(questionId, member.getId(), Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
+
+        questionToDelete.getAnswerList().forEach(BaseEntity::softDelete);
+        questionToDelete.softDelete();
+
+        return questionToDelete;
     }
 }

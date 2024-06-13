@@ -1,5 +1,9 @@
 package kr.co.teacherforboss.domain;
 
+import java.util.List;
+
+import org.hibernate.annotations.ColumnDefault;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -10,21 +14,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
-
-import java.time.LocalDateTime;
-import java.util.List;
 import kr.co.teacherforboss.converter.StringConverter;
 import kr.co.teacherforboss.domain.common.BaseEntity;
 import kr.co.teacherforboss.domain.enums.BooleanType;
-import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Getter
@@ -78,6 +75,9 @@ public class Question extends BaseEntity {
 
     @OneToMany(mappedBy = "question")
     private List<QuestionHashtag> hashtagList;
+
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answerList;
 
     public Question editQuestion(Category category, String title, String content, List<String> imageIndex) {
         this.category = category;
