@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.service.authService;
 
+import kr.co.teacherforboss.domain.BusinessAuth;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.EmailAuth;
 import kr.co.teacherforboss.domain.PhoneAuth;
@@ -19,5 +20,5 @@ public interface AuthCommandService {
     Member findEmail(AuthRequestDTO.FindEmailDTO request);
     Member getMember();
     Member socialLogin(AuthRequestDTO.SocialLoginDTO request, int socialType);
-    boolean checkBusinessNumber(AuthRequestDTO.CheckBusinessNumberDTO request);
+    BusinessAuth checkBusinessNumber(AuthRequestDTO.CheckBusinessNumberDTO request);
 }

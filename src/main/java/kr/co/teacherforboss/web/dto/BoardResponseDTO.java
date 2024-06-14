@@ -1,12 +1,12 @@
 package kr.co.teacherforboss.web.dto;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 public class BoardResponseDTO {
     @Getter
@@ -17,6 +17,7 @@ public class BoardResponseDTO {
         Long postId;
         LocalDateTime createdAt;
     }
+
     @Builder
     @Getter
     @NoArgsConstructor
@@ -33,8 +34,35 @@ public class BoardResponseDTO {
         LocalDateTime createdAt;
     }
 
-    @Builder
     @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SaveQuestionDTO {
+        Long questionId;
+        LocalDateTime createdAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class EditQuestionDTO {
+        Long questionId;
+        LocalDateTime createdAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SaveAnswerDTO {
+        Long answerId;
+        LocalDateTime createdAt;
+    }
+
+    @Getter
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class MemberInfo {
@@ -64,5 +92,32 @@ public class BoardResponseDTO {
             Boolean bookmark;
             LocalDateTime createdAt;
         }
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SavePostBookmarkDTO {
+        Boolean bookmark;
+        LocalDateTime updatedAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SavePostLikeDTO {
+        Boolean like;
+        LocalDateTime updatedAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DeleteQuestionDTO {
+        Long questionId;
+        LocalDateTime deletedAt;
     }
 }

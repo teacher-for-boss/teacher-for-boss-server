@@ -46,7 +46,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((authorizeRequests) ->
                                 authorizeRequests
-                                        .requestMatchers("/", "/api/v1/temp/**", "/api/v1/auth/**").permitAll()
+                                        .requestMatchers("/", "/api/v1/temp/**", "/api/v1/auth/**", "/api/v1/s3/presigned-url").permitAll()
                                         .requestMatchers(AUTH_WHITELIST_SWAGGER).permitAll()
 //								.requestMatchers("/posts/**", "/api/v1/posts/**").hasRole(Role.USER.name())
 //								.requestMatchers("/admins/**", "/api/v1/admins/**").hasRole(Role.ADMIN.name())
