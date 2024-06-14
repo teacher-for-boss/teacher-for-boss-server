@@ -15,8 +15,6 @@ import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 
-import java.util.List;
-
 public class BoardConverter {
 
     public static BoardResponseDTO.SavePostDTO toSavePostDTO(Post post) {
@@ -97,6 +95,7 @@ public class BoardConverter {
         return new BoardResponseDTO.GetPostListDTO.PostInfo(post.getId(), post.getTitle(), post.getContent(), post.getBookmarkCount(), commentCount, post.getLikeCount(),
                 like, bookmark, post.getCreatedAt());
     }
+
     public static BoardResponseDTO.GetPostListDTO toGetPostListDTO(int postsCount, List<BoardResponseDTO.GetPostListDTO.PostInfo> postInfos) {
         return BoardResponseDTO.GetPostListDTO.builder()
                 .totalCount(postsCount)
@@ -104,7 +103,7 @@ public class BoardConverter {
                 .build();
     }
 
-	public static BoardResponseDTO.SaveQuestionDTO toSaveQuestionDTO(Question question) {
+  	public static BoardResponseDTO.SaveQuestionDTO toSaveQuestionDTO(Question question) {
         return BoardResponseDTO.SaveQuestionDTO.builder()
                 .questionId(question.getId())
                 .createdAt(question.getCreatedAt())

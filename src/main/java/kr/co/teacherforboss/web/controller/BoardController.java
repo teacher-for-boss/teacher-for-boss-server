@@ -52,6 +52,7 @@ public class BoardController {
         return ApiResponse.onSuccess(boardQueryService.getPostList(lastPostId, size, sortBy));
     }
 
+
     @PostMapping("/teacher/questions")
     public ApiResponse<BoardResponseDTO.SaveQuestionDTO> saveQuestion(@RequestBody @Valid BoardRequestDTO.SaveQuestionDTO request) {
         Question question = boardCommandService.saveQuestion(request);
