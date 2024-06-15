@@ -84,8 +84,8 @@ public class BoardController {
     }
 
     @PostMapping("/teacher/questions/{questionId}/likes")
-    public ApiResponse<BoardResponseDTO.LikeQuestionDTO> likeQuestion(@PathVariable("questionId") Long questionId) {
-        QuestionLike questionLike = boardCommandService.likeQuestion(questionId);
+    public ApiResponse<BoardResponseDTO.LikeQuestionDTO> toggleQuestionLike(@PathVariable("questionId") Long questionId) {
+        QuestionLike questionLike = boardCommandService.toggleQuestionLike(questionId);
         return ApiResponse.onSuccess(BoardConverter.toLikeQuestionDTO(questionLike));
     }
 

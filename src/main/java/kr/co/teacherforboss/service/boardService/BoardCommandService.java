@@ -16,5 +16,5 @@ public interface BoardCommandService {
     Question editQuestion(Long questionId, BoardRequestDTO.EditQuestionDTO request);
     Answer saveAnswer(long questionId, BoardRequestDTO.SaveAnswerDTO request);
     Question deleteQuestion(Long questionId);
-    QuestionLike likeQuestion(Long questionId);
+    QuestionLike toggleQuestionLike(Long questionId);
 }
