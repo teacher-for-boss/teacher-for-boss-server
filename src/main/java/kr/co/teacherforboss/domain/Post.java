@@ -7,6 +7,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
+import java.util.List;
 import kr.co.teacherforboss.domain.common.BaseEntity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -14,8 +15,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
-
-import java.util.List;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Getter
@@ -55,6 +55,7 @@ public class Post extends BaseEntity {
     private String imageUrl;
 
     @OneToMany(mappedBy = "post")
+    @SQLRestriction(value = "status = 'ACTIVE'")
     private List<PostHashtag> hashtagList;
 
     public void setTitle(String title) {
@@ -67,5 +68,9 @@ public class Post extends BaseEntity {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public void addHashtag(PostHashtag postHashtag) {
+        this.hashtagList.add(postHashtag);
     }
 }

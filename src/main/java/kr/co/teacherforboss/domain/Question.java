@@ -21,6 +21,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -77,6 +78,7 @@ public class Question extends BaseEntity {
     protected LocalDateTime imageTimestamp;
 
     @OneToMany(mappedBy = "question")
+    @SQLRestriction(value = "status = 'ACTIVE'")
     private List<QuestionHashtag> hashtagList;
 
     public Question editQuestion(Category category, String title, String content, Integer imageCount, LocalDateTime imageTimestamp) {

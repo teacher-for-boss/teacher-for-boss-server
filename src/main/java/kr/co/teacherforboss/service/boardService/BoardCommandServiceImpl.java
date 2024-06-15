@@ -3,7 +3,6 @@ package kr.co.teacherforboss.service.boardService;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
@@ -95,29 +94,26 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     }
 
     private void editPostHashtags(Post post, List<String> newHashtagList) {
-        List<PostHashtag> existPostHashtags = post.getHashtagList();
-        existPostHashtags.forEach(ph -> ph.revertSoftDelete(Status.INACTIVE));
+        List<String> originalHashtagList = post.getHashtagList().stream()
+                .map(postHashtag -> postHashtag.getHashtag().getName()).toList();
 
-        for (String tag : newHashtagList) {
-            Hashtag hashtag = hashtagRepository.findOptionalByNameAndStatus(tag, Status.ACTIVE)
-                    .orElseGet(() -> {
-                        Hashtag newHashtag = BoardConverter.toHashtag(tag);
-                        hashtagRepository.save(newHashtag);
-                        return newHashtag;
-                    });
-
-            Optional<PostHashtag> existingPostHashtag = existPostHashtags.stream()
-                    .filter(ph -> ph.getHashtag().equals(hashtag))
-                    .findFirst();
-
-            if (existingPostHashtag.isPresent()) {
-                existingPostHashtag.get().revertSoftDelete(Status.ACTIVE);
-            } else {
-                PostHashtag newPostHashtag = BoardConverter.toPostHashtag(post, hashtag);
-                existPostHashtags.add(newPostHashtag);
-                postHashtagRepository.save(newPostHashtag);
+        List<String> hashtagsToBeAdded = new ArrayList<>(newHashtagList);
+        hashtagsToBeAdded.removeAll(originalHashtagList);
+        hashtagsToBeAdded.forEach(tag -> {
+            Hashtag hashtag = hashtagRepository.findByNameAndStatus(tag, Status.ACTIVE);
+            if (hashtag == null) {
+                hashtag = hashtagRepository.save(BoardConverter.toHashtag(tag));
             }
-        }
+            PostHashtag postHashtag = BoardConverter.toPostHashtag(post, hashtag);
+            postHashtagRepository.save(postHashtag);
+        });
+
+        List<String> hashtagsToBeRemoved = new ArrayList<>(originalHashtagList);
+        hashtagsToBeRemoved.removeAll(newHashtagList);
+        hashtagsToBeRemoved.forEach(tag -> post.getHashtagList().stream()
+                .filter(postHashtag -> postHashtag.getHashtag().getName().equals(tag))
+                .findFirst()
+                .ifPresent(PostHashtag::softDelete));
     }
 
     @Override
