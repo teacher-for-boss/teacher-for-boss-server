@@ -62,4 +62,9 @@ public class Post extends BaseEntity {
 
     @OneToMany(mappedBy = "post")
     private List<PostHashtag> hashtagList;
+
+    public Post updatePost() {
+        this.viewCount += 1;
+        return this;
+    }
 }

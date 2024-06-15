@@ -35,7 +35,8 @@ public class BoardQueryServiceImpl implements BoardQueryService {
     public BoardResponseDTO.GetPostDTO getPost(Long postId) {
         Member member = authCommandService.getMember();
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
-                .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND))
+                .updatePost();
 
         String liked = "F";
         String bookmarked = "F";
@@ -54,6 +55,7 @@ public class BoardQueryServiceImpl implements BoardQueryService {
             hashtagList = BoardConverter.toPostHashtagList(post);
         }
 
+        postRepository.save(post);
         return BoardConverter.toGetPostDTO(post, hashtagList, liked, bookmarked);
     }
 }
