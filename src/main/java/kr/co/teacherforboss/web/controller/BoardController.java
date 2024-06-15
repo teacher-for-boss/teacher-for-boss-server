@@ -22,6 +22,7 @@ import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Slf4j
 @Validated
@@ -42,6 +43,12 @@ public class BoardController {
     @GetMapping("/boss/posts/{postId}")
     public ApiResponse<BoardResponseDTO.GetPostDTO> getPost(@PathVariable("postId") Long postId){
         return ApiResponse.onSuccess(boardQueryService.getPost(postId));
+    }
+
+    @GetMapping("/boss/posts")
+    public ApiResponse<BoardResponseDTO.GetPostListDTO> getPostList(@RequestParam(defaultValue = "0") Long lastPostId, @RequestParam(defaultValue = "10") int size,
+                                                                    @RequestParam(defaultValue = "latest") String sortBy){
+        return ApiResponse.onSuccess(boardQueryService.getPostList(lastPostId, size, sortBy));
     }
 
     @PostMapping("/boss/posts/{postId}")
@@ -75,11 +82,16 @@ public class BoardController {
         return ApiResponse.onSuccess(BoardConverter.toEditQuestionDTO(question));
     }
 
-
     @PostMapping("/teacher/questions/{questionId}/answers")
     public ApiResponse<BoardResponseDTO.SaveAnswerDTO> saveAnswer(@PathVariable("questionId") Long questionId,
                                                                   @RequestBody @Valid BoardRequestDTO.SaveAnswerDTO request) {
         Answer answer = boardCommandService.saveAnswer(questionId, request);
         return ApiResponse.onSuccess(BoardConverter.toSaveAnswerDTO(answer));
+    }
+
+    @PostMapping("/teacher/questions/{questionId}")
+    public ApiResponse<BoardResponseDTO.DeleteQuestionDTO> deleteQuestion(@PathVariable("questionId") Long questionId) {
+        Question question = boardCommandService.deleteQuestion(questionId);
+        return ApiResponse.onSuccess(BoardConverter.toDeleteQuestionDTO(question));
     }
 }

@@ -18,6 +18,7 @@ import kr.co.teacherforboss.domain.PostHashtag;
 import kr.co.teacherforboss.domain.PostLike;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionHashtag;
+import kr.co.teacherforboss.domain.common.BaseEntity;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.AnswerRepository;
 import kr.co.teacherforboss.repository.CategoryRepository;
@@ -31,9 +32,12 @@ import kr.co.teacherforboss.repository.QuestionRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BoardCommandServiceImpl implements BoardCommandService {
@@ -117,10 +121,8 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     }
 
     @Override
+    @Transactional
     public Question saveQuestion(BoardRequestDTO.SaveQuestionDTO request) {
-        if (request.getImageCount() > 0 && request.getImageTimestamp() == null)
-            throw new BoardHandler(ErrorStatus.INVALID_IMAGE_TIMESTAMP);
-
         Member member = authCommandService.getMember();
         Category category = categoryRepository.findByIdAndStatus(request.getCategoryId(), Status.ACTIVE);
         Question question = BoardConverter.toQuestion(request, member, category);
@@ -181,13 +183,12 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     public Question editQuestion(Long questionId, BoardRequestDTO.EditQuestionDTO request) {
         Member member = authCommandService.getMember();
         Category category = categoryRepository.findByIdAndStatus(request.getCategoryId(), Status.ACTIVE);
-        Question editQuestion = questionRepository.findById(questionId)
+        Question editedQuestion = questionRepository.findByIdAndMemberIdAndStatus(questionId, member.getId(), Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND))
-                .editQuestion(category, request.getTitle(), request.getContent(), request.getImageCount(), request.getImageTimestamp());
+                .editQuestion(category, request.getTitle(), request.getContent(), BoardConverter.extractImageIndexs(request.getImageUrlList()));
 
-        // TODO : 수정되고 난 후 아예 안 쓰이는 해시태그 비활성화?
-        questionHashtagRepository.softDeleteAllByQuestionId(questionId);
-        List<QuestionHashtag> editQuestionHashtags = new ArrayList<>();
+        editedQuestion.getHashtagList().forEach(BaseEntity::softDelete);
+        List<QuestionHashtag> editedQuestionHashtags = new ArrayList<>();
         if (request.getHashtagList() != null) {
             Set<String> editHashtags = new HashSet<>(request.getHashtagList());
             for (String tag : editHashtags) {
@@ -195,28 +196,38 @@ public class BoardCommandServiceImpl implements BoardCommandService {
                 if (hashtag == null) {
                     hashtag = hashtagRepository.save(BoardConverter.toHashtag(tag));
                 }
-                QuestionHashtag questionHashtag = BoardConverter.toQuestionHashtag(editQuestion, hashtag);
-                editQuestionHashtags.add(questionHashtag);
+                QuestionHashtag questionHashtag = BoardConverter.toQuestionHashtag(editedQuestion, hashtag);
+                editedQuestionHashtags.add(questionHashtag);
             }
         }
 
-        questionRepository.save(editQuestion);
-        questionHashtagRepository.saveAll(editQuestionHashtags);
+        questionRepository.save(editedQuestion);
+        questionHashtagRepository.saveAll(editedQuestionHashtags);
 
-        return editQuestion;
+        return editedQuestion;
     }
 
     @Override
     @Transactional
     public Answer saveAnswer(long questionId, BoardRequestDTO.SaveAnswerDTO request) {
-        if (request.getImageCount() > 0 && request.getImageTimestamp() == null)
-            throw new BoardHandler(ErrorStatus.INVALID_IMAGE_TIMESTAMP);
-
         Member member = authCommandService.getMember();
         Question question = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
 
         Answer answer = BoardConverter.toAnswer(question, member, request);
         return answerRepository.save(answer);
+    }
+
+    @Override
+    @Transactional
+    public Question deleteQuestion(Long questionId) {
+        Member member = authCommandService.getMember();
+        Question questionToDelete = questionRepository.findByIdAndMemberIdAndStatus(questionId, member.getId(), Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
+
+        questionToDelete.getAnswerList().forEach(BaseEntity::softDelete);
+        questionToDelete.softDelete();
+
+        return questionToDelete;
     }
 }

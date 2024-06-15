@@ -2,28 +2,31 @@ package kr.co.teacherforboss.validation.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
-import kr.co.teacherforboss.domain.enums.Purpose;
-import kr.co.teacherforboss.domain.enums.Role;
-import kr.co.teacherforboss.validation.annotation.CheckRole;
+import java.util.List;
+import java.util.stream.Collectors;
+import kr.co.teacherforboss.validation.annotation.CheckImageUuid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class CheckRoleValidator implements ConstraintValidator<CheckRole, Integer> {
+public class CheckImageUuidValidator implements ConstraintValidator<CheckImageUuid, List<String>> {
 
     private String message;
 
     @Override
-    public void initialize(CheckRole constraintAnnotation) {
+    public void initialize(CheckImageUuid constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);
         this.message = constraintAnnotation.message();
     }
 
     @Override
-    public boolean isValid(Integer value, ConstraintValidatorContext context) {
-        boolean isValid = Role.of(value).equals(Role.BOSS) || Role.of(value).equals(Role.TEACHER);
+    public boolean isValid(List<String> value, ConstraintValidatorContext context) {
+        if (value == null || value.isEmpty()) {
+            return true;
+        }
+
+        boolean isValid = value.stream().map(imageUrl -> imageUrl.split("_")[0]).collect(Collectors.toSet()).size() == 1;
 
         if (!isValid) {
             context.disableDefaultConstraintViolation();

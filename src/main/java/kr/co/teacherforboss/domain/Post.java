@@ -1,12 +1,14 @@
 package kr.co.teacherforboss.domain;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
+import kr.co.teacherforboss.converter.StringConverter;
 import java.util.List;
 import kr.co.teacherforboss.domain.common.BaseEntity;
 import lombok.AccessLevel;
@@ -51,12 +53,19 @@ public class Post extends BaseEntity {
     @ColumnDefault("0")
     private Integer bookmarkCount;
 
+    @Column(length = 36)
+    private String imageUuid;
+
     @Column
-    private String imageUrl;
+    @Convert(converter = StringConverter.class)
+    private List<String> imageIndex;
 
     @OneToMany(mappedBy = "post")
     @SQLRestriction(value = "status = 'ACTIVE'")
     private List<PostHashtag> hashtagList;
+
+    @OneToMany(mappedBy = "post")
+    private List<Comment> commentList;
 
     public void setTitle(String title) {
         this.title = title;
