@@ -96,7 +96,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
     private void editPostHashtags(Post post, List<String> newHashtagList) {
         List<PostHashtag> existPostHashtags = post.getHashtagList();
-        existPostHashtags.forEach(ph -> ph.setStatus(Status.INACTIVE));
+        existPostHashtags.forEach(ph -> ph.revertSoftDelete(Status.INACTIVE));
 
         for (String tag : newHashtagList) {
             Hashtag hashtag = hashtagRepository.findOptionalByNameAndStatus(tag, Status.ACTIVE)
@@ -110,9 +110,9 @@ public class BoardCommandServiceImpl implements BoardCommandService {
                     .filter(ph -> ph.getHashtag().equals(hashtag))
                     .findFirst();
 
-            existingPostHashtag.ifPresent(ph -> ph.setStatus(Status.ACTIVE));
-
-            if (existingPostHashtag.isEmpty()) {
+            if (existingPostHashtag.isPresent()) {
+                existingPostHashtag.get().revertSoftDelete(Status.ACTIVE);
+            } else {
                 PostHashtag newPostHashtag = BoardConverter.toPostHashtag(post, hashtag);
                 existPostHashtags.add(newPostHashtag);
                 postHashtagRepository.save(newPostHashtag);
