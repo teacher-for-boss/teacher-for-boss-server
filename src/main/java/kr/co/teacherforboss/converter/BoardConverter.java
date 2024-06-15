@@ -92,7 +92,19 @@ public class BoardConverter {
                 .toList();
     }
 
-	public static BoardResponseDTO.SaveQuestionDTO toSaveQuestionDTO(Question question) {
+    public static BoardResponseDTO.GetPostListDTO.PostInfo toGetPostInfo(Post post, boolean bookmark, boolean like, Integer commentCount) {
+        return new BoardResponseDTO.GetPostListDTO.PostInfo(post.getId(), post.getTitle(), post.getContent(), post.getBookmarkCount(), commentCount, post.getLikeCount(),
+                like, bookmark, post.getCreatedAt());
+    }
+
+    public static BoardResponseDTO.GetPostListDTO toGetPostListDTO(int postsCount, List<BoardResponseDTO.GetPostListDTO.PostInfo> postInfos) {
+        return BoardResponseDTO.GetPostListDTO.builder()
+                .totalCount(postsCount)
+                .postList(postInfos)
+                .build();
+    }
+
+  	public static BoardResponseDTO.SaveQuestionDTO toSaveQuestionDTO(Question question) {
         return BoardResponseDTO.SaveQuestionDTO.builder()
                 .questionId(question.getId())
                 .createdAt(question.getCreatedAt())
