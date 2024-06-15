@@ -23,6 +23,7 @@ import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Slf4j
 @Validated
@@ -44,6 +45,13 @@ public class BoardController {
     public ApiResponse<BoardResponseDTO.GetPostDTO> getPost(@PathVariable("postId") Long postId){
         return ApiResponse.onSuccess(boardQueryService.getPost(postId));
     }
+
+    @GetMapping("/boss/posts")
+    public ApiResponse<BoardResponseDTO.GetPostListDTO> getPostList(@RequestParam(defaultValue = "0") Long lastPostId, @RequestParam(defaultValue = "10") int size,
+                                                                    @RequestParam(defaultValue = "latest") String sortBy){
+        return ApiResponse.onSuccess(boardQueryService.getPostList(lastPostId, size, sortBy));
+    }
+
 
     @PostMapping("/teacher/questions")
     public ApiResponse<BoardResponseDTO.SaveQuestionDTO> saveQuestion(@RequestBody @Valid BoardRequestDTO.SaveQuestionDTO request) {
@@ -81,5 +89,4 @@ public class BoardController {
         Question question = boardCommandService.deleteQuestion(questionId);
         return ApiResponse.onSuccess(BoardConverter.toDeleteQuestionDTO(question));
     }
-
 }
