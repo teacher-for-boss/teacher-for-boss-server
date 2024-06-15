@@ -67,16 +67,10 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post")
     private List<Comment> commentList;
 
-    public void setTitle(String title) {
+    public void editPost(String title, String content, List<String> imageIndex) {
         this.title = title;
-    }
-
-    public void setContent(String content) {
         this.content = content;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+        this.imageIndex = imageIndex;
     }
 
     public void addHashtag(PostHashtag postHashtag) {

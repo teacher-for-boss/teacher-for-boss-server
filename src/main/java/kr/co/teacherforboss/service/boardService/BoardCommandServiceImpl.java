@@ -78,22 +78,12 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     @Override
     @Transactional
     public Post editPost(Long postId, BoardRequestDTO.SavePostDTO request) {
-        Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
+        Member member = authCommandService.getMember();
+        Post post = postRepository.findByIdAndMemberIdAndStatus(postId, member.getId(), Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
 
-        Member member = authCommandService.getMember();
-
-        if(post.getMember().getId() != member.getId()) {
-            throw new AuthHandler(ErrorStatus.ACCESS_DENIED);
-        }
-
-        Post modifyPost = BoardConverter.toPost(request, member);
-        post.setTitle(modifyPost.getTitle());
-        post.setContent(modifyPost.getContent());
-        post.setImageUrl(modifyPost.getImageUrl());
-
+        post.editPost(request.getTitle(), request.getContent(), BoardConverter.extractImageIndexs(request.getImageUrlList()));
         editPostHashtags(post, request.getHashtagList());
-
         return post;
     }
 
