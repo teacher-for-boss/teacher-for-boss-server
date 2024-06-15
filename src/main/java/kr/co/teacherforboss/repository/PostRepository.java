@@ -15,11 +15,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Optional<Post> findByIdAndStatus(Long postId, Status status);
     Integer countAllByStatus(Status status);
     @Query(value = "select * from post order by like_count desc, created_at asc", nativeQuery = true)
-    Slice<Post> findSliceByIdLessThanOrderByLikeCountDesc(Long postId, PageRequest pageRequest);
+    Slice<Post> findSliceByIdLessThanOrderByLikeCountDesc(PageRequest pageRequest);
     @Query(value = "select * from post order by view_count desc, created_at asc", nativeQuery = true)
-    Slice<Post> findSliceByIdLessThanOrderByViewCountDesc(Long postId, PageRequest pageRequest);
+    Slice<Post> findSliceByIdLessThanOrderByViewCountDesc(PageRequest pageRequest);
     @Query(value = "select * from post order by created_at desc, created_at asc", nativeQuery = true)
-    Slice<Post> findSliceByIdLessThanOrderByCreatedAtDesc(Long postId, PageRequest pageRequest);
+    Slice<Post> findSliceByIdLessThanOrderByCreatedAtDesc(PageRequest pageRequest);
     @Query(value = """
             SELECT * FROM post
             WHERE (like_count < (SELECT like_count FROM post WHERE id = :postId)

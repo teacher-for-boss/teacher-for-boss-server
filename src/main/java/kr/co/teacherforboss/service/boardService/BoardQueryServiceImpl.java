@@ -13,7 +13,6 @@ import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostLike;
 import kr.co.teacherforboss.domain.enums.Status;
-import kr.co.teacherforboss.repository.CommentRepository;
 import kr.co.teacherforboss.repository.PostBookmarkRepository;
 import kr.co.teacherforboss.repository.PostLikeRepository;
 import kr.co.teacherforboss.repository.PostRepository;
@@ -24,7 +23,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,8 +34,6 @@ public class BoardQueryServiceImpl implements BoardQueryService {
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
     private final PostBookmarkRepository postBookmarkRepository;
-    private final CommentRepository commentRepository;
-
 
     @Override
     @Transactional(readOnly = true)
@@ -74,9 +72,9 @@ public class BoardQueryServiceImpl implements BoardQueryService {
 
         if (lastPostId == 0) {
             postsPage = switch (sortBy) {
-                case "likes" -> postRepository.findSliceByIdLessThanOrderByLikeCountDesc(lastPostId, pageRequest);
-                case "views" -> postRepository.findSliceByIdLessThanOrderByViewCountDesc(lastPostId, pageRequest);
-                default -> postRepository.findSliceByIdLessThanOrderByCreatedAtDesc(lastPostId, pageRequest);
+                case "likes" -> postRepository.findSliceByIdLessThanOrderByLikeCountDesc(pageRequest);
+                case "views" -> postRepository.findSliceByIdLessThanOrderByViewCountDesc(pageRequest);
+                default -> postRepository.findSliceByIdLessThanOrderByCreatedAtDesc(pageRequest);
             };
         }
         else {
@@ -88,15 +86,22 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         }
 
         List<BoardResponseDTO.GetPostListDTO.PostInfo> postInfos = new ArrayList<>();
+
+        List<PostLike> postLikes = postLikeRepository.findByPostInAndStatus(postsPage.getContent(), Status.ACTIVE);
+        List<PostBookmark> postBookmarks = postBookmarkRepository.findByPostInAndStatus(postsPage.getContent(), Status.ACTIVE);
+
+        Map<Long, PostLike> postLikeMap = postLikes.stream()
+                .collect(Collectors.toMap(like -> like.getPost().getId(), like -> like));
+        Map<Long, PostBookmark> postBookmarkMap = postBookmarks.stream()
+                .collect(Collectors.toMap(bookmark -> bookmark.getPost().getId(), bookmark -> bookmark));
+
         // TODO : 좋아요 수, 북마크 수, 조회수 동시성 제어
         postsPage.getContent().forEach(post -> {
-            boolean like = false;
-            boolean bookmark = false;
-            PostLike postLike = postLikeRepository.findByPostAndMemberAndStatus(post, member, Status.ACTIVE);
-            PostBookmark postBookmark = postBookmarkRepository.findByPostAndMemberAndStatus(post, member, Status.ACTIVE);
-            if (postLike != null) like = postLike.getLiked().isIdentifier();
-            if (postBookmark != null) bookmark = postBookmark.getBookmarked().isIdentifier();
-            Integer commentCount = commentRepository.countAllByPostAndStatus(post, Status.ACTIVE);
+            PostLike postLike = postLikeMap.get(post.getId());
+            PostBookmark postBookmark = postBookmarkMap.get(post.getId());
+            boolean like = (postLike == null) ? false : postLike.getLiked().isIdentifier();
+            boolean bookmark = (postBookmark == null) ? false : postBookmark.getBookmarked().isIdentifier();
+            Integer commentCount = post.getCommentList().size();
             postInfos.add(BoardConverter.toGetPostInfo(post, bookmark, like, commentCount));
         });
 
