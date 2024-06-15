@@ -153,7 +153,7 @@ public class BoardConverter {
     public static BoardResponseDTO.EditQuestionDTO toEditQuestionDTO(Question question) {
         return BoardResponseDTO.EditQuestionDTO.builder()
                 .questionId(question.getId())
-                .createdAt(question.getCreatedAt())
+                .updatedAt(question.getUpdatedAt())
                 .build();
     }
 

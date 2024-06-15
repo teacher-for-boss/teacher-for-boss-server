@@ -49,7 +49,7 @@ public class BoardResponseDTO {
     @AllArgsConstructor
     public static class EditQuestionDTO {
         Long questionId;
-        LocalDateTime createdAt;
+        LocalDateTime updatedAt;
     }
 
     @Getter
