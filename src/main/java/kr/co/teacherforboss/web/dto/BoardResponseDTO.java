@@ -8,9 +8,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 public class BoardResponseDTO {
     @Getter
     @Builder
@@ -37,8 +34,35 @@ public class BoardResponseDTO {
         LocalDateTime createdAt;
     }
 
-    @Builder
     @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SaveQuestionDTO {
+        Long questionId;
+        LocalDateTime createdAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class EditQuestionDTO {
+        Long questionId;
+        LocalDateTime createdAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SaveAnswerDTO {
+        Long answerId;
+        LocalDateTime createdAt;
+    }
+
+    @Getter
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class MemberInfo {
@@ -93,6 +117,15 @@ public class BoardResponseDTO {
     @AllArgsConstructor
     public static class DeletePostDTO {
         long postId;
+        LocalDateTime deletedAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DeleteQuestionDTO {
+        Long questionId;
         LocalDateTime deletedAt;
     }
 }

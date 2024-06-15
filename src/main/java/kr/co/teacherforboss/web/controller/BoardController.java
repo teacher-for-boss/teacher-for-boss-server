@@ -1,7 +1,9 @@
 package kr.co.teacherforboss.web.controller;
 
+import kr.co.teacherforboss.domain.Answer;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +14,7 @@ import jakarta.validation.Valid;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.converter.BoardConverter;
 import kr.co.teacherforboss.domain.Post;
+import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostLike;
 import kr.co.teacherforboss.service.boardService.BoardCommandService;
@@ -42,6 +45,12 @@ public class BoardController {
         return ApiResponse.onSuccess(boardQueryService.getPost(postId));
     }
 
+    @PostMapping("/teacher/questions")
+    public ApiResponse<BoardResponseDTO.SaveQuestionDTO> saveQuestion(@RequestBody @Valid BoardRequestDTO.SaveQuestionDTO request) {
+        Question question = boardCommandService.saveQuestion(request);
+        return ApiResponse.onSuccess(BoardConverter.toSaveQuestionDTO(question));
+    }
+
     @PostMapping("/boss/posts/{postId}/bookmark")
     public ApiResponse<BoardResponseDTO.SavePostBookmarkDTO> savePostBookmark(@PathVariable("postId") Long postId){
         PostBookmark bookmark = boardCommandService.savePostBookmark(postId);
@@ -59,4 +68,24 @@ public class BoardController {
         Post post = boardCommandService.deletePost(postId);
         return ApiResponse.onSuccess(BoardConverter.toDeletePostDTO(post));
     }
+
+    @PatchMapping("/teacher/questions/{questionId}")
+    public ApiResponse<BoardResponseDTO.EditQuestionDTO> editQuestion(@PathVariable("questionId") Long questionId, @RequestBody @Valid BoardRequestDTO.EditQuestionDTO request) {
+        Question question = boardCommandService.editQuestion(questionId, request);
+        return ApiResponse.onSuccess(BoardConverter.toEditQuestionDTO(question));
+    }
+
+    @PostMapping("/teacher/questions/{questionId}/answers")
+    public ApiResponse<BoardResponseDTO.SaveAnswerDTO> saveAnswer(@PathVariable("questionId") Long questionId,
+                                                                  @RequestBody @Valid BoardRequestDTO.SaveAnswerDTO request) {
+        Answer answer = boardCommandService.saveAnswer(questionId, request);
+        return ApiResponse.onSuccess(BoardConverter.toSaveAnswerDTO(answer));
+    }
+
+    @PostMapping("/teacher/questions/{questionId}")
+    public ApiResponse<BoardResponseDTO.DeleteQuestionDTO> deleteQuestion(@PathVariable("questionId") Long questionId) {
+        Question question = boardCommandService.deleteQuestion(questionId);
+        return ApiResponse.onSuccess(BoardConverter.toDeleteQuestionDTO(question));
+    }
+
 }
