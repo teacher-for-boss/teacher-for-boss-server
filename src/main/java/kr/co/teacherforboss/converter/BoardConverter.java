@@ -170,6 +170,13 @@ public class BoardConverter {
                 .build();
     }
 
+    public static BoardResponseDTO.EditAnswerDTO toEditAnswerDTO(Answer answer) {
+        return BoardResponseDTO.EditAnswerDTO.builder()
+                .answerId(answer.getId())
+                .updatedAt(answer.getUpdatedAt())
+                .build();
+    }
+
     public static BoardResponseDTO.SaveAnswerDTO toSaveAnswerDTO(Answer answer) {
         return BoardResponseDTO.SaveAnswerDTO.builder()
                 .answerId(answer.getId())
