@@ -75,7 +75,7 @@ public class BoardResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SavePostBookmarkDTO {
+    public static class TogglePostBookmarkDTO {
         Boolean bookmark;
         LocalDateTime updatedAt;
     }
@@ -84,7 +84,7 @@ public class BoardResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SavePostLikeDTO {
+    public static class TogglePostLikeDTO {
         Boolean like;
         LocalDateTime updatedAt;
     }

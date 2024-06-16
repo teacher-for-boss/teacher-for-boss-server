@@ -10,8 +10,8 @@ import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 public interface BoardCommandService {
     Post savePost(BoardRequestDTO.SavePostDTO request);
     Question saveQuestion(BoardRequestDTO.SaveQuestionDTO request);
-    PostBookmark savePostBookmark(Long postId);
-    PostLike savePostLike(long postId);
+    PostBookmark togglePostBookmark(Long postId);
+    PostLike togglePostLike(long postId);
     Question editQuestion(Long questionId, BoardRequestDTO.EditQuestionDTO request);
     Answer saveAnswer(long questionId, BoardRequestDTO.SaveAnswerDTO request);
     Question deleteQuestion(Long questionId);

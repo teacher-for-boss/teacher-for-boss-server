@@ -120,7 +120,7 @@ public class BoardConverter {
                 .build();
     }
 
-    public static PostBookmark toSavePostBookmark(Post post, Member member) {
+    public static PostBookmark toTogglePostBookmark(Post post, Member member) {
         return PostBookmark.builder()
                 .bookmarked(BooleanType.F)
                 .member(member)
@@ -128,8 +128,8 @@ public class BoardConverter {
                 .build();
     }
 
-    public static BoardResponseDTO.SavePostBookmarkDTO toSavePostBookmarkDTO(PostBookmark bookmark) {
-        return BoardResponseDTO.SavePostBookmarkDTO.builder()
+    public static BoardResponseDTO.TogglePostBookmarkDTO toTogglePostBookmarkDTO(PostBookmark bookmark) {
+        return BoardResponseDTO.TogglePostBookmarkDTO.builder()
                 .bookmark(BooleanType.T.isIdentifier())
                 .updatedAt(bookmark.getUpdatedAt())
                 .build();
@@ -143,8 +143,8 @@ public class BoardConverter {
                 .build();
     }
 
-    public static BoardResponseDTO.SavePostLikeDTO toSavePostLikeDTO(PostLike like) {
-        return BoardResponseDTO.SavePostLikeDTO.builder()
+    public static BoardResponseDTO.TogglePostLikeDTO toTogglePostLikeDTO(PostLike like) {
+        return BoardResponseDTO.TogglePostLikeDTO.builder()
                 .like(like.getLiked().isIdentifier())
                 .updatedAt(like.getUpdatedAt())
                 .build();

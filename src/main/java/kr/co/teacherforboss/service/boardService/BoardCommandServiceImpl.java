@@ -102,14 +102,14 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
     @Override
     @Transactional
-    public PostBookmark savePostBookmark(Long postId) {
+    public PostBookmark togglePostBookmark(Long postId) {
         Member member = authCommandService.getMember();
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
         PostBookmark bookmark = postBookmarkRepository.findByPostAndMemberAndStatus(post, member, Status.ACTIVE);
 
         if (bookmark == null) {
-            bookmark = BoardConverter.toSavePostBookmark(post, member);
+            bookmark = BoardConverter.toTogglePostBookmark(post, member);
         }
         bookmark.toggleBookmarked();
         postBookmarkRepository.save(bookmark);
@@ -118,7 +118,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
     @Override
     @Transactional
-    public PostLike savePostLike(long postId) {
+    public PostLike togglePostLike(long postId) {
         Member member = authCommandService.getMember();
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
