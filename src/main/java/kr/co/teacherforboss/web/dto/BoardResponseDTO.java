@@ -3,6 +3,7 @@ package kr.co.teacherforboss.web.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import kr.co.teacherforboss.domain.enums.BooleanType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -119,5 +120,15 @@ public class BoardResponseDTO {
     public static class DeleteQuestionDTO {
         Long questionId;
         LocalDateTime deletedAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LikeQuestionDTO {
+        Long questionId;
+        BooleanType liked;
+        LocalDateTime updatedAt;
     }
 }

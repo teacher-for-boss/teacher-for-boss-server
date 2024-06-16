@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.BoardHandler;
 import kr.co.teacherforboss.converter.BoardConverter;
@@ -17,7 +21,9 @@ import kr.co.teacherforboss.domain.PostHashtag;
 import kr.co.teacherforboss.domain.PostLike;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionHashtag;
+import kr.co.teacherforboss.domain.QuestionLike;
 import kr.co.teacherforboss.domain.common.BaseEntity;
+import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.AnswerRepository;
 import kr.co.teacherforboss.repository.CategoryRepository;
@@ -27,14 +33,12 @@ import kr.co.teacherforboss.repository.PostHashtagRepository;
 import kr.co.teacherforboss.repository.PostLikeRepository;
 import kr.co.teacherforboss.repository.PostRepository;
 import kr.co.teacherforboss.repository.QuestionHashtagRepository;
+import kr.co.teacherforboss.repository.QuestionLikeRepository;
 import kr.co.teacherforboss.repository.QuestionRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -49,6 +53,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     private final CategoryRepository categoryRepository;
     private final PostBookmarkRepository postBookmarkRepository;
     private final PostLikeRepository postLikeRepository;
+    private final QuestionLikeRepository questionLikeRepository;
     private final AnswerRepository answerRepository;
 
     @Override
@@ -183,5 +188,20 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         questionToDelete.softDelete();
 
         return questionToDelete;
+    }
+
+    @Override
+    public QuestionLike toggleQuestionLike(Long questionId) {
+        Member member = authCommandService.getMember();
+        Question questionToLike = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
+        QuestionLike questionLike = questionLikeRepository.findByQuestionIdAndMemberIdAndStatus(questionToLike.getId(), member.getId(), Status.ACTIVE)
+                .orElse(new QuestionLike(questionToLike, member, BooleanType.F));
+
+        questionLike.toggleLiked();
+
+        questionLikeRepository.save(questionLike);
+
+        return questionLike;
     }
 }

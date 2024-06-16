@@ -1,6 +1,5 @@
 package kr.co.teacherforboss.web.controller;
 
-import kr.co.teacherforboss.domain.Answer;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -13,10 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.converter.BoardConverter;
+import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.Post;
-import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostLike;
+import kr.co.teacherforboss.domain.Question;
+import kr.co.teacherforboss.domain.QuestionLike;
 import kr.co.teacherforboss.service.boardService.BoardCommandService;
 import kr.co.teacherforboss.service.boardService.BoardQueryService;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
@@ -89,4 +90,11 @@ public class BoardController {
         Question question = boardCommandService.deleteQuestion(questionId);
         return ApiResponse.onSuccess(BoardConverter.toDeleteQuestionDTO(question));
     }
+
+    @PostMapping("/teacher/questions/{questionId}/likes")
+    public ApiResponse<BoardResponseDTO.LikeQuestionDTO> toggleQuestionLike(@PathVariable("questionId") Long questionId) {
+        QuestionLike questionLike = boardCommandService.toggleQuestionLike(questionId);
+        return ApiResponse.onSuccess(BoardConverter.toLikeQuestionDTO(questionLike));
+    }
+
 }

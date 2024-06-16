@@ -9,9 +9,10 @@ import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostHashtag;
 import kr.co.teacherforboss.domain.PostLike;
+import kr.co.teacherforboss.domain.QuestionLike;
+import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionHashtag;
-import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 
@@ -24,7 +25,7 @@ public class BoardConverter {
                 .build();
     }
 
-    public static BoardResponseDTO.GetPostDTO toGetPostDTO(Post post, List<String> hashtagList, String liked, String bookmarked) {;
+    public static BoardResponseDTO.GetPostDTO toGetPostDTO(Post post, List<String> hashtagList, String liked, String bookmarked) {
         return BoardResponseDTO.GetPostDTO.builder()
                 .title(post.getTitle())
                 .content(post.getContent())
@@ -193,6 +194,14 @@ public class BoardConverter {
         return BoardResponseDTO.DeleteQuestionDTO.builder()
                 .questionId(question.getId())
                 .deletedAt(question.getUpdatedAt())
+                .build();
+    }
+
+    public static BoardResponseDTO.LikeQuestionDTO toLikeQuestionDTO(QuestionLike questionLike) {
+        return BoardResponseDTO.LikeQuestionDTO.builder()
+                .questionId(questionLike.getQuestion().getId())
+                .liked(questionLike.getLiked())
+                .updatedAt(questionLike.getUpdatedAt())
                 .build();
     }
 }
