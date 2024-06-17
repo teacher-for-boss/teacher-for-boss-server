@@ -156,6 +156,14 @@ public class BoardConverter {
                 .build();
     }
 
+    public static QuestionLike toQuestionLike(Question question, Member member) {
+        return QuestionLike.builder()
+                .liked(BooleanType.F)
+                .member(member)
+                .question(question)
+                .build();
+    }
+
     public static BoardResponseDTO.SavePostLikeDTO toSavePostLikeDTO(PostLike like) {
         return BoardResponseDTO.SavePostLikeDTO.builder()
                 .like(like.getLiked().isIdentifier())

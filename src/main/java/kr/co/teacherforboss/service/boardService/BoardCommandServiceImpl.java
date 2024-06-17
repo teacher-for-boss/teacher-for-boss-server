@@ -189,12 +189,9 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         Question questionToLike = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
         QuestionLike questionLike = questionLikeRepository.findByQuestionIdAndMemberIdAndStatus(questionToLike.getId(), member.getId(), Status.ACTIVE)
-                .orElse(new QuestionLike(questionToLike, member, BooleanType.F));
+                .orElse(BoardConverter.toQuestionLike(questionToLike, member));
 
         questionLike.toggleLiked();
-
-        questionLikeRepository.save(questionLike);
-
-        return questionLike;
+        return questionLikeRepository.save(questionLike);
     }
 }
