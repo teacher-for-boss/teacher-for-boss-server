@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.repository;
 
+import java.util.Optional;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostLike;
@@ -11,6 +12,6 @@ import java.util.List;
 
 @Repository
 public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
-    PostLike findByPostAndMemberAndStatus(Post post, Member member, Status status);
+    Optional<PostLike> findByPostIdAndMemberIdAndStatus(Long postId, Long memberId, Status status);
     List<PostLike> findByPostInAndStatus(List<Post> postCollect, Status status);
 }

@@ -111,14 +111,11 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         Member member = authCommandService.getMember();
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
-        PostBookmark bookmark = postBookmarkRepository.findByPostAndMemberAndStatus(post, member, Status.ACTIVE);
+        PostBookmark bookmark = postBookmarkRepository.findByPostIdAndMemberIdAndStatus(post.getId(), member.getId(), Status.ACTIVE)
+                .orElse(BoardConverter.toSavePostBookmark(post, member));
 
-        if (bookmark == null) {
-            bookmark = BoardConverter.toSavePostBookmark(post, member);
-        }
         bookmark.toggleBookmarked();
-        postBookmarkRepository.save(bookmark);
-        return bookmark;
+        return postBookmarkRepository.save(bookmark);
     }
 
     @Override
@@ -127,14 +124,10 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         Member member = authCommandService.getMember();
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
-        PostLike like = postLikeRepository.findByPostAndMemberAndStatus(post, member, Status.ACTIVE);
-
-        if (like == null) {
-            like = BoardConverter.toPostLike(post, member);
-        }
+        PostLike like = postLikeRepository.findByPostIdAndMemberIdAndStatus(post.getId(), member.getId(), Status.ACTIVE)
+                        .orElse(BoardConverter.toPostLike(post, member));
         like.toggleLiked();
-        postLikeRepository.save(like);
-        return like;
+        return postLikeRepository.save(like);
     }
 
     @Override
@@ -196,12 +189,9 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         Question questionToLike = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
         QuestionLike questionLike = questionLikeRepository.findByQuestionIdAndMemberIdAndStatus(questionToLike.getId(), member.getId(), Status.ACTIVE)
-                .orElse(new QuestionLike(questionToLike, member, BooleanType.F));
+                .orElse(BoardConverter.toQuestionLike(questionToLike, member));
 
         questionLike.toggleLiked();
-
-        questionLikeRepository.save(questionLike);
-
-        return questionLike;
+        return questionLikeRepository.save(questionLike);
     }
 }
