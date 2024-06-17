@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
+import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import kr.co.teacherforboss.apiPayload.exception.handler.BoardHandler;
 import kr.co.teacherforboss.converter.BoardConverter;
 import kr.co.teacherforboss.domain.Answer;
@@ -77,6 +78,41 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         postRepository.save(post);
         postHashtagRepository.saveAll(postHashtags);
         return post;
+    }
+
+    @Override
+    @Transactional
+    public Post editPost(Long postId, BoardRequestDTO.SavePostDTO request) {
+        Member member = authCommandService.getMember();
+        Post post = postRepository.findByIdAndMemberIdAndStatus(postId, member.getId(), Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
+
+        post.editPost(request.getTitle(), request.getContent(), BoardConverter.extractImageIndexs(request.getImageUrlList()));
+        editPostHashtags(post, request.getHashtagList());
+        return post;
+    }
+
+    private void editPostHashtags(Post post, List<String> newHashtagList) {
+        List<String> originalHashtagList = post.getHashtagList().stream()
+                .map(postHashtag -> postHashtag.getHashtag().getName()).toList();
+
+        List<String> hashtagsToBeAdded = new ArrayList<>(newHashtagList);
+        hashtagsToBeAdded.removeAll(originalHashtagList);
+        hashtagsToBeAdded.forEach(tag -> {
+            Hashtag hashtag = hashtagRepository.findByNameAndStatus(tag, Status.ACTIVE);
+            if (hashtag == null) {
+                hashtag = hashtagRepository.save(BoardConverter.toHashtag(tag));
+            }
+            PostHashtag postHashtag = BoardConverter.toPostHashtag(post, hashtag);
+            postHashtagRepository.save(postHashtag);
+        });
+
+        List<String> hashtagsToBeRemoved = new ArrayList<>(originalHashtagList);
+        hashtagsToBeRemoved.removeAll(newHashtagList);
+        hashtagsToBeRemoved.forEach(tag -> post.getHashtagList().stream()
+                .filter(postHashtag -> postHashtag.getHashtag().getName().equals(tag))
+                .findFirst()
+                .ifPresent(PostHashtag::softDelete));
     }
 
     @Override

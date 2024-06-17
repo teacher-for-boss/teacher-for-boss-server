@@ -13,6 +13,7 @@ import java.util.Optional;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
     Optional<Post> findByIdAndStatus(Long postId, Status status);
+    Optional<Post> findByIdAndMemberIdAndStatus(Long postId, Long memberId, Status status);
     Integer countAllByStatus(Status status);
     @Query(value = "select * from post order by like_count desc, created_at asc", nativeQuery = true)
     Slice<Post> findSliceByIdLessThanOrderByLikeCountDesc(PageRequest pageRequest);

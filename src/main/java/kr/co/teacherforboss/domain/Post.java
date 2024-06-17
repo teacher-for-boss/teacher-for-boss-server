@@ -9,6 +9,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 import kr.co.teacherforboss.converter.StringConverter;
+import java.util.List;
 import kr.co.teacherforboss.domain.common.BaseEntity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -16,8 +17,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
-
-import java.util.List;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Getter
@@ -61,8 +61,19 @@ public class Post extends BaseEntity {
     private List<String> imageIndex;
 
     @OneToMany(mappedBy = "post")
+    @SQLRestriction(value = "status = 'ACTIVE'")
     private List<PostHashtag> hashtagList;
 
     @OneToMany(mappedBy = "post")
     private List<Comment> commentList;
+
+    public void editPost(String title, String content, List<String> imageIndex) {
+        this.title = title;
+        this.content = content;
+        this.imageIndex = imageIndex;
+    }
+
+    public void addHashtag(PostHashtag postHashtag) {
+        this.hashtagList.add(postHashtag);
+    }
 }

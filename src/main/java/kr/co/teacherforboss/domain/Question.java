@@ -22,6 +22,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLRestriction;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Getter
@@ -74,6 +78,7 @@ public class Question extends BaseEntity {
     private List<String> imageIndex;
 
     @OneToMany(mappedBy = "question")
+    @SQLRestriction(value = "status = 'ACTIVE'")
     private List<QuestionHashtag> hashtagList;
 
     @OneToMany(mappedBy = "question")
