@@ -150,7 +150,7 @@ public class BoardConverter {
 
     public static PostLike toPostLike(Post post, Member member) {
         return PostLike.builder()
-                .liked(BooleanType.T)
+                .liked(BooleanType.F)
                 .member(member)
                 .post(post)
                 .build();
