@@ -50,7 +50,7 @@ public class BoardResponseDTO {
     @AllArgsConstructor
     public static class EditQuestionDTO {
         Long questionId;
-        LocalDateTime createdAt;
+        LocalDateTime updatedAt;
     }
 
     @Getter
@@ -60,6 +60,15 @@ public class BoardResponseDTO {
     public static class SaveAnswerDTO {
         Long answerId;
         LocalDateTime createdAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class EditAnswerDTO {
+        Long answerId;
+        LocalDateTime updatedAt;
     }
 
     @Getter

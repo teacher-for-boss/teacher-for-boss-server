@@ -174,7 +174,7 @@ public class BoardConverter {
     public static BoardResponseDTO.EditQuestionDTO toEditQuestionDTO(Question question) {
         return BoardResponseDTO.EditQuestionDTO.builder()
                 .questionId(question.getId())
-                .createdAt(question.getCreatedAt())
+                .updatedAt(question.getUpdatedAt())
                 .build();
     }
 
@@ -188,6 +188,13 @@ public class BoardConverter {
                 .dislikeCount(0)
                 .imageUuid(extractImageUuid(request.getImageUrlList()))
                 .imageIndex(extractImageIndexs(request.getImageUrlList()))
+                .build();
+    }
+
+    public static BoardResponseDTO.EditAnswerDTO toEditAnswerDTO(Answer answer) {
+        return BoardResponseDTO.EditAnswerDTO.builder()
+                .answerId(answer.getId())
+                .updatedAt(answer.getUpdatedAt())
                 .build();
     }
 

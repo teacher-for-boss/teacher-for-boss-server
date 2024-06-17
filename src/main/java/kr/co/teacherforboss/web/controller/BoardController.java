@@ -97,4 +97,12 @@ public class BoardController {
         return ApiResponse.onSuccess(BoardConverter.toLikeQuestionDTO(questionLike));
     }
 
+    @PatchMapping("/teacher/questions/{questionId}/answers/{answerId}")
+    public ApiResponse<BoardResponseDTO.EditAnswerDTO> editAnswer(@PathVariable("questionId") Long questionId,
+                                                                  @PathVariable("answerId") Long answerId,
+                                                                  @RequestBody @Valid BoardRequestDTO.EditAnswerDTO request) {
+        Answer answer = boardCommandService.editAnswer(questionId, answerId, request);
+        return ApiResponse.onSuccess(BoardConverter.toEditAnswerDTO(answer));
+    }
+
 }

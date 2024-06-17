@@ -172,6 +172,19 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
     @Override
     @Transactional
+    public Answer editAnswer(Long questionId, Long answerId, BoardRequestDTO.EditAnswerDTO request) {
+        Member member = authCommandService.getMember();
+        if (!questionRepository.existsByIdAndStatus(questionId, Status.ACTIVE))
+            throw new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND);
+
+        Answer answer = answerRepository.findByIdAndMemberIdAndStatus(answerId, member.getId(), Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.ANSWER_NOT_FOUND));
+
+        return answer.editAnswer(request.getContent(), BoardConverter.extractImageIndexs(request.getImageUrlList()));
+    }
+
+    @Override
+    @Transactional
     public Question deleteQuestion(Long questionId) {
         Member member = authCommandService.getMember();
         Question questionToDelete = questionRepository.findByIdAndMemberIdAndStatus(questionId, member.getId(), Status.ACTIVE)
