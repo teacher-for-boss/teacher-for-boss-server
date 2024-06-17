@@ -183,4 +183,11 @@ public class BoardConverter {
                 .deletedAt(question.getUpdatedAt())
                 .build();
     }
+
+    public static BoardResponseDTO.DeleteAnswerDTO toDeleteAnswerDTO(Answer answer) {
+        return BoardResponseDTO.DeleteAnswerDTO.builder()
+                .answerId(answer.getId())
+                .deletedAt(answer.getUpdatedAt())
+                .build();
+    }
 }

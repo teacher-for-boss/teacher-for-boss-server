@@ -82,4 +82,11 @@ public class BoardController {
         return ApiResponse.onSuccess(BoardConverter.toDeleteQuestionDTO(question));
     }
 
+    @PostMapping("/teacher/questions/{questionId}/answers/{answerId}")
+    public ApiResponse<BoardResponseDTO.DeleteAnswerDTO> deleteAnswer(@PathVariable("questionId") Long questionId,
+                                                                      @PathVariable("answerId") Long answerId) {
+        Answer answer = boardCommandService.deleteAnswer(questionId, answerId);
+        return ApiResponse.onSuccess(BoardConverter.toDeleteAnswerDTO(answer));
+    }
+
 }

@@ -184,4 +184,15 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
         return questionToDelete;
     }
+
+    @Override
+    @Transactional
+    public Answer deleteAnswer(Long questionId, Long answerId) {
+        Member member = authCommandService.getMember();
+        Answer answerToDelete = answerRepository.findByIdAndQuestionIdAndMemberIdAndStatus(answerId, questionId, member.getId(), Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.ANSWER_NOT_FOUND));
+
+        answerToDelete.softDelete();
+        return answerToDelete;
+    }
 }

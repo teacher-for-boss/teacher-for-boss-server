@@ -97,4 +97,13 @@ public class BoardResponseDTO {
         Long questionId;
         LocalDateTime deletedAt;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DeleteAnswerDTO {
+        Long answerId;
+        LocalDateTime deletedAt;
+    }
 }
