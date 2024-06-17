@@ -46,12 +46,12 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         String bookmarked = "F";
         List<String> hashtagList = null;
 
-        PostLike postLike = postLikeRepository.findByPostAndMemberAndStatus(post, member, Status.ACTIVE);
+        PostLike postLike = postLikeRepository.findByPostIdAndMemberIdAndStatus(post.getId(), member.getId(), Status.ACTIVE).orElse(null);
         if (postLike != null) {
             liked = String.valueOf(postLike.getLiked());
         }
 
-        PostBookmark postBookmark = postBookmarkRepository.findByPostAndMemberAndStatus(post, member, Status.ACTIVE);
+        PostBookmark postBookmark = postBookmarkRepository.findByPostIdAndMemberIdAndStatus(post.getId(), member.getId(), Status.ACTIVE).orElse(null);
         if (postBookmark != null) {
             bookmarked = String.valueOf(postBookmark.getBookmarked());
         }
