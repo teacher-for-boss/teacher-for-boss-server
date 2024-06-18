@@ -9,9 +9,10 @@ import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostHashtag;
 import kr.co.teacherforboss.domain.PostLike;
+import kr.co.teacherforboss.domain.QuestionLike;
+import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionHashtag;
-import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 
@@ -24,7 +25,7 @@ public class BoardConverter {
                 .build();
     }
 
-    public static BoardResponseDTO.GetPostDTO toGetPostDTO(Post post, List<String> hashtagList, String liked, String bookmarked) {;
+    public static BoardResponseDTO.GetPostDTO toGetPostDTO(Post post, List<String> hashtagList, String liked, String bookmarked) {
         return BoardResponseDTO.GetPostDTO.builder()
                 .title(post.getTitle())
                 .content(post.getContent())
@@ -91,7 +92,19 @@ public class BoardConverter {
                 .toList();
     }
 
-	public static BoardResponseDTO.SaveQuestionDTO toSaveQuestionDTO(Question question) {
+    public static BoardResponseDTO.GetPostListDTO.PostInfo toGetPostInfo(Post post, boolean bookmark, boolean like, Integer commentCount) {
+        return new BoardResponseDTO.GetPostListDTO.PostInfo(post.getId(), post.getTitle(), post.getContent(), post.getBookmarkCount(), commentCount, post.getLikeCount(),
+                like, bookmark, post.getCreatedAt());
+    }
+
+    public static BoardResponseDTO.GetPostListDTO toGetPostListDTO(int postsCount, List<BoardResponseDTO.GetPostListDTO.PostInfo> postInfos) {
+        return BoardResponseDTO.GetPostListDTO.builder()
+                .totalCount(postsCount)
+                .postList(postInfos)
+                .build();
+    }
+
+  	public static BoardResponseDTO.SaveQuestionDTO toSaveQuestionDTO(Question question) {
         return BoardResponseDTO.SaveQuestionDTO.builder()
                 .questionId(question.getId())
                 .createdAt(question.getCreatedAt())
@@ -137,9 +150,17 @@ public class BoardConverter {
 
     public static PostLike toPostLike(Post post, Member member) {
         return PostLike.builder()
-                .liked(BooleanType.T)
+                .liked(BooleanType.F)
                 .member(member)
                 .post(post)
+                .build();
+    }
+
+    public static QuestionLike toQuestionLike(Question question, Member member) {
+        return QuestionLike.builder()
+                .liked(BooleanType.F)
+                .member(member)
+                .question(question)
                 .build();
     }
 
@@ -153,7 +174,7 @@ public class BoardConverter {
     public static BoardResponseDTO.EditQuestionDTO toEditQuestionDTO(Question question) {
         return BoardResponseDTO.EditQuestionDTO.builder()
                 .questionId(question.getId())
-                .createdAt(question.getCreatedAt())
+                .updatedAt(question.getUpdatedAt())
                 .build();
     }
 
@@ -170,6 +191,13 @@ public class BoardConverter {
                 .build();
     }
 
+    public static BoardResponseDTO.EditAnswerDTO toEditAnswerDTO(Answer answer) {
+        return BoardResponseDTO.EditAnswerDTO.builder()
+                .answerId(answer.getId())
+                .updatedAt(answer.getUpdatedAt())
+                .build();
+    }
+
     public static BoardResponseDTO.SaveAnswerDTO toSaveAnswerDTO(Answer answer) {
         return BoardResponseDTO.SaveAnswerDTO.builder()
                 .answerId(answer.getId())
@@ -181,6 +209,14 @@ public class BoardConverter {
         return BoardResponseDTO.DeleteQuestionDTO.builder()
                 .questionId(question.getId())
                 .deletedAt(question.getUpdatedAt())
+                .build();
+    }
+
+    public static BoardResponseDTO.LikeQuestionDTO toLikeQuestionDTO(QuestionLike questionLike) {
+        return BoardResponseDTO.LikeQuestionDTO.builder()
+                .questionId(questionLike.getQuestion().getId())
+                .liked(questionLike.getLiked())
+                .updatedAt(questionLike.getUpdatedAt())
                 .build();
     }
 

@@ -52,4 +52,9 @@ public abstract class BaseEntity {
         this.status = Status.INACTIVE;
         return true;
     }
+
+    public boolean revertSoftDelete() {
+        this.status = Status.ACTIVE;
+        return true;
+    }
 }

@@ -96,4 +96,19 @@ public class BoardRequestDTO {
         @CheckImageUuid
         List<String> imageUrlList;
     }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class EditAnswerDTO {
+
+        @NotNull(message = "댓글 내용은 필수 입력값입니다.")
+        @Size(max = 3000, message = "댓글 내용은 최대 3000자 입력 가능합니다.")
+        String content;
+
+        @Size(max = 3, message = "사진은 최대 3장까지 등록 가능합니다.")
+        @CheckImageUuid
+        List<String> imageUrlList;
+    }
 }

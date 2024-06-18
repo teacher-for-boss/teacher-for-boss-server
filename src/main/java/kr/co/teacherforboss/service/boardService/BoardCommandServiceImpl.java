@@ -4,7 +4,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
+import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import kr.co.teacherforboss.apiPayload.exception.handler.BoardHandler;
 import kr.co.teacherforboss.converter.BoardConverter;
 import kr.co.teacherforboss.domain.Answer;
@@ -17,7 +22,9 @@ import kr.co.teacherforboss.domain.PostHashtag;
 import kr.co.teacherforboss.domain.PostLike;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionHashtag;
+import kr.co.teacherforboss.domain.QuestionLike;
 import kr.co.teacherforboss.domain.common.BaseEntity;
+import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.AnswerRepository;
 import kr.co.teacherforboss.repository.CategoryRepository;
@@ -27,14 +34,12 @@ import kr.co.teacherforboss.repository.PostHashtagRepository;
 import kr.co.teacherforboss.repository.PostLikeRepository;
 import kr.co.teacherforboss.repository.PostRepository;
 import kr.co.teacherforboss.repository.QuestionHashtagRepository;
+import kr.co.teacherforboss.repository.QuestionLikeRepository;
 import kr.co.teacherforboss.repository.QuestionRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -49,6 +54,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     private final CategoryRepository categoryRepository;
     private final PostBookmarkRepository postBookmarkRepository;
     private final PostLikeRepository postLikeRepository;
+    private final QuestionLikeRepository questionLikeRepository;
     private final AnswerRepository answerRepository;
 
     @Override
@@ -72,6 +78,41 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         postRepository.save(post);
         postHashtagRepository.saveAll(postHashtags);
         return post;
+    }
+
+    @Override
+    @Transactional
+    public Post editPost(Long postId, BoardRequestDTO.SavePostDTO request) {
+        Member member = authCommandService.getMember();
+        Post post = postRepository.findByIdAndMemberIdAndStatus(postId, member.getId(), Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
+
+        post.editPost(request.getTitle(), request.getContent(), BoardConverter.extractImageIndexs(request.getImageUrlList()));
+        editPostHashtags(post, request.getHashtagList());
+        return post;
+    }
+
+    private void editPostHashtags(Post post, List<String> newHashtagList) {
+        List<String> originalHashtagList = post.getHashtagList().stream()
+                .map(postHashtag -> postHashtag.getHashtag().getName()).toList();
+
+        List<String> hashtagsToBeAdded = new ArrayList<>(newHashtagList);
+        hashtagsToBeAdded.removeAll(originalHashtagList);
+        hashtagsToBeAdded.forEach(tag -> {
+            Hashtag hashtag = hashtagRepository.findByNameAndStatus(tag, Status.ACTIVE);
+            if (hashtag == null) {
+                hashtag = hashtagRepository.save(BoardConverter.toHashtag(tag));
+            }
+            PostHashtag postHashtag = BoardConverter.toPostHashtag(post, hashtag);
+            postHashtagRepository.save(postHashtag);
+        });
+
+        List<String> hashtagsToBeRemoved = new ArrayList<>(originalHashtagList);
+        hashtagsToBeRemoved.removeAll(newHashtagList);
+        hashtagsToBeRemoved.forEach(tag -> post.getHashtagList().stream()
+                .filter(postHashtag -> postHashtag.getHashtag().getName().equals(tag))
+                .findFirst()
+                .ifPresent(PostHashtag::softDelete));
     }
 
     @Override
@@ -106,14 +147,11 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         Member member = authCommandService.getMember();
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
-        PostBookmark bookmark = postBookmarkRepository.findByPostAndMemberAndStatus(post, member, Status.ACTIVE);
+        PostBookmark bookmark = postBookmarkRepository.findByPostIdAndMemberIdAndStatus(post.getId(), member.getId(), Status.ACTIVE)
+                .orElse(BoardConverter.toSavePostBookmark(post, member));
 
-        if (bookmark == null) {
-            bookmark = BoardConverter.toSavePostBookmark(post, member);
-        }
         bookmark.toggleBookmarked();
-        postBookmarkRepository.save(bookmark);
-        return bookmark;
+        return postBookmarkRepository.save(bookmark);
     }
 
     @Override
@@ -122,14 +160,10 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         Member member = authCommandService.getMember();
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
-        PostLike like = postLikeRepository.findByPostAndMemberAndStatus(post, member, Status.ACTIVE);
-
-        if (like == null) {
-            like = BoardConverter.toPostLike(post, member);
-        }
+        PostLike like = postLikeRepository.findByPostIdAndMemberIdAndStatus(post.getId(), member.getId(), Status.ACTIVE)
+                        .orElse(BoardConverter.toPostLike(post, member));
         like.toggleLiked();
-        postLikeRepository.save(like);
-        return like;
+        return postLikeRepository.save(like);
     }
 
     @Override
@@ -174,6 +208,19 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
     @Override
     @Transactional
+    public Answer editAnswer(Long questionId, Long answerId, BoardRequestDTO.EditAnswerDTO request) {
+        Member member = authCommandService.getMember();
+        if (!questionRepository.existsByIdAndStatus(questionId, Status.ACTIVE))
+            throw new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND);
+
+        Answer answer = answerRepository.findByIdAndMemberIdAndStatus(answerId, member.getId(), Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.ANSWER_NOT_FOUND));
+
+        return answer.editAnswer(request.getContent(), BoardConverter.extractImageIndexs(request.getImageUrlList()));
+    }
+
+    @Override
+    @Transactional
     public Question deleteQuestion(Long questionId) {
         Member member = authCommandService.getMember();
         Question questionToDelete = questionRepository.findByIdAndMemberIdAndStatus(questionId, member.getId(), Status.ACTIVE)
@@ -183,6 +230,18 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         questionToDelete.softDelete();
 
         return questionToDelete;
+    }
+
+    @Override
+    public QuestionLike toggleQuestionLike(Long questionId) {
+        Member member = authCommandService.getMember();
+        Question questionToLike = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
+        QuestionLike questionLike = questionLikeRepository.findByQuestionIdAndMemberIdAndStatus(questionToLike.getId(), member.getId(), Status.ACTIVE)
+                .orElse(BoardConverter.toQuestionLike(questionToLike, member));
+
+        questionLike.toggleLiked();
+        return questionLikeRepository.save(questionLike);
     }
 
     @Override
