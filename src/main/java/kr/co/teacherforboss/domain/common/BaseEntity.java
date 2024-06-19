@@ -53,7 +53,8 @@ public abstract class BaseEntity {
         return true;
     }
 
-    public void setStatus(Status status) {
-        this.status = status;
+    public boolean revertSoftDelete() {
+        this.status = Status.ACTIVE;
+        return true;
     }
 }

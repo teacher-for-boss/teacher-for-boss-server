@@ -46,4 +46,20 @@ public class Comment extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memberId")
     private Member member;
+
+    public void setLikeCount(Boolean isIncreased) {
+        if (isIncreased) {
+            this.likeCount += 1;
+        } else {
+            this.likeCount -= 1;
+        }
+    }
+
+    public void setDislikeCount(Boolean isIncreased) {
+        if (isIncreased) {
+            this.dislikeCount += 1;
+        } else {
+            this.dislikeCount -= 1;
+        }
+    }
 }

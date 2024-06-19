@@ -14,14 +14,14 @@ import java.util.List;
 
 public class CommentConverter {
 
-    public static CommentResponseDTO.SaveCommentResultDTO toSaveCommentResultDTO(Comment comment) {
+    public static CommentResponseDTO.SaveCommentDTO toSaveCommentDTO(Comment comment) {
         Long parentId = null;
         Comment parentComment = comment.getComment();
         if (parentComment != null) {
             parentId = parentComment.getId();
         }
 
-        return CommentResponseDTO.SaveCommentResultDTO.builder()
+        return CommentResponseDTO.SaveCommentDTO.builder()
                 .postId(comment.getPost().getId())
                 .parentId(parentId)
                 .createdAt(comment.getCreatedAt())
@@ -39,9 +39,9 @@ public class CommentConverter {
                 .build();
     }
 
-    public static CommentResponseDTO.SaveCommentLikedResultDTO toSaveCommentLikedResultDTO(CommentLike liked) {
+    public static CommentResponseDTO.SaveCommentLikeDTO toSaveCommentLikeDTO(CommentLike liked) {
         Boolean likeStatus = (liked.getLiked() != null) ? liked.getLiked().isIdentifier() : null;
-        return CommentResponseDTO.SaveCommentLikedResultDTO.builder()
+        return CommentResponseDTO.SaveCommentLikeDTO.builder()
                 .liked(likeStatus)
                 .updatedAt(LocalDateTime.now())
                 .build();

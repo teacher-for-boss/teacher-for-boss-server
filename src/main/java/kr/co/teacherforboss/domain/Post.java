@@ -1,12 +1,15 @@
 package kr.co.teacherforboss.domain;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
+import kr.co.teacherforboss.converter.StringConverter;
+import java.util.List;
 import kr.co.teacherforboss.domain.common.BaseEntity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -14,8 +17,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
-
-import java.util.List;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Getter
@@ -51,21 +53,27 @@ public class Post extends BaseEntity {
     @ColumnDefault("0")
     private Integer bookmarkCount;
 
+    @Column(length = 36)
+    private String imageUuid;
+
     @Column
-    private String imageUrl;
+    @Convert(converter = StringConverter.class)
+    private List<String> imageIndex;
 
     @OneToMany(mappedBy = "post")
+    @SQLRestriction(value = "status = 'ACTIVE'")
     private List<PostHashtag> hashtagList;
 
-    public void setTitle(String title) {
+    @OneToMany(mappedBy = "post")
+    private List<Comment> commentList;
+
+    public void editPost(String title, String content, List<String> imageIndex) {
         this.title = title;
-    }
-
-    public void setContent(String content) {
         this.content = content;
+        this.imageIndex = imageIndex;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void addHashtag(PostHashtag postHashtag) {
+        this.hashtagList.add(postHashtag);
     }
 }

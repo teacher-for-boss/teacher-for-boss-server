@@ -1,6 +1,11 @@
 package kr.co.teacherforboss.domain;
 
+import java.util.List;
+
+import org.hibernate.annotations.ColumnDefault;
+
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -9,9 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
-
-import java.time.LocalDateTime;
-import java.util.List;
+import kr.co.teacherforboss.converter.StringConverter;
 import kr.co.teacherforboss.domain.common.BaseEntity;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import lombok.AccessLevel;
@@ -20,6 +23,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -66,18 +70,26 @@ public class Question extends BaseEntity {
     @ColumnDefault("0")
     private Integer bookmarkCount;
 
-    @NotNull
-    @Column
-    @ColumnDefault("0")
-    private Integer imageCount;
+    @Column(length = 36)
+    private String imageUuid;
 
-    @NotNull
     @Column
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    protected LocalDateTime imageTimestamp;
+    @Convert(converter = StringConverter.class)
+    private List<String> imageIndex;
 
     @OneToMany(mappedBy = "question")
+    @SQLRestriction(value = "status = 'ACTIVE'")
     private List<QuestionHashtag> hashtagList;
 
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answerList;
+
+    public Question editQuestion(Category category, String title, String content, List<String> imageIndex) {
+        this.category = category;
+        this.title = title;
+        this.content = content;
+        this.imageIndex = imageIndex;
+        return this;
+    }
 }
 
