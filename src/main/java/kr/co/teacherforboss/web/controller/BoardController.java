@@ -112,8 +112,15 @@ public class BoardController {
         return ApiResponse.onSuccess(BoardConverter.toEditAnswerDTO(answer));
     }
 
+    @PostMapping("/teacher/questions/{questionId}/answers/{answerId}")
+    public ApiResponse<BoardResponseDTO.DeleteAnswerDTO> deleteAnswer(@PathVariable("questionId") Long questionId,
+                                                                      @PathVariable("answerId") Long answerId) {
+        Answer answer = boardCommandService.deleteAnswer(questionId, answerId);
+        return ApiResponse.onSuccess(BoardConverter.toDeleteAnswerDTO(answer));
+    }
+
     @PostMapping("/teacher/questions/{questionId}/bookmark")
-    public ApiResponse<BoardResponseDTO.BookmarkQuestionDTO> bookmarkQuestion(@PathVariable("questionId") Long questionId) {
+    public ApiResponse<BoardResponseDTO.BookmarkQuestionDTO> toggleQuestionBookmark(@PathVariable("questionId") Long questionId) {
         QuestionBookmark questionBookmark = boardCommandService.toggleQuestionBookmark(questionId);
         return ApiResponse.onSuccess(BoardConverter.toBookmarkQuestionDTO(questionBookmark));
     }

@@ -222,6 +222,13 @@ public class BoardConverter {
                 .build();
     }
 
+    public static BoardResponseDTO.DeleteAnswerDTO toDeleteAnswerDTO(Answer answer) {
+        return BoardResponseDTO.DeleteAnswerDTO.builder()
+                .answerId(answer.getId())
+                .deletedAt(answer.getUpdatedAt())
+                .build();
+    }
+
     public static QuestionBookmark toQuestionBookmark(Question questionToBookmark, Member member) {
         return QuestionBookmark.builder()
                 .question(questionToBookmark)
