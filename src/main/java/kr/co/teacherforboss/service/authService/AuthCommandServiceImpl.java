@@ -3,6 +3,8 @@ package kr.co.teacherforboss.service.authService;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.GeneralException;
 import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
@@ -11,6 +13,7 @@ import kr.co.teacherforboss.config.jwt.TokenManager;
 import kr.co.teacherforboss.converter.AuthConverter;
 import kr.co.teacherforboss.domain.BusinessAuth;
 import kr.co.teacherforboss.domain.TeacherInfo;
+import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.LoginType;
 import kr.co.teacherforboss.domain.AgreementTerm;
 import kr.co.teacherforboss.domain.enums.Role;
@@ -62,12 +65,19 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Override
     @Transactional
     public Member joinMember(AuthRequestDTO.JoinDTO request){
+        validateRequiredFields(request);
         if (memberRepository.existsByEmailAndStatus(request.getEmail(), Status.ACTIVE))
             throw new AuthHandler(ErrorStatus.MEMBER_EMAIL_DUPLICATED);
+        if (!emailAuthRepository.existsByIdAndEmailAndPurposeAndIsChecked(request.getEmailAuthId(), request.getEmail(),
+                Purpose.of(1), BooleanType.T))
+            throw new AuthHandler(ErrorStatus.MAIL_NOT_CHECKED);
         if (memberRepository.existsByPhoneAndStatus(request.getPhone(), Status.ACTIVE))
             throw new AuthHandler(ErrorStatus.MEMBER_PHONE_DUPLICATED);
         if (!request.getPassword().equals(request.getRePassword()))
             throw new AuthHandler(ErrorStatus.PASSWORD_NOT_CORRECT);
+        if (!phoneAuthRepository.existsByIdAndPhoneAndPurposeAndIsChecked(request.getPhoneAuthId(), request.getPhone(),
+                Purpose.of(1), BooleanType.T))
+            throw new AuthHandler(ErrorStatus.PHONE_NOT_CHECKED);
         if (!(request.getAgreementUsage().equals("T") && request.getAgreementInfo().equals("T") && request.getAgreementAge().equals("T")))
             throw new AuthHandler(ErrorStatus.INVALID_AGREEMENT_TERM);
         if (memberRepository.existsByNicknameAndStatus(request.getNickname(), Status.ACTIVE))
@@ -80,7 +90,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         AgreementTerm newAgreement = AuthConverter.toAgreementTerm(request, newMember);
 
         newMember.setProfile(request.getNickname(), request.getProfileImg());
-        if (Role.of(request.getRole()).equals(Role.BOSS)) saveTeacherInfo(request);
+        if (Role.of(request.getRole()).equals(Role.TEACHER)) saveTeacherInfo(request);
 
         agreementTermRepository.save(newAgreement);
         return memberRepository.save(newMember);
@@ -237,10 +247,10 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Transactional
     public Member socialLogin(AuthRequestDTO.SocialLoginDTO request, int socialType) {
         // TODO: 전화번호가 변경되었을 때 어떻게 처리할지
-        if (memberRepository.existsByEmailAndLoginTypeAndStatus(request.getEmail(), LoginType.of(socialType), Status.ACTIVE))
-            return memberRepository.findByEmailAndLoginTypeAndStatus(request.getEmail(), LoginType.of(socialType), Status.ACTIVE)
-                    .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Optional<Member> member = memberRepository.findByEmailAndLoginTypeAndStatus(request.getEmail(), LoginType.of(socialType), Status.ACTIVE);
+        if (member.isPresent()) return member.get();
 
+        validateRequiredFields(request);
         if (memberRepository.existsByEmailAndStatus(request.getEmail(), Status.ACTIVE))
             throw new MemberHandler(ErrorStatus.MEMBER_EMAIL_DUPLICATED);
         if (memberRepository.existsByPhoneAndStatus(request.getPhone(), Status.ACTIVE))
@@ -253,7 +263,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         newMember.setPassword(passwordList);
 
         newMember.setProfile(request.getNickname(), request.getProfileImg());
-        if (request.getRole().equals(2)) saveTeacherInfo(request);
+        if (Role.of(request.getRole()).equals(Role.TEACHER)) saveTeacherInfo(request);
 
         return memberRepository.save(newMember);
     }
@@ -303,5 +313,20 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
         TeacherInfo newTeacher = AuthConverter.toTeacher(request);
         teacherInfoRepository.save(newTeacher);
+    }
+
+    private void validateRequiredFields (AuthRequestDTO.JoinCommonDTO request) {
+        if (request.getRole() == null)
+            throw new AuthHandler(ErrorStatus.MEMBER_ROLE_EMPTY);
+        if (!(Role.of(request.getRole()).equals(Role.BOSS) || Role.of(request.getRole()).equals(Role.TEACHER)))
+            throw new AuthHandler(ErrorStatus.MEMBER_ROLE_INVALID);
+        if (request.getName() == null)
+            throw new AuthHandler(ErrorStatus.MEMBER_NAME_EMPTY);
+        if (request.getNickname() == null)
+            throw new AuthHandler(ErrorStatus.MEMBER_NICKNAME_EMPTY);
+        if (request.getPhone() == null)
+            throw new AuthHandler(ErrorStatus.MEMBER_PHONE_EMPTY);
+        if (request.getProfileImg() == null)
+            throw new AuthHandler(ErrorStatus.MEMBER_PROFILE_IMG_EMPTY);
     }
 }

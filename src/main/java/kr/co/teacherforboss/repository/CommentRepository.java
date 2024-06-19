@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-
+    Integer countAllByPostAndStatus(Post post, Status status);
     Comment findByIdAndStatus(Long id, Status status);
     Optional<Comment> findByIdAndPostAndStatus(Long id, Post post, Status status);
     boolean existsByIdAndStatus(Long id, Status status);
