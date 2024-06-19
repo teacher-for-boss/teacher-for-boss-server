@@ -224,8 +224,8 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         Question questionToDelete = questionRepository.findByIdAndMemberIdAndStatus(questionId, member.getId(), Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
 
-        answerRepository.softDeleteAnswersByQuestionId(questionToDelete.getId());
         questionToDelete.softDelete();
+        answerRepository.softDeleteAnswersByQuestionId(questionToDelete.getId());
 
         return questionToDelete;
     }
