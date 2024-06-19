@@ -20,5 +20,5 @@ public interface BoardCommandService {
     Answer editAnswer(Long questionId, Long answerId, BoardRequestDTO.EditAnswerDTO request);
     Question deleteQuestion(Long questionId);
     QuestionLike toggleQuestionLike(Long questionId);
-    QuestionBookmark bookmarkQuestion(Long questionId);
+    QuestionBookmark toggleQuestionBookmark(Long questionId);
 }

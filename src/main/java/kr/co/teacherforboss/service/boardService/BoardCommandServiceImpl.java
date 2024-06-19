@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
-import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import kr.co.teacherforboss.apiPayload.exception.handler.BoardHandler;
 import kr.co.teacherforboss.converter.BoardConverter;
 import kr.co.teacherforboss.domain.Answer;
@@ -25,7 +24,6 @@ import kr.co.teacherforboss.domain.QuestionBookmark;
 import kr.co.teacherforboss.domain.QuestionHashtag;
 import kr.co.teacherforboss.domain.QuestionLike;
 import kr.co.teacherforboss.domain.common.BaseEntity;
-import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.AnswerRepository;
 import kr.co.teacherforboss.repository.CategoryRepository;
@@ -248,17 +246,14 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     }
 
     @Override
-    public QuestionBookmark bookmarkQuestion(Long questionId) {
+    public QuestionBookmark toggleQuestionBookmark(Long questionId) {
         Member member = authCommandService.getMember();
         Question questionToBookmark = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
-        QuestionBookmark questionBookmark = questionBookmarkRepository.findByQuestionAndMemberAndStatus(questionToBookmark, member, Status.ACTIVE);
+        QuestionBookmark questionBookmark = questionBookmarkRepository.findByQuestionIdAndMemberIdAndStatus(questionToBookmark.getId(), member.getId(), Status.ACTIVE)
+                .orElse(BoardConverter.toQuestionBookmark(questionToBookmark, member));
 
-        if (questionBookmark == null) questionBookmark = BoardConverter.toQuestionBookmark(questionToBookmark, member);
-        else questionBookmark.toggleLiked();
-
-        questionBookmarkRepository.save(questionBookmark);
-
-        return questionBookmark;
+        questionBookmark.toggleLiked();
+        return questionBookmarkRepository.save(questionBookmark);
     }
 }
