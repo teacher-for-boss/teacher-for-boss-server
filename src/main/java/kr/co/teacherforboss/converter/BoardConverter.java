@@ -1,6 +1,7 @@
 package kr.co.teacherforboss.converter;
 
 import java.util.List;
+
 import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.Category;
 import kr.co.teacherforboss.domain.Hashtag;
@@ -9,10 +10,11 @@ import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostHashtag;
 import kr.co.teacherforboss.domain.PostLike;
+import kr.co.teacherforboss.domain.Question;
+import kr.co.teacherforboss.domain.QuestionBookmark;
+import kr.co.teacherforboss.domain.QuestionHashtag;
 import kr.co.teacherforboss.domain.QuestionLike;
 import kr.co.teacherforboss.domain.enums.BooleanType;
-import kr.co.teacherforboss.domain.Question;
-import kr.co.teacherforboss.domain.QuestionHashtag;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 
@@ -224,6 +226,22 @@ public class BoardConverter {
         return BoardResponseDTO.DeleteAnswerDTO.builder()
                 .answerId(answer.getId())
                 .deletedAt(answer.getUpdatedAt())
+                .build();
+    }
+
+    public static QuestionBookmark toQuestionBookmark(Question questionToBookmark, Member member) {
+        return QuestionBookmark.builder()
+                .question(questionToBookmark)
+                .member(member)
+                .bookmarked(BooleanType.F)
+                .build();
+    }
+
+    public static BoardResponseDTO.BookmarkQuestionDTO toBookmarkQuestionDTO(QuestionBookmark questionBookmark) {
+        return BoardResponseDTO.BookmarkQuestionDTO.builder()
+                .questionId(questionBookmark.getQuestion().getId())
+                .bookmarked(questionBookmark.getBookmarked())
+                .updatedAt(questionBookmark.getUpdatedAt())
                 .build();
     }
 }

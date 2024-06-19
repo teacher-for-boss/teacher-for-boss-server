@@ -5,6 +5,7 @@ import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostLike;
 import kr.co.teacherforboss.domain.Question;
+import kr.co.teacherforboss.domain.QuestionBookmark;
 import kr.co.teacherforboss.domain.QuestionLike;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 
@@ -20,4 +21,5 @@ public interface BoardCommandService {
     Question deleteQuestion(Long questionId);
     QuestionLike toggleQuestionLike(Long questionId);
     Answer deleteAnswer(Long questionId, Long answerId);
+    QuestionBookmark toggleQuestionBookmark(Long questionId);
 }

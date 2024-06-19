@@ -149,4 +149,14 @@ public class BoardResponseDTO {
         Long answerId;
         LocalDateTime deletedAt;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class BookmarkQuestionDTO {
+        Long questionId;
+        BooleanType bookmarked;
+        LocalDateTime updatedAt;
+    }
 }

@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import jakarta.validation.Valid;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.converter.BoardConverter;
@@ -16,6 +18,7 @@ import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostLike;
 import kr.co.teacherforboss.domain.Question;
+import kr.co.teacherforboss.domain.QuestionBookmark;
 import kr.co.teacherforboss.domain.QuestionLike;
 import kr.co.teacherforboss.service.boardService.BoardCommandService;
 import kr.co.teacherforboss.service.boardService.BoardQueryService;
@@ -23,7 +26,6 @@ import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Slf4j
 @Validated
@@ -115,6 +117,12 @@ public class BoardController {
                                                                       @PathVariable("answerId") Long answerId) {
         Answer answer = boardCommandService.deleteAnswer(questionId, answerId);
         return ApiResponse.onSuccess(BoardConverter.toDeleteAnswerDTO(answer));
+    }
+
+    @PostMapping("/teacher/questions/{questionId}/bookmark")
+    public ApiResponse<BoardResponseDTO.BookmarkQuestionDTO> toggleQuestionBookmark(@PathVariable("questionId") Long questionId) {
+        QuestionBookmark questionBookmark = boardCommandService.toggleQuestionBookmark(questionId);
+        return ApiResponse.onSuccess(BoardConverter.toBookmarkQuestionDTO(questionBookmark));
     }
 
 }

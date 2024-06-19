@@ -20,6 +20,7 @@ import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostHashtag;
 import kr.co.teacherforboss.domain.PostLike;
 import kr.co.teacherforboss.domain.Question;
+import kr.co.teacherforboss.domain.QuestionBookmark;
 import kr.co.teacherforboss.domain.QuestionHashtag;
 import kr.co.teacherforboss.domain.QuestionLike;
 import kr.co.teacherforboss.domain.common.BaseEntity;
@@ -31,6 +32,7 @@ import kr.co.teacherforboss.repository.PostBookmarkRepository;
 import kr.co.teacherforboss.repository.PostHashtagRepository;
 import kr.co.teacherforboss.repository.PostLikeRepository;
 import kr.co.teacherforboss.repository.PostRepository;
+import kr.co.teacherforboss.repository.QuestionBookmarkRepository;
 import kr.co.teacherforboss.repository.QuestionHashtagRepository;
 import kr.co.teacherforboss.repository.QuestionLikeRepository;
 import kr.co.teacherforboss.repository.QuestionRepository;
@@ -54,6 +56,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     private final PostLikeRepository postLikeRepository;
     private final QuestionLikeRepository questionLikeRepository;
     private final AnswerRepository answerRepository;
+    private final QuestionBookmarkRepository questionBookmarkRepository;
 
     @Override
     @Transactional
@@ -251,5 +254,17 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
         answerToDelete.softDelete();
         return answerToDelete;
+    }
+
+    @Override
+    public QuestionBookmark toggleQuestionBookmark(Long questionId) {
+        Member member = authCommandService.getMember();
+        Question questionToBookmark = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
+        QuestionBookmark questionBookmark = questionBookmarkRepository.findByQuestionIdAndMemberIdAndStatus(questionToBookmark.getId(), member.getId(), Status.ACTIVE)
+                .orElse(BoardConverter.toQuestionBookmark(questionToBookmark, member));
+
+        questionBookmark.toggleLiked();
+        return questionBookmarkRepository.save(questionBookmark);
     }
 }
