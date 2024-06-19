@@ -14,6 +14,7 @@ import kr.co.teacherforboss.domain.enums.Status;
 @Repository
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
 	Optional<Answer> findByIdAndMemberIdAndStatus(Long answerId, Long memberId, Status status);
+	Optional<Answer> findByIdAndQuestionIdAndMemberIdAndStatus(Long answerId, Long questionId, Long memberId, Status status);
 	@Modifying(clearAutomatically = true, flushAutomatically = true)
 	@Query(value = """
 		UPDATE answer a
