@@ -1,11 +1,10 @@
 package kr.co.teacherforboss.service.s3Service;
 
 import java.net.URL;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -16,7 +15,6 @@ import com.amazonaws.services.s3.Headers;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 
-import kr.co.teacherforboss.web.dto.S3RequestDTO;
 import kr.co.teacherforboss.web.dto.S3ResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,24 +28,19 @@ public class S3QueryServiceImpl implements S3QueryService{
 
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucket;
-	private final long EXPIRATION = 1000 * 60 * 2;	// 120s
+
+	private final long URL_EXPIRATION = 1000 * 60 * 10;	// 600s
 
 	@Override
-	public S3ResponseDTO.GetPresignedUrlDTO getPresignedUrl(S3RequestDTO.GetPresignedUrlDTO request) {
-		LocalDateTime timestamp = LocalDateTime.now();
-		String type = request.getType();
-		// log.info("Image File Pattern Timestamp => " + timestamp);
-
+	public S3ResponseDTO.GetPresignedUrlDTO getPresignedUrl(String origin, String uuid, Integer lastIndex, Integer imageCount) {
 		List<String> presignedUrlList = new ArrayList<>();
+		String imageUuid = (uuid == null) ? createUuid() : uuid;
 
-		for (int index = 1; index <= request.getImageCount(); index++) {
-
-			String fileName = String.format("%s/%s/%s_%d", type, request.getId(), timestamp.format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss")), index);
+		for (int index = lastIndex + 1; index <= lastIndex + imageCount; index++) {
+			String fileName = String.format("%s/%s_%d", origin, imageUuid, index);
 
 			GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePresignedUrlRequest(bucket, fileName);
 			URL url = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
-
-			// log.info("File Name => " + fileName);
 
 			presignedUrlList.add(url.toString());
 		}
@@ -71,6 +64,10 @@ public class S3QueryServiceImpl implements S3QueryService{
 	}
 
 	private Date getPresignedUrlExpiration() {
-		return new Date(System.currentTimeMillis() + EXPIRATION);
+		return new Date(System.currentTimeMillis() + URL_EXPIRATION);
+	}
+
+	private String createUuid() {
+		return UUID.randomUUID().toString();
 	}
 }

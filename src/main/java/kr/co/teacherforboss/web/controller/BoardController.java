@@ -1,11 +1,5 @@
 package kr.co.teacherforboss.web.controller;
 
-import kr.co.teacherforboss.converter.CommentConverter;
-import kr.co.teacherforboss.domain.Comment;
-import kr.co.teacherforboss.service.commentService.CommentCommandService;
-import kr.co.teacherforboss.web.dto.CommentRequestDTO;
-import kr.co.teacherforboss.web.dto.CommentResponseDTO;
-import kr.co.teacherforboss.domain.Answer;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -17,16 +11,19 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.converter.BoardConverter;
+import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.Post;
-import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostLike;
+import kr.co.teacherforboss.domain.Question;
+import kr.co.teacherforboss.domain.QuestionLike;
 import kr.co.teacherforboss.service.boardService.BoardCommandService;
 import kr.co.teacherforboss.service.boardService.BoardQueryService;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Slf4j
 @Validated
@@ -37,17 +34,22 @@ public class BoardController {
 
     private final BoardCommandService boardCommandService;
     private final BoardQueryService boardQueryService;
-    private final CommentCommandService commentCommandService;
 
     @PostMapping("/boss/posts")
-    public ApiResponse<BoardResponseDTO.SavePostDTO> savePost(@RequestBody @Valid BoardRequestDTO.SavePostDTO request) {
+    public ApiResponse<BoardResponseDTO.SavePostDTO> savePost(@RequestBody @Valid BoardRequestDTO.SavePostDTO request){
         Post post = boardCommandService.savePost(request);
         return ApiResponse.onSuccess(BoardConverter.toSavePostDTO(post));
     }
 
     @GetMapping("/boss/posts/{postId}")
-    public ApiResponse<BoardResponseDTO.GetPostDTO> getPost(@PathVariable("postId") Long postId) {
+    public ApiResponse<BoardResponseDTO.GetPostDTO> getPost(@PathVariable("postId") Long postId){
         return ApiResponse.onSuccess(boardQueryService.getPost(postId));
+    }
+
+    @GetMapping("/boss/posts")
+    public ApiResponse<BoardResponseDTO.GetPostListDTO> getPostList(@RequestParam(defaultValue = "0") Long lastPostId, @RequestParam(defaultValue = "10") int size,
+                                                                    @RequestParam(defaultValue = "latest") String sortBy){
+        return ApiResponse.onSuccess(boardQueryService.getPostList(lastPostId, size, sortBy));
     }
 
     @PostMapping("/boss/posts/{postId}")
@@ -62,13 +64,13 @@ public class BoardController {
         Question question = boardCommandService.saveQuestion(request);
         return ApiResponse.onSuccess(BoardConverter.toSaveQuestionDTO(question));
     }
-  
+
     @PostMapping("/boss/posts/{postId}/bookmark")
     public ApiResponse<BoardResponseDTO.SavePostBookmarkDTO> savePostBookmark(@PathVariable("postId") Long postId){
         PostBookmark bookmark = boardCommandService.savePostBookmark(postId);
         return ApiResponse.onSuccess(BoardConverter.toSavePostBookmarkDTO(bookmark));
     }
-  
+
     @PostMapping("/boss/posts/{postId}/likes")
     public ApiResponse<BoardResponseDTO.SavePostLikeDTO> savePostLike(@PathVariable("postId") Long postId){
         PostLike like = boardCommandService.savePostLike(postId);
@@ -81,17 +83,31 @@ public class BoardController {
         return ApiResponse.onSuccess(BoardConverter.toEditQuestionDTO(question));
     }
 
-    @PostMapping("/boss/posts/{postId}/comments")
-    public ApiResponse<CommentResponseDTO.SaveCommentResultDTO> saveComment(@PathVariable("postId") Long postId,
-                                                                            @RequestBody @Valid CommentRequestDTO.SaveCommentDTO request) {
-        Comment comment = commentCommandService.saveComment(request, postId);
-        return ApiResponse.onSuccess(CommentConverter.toSaveCommentResultDTO(comment));
-    }
-  
     @PostMapping("/teacher/questions/{questionId}/answers")
     public ApiResponse<BoardResponseDTO.SaveAnswerDTO> saveAnswer(@PathVariable("questionId") Long questionId,
                                                                   @RequestBody @Valid BoardRequestDTO.SaveAnswerDTO request) {
         Answer answer = boardCommandService.saveAnswer(questionId, request);
         return ApiResponse.onSuccess(BoardConverter.toSaveAnswerDTO(answer));
     }
+
+    @PostMapping("/teacher/questions/{questionId}")
+    public ApiResponse<BoardResponseDTO.DeleteQuestionDTO> deleteQuestion(@PathVariable("questionId") Long questionId) {
+        Question question = boardCommandService.deleteQuestion(questionId);
+        return ApiResponse.onSuccess(BoardConverter.toDeleteQuestionDTO(question));
+    }
+
+    @PostMapping("/teacher/questions/{questionId}/likes")
+    public ApiResponse<BoardResponseDTO.LikeQuestionDTO> toggleQuestionLike(@PathVariable("questionId") Long questionId) {
+        QuestionLike questionLike = boardCommandService.toggleQuestionLike(questionId);
+        return ApiResponse.onSuccess(BoardConverter.toLikeQuestionDTO(questionLike));
+    }
+
+    @PatchMapping("/teacher/questions/{questionId}/answers/{answerId}")
+    public ApiResponse<BoardResponseDTO.EditAnswerDTO> editAnswer(@PathVariable("questionId") Long questionId,
+                                                                  @PathVariable("answerId") Long answerId,
+                                                                  @RequestBody @Valid BoardRequestDTO.EditAnswerDTO request) {
+        Answer answer = boardCommandService.editAnswer(questionId, answerId, request);
+        return ApiResponse.onSuccess(BoardConverter.toEditAnswerDTO(answer));
+    }
+
 }
