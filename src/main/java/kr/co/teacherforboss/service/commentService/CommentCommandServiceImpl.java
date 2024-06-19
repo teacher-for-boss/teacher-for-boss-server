@@ -59,11 +59,41 @@ public class CommentCommandServiceImpl implements CommentCommandService {
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.COMMENT_NOT_FOUND));
 
         CommentLike commentLike = commentLikeRepository.findByCommentAndMemberAndStatus(comment, member, Status.ACTIVE);
-        if (commentLike == null) commentLike = CommentConverter.toCommentLiked(comment, member, type);
+        BooleanType preLikeType = commentLike != null ? commentLike.getLiked() : null;
 
-        if (type == BooleanType.T) commentLike.setLiked();
-        else commentLike.setDisliked();
+        if (commentLike == null) {
+            commentLike = CommentConverter.toCommentLiked(comment, member, type);
+        } else if (type == BooleanType.T) {
+            commentLike.setLiked();
+        } else {
+            commentLike.setDisliked();
+        }
 
+        updateLikeOrDislikeCount(comment, preLikeType, commentLike.getLiked());
         return commentLikeRepository.save(commentLike);
+    }
+
+    private void updateLikeOrDislikeCount(Comment comment, BooleanType preLikeType, BooleanType nowLikeType) {
+        if (preLikeType == BooleanType.T) {
+            if (nowLikeType == BooleanType.F) {
+                comment.setLikeCount(false);
+                comment.setDislikeCount(true);
+            } else if (nowLikeType == null) {
+                comment.setLikeCount(false);
+            }
+        } else if (preLikeType == BooleanType.F) {
+            if (nowLikeType == BooleanType.T) {
+                comment.setDislikeCount(false);
+                comment.setLikeCount(true);
+            } else if (nowLikeType == null) {
+                comment.setDislikeCount(false);
+            }
+        } else if (preLikeType == null) {
+            if (nowLikeType == BooleanType.F) {
+                comment.setDislikeCount(true);
+            } else if (nowLikeType == BooleanType.T) {
+                comment.setLikeCount(true);
+            }
+        }
     }
 }

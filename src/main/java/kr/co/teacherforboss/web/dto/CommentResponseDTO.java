@@ -13,7 +13,7 @@ public class CommentResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SaveCommentResultDTO {
+    public static class SaveCommentDTO {
         Long postId;
         Long parentId;
         LocalDateTime createdAt;
@@ -23,7 +23,7 @@ public class CommentResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SaveCommentLikedResultDTO {
+    public static class SaveCommentLikeDTO {
         Boolean liked;
         LocalDateTime updatedAt;
     }
