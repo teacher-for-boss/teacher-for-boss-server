@@ -61,7 +61,12 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_BANK_EMPTY(BAD_REQUEST, "MEMBER40015", "은행 선택은 필수 입니다."),
     MEMBER_ACCOUNT_NUMBER_EMPTY(BAD_REQUEST, "MEMBER40016", "계좌번호 입력은 필수 입니다."),
     MEMBER_ACCOUNT_HOLDER_EMPTY(BAD_REQUEST, "MEMBER40017", "예금주명 입력은 필수 입니다."),
-    MEMBER_NICKNAME_DUPLICATED(BAD_REQUEST, "MEMBER4018", "이미 존재하는 닉네임입니다."),
+    MEMBER_NICKNAME_DUPLICATED(BAD_REQUEST, "MEMBER40018", "이미 존재하는 닉네임입니다."),
+    MEMBER_ROLE_EMPTY(BAD_REQUEST, "MEMBER40019", "보스(1)/티쳐(2) 중 선택해주세요."),
+    MEMBER_NAME_EMPTY(BAD_REQUEST, "MEMBER40020", "이름을 입력해주세요."),
+    MEMBER_NICKNAME_EMPTY(BAD_REQUEST, "MEMBER40021", "닉네임을 입력해주세요."),
+    MEMBER_PHONE_EMPTY(BAD_REQUEST, "MEMBER40022", "전화번호를 입력해주세요."),
+    MEMBER_PROFILE_IMG_EMPTY(BAD_REQUEST, "MEMBER40023", "프로필 이미지를 선택해주세요."),
 
     MEMBER_NOT_FOUND(NOT_FOUND, "MEMBER4041", "사용자가 없습니다."),
 
@@ -110,8 +115,11 @@ public enum ErrorStatus implements BaseErrorCode {
     EXAM_TAG_NOT_FOUND(NOT_FOUND, "EXAM4048", "시험 카테고리가 존재하지 않습니다."),
 
     // Board
+    INVALID_IMAGE_TIMESTAMP(BAD_REQUEST, "BOARD4001", "이미지 타임스탬프 값이 없습니다."),
+
     POST_NOT_FOUND(NOT_FOUND, "BOARD4041", "게시물을 찾을 수 없습니다."),
-    COMMENT_NOT_FOUND(NOT_FOUND, "BOARD4042", "댓글을 찾을 수 없습니다."),
+    QUESTION_NOT_FOUND(NOT_FOUND, "BOARD4042", "질문을 찾을 수 없습니다."),
+    ANSWER_NOT_FOUND(NOT_FOUND, "BOARD4043", "답변을 찾을 수 없습니다."),
 
     // For test
     TEMP_EXCEPTION(BAD_REQUEST, "TEMP4001", "이거는 테스트");
