@@ -4,6 +4,7 @@ import kr.co.teacherforboss.converter.CommentConverter;
 import kr.co.teacherforboss.domain.Comment;
 import kr.co.teacherforboss.domain.CommentLike;
 import kr.co.teacherforboss.service.commentService.CommentCommandService;
+import kr.co.teacherforboss.service.commentService.CommentQueryService;
 import kr.co.teacherforboss.web.dto.CommentRequestDTO;
 import kr.co.teacherforboss.web.dto.CommentResponseDTO;
 import org.springframework.validation.annotation.Validated;
@@ -41,6 +42,7 @@ public class BoardController {
     private final BoardCommandService boardCommandService;
     private final BoardQueryService boardQueryService;
     private final CommentCommandService commentCommandService;
+    private final CommentQueryService commentQueryService;
 
     @PostMapping("/boss/posts")
     public ApiResponse<BoardResponseDTO.SavePostDTO> savePost(@RequestBody @Valid BoardRequestDTO.SavePostDTO request){
@@ -136,5 +138,10 @@ public class BoardController {
                                                                                  @PathVariable("commentId") Long commentId) {
         CommentLike commentLike = commentCommandService.saveCommentDislike(postId, commentId);
         return ApiResponse.onSuccess(CommentConverter.toSaveCommentLikeDTO(commentLike));
+    }
+
+    @GetMapping("/boss/posts/{postId}/comments")
+    public ApiResponse<CommentResponseDTO.GetCommentListDTO> getCommentList(@PathVariable("postId") Long postId) {
+        return ApiResponse.onSuccess(commentQueryService.getCommentListDTO(postId));
     }
 }
