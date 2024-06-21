@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
-import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import kr.co.teacherforboss.apiPayload.exception.handler.BoardHandler;
 import kr.co.teacherforboss.converter.BoardConverter;
 import kr.co.teacherforboss.domain.Answer;
@@ -21,10 +20,10 @@ import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostHashtag;
 import kr.co.teacherforboss.domain.PostLike;
 import kr.co.teacherforboss.domain.Question;
+import kr.co.teacherforboss.domain.QuestionBookmark;
 import kr.co.teacherforboss.domain.QuestionHashtag;
 import kr.co.teacherforboss.domain.QuestionLike;
 import kr.co.teacherforboss.domain.common.BaseEntity;
-import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.AnswerRepository;
 import kr.co.teacherforboss.repository.CategoryRepository;
@@ -33,6 +32,7 @@ import kr.co.teacherforboss.repository.PostBookmarkRepository;
 import kr.co.teacherforboss.repository.PostHashtagRepository;
 import kr.co.teacherforboss.repository.PostLikeRepository;
 import kr.co.teacherforboss.repository.PostRepository;
+import kr.co.teacherforboss.repository.QuestionBookmarkRepository;
 import kr.co.teacherforboss.repository.QuestionHashtagRepository;
 import kr.co.teacherforboss.repository.QuestionLikeRepository;
 import kr.co.teacherforboss.repository.QuestionRepository;
@@ -56,6 +56,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     private final PostLikeRepository postLikeRepository;
     private final QuestionLikeRepository questionLikeRepository;
     private final AnswerRepository answerRepository;
+    private final QuestionBookmarkRepository questionBookmarkRepository;
 
     @Override
     @Transactional
@@ -226,8 +227,8 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         Question questionToDelete = questionRepository.findByIdAndMemberIdAndStatus(questionId, member.getId(), Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
 
-        questionToDelete.getAnswerList().forEach(BaseEntity::softDelete);
         questionToDelete.softDelete();
+        answerRepository.softDeleteAnswersByQuestionId(questionToDelete.getId());
 
         return questionToDelete;
     }
@@ -242,5 +243,28 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
         questionLike.toggleLiked();
         return questionLikeRepository.save(questionLike);
+    }
+
+    @Override
+    @Transactional
+    public Answer deleteAnswer(Long questionId, Long answerId) {
+        Member member = authCommandService.getMember();
+        Answer answerToDelete = answerRepository.findByIdAndQuestionIdAndMemberIdAndStatus(answerId, questionId, member.getId(), Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.ANSWER_NOT_FOUND));
+
+        answerToDelete.softDelete();
+        return answerToDelete;
+    }
+
+    @Override
+    public QuestionBookmark toggleQuestionBookmark(Long questionId) {
+        Member member = authCommandService.getMember();
+        Question questionToBookmark = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
+        QuestionBookmark questionBookmark = questionBookmarkRepository.findByQuestionIdAndMemberIdAndStatus(questionToBookmark.getId(), member.getId(), Status.ACTIVE)
+                .orElse(BoardConverter.toQuestionBookmark(questionToBookmark, member));
+
+        questionBookmark.toggleLiked();
+        return questionBookmarkRepository.save(questionBookmark);
     }
 }

@@ -140,4 +140,23 @@ public class BoardResponseDTO {
         BooleanType liked;
         LocalDateTime updatedAt;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DeleteAnswerDTO {
+        Long answerId;
+        LocalDateTime deletedAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class BookmarkQuestionDTO {
+        Long questionId;
+        BooleanType bookmarked;
+        LocalDateTime updatedAt;
+    }
 }
