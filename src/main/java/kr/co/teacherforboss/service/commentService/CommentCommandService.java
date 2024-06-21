@@ -5,7 +5,7 @@ import kr.co.teacherforboss.domain.CommentLike;
 import kr.co.teacherforboss.web.dto.CommentRequestDTO;
 
 public interface CommentCommandService {
-    Comment saveComment(CommentRequestDTO.SaveCommentDTO request, Long postId);
+    Comment saveComment(Long postId, CommentRequestDTO.SaveCommentDTO request);
     CommentLike saveCommentLike(Long postId, Long commentId);
     CommentLike saveCommentDislike(Long postId, Long commentId);
 }

@@ -14,7 +14,7 @@ public class CommentConverter {
 
     public static CommentResponseDTO.SaveCommentDTO toSaveCommentDTO(Comment comment) {
         Long parentId = null;
-        Comment parentComment = comment.getComment();
+        Comment parentComment = comment.getParent();
         if (parentComment != null) {
             parentId = parentComment.getId();
         }
@@ -30,7 +30,7 @@ public class CommentConverter {
         return Comment.builder()
                 .post(post)
                 .member(member)
-                .comment(comment)
+                .parent(comment)
                 .content(request.getContent())
                 .likeCount(0)
                 .dislikeCount(0)
