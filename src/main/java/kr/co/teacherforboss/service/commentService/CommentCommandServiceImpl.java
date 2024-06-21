@@ -24,13 +24,14 @@ public class CommentCommandServiceImpl implements CommentCommandService {
 
     @Override
     @Transactional
-    public Comment saveComment(CommentRequestDTO.SaveCommentDTO request, Long postId) {
+    public Comment saveComment(Long postId, CommentRequestDTO.SaveCommentDTO request) {
         Member member = authCommandService.getMember();
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
 
-        Comment parentComment = commentRepository.findByIdAndStatus(request.getParentId(), Status.ACTIVE);
-        if(request.getParentId() != null && parentComment == null) throw new BoardHandler(ErrorStatus.COMMENT_NOT_FOUND);
+        Comment parentComment = null;
+        if(request.getParentId() != null) parentComment = commentRepository.findByIdAndStatus(request.getParentId(), Status.ACTIVE);
+
         Comment comment = CommentConverter.toCommentDTO(request, member, post, parentComment);
         return commentRepository.save(comment);
     }

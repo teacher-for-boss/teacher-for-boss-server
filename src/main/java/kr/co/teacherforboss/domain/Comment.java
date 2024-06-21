@@ -23,7 +23,17 @@ public class Comment extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parentId")
-    private Comment comment;
+    private Comment parent;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "postId")
+    private Post post;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "memberId")
+    private Member member;
 
     @NotNull
     @Column(length = 400)
@@ -38,12 +48,4 @@ public class Comment extends BaseEntity {
     @Column
     @ColumnDefault("0")
     private Integer dislikeCount;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "postId")
-    private Post post;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "memberId")
-    private Member member;
 }
