@@ -122,7 +122,7 @@ public class BoardController {
     @PostMapping("/boss/posts/{postId}/comments")
     public ApiResponse<CommentResponseDTO.SaveCommentDTO> saveComment(@PathVariable("postId") Long postId,
                                                                       @RequestBody @Valid CommentRequestDTO.SaveCommentDTO request) {
-        Comment comment = commentCommandService.saveComment(request, postId);
+        Comment comment = commentCommandService.saveComment(postId, request);
         return ApiResponse.onSuccess(CommentConverter.toSaveCommentDTO(comment));
     }
 

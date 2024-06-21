@@ -16,7 +16,11 @@ import kr.co.teacherforboss.web.dto.MemberResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -29,17 +33,32 @@ public class CommentQueryServiceImpl implements CommentQueryService {
     @Transactional(readOnly = true)
     public CommentResponseDTO.GetCommentListDTO getCommentListDTO(Long postId) {
         Member member = authCommandService.getMember();
+
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
-        Integer totalCount = commentRepository.countAllByStatus(Status.ACTIVE);
+
+        Integer totalCount = commentRepository.countAllByPostAndStatus(post, Status.ACTIVE);
 
         List<Comment> comments = commentRepository.findAllByPostAndStatus(post, Status.ACTIVE);
-        List<CommentResponseDTO.GetCommentListDTO.CommentInfo> commentInfos = comments.stream()
-                .map(comment -> {
-                    MemberResponseDTO.GetMemberProfileDTO memberInfo = MemberConverter.toGetMemberProfileDTO(comment.getMember());
-                    return CommentConverter.toGetCommentInfo(post, comment, memberInfo);
-                }).toList();
 
-        return CommentConverter.toGetCommentListDTO(totalCount, commentInfos);
+        Map<Long, CommentResponseDTO.GetCommentListDTO.CommentInfo> parentCommentMap = new HashMap<>();
+        List<CommentResponseDTO.GetCommentListDTO.CommentInfo> commentList = new ArrayList<>();
+
+        for (Comment comment : comments) {
+            MemberResponseDTO.MemberInfoDTO memberInfo = MemberConverter.toMemberInfoDTO(comment.getMember());
+            CommentResponseDTO.GetCommentListDTO.CommentInfo commentInfo = CommentConverter.toGetCommentInfo(comment, memberInfo, new ArrayList<>());
+
+            if (comment.getParent() == null) {
+                commentList.add(commentInfo);
+                parentCommentMap.put(comment.getId(), commentInfo);
+            } else {
+                CommentResponseDTO.GetCommentListDTO.CommentInfo parentCommentInfo = parentCommentMap.get(comment.getParent().getId());
+                if (parentCommentInfo != null) {
+                    parentCommentInfo.getChildren().add(commentInfo);
+                }
+            }
+        }
+
+        return CommentConverter.toGetCommentListDTO(totalCount, commentList);
     }
 }

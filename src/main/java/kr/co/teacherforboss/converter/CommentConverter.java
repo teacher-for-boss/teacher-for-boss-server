@@ -63,21 +63,15 @@ public class CommentConverter {
                 .build();
     }
 
-    public static CommentResponseDTO.GetCommentListDTO.CommentInfo toGetCommentInfo(Post post, Comment comment, MemberResponseDTO.GetMemberProfileDTO memberInfo) {
-        Long parentId = null;
-        Comment parentComment = comment.getParent();
-        if (parentComment != null) {
-            parentId = parentComment.getId();
-        }
-
+    public static CommentResponseDTO.GetCommentListDTO.CommentInfo toGetCommentInfo(Comment comment, MemberResponseDTO.MemberInfoDTO memberInfo, List<CommentResponseDTO.GetCommentListDTO.CommentInfo> children) {
         return new CommentResponseDTO.GetCommentListDTO.CommentInfo(
-                post.getId(),
                 comment.getId(),
-                parentId,
                 comment.getContent(),
                 comment.getLikeCount(),
                 comment.getDislikeCount(),
                 comment.getCreatedAt(),
-                memberInfo);
+                memberInfo,
+                children
+        );
     }
 }

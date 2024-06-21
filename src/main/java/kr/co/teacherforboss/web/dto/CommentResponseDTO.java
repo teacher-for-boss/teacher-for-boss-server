@@ -40,14 +40,13 @@ public class CommentResponseDTO {
         @Getter
         @AllArgsConstructor
         public static class CommentInfo {
-            Long postId;
             Long commentId;
-            Long parentId;
             String content;
             Integer likeCount;
             Integer dislikeCount;
             LocalDateTime createdAt;
-            MemberResponseDTO.GetMemberProfileDTO memberInfo;
+            MemberResponseDTO.MemberInfoDTO memberInfo;
+            List<CommentInfo> children;
         }
     }
 }
