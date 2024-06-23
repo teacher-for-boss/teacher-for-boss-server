@@ -125,4 +125,11 @@ public class BoardController {
         return ApiResponse.onSuccess(BoardConverter.toBookmarkQuestionDTO(questionBookmark));
     }
 
+    @GetMapping("/teacher/questions")
+    public ApiResponse<BoardResponseDTO.GetQuestionListDTO> getQuestionList(@RequestParam(defaultValue = "0") Long lastQuestionId,
+                                                                            @RequestParam(defaultValue = "10") int size,
+                                                                            @RequestParam(defaultValue = "latest") String sortBy,
+                                                                            @RequestParam(defaultValue = "전체") String category) {
+        return ApiResponse.onSuccess(boardQueryService.getQuestionList(lastQuestionId, size, sortBy, category));
+    }
 }
