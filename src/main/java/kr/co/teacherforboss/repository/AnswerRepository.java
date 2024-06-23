@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import kr.co.teacherforboss.domain.Answer;
+import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.Status;
 
 @Repository
@@ -22,4 +23,5 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
 		WHERE a.question_id = :questionId
 	""", nativeQuery = true)
 	void softDeleteAnswersByQuestionId(@Param(value = "questionId") Long questionId);
+	Optional<Answer> findByQuestionIdAndSelected(Long quesionId, BooleanType selected);
 }

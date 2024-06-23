@@ -1,30 +1,39 @@
 package kr.co.teacherforboss.service.boardService;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.BoardHandler;
 import kr.co.teacherforboss.converter.BoardConverter;
+import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostLike;
+import kr.co.teacherforboss.domain.Question;
+import kr.co.teacherforboss.domain.QuestionBookmark;
+import kr.co.teacherforboss.domain.QuestionLike;
+import kr.co.teacherforboss.domain.enums.BooleanType;
+import kr.co.teacherforboss.domain.enums.QuestionCategory;
 import kr.co.teacherforboss.domain.enums.Status;
+import kr.co.teacherforboss.repository.AnswerRepository;
 import kr.co.teacherforboss.repository.PostBookmarkRepository;
 import kr.co.teacherforboss.repository.PostLikeRepository;
 import kr.co.teacherforboss.repository.PostRepository;
+import kr.co.teacherforboss.repository.QuestionBookmarkRepository;
+import kr.co.teacherforboss.repository.QuestionLikeRepository;
+import kr.co.teacherforboss.repository.QuestionRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
-
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +43,10 @@ public class BoardQueryServiceImpl implements BoardQueryService {
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
     private final PostBookmarkRepository postBookmarkRepository;
+    private final QuestionRepository questionRepository;
+    private final QuestionLikeRepository questionLikeRepository;
+    private final QuestionBookmarkRepository questionBookmarkRepository;
+    private final AnswerRepository answerRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -106,5 +119,52 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         });
 
         return BoardConverter.toGetPostListDTO(totalCount, postInfos);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public BoardResponseDTO.GetQuestionListDTO getQuestionList(Long lastQuestionId, int size, String sortBy, String category) {
+        Member member = authCommandService.getMember();
+        PageRequest pageRequest = PageRequest.of(0, size);
+        Long categoryId = QuestionCategory.getIdentifier(category);
+        Integer totalCount = questionRepository.countAllByCategoryIdAndStatus(categoryId, Status.ACTIVE);
+        Slice<Question> questionsPage;
+
+        if (lastQuestionId == 0) {
+            questionsPage = switch (sortBy) {
+                case "likes" -> questionRepository.findSliceByIdLessThanOrderByLikeCountDesc(categoryId, pageRequest);
+                case "views" -> questionRepository.findSliceByIdLessThanOrderByViewCountDesc(categoryId, pageRequest);
+                default -> questionRepository.findSliceByIdLessThanOrderByCreatedAtDesc(categoryId, pageRequest);
+            };
+        } else {
+            questionsPage = switch (sortBy) {
+                case "likes" -> questionRepository.findSliceByIdLessThanOrderByLikeCountDescWithLastQuestionId(categoryId, lastQuestionId, pageRequest);
+                case "views" -> questionRepository.findSliceByIdLessThanOrderByViewCountDescWithLastQuestionId(categoryId, lastQuestionId, pageRequest);
+                default -> questionRepository.findSliceByIdLessThanOrderByCreatedAtDescWithLastQuestionId(categoryId, lastQuestionId, pageRequest);
+            };
+        }
+
+        List<BoardResponseDTO.GetQuestionListDTO.QuestionInfo> questionInfos = new ArrayList<>();
+
+        List<QuestionLike> questionLikes = questionLikeRepository.findByQuestionInAndStatus(questionsPage.getContent(), Status.ACTIVE);
+        List<QuestionBookmark> questionBookmarks = questionBookmarkRepository.findByQuestionInAndStatus(questionsPage.getContent(), Status.ACTIVE);
+
+        Map<Long, QuestionLike> questionLikeMap = questionLikes.stream()
+                .collect(Collectors.toMap(like -> like.getQuestion().getId(), like -> like));
+        Map<Long, QuestionBookmark> questionBookmarkMap = questionBookmarks.stream()
+                .collect(Collectors.toMap(bookmark -> bookmark.getQuestion().getId(), bookmark -> bookmark));
+
+        questionsPage.getContent().forEach(question -> {
+            Answer selectedTeacher = answerRepository.findByQuestionIdAndSelected(question.getId(), BooleanType.T)
+                    .orElse(null);
+            QuestionLike questionLike = questionLikeMap.get(question.getId());
+            QuestionBookmark questionBookmark = questionBookmarkMap.get(question.getId());
+            boolean liked = (questionLike == null) ? false : questionLike.getLiked().isIdentifier();
+            boolean bookmarked = (questionBookmark == null) ? false : questionBookmark.getBookmarked().isIdentifier();
+            Integer answerCount = question.getAnswerList().size();
+            questionInfos.add(BoardConverter.toGetQuestionInfo(question, selectedTeacher, liked, bookmarked, answerCount));
+        });
+
+        return BoardConverter.toGetQuestionListDTO(totalCount, questionInfos);
     }
 }
