@@ -244,4 +244,43 @@ public class BoardConverter {
                 .updatedAt(questionBookmark.getUpdatedAt())
                 .build();
     }
+
+    public static BoardResponseDTO.GetQuestionListDTO.QuestionInfo toGetQuestionInfo(Question question, Answer selectedTeacher, boolean liked, boolean bookmarked, Integer answerCount) {
+        if (selectedTeacher == null) {
+            return new BoardResponseDTO.GetQuestionListDTO.QuestionInfo(
+                    question.getId(),
+                    question.getTitle(),
+                    question.getContent(),
+                    question.getSolved().isIdentifier(),
+                    null,
+                    question.getBookmarkCount(),
+                    answerCount,
+                    question.getLikeCount(),
+                    liked,
+                    bookmarked,
+                    question.getCreatedAt()
+            );
+        } else {
+            return new BoardResponseDTO.GetQuestionListDTO.QuestionInfo(
+                    question.getId(),
+                    question.getTitle(),
+                    question.getContent(),
+                    question.getSolved().isIdentifier(),
+                    selectedTeacher.getImageUuid(),
+                    question.getBookmarkCount(),
+                    answerCount,
+                    question.getLikeCount(),
+                    liked,
+                    bookmarked,
+                    question.getCreatedAt()
+            );
+        }
+    }
+
+    public static BoardResponseDTO.GetQuestionListDTO toGetQuestionListDTO(Integer questionsCount, List<BoardResponseDTO.GetQuestionListDTO.QuestionInfo> questionInfos) {
+        return BoardResponseDTO.GetQuestionListDTO.builder()
+                .totalCount(questionsCount)
+                .questionList(questionInfos)
+                .build();
+    }
 }
