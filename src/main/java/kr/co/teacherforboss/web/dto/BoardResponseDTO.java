@@ -50,17 +50,58 @@ public class BoardResponseDTO {
     @AllArgsConstructor
     public static class EditQuestionDTO {
         Long questionId;
+        LocalDateTime updatedAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SaveAnswerDTO {
+        Long answerId;
         LocalDateTime createdAt;
     }
 
-    @Builder
     @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class EditAnswerDTO {
+        Long answerId;
+        LocalDateTime updatedAt;
+    }
+
+    @Getter
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class MemberInfo {
         Long memberId;
         String name;
         String profileImg;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetPostListDTO {
+        Integer totalCount;
+        List<PostInfo> postList;
+
+        @Getter
+        @AllArgsConstructor
+        public static class PostInfo {
+            Long postId;
+            String title;
+            String content;
+            Integer bookmarkCount;
+            Integer commentCount;
+            Integer likeCount;
+            Boolean like;
+            Boolean bookmark;
+            LocalDateTime createdAt;
+        }
     }
 
     @Getter
@@ -96,8 +137,17 @@ public class BoardResponseDTO {
     @AllArgsConstructor
     public static class LikeQuestionDTO {
         Long questionId;
-        BooleanType like;
+        BooleanType liked;
         LocalDateTime updatedAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DeleteAnswerDTO {
+        Long answerId;
+        LocalDateTime deletedAt;
     }
 
     @Getter

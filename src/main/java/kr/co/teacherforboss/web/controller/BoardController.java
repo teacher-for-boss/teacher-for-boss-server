@@ -7,11 +7,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.converter.BoardConverter;
+import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostLike;
@@ -46,16 +48,17 @@ public class BoardController {
         return ApiResponse.onSuccess(boardQueryService.getPost(postId));
     }
 
-    @PostMapping("/board/boss/posts/{postId}/bookmark")
-    public ApiResponse<BoardResponseDTO.SavePostBookmarkDTO> savePostBookmark(@PathVariable("postId") Long postId){
-        PostBookmark bookmark = boardCommandService.savePostBookmark(postId);
-        return ApiResponse.onSuccess(BoardConverter.toSavePostBookmarkDTO(bookmark));
+    @GetMapping("/boss/posts")
+    public ApiResponse<BoardResponseDTO.GetPostListDTO> getPostList(@RequestParam(defaultValue = "0") Long lastPostId, @RequestParam(defaultValue = "10") int size,
+                                                                    @RequestParam(defaultValue = "latest") String sortBy){
+        return ApiResponse.onSuccess(boardQueryService.getPostList(lastPostId, size, sortBy));
     }
 
-    @PostMapping("/board/boss/posts/{postId}/likes")
-    public ApiResponse<BoardResponseDTO.SavePostLikeDTO> savePostLike(@PathVariable("postId") Long postId){
-        PostLike like = boardCommandService.savePostLike(postId);
-        return ApiResponse.onSuccess(BoardConverter.toSavePostLikeDTO(like));
+    @PostMapping("/boss/posts/{postId}")
+    public ApiResponse<BoardResponseDTO.SavePostDTO> editPost(@PathVariable("postId") Long postId,
+                                                              @RequestBody @Valid BoardRequestDTO.SavePostDTO request) {
+        Post post = boardCommandService.editPost(postId, request);
+        return ApiResponse.onSuccess(BoardConverter.toSavePostDTO(post));
     }
 
     @PostMapping("/teacher/questions")
@@ -64,10 +67,29 @@ public class BoardController {
         return ApiResponse.onSuccess(BoardConverter.toSaveQuestionDTO(question));
     }
 
+    @PostMapping("/boss/posts/{postId}/bookmark")
+    public ApiResponse<BoardResponseDTO.SavePostBookmarkDTO> savePostBookmark(@PathVariable("postId") Long postId){
+        PostBookmark bookmark = boardCommandService.savePostBookmark(postId);
+        return ApiResponse.onSuccess(BoardConverter.toSavePostBookmarkDTO(bookmark));
+    }
+
+    @PostMapping("/boss/posts/{postId}/likes")
+    public ApiResponse<BoardResponseDTO.SavePostLikeDTO> savePostLike(@PathVariable("postId") Long postId){
+        PostLike like = boardCommandService.savePostLike(postId);
+        return ApiResponse.onSuccess(BoardConverter.toSavePostLikeDTO(like));
+    }
+
     @PatchMapping("/teacher/questions/{questionId}")
     public ApiResponse<BoardResponseDTO.EditQuestionDTO> editQuestion(@PathVariable("questionId") Long questionId, @RequestBody @Valid BoardRequestDTO.EditQuestionDTO request) {
         Question question = boardCommandService.editQuestion(questionId, request);
         return ApiResponse.onSuccess(BoardConverter.toEditQuestionDTO(question));
+    }
+
+    @PostMapping("/teacher/questions/{questionId}/answers")
+    public ApiResponse<BoardResponseDTO.SaveAnswerDTO> saveAnswer(@PathVariable("questionId") Long questionId,
+                                                                  @RequestBody @Valid BoardRequestDTO.SaveAnswerDTO request) {
+        Answer answer = boardCommandService.saveAnswer(questionId, request);
+        return ApiResponse.onSuccess(BoardConverter.toSaveAnswerDTO(answer));
     }
 
     @PostMapping("/teacher/questions/{questionId}")
@@ -77,14 +99,29 @@ public class BoardController {
     }
 
     @PostMapping("/teacher/questions/{questionId}/likes")
-    public ApiResponse<BoardResponseDTO.LikeQuestionDTO> likeQuestion(@PathVariable("questionId") Long questionId) {
-        QuestionLike questionLike = boardCommandService.likeQuestion(questionId);
+    public ApiResponse<BoardResponseDTO.LikeQuestionDTO> toggleQuestionLike(@PathVariable("questionId") Long questionId) {
+        QuestionLike questionLike = boardCommandService.toggleQuestionLike(questionId);
         return ApiResponse.onSuccess(BoardConverter.toLikeQuestionDTO(questionLike));
     }
 
+    @PatchMapping("/teacher/questions/{questionId}/answers/{answerId}")
+    public ApiResponse<BoardResponseDTO.EditAnswerDTO> editAnswer(@PathVariable("questionId") Long questionId,
+                                                                  @PathVariable("answerId") Long answerId,
+                                                                  @RequestBody @Valid BoardRequestDTO.EditAnswerDTO request) {
+        Answer answer = boardCommandService.editAnswer(questionId, answerId, request);
+        return ApiResponse.onSuccess(BoardConverter.toEditAnswerDTO(answer));
+    }
+
+    @PostMapping("/teacher/questions/{questionId}/answers/{answerId}")
+    public ApiResponse<BoardResponseDTO.DeleteAnswerDTO> deleteAnswer(@PathVariable("questionId") Long questionId,
+                                                                      @PathVariable("answerId") Long answerId) {
+        Answer answer = boardCommandService.deleteAnswer(questionId, answerId);
+        return ApiResponse.onSuccess(BoardConverter.toDeleteAnswerDTO(answer));
+    }
+
     @PostMapping("/teacher/questions/{questionId}/bookmark")
-    public ApiResponse<BoardResponseDTO.BookmarkQuestionDTO> bookmarkQuestion(@PathVariable("questionId") Long questionId) {
-        QuestionBookmark questionBookmark = boardCommandService.bookmarkQuestion(questionId);
+    public ApiResponse<BoardResponseDTO.BookmarkQuestionDTO> toggleQuestionBookmark(@PathVariable("questionId") Long questionId) {
+        QuestionBookmark questionBookmark = boardCommandService.toggleQuestionBookmark(questionId);
         return ApiResponse.onSuccess(BoardConverter.toBookmarkQuestionDTO(questionBookmark));
     }
 
