@@ -1,7 +1,12 @@
 package kr.co.teacherforboss.service.boardService;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,12 +31,6 @@ import kr.co.teacherforboss.repository.QuestionRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
-
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -125,19 +124,15 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         Question question = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
 
-        BooleanType liked = BooleanType.F;
-        BooleanType bookmarked = BooleanType.F;
+		QuestionLike questionLike = questionLikeRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE)
+                .orElse(BoardConverter.toQuestionLike(question, member));
+		BooleanType liked = questionLike.getLiked();
+
+        QuestionBookmark questionBookmark = questionBookmarkRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE)
+                .orElse(BoardConverter.toQuestionBookmark(question, member));
+		BooleanType bookmarked = questionBookmark.getBookmarked();
+
         List<String> hashtagList = null;
-
-        QuestionLike questionLike = questionLikeRepository.findByQuestionAndMemberAndStatus(question, member, Status.ACTIVE);
-        if (questionLike != null) {
-            liked = questionLike.getLiked();
-        }
-
-        QuestionBookmark questionBookmark = questionBookmarkRepository.findByQuestionAndMemberAndStatus(question, member, Status.ACTIVE);
-        if (questionBookmark != null) {
-            bookmarked = questionBookmark.getBookmarked();
-        }
 
         if (!question.getHashtagList().isEmpty()) {
             hashtagList = question.getHashtagList()
