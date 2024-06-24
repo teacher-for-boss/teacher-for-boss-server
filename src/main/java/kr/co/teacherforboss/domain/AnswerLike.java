@@ -30,4 +30,14 @@ public class AnswerLike extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private BooleanType liked;
+
+    public void toggleLiked() {
+        if (this.liked != null && this.liked.equals(BooleanType.T)) this.liked = null;
+        else this.liked = BooleanType.T;
+    }
+
+    public void toggleDisliked() {
+        if (this.liked != null && this.liked.equals(BooleanType.F)) this.liked = null;
+        else this.liked = BooleanType.F;
+    }
 }

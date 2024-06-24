@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import kr.co.teacherforboss.domain.AnswerLike;
+import kr.co.teacherforboss.repository.AnswerLikeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,6 +59,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     private final QuestionLikeRepository questionLikeRepository;
     private final AnswerRepository answerRepository;
     private final QuestionBookmarkRepository questionBookmarkRepository;
+    private final AnswerLikeRepository answerLikeRepository;
 
     @Override
     @Transactional
@@ -234,6 +237,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     }
 
     @Override
+    @Transactional
     public QuestionLike toggleQuestionLike(Long questionId) {
         Member member = authCommandService.getMember();
         Question questionToLike = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
@@ -257,6 +261,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     }
 
     @Override
+    @Transactional
     public QuestionBookmark toggleQuestionBookmark(Long questionId) {
         Member member = authCommandService.getMember();
         Question questionToBookmark = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
@@ -266,5 +271,19 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
         questionBookmark.toggleLiked();
         return questionBookmarkRepository.save(questionBookmark);
+    }
+
+    @Override
+    @Transactional
+    public AnswerLike toggleAnswerLike(Long questionId, Long answerId, boolean isLike) {
+        Member member = authCommandService.getMember();
+        Answer answer = answerRepository.findByIdAndQuestionIdAndMemberIdAndStatus(answerId, questionId, member.getId(), Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.ANSWER_NOT_FOUND));
+        AnswerLike answerLike = answerLikeRepository.findByAnswerIdAndMemberIdAndStatus(answerId, member.getId(), Status.ACTIVE)
+                .orElse(BoardConverter.toAnswerLike(answer, member));
+
+        if (isLike) answerLike.toggleLiked();
+        else answerLike.toggleDisliked();
+        return answerLikeRepository.save(answerLike);
     }
 }

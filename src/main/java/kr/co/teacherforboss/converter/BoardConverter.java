@@ -3,6 +3,7 @@ package kr.co.teacherforboss.converter;
 import java.util.List;
 
 import kr.co.teacherforboss.domain.Answer;
+import kr.co.teacherforboss.domain.AnswerLike;
 import kr.co.teacherforboss.domain.Category;
 import kr.co.teacherforboss.domain.Hashtag;
 import kr.co.teacherforboss.domain.Member;
@@ -242,6 +243,22 @@ public class BoardConverter {
                 .questionId(questionBookmark.getQuestion().getId())
                 .bookmarked(questionBookmark.getBookmarked())
                 .updatedAt(questionBookmark.getUpdatedAt())
+                .build();
+    }
+
+    public static AnswerLike toAnswerLike(Answer answer, Member member) {
+        return AnswerLike.builder()
+                .answer(answer)
+                .member(member)
+                .liked(BooleanType.F)
+                .build();
+    }
+
+    public static BoardResponseDTO.LikeAnswerDTO toLikeAnswerDTO(AnswerLike answerLike) {
+        return BoardResponseDTO.LikeAnswerDTO.builder()
+                .answerId(answerLike.getAnswer().getId())
+                .liked(answerLike.getLiked())
+                .updatedAt(answerLike.getUpdatedAt())
                 .build();
     }
 }

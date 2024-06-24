@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.web.controller;
 
+import kr.co.teacherforboss.domain.AnswerLike;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -123,6 +124,20 @@ public class BoardController {
     public ApiResponse<BoardResponseDTO.BookmarkQuestionDTO> toggleQuestionBookmark(@PathVariable("questionId") Long questionId) {
         QuestionBookmark questionBookmark = boardCommandService.toggleQuestionBookmark(questionId);
         return ApiResponse.onSuccess(BoardConverter.toBookmarkQuestionDTO(questionBookmark));
+    }
+
+    @PostMapping("/teacher/questions/{questionId}/answers/{answerId}/likes")
+    public ApiResponse<BoardResponseDTO.LikeAnswerDTO> toggleAnswerLike(@PathVariable("questionId") Long questionId,
+                                                                       @PathVariable("answerId") Long answerId) {
+        AnswerLike answerLike = boardCommandService.toggleAnswerLike(questionId, answerId, true);
+        return ApiResponse.onSuccess(BoardConverter.toLikeAnswerDTO(answerLike));
+    }
+
+    @PostMapping("/teacher/questions/{questionId}/answers/{answerId}/dislikes")
+    public ApiResponse<BoardResponseDTO.LikeAnswerDTO> toggleAnswerDislike(@PathVariable("questionId") Long questionId,
+                                                                        @PathVariable("answerId") Long answerId) {
+        AnswerLike answerLike = boardCommandService.toggleAnswerLike(questionId, answerId, false);
+        return ApiResponse.onSuccess(BoardConverter.toLikeAnswerDTO(answerLike));
     }
 
 }

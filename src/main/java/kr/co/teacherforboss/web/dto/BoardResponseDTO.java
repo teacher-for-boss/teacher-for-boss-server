@@ -145,6 +145,16 @@ public class BoardResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class LikeAnswerDTO {
+        Long answerId;
+        BooleanType liked;
+        LocalDateTime updatedAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class DeleteAnswerDTO {
         Long answerId;
         LocalDateTime deletedAt;
