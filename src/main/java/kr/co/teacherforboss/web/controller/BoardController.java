@@ -57,7 +57,8 @@ public class BoardController {
     }
 
     @GetMapping("/boss/posts")
-    public ApiResponse<BoardResponseDTO.GetPostListDTO> getPostList(@RequestParam(defaultValue = "0") Long lastPostId, @RequestParam(defaultValue = "10") int size,
+    public ApiResponse<BoardResponseDTO.GetPostListDTO> getPostList(@RequestParam(defaultValue = "0") Long lastPostId,
+                                                                    @RequestParam(defaultValue = "10") int size,
                                                                     @RequestParam(defaultValue = "latest") String sortBy){
         return ApiResponse.onSuccess(boardQueryService.getPostList(lastPostId, size, sortBy));
     }

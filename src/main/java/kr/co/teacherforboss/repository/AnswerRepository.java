@@ -36,7 +36,7 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
 	@Query(value = """
 		SELECT * FROM answer
 		WHERE created_at < (SELECT created_at FROM answer WHERE id = :lastAnswerId)
-		AND status = 'ACTIVE'
+			AND status = 'ACTIVE'
 		ORDER BY created_at DESC
 	""", nativeQuery = true)
 	Slice<Answer> findSliceByIdLessThanAndStatusOrderByCreatedAtDesc(Long lastAnswerId, Pageable pageable);
