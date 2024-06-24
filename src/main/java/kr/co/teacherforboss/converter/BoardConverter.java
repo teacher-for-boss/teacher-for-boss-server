@@ -259,4 +259,10 @@ public class BoardConverter {
                 .createdAt(question.getCreatedAt())
                 .build();
     }
+
+    public static List<String> toQuestionHashtagList(Question question) {
+        return question.getHashtagList()
+                .stream().map(questionHashtag -> questionHashtag.getHashtag().getName())
+                .toList();
+    }
 }

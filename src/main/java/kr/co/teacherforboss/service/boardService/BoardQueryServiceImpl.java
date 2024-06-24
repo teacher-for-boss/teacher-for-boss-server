@@ -125,19 +125,17 @@ public class BoardQueryServiceImpl implements BoardQueryService {
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
 
 		QuestionLike questionLike = questionLikeRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE)
-                .orElse(BoardConverter.toQuestionLike(question, member));
-		BooleanType liked = questionLike.getLiked();
+                .orElse(null);
+		BooleanType liked = (questionLike == null) ? BooleanType.F : questionLike.getLiked();
 
         QuestionBookmark questionBookmark = questionBookmarkRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE)
-                .orElse(BoardConverter.toQuestionBookmark(question, member));
-		BooleanType bookmarked = questionBookmark.getBookmarked();
+                .orElse(null);
+		BooleanType bookmarked = (questionBookmark == null) ? BooleanType.F : questionBookmark.getBookmarked();
 
         List<String> hashtagList = null;
 
         if (!question.getHashtagList().isEmpty()) {
-            hashtagList = question.getHashtagList()
-                    .stream().map(questionHashtag -> questionHashtag.getHashtag().getName())
-                    .toList();
+            hashtagList = BoardConverter.toQuestionHashtagList(question);
         }
 
         return BoardConverter.toGetQuestionDTO(question, liked, bookmarked, hashtagList);
