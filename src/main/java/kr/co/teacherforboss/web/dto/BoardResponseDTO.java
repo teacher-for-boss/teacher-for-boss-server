@@ -111,7 +111,7 @@ public class BoardResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class GetPostListDTO {
-        Integer totalCount;
+        boolean hasNext;
         List<PostInfo> postList;
 
         @Getter

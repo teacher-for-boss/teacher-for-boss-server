@@ -15,26 +15,31 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Optional<Post> findByIdAndStatus(Long postId, Status status);
     Optional<Post> findByIdAndMemberIdAndStatus(Long postId, Long memberId, Status status);
     Integer countAllByStatus(Status status);
-    @Query(value = "select * from post order by like_count desc, created_at asc", nativeQuery = true)
-    Slice<Post> findSliceByIdLessThanOrderByLikeCountDesc(PageRequest pageRequest);
-    @Query(value = "select * from post order by view_count desc, created_at asc", nativeQuery = true)
-    Slice<Post> findSliceByIdLessThanOrderByViewCountDesc(PageRequest pageRequest);
-    @Query(value = "select * from post order by created_at desc, created_at asc", nativeQuery = true)
-    Slice<Post> findSliceByIdLessThanOrderByCreatedAtDesc(PageRequest pageRequest);
+    // TODO: 아래 3개는 native query 쓰지 말고 그냥 메서드로 하기 + 변수명 수정
+    Slice<Post> findSliceByStatusOrderByLikeCountDesc(Status status, PageRequest pageRequest);
+    Slice<Post> findSliceByStatusOrderByViewCountDesc(Status status, PageRequest pageRequest);
+    Slice<Post> findSliceByStatusOrderByCreatedAtDesc(Status status, PageRequest pageRequest);
     @Query(value = """
             SELECT * FROM post
-            WHERE (like_count < (SELECT like_count FROM post WHERE id = :postId)
-                OR (like_count = (SELECT like_count FROM post WHERE id = :postId) AND id > :postId))
+            WHERE ((like_count < (SELECT like_count FROM post WHERE id = :postId)
+                OR (like_count = (SELECT like_count FROM post WHERE id = :postId) AND id > :postId)))
+                AND status = 'ACTIVE'
             ORDER BY like_count DESC, created_at asc;
     """, nativeQuery = true)
-    Slice<Post> findSliceByIdLessThanOrderByLikeCountDescWithLastPostId(Long postId, PageRequest pageRequest);
+    Slice<Post> findSliceByIdLessThanOrderByLikeCountDesc(Long postId, PageRequest pageRequest);
     @Query(value = """
             SELECT * FROM post
-            WHERE (view_count < (SELECT view_count FROM post WHERE id = :postId)
-                OR (view_count = (SELECT view_count FROM post WHERE id = :postId) AND id > :postId))
+            WHERE ((view_count < (SELECT view_count FROM post WHERE id = :postId)
+                OR (view_count = (SELECT view_count FROM post WHERE id = :postId) AND id > :postId)))
+                AND status = 'ACTIVE'
             ORDER BY view_count DESC, created_at asc;
     """, nativeQuery = true)
-    Slice<Post> findSliceByIdLessThanOrderByViewCountDescWithLastPostId(Long postId, PageRequest pageRequest);
-    @Query(value = "select * from post where created_at < (select created_at from post where id = :postId) order by created_at desc", nativeQuery = true)
-    Slice<Post> findSliceByIdLessThanOrderByCreatedAtDescWithLastPostId(Long postId, PageRequest pageRequest);
+    Slice<Post> findSliceByIdLessThanOrderByViewCountDesc(Long postId, PageRequest pageRequest);
+    @Query(value = """
+            SELECT * FROM post 
+            WHERE created_at < (SELECT created_at FROM post WHERE id = :postId) 
+                AND status = 'ACTIVE'
+            ORDER BY created_at DESC
+    """, nativeQuery = true)
+    Slice<Post> findSliceByIdLessThanOrderByCreatedAtDesc(Long postId, PageRequest pageRequest);
 }

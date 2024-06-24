@@ -1,7 +1,9 @@
 package kr.co.teacherforboss.converter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.AnswerLike;
 import kr.co.teacherforboss.domain.Category;
@@ -111,9 +113,19 @@ public class BoardConverter {
                 like, bookmark, post.getCreatedAt());
     }
 
-    public static BoardResponseDTO.GetPostListDTO toGetPostListDTO(int postsCount, List<BoardResponseDTO.GetPostListDTO.PostInfo> postInfos) {
+    public static BoardResponseDTO.GetPostListDTO toGetPostListDTO(Slice<Post> posts, Map<Long, Boolean> postLikeMap, Map<Long, Boolean> postBookmarkMap) {
+
+        List<BoardResponseDTO.GetPostListDTO.PostInfo> postInfos = new ArrayList<>();
+
+        posts.getContent().forEach(post -> {
+            boolean like = postLikeMap.get(post.getId()) != null && postLikeMap.get(post.getId());
+            boolean bookmark = postBookmarkMap.get(post.getId()) != null && postBookmarkMap.get(post.getId());
+            Integer commentCount = post.getCommentList().size(); // TODO: query 나가는거 왜이러는지 찾아보기
+            postInfos.add(BoardConverter.toGetPostInfo(post, bookmark, like, commentCount));
+        });
+
         return BoardResponseDTO.GetPostListDTO.builder()
-                .totalCount(postsCount)
+                .hasNext(posts.hasNext())
                 .postList(postInfos)
                 .build();
     }

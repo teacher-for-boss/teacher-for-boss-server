@@ -77,45 +77,36 @@ public class BoardQueryServiceImpl implements BoardQueryService {
     public BoardResponseDTO.GetPostListDTO getPostList(Long lastPostId, int size, String sortBy) {
         Member member = authCommandService.getMember();
         PageRequest pageRequest = PageRequest.of(0, size);
-        Integer totalCount = postRepository.countAllByStatus(Status.ACTIVE);
-        Slice<Post> postsPage;
+        Slice<Post> posts;
 
         if (lastPostId == 0) {
-            postsPage = switch (sortBy) {
-                case "likes" -> postRepository.findSliceByIdLessThanOrderByLikeCountDesc(pageRequest);
-                case "views" -> postRepository.findSliceByIdLessThanOrderByViewCountDesc(pageRequest);
-                default -> postRepository.findSliceByIdLessThanOrderByCreatedAtDesc(pageRequest);
+            posts = switch (sortBy) {
+                case "likes" -> postRepository.findSliceByStatusOrderByLikeCountDesc(Status.ACTIVE, pageRequest);
+                case "views" -> postRepository.findSliceByStatusOrderByViewCountDesc(Status.ACTIVE, pageRequest);
+                default -> postRepository.findSliceByStatusOrderByCreatedAtDesc(Status.ACTIVE, pageRequest);
             };
         }
         else {
-            postsPage = switch (sortBy) {
-                case "likes" -> postRepository.findSliceByIdLessThanOrderByLikeCountDescWithLastPostId(lastPostId, pageRequest);
-                case "views" -> postRepository.findSliceByIdLessThanOrderByViewCountDescWithLastPostId(lastPostId, pageRequest);
-                default -> postRepository.findSliceByIdLessThanOrderByCreatedAtDescWithLastPostId(lastPostId, pageRequest);
+            posts = switch (sortBy) {
+                case "likes" -> postRepository.findSliceByIdLessThanOrderByLikeCountDesc(lastPostId, pageRequest);
+                case "views" -> postRepository.findSliceByIdLessThanOrderByViewCountDesc(lastPostId, pageRequest);
+                default -> postRepository.findSliceByIdLessThanOrderByCreatedAtDesc(lastPostId, pageRequest);
             };
         }
 
-        List<BoardResponseDTO.GetPostListDTO.PostInfo> postInfos = new ArrayList<>();
+        List<PostLike> postLikes = postLikeRepository.findByPostInAndMemberIdAndStatus(posts.getContent(),
+                member.getId(), Status.ACTIVE);
+        List<PostBookmark> postBookmarks = postBookmarkRepository.findByPostInAndMemberIdAndStatus(posts.getContent(),
+                member.getId(), Status.ACTIVE);
 
-        List<PostLike> postLikes = postLikeRepository.findByPostInAndStatus(postsPage.getContent(), Status.ACTIVE);
-        List<PostBookmark> postBookmarks = postBookmarkRepository.findByPostInAndStatus(postsPage.getContent(), Status.ACTIVE);
-
-        Map<Long, PostLike> postLikeMap = postLikes.stream()
-                .collect(Collectors.toMap(like -> like.getPost().getId(), like -> like));
-        Map<Long, PostBookmark> postBookmarkMap = postBookmarks.stream()
-                .collect(Collectors.toMap(bookmark -> bookmark.getPost().getId(), bookmark -> bookmark));
+        Map<Long, Boolean> postLikeMap = postLikes.stream()
+                .collect(Collectors.toMap(like -> like.getPost().getId(), like -> like.getLiked().isIdentifier()));
+        Map<Long, Boolean> postBookmarkMap = postBookmarks.stream()
+                .collect(Collectors.toMap(bookmark -> bookmark.getPost().getId(), bookmark -> bookmark.getBookmarked().isIdentifier()));
 
         // TODO : 좋아요 수, 북마크 수, 조회수 동시성 제어
-        postsPage.getContent().forEach(post -> {
-            PostLike postLike = postLikeMap.get(post.getId());
-            PostBookmark postBookmark = postBookmarkMap.get(post.getId());
-            boolean like = (postLike == null) ? false : postLike.getLiked().isIdentifier();
-            boolean bookmark = (postBookmark == null) ? false : postBookmark.getBookmarked().isIdentifier();
-            Integer commentCount = post.getCommentList().size();
-            postInfos.add(BoardConverter.toGetPostInfo(post, bookmark, like, commentCount));
-        });
 
-        return BoardConverter.toGetPostListDTO(totalCount, postInfos);
+        return BoardConverter.toGetPostListDTO(posts, postLikeMap, postBookmarkMap);
     }
 
     @Override
