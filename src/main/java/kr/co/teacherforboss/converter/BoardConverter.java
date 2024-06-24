@@ -283,4 +283,43 @@ public class BoardConverter {
                 .questionList(questionInfos)
                 .build();
     }
+
+    public static BoardResponseDTO.SearchQuestionDTO.QuestionInfo toSearchQuestionInfo(Question question, Answer selectedTeacher, boolean liked, boolean bookmarked, Integer answerCount) {
+        if (selectedTeacher == null) {
+            return new BoardResponseDTO.SearchQuestionDTO.QuestionInfo(
+                    question.getId(),
+                    question.getTitle(),
+                    question.getContent(),
+                    question.getSolved().isIdentifier(),
+                    null,
+                    question.getBookmarkCount(),
+                    answerCount,
+                    question.getLikeCount(),
+                    liked,
+                    bookmarked,
+                    question.getCreatedAt()
+            );
+        } else {
+            return new BoardResponseDTO.SearchQuestionDTO.QuestionInfo(
+                    question.getId(),
+                    question.getTitle(),
+                    question.getContent(),
+                    question.getSolved().isIdentifier(),
+                    selectedTeacher.getImageUuid(),
+                    question.getBookmarkCount(),
+                    answerCount,
+                    question.getLikeCount(),
+                    liked,
+                    bookmarked,
+                    question.getCreatedAt()
+            );
+        }
+    }
+
+    public static BoardResponseDTO.SearchQuestionDTO toSearchQuestionDTO(Integer questionsCount, List<BoardResponseDTO.SearchQuestionDTO.QuestionInfo> questionInfos) {
+        return BoardResponseDTO.SearchQuestionDTO.builder()
+                .totalCount(questionsCount)
+                .questionList(questionInfos)
+                .build();
+    }
 }

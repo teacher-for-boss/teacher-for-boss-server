@@ -6,4 +6,5 @@ public interface BoardQueryService {
     BoardResponseDTO.GetPostDTO getPost(Long postId);
     BoardResponseDTO.GetPostListDTO getPostList(Long lastPostId, int size, String sortBy);
 	BoardResponseDTO.GetQuestionListDTO getQuestionList(Long lastQuestionId, int size, String sortBy, String categoryId);
+	BoardResponseDTO.SearchQuestionDTO searchQuestion(String keyword, Long lastQuestionId, int size);
 }
