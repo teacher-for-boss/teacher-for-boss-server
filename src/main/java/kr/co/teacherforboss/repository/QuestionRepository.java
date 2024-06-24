@@ -40,17 +40,17 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
             WHERE category_id = :categoryId AND (like_count <= (SELECT like_count FROM question WHERE id = :questionId) AND id != :questionId)
             ORDER BY like_count DESC, created_at DESC
     """, nativeQuery = true)
-	Slice<Question> findSliceByIdLessThanOrderByLikeCountDescWithLastQuestionId(Long categoryId, Long questionId, PageRequest pageRequest);
+	Slice<Question> findSliceByIdLessThanOrderByLikeCountDescWithLastPostId(Long categoryId, Long questionId, PageRequest pageRequest);
 	@Query(value = """
             SELECT * FROM question
             WHERE category_id = :categoryId AND (view_count <= (SELECT view_count FROM question WHERE id = :questionId) AND id != :questionId)
             ORDER BY view_count DESC, created_at DESC
     """, nativeQuery = true)
-	Slice<Question> findSliceByIdLessThanOrderByViewCountDescWithLastQuestionId(Long categoryId, Long questionId, PageRequest pageRequest);
+	Slice<Question> findSliceByIdLessThanOrderByViewCountDescWithLastPostId(Long categoryId, Long questionId, PageRequest pageRequest);
 	@Query(value = """
 			SELECT * FROM question
 			WHERE category_id = :categoryId AND created_at < (SELECT created_at FROM question WHERE id = :questionId)
 			ORDER BY created_at DESC
 	""", nativeQuery = true)
-	Slice<Question> findSliceByIdLessThanOrderByCreatedAtDescWithLastQuestionId(Long categoryId, Long questionId, PageRequest pageRequest);
+	Slice<Question> findSliceByIdLessThanOrderByCreatedAtDescWithLastPostId(Long categoryId, Long questionId, PageRequest pageRequest);
 }

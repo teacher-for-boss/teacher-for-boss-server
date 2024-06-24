@@ -138,9 +138,9 @@ public class BoardQueryServiceImpl implements BoardQueryService {
             };
         } else {
             questionsPage = switch (sortBy) {
-                case "likes" -> questionRepository.findSliceByIdLessThanOrderByLikeCountDescWithLastQuestionId(categoryId, lastQuestionId, pageRequest);
-                case "views" -> questionRepository.findSliceByIdLessThanOrderByViewCountDescWithLastQuestionId(categoryId, lastQuestionId, pageRequest);
-                default -> questionRepository.findSliceByIdLessThanOrderByCreatedAtDescWithLastQuestionId(categoryId, lastQuestionId, pageRequest);
+                case "likes" -> questionRepository.findSliceByIdLessThanOrderByLikeCountDescWithLastPostId(categoryId, lastQuestionId, pageRequest);
+                case "views" -> questionRepository.findSliceByIdLessThanOrderByViewCountDescWithLastPostId(categoryId, lastQuestionId, pageRequest);
+                default -> questionRepository.findSliceByIdLessThanOrderByCreatedAtDescWithLastPostId(categoryId, lastQuestionId, pageRequest);
             };
         }
 
