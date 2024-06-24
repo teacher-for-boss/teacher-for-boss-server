@@ -76,7 +76,7 @@ public class BoardResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class GetAnswersDTO {
-        int totalCount;
+        boolean hasNext;
         List<AnswerInfo> answerList;
 
         @Getter

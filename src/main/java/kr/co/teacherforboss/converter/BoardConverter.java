@@ -19,6 +19,7 @@ import kr.co.teacherforboss.domain.TeacherInfo;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
+import org.springframework.data.domain.Slice;
 
 public class BoardConverter {
 
@@ -256,7 +257,7 @@ public class BoardConverter {
                 .build();
     }
 
-    public static BoardResponseDTO.GetAnswersDTO toGetAnswersDTO(List<Answer> answers, List<AnswerLike> answerLikes,
+    public static BoardResponseDTO.GetAnswersDTO toGetAnswersDTO(Slice<Answer> answers, List<AnswerLike> answerLikes,
                                                                  List<TeacherInfo> teacherInfos) {
         HashMap<Long, BooleanType> answerLiked = new HashMap<>();
         answerLikes.forEach(answerLike -> answerLiked.put(answerLike.getAnswer().getId(), answerLike.getLiked()));
@@ -279,7 +280,7 @@ public class BoardConverter {
                 .toList();
 
         return BoardResponseDTO.GetAnswersDTO.builder()
-                .totalCount(0)
+                .hasNext(answers.hasNext())
                 .answerList(answerInfos)
                 .build();
     }

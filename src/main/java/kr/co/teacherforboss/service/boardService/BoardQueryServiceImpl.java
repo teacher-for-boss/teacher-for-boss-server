@@ -120,12 +120,19 @@ public class BoardQueryServiceImpl implements BoardQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public BoardResponseDTO.GetAnswersDTO getAnswers(Long questionId) {
+    public BoardResponseDTO.GetAnswersDTO getAnswers(Long questionId, Long lastAnswerId, int size) {
         if (!questionRepository.existsByIdAndStatus(questionId, Status.ACTIVE))
             throw new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND);
 
-        // TODO: 무한스크롤 (커서 기반) 구현
-        List<Answer> answers = answerRepository.findAllByQuestionIdAndStatusOrderByCreatedAt(questionId, Status.ACTIVE);
+        PageRequest pageRequest = PageRequest.of(0, size);
+        Slice<Answer> answers;
+
+        if (lastAnswerId == 0) {
+            answers = answerRepository.findSliceByStatusOrderByCreatedAtDesc(Status.ACTIVE, pageRequest);
+        }
+        else {
+            answers = answerRepository.findSliceByIdLessThanAndStatusOrderByCreatedAtDesc(lastAnswerId, pageRequest);
+        }
         List<Long> answerIds = answers.stream().map(BaseEntity::getId).toList();
         List<Long> memberIds = answers.stream().map(answer -> answer.getMember().getId()).toList();
 
