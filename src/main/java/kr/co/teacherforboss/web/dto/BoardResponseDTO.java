@@ -159,4 +159,21 @@ public class BoardResponseDTO {
         BooleanType bookmarked;
         LocalDateTime updatedAt;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetQuestionDTO {
+        String title;
+        String content;
+        String category;
+        List<String> hashtagList;
+        MemberInfo memberInfo;
+        BooleanType liked;
+        BooleanType bookmarked;
+        Integer likeCount;
+        Integer bookmarkCount;
+        LocalDateTime createdAt;
+    }
 }
