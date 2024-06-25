@@ -75,10 +75,35 @@ public class BoardResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class GetAnswersDTO {
+        boolean hasNext;
+        List<AnswerInfo> answerList;
+
+        @Getter
+        @Builder
+        @AllArgsConstructor
+        public static class AnswerInfo {
+            Long answerId;
+            String content;
+            int likeCount;
+            int dislikeCount;
+            boolean liked;
+            boolean disliked;
+            boolean selected;
+            LocalDateTime createdAt;
+            MemberInfo memberInfo;
+        }
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class MemberInfo {
         Long memberId;
         String name;
         String profileImg;
+        String level;
     }
 
     @Builder
@@ -86,7 +111,7 @@ public class BoardResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class GetPostListDTO {
-        Integer totalCount;
+        boolean hasNext;
         List<PostInfo> postList;
 
         @Getter
