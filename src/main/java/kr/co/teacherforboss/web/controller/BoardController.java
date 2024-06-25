@@ -54,7 +54,7 @@ public class BoardController {
         return ApiResponse.onSuccess(boardQueryService.getPostList(lastPostId, size, sortBy));
     }
 
-    @PostMapping("/boss/posts/{postId}")
+    @PatchMapping("/boss/posts/{postId}")
     public ApiResponse<BoardResponseDTO.SavePostDTO> editPost(@PathVariable("postId") Long postId,
                                                               @RequestBody @Valid BoardRequestDTO.SavePostDTO request) {
         Post post = boardCommandService.editPost(postId, request);
