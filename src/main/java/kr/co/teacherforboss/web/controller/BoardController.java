@@ -61,7 +61,7 @@ public class BoardController {
         return ApiResponse.onSuccess(boardQueryService.getPostList(lastPostId, size, sortBy));
     }
 
-    @PostMapping("/boss/posts/{postId}")
+    @PatchMapping("/boss/posts/{postId}")
     public ApiResponse<BoardResponseDTO.SavePostDTO> editPost(@PathVariable("postId") Long postId,
                                                               @RequestBody @Valid BoardRequestDTO.SavePostDTO request) {
         Post post = boardCommandService.editPost(postId, request);
@@ -130,6 +130,11 @@ public class BoardController {
     public ApiResponse<BoardResponseDTO.BookmarkQuestionDTO> toggleQuestionBookmark(@PathVariable("questionId") Long questionId) {
         QuestionBookmark questionBookmark = boardCommandService.toggleQuestionBookmark(questionId);
         return ApiResponse.onSuccess(BoardConverter.toBookmarkQuestionDTO(questionBookmark));
+    }
+
+    @GetMapping("/teacher/questions/{questionId}")
+    public ApiResponse<BoardResponseDTO.GetQuestionDTO> getQuestion(@PathVariable("questionId") Long questionId){
+        return ApiResponse.onSuccess(boardQueryService.getQuestion(questionId));
     }
 
     @PostMapping("/boss/posts/{postId}/comments")
