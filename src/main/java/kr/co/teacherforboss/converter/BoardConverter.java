@@ -1,6 +1,7 @@
 package kr.co.teacherforboss.converter;
 
 import java.util.List;
+
 import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.Category;
 import kr.co.teacherforboss.domain.Hashtag;
@@ -9,10 +10,11 @@ import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostHashtag;
 import kr.co.teacherforboss.domain.PostLike;
+import kr.co.teacherforboss.domain.Question;
+import kr.co.teacherforboss.domain.QuestionBookmark;
+import kr.co.teacherforboss.domain.QuestionHashtag;
 import kr.co.teacherforboss.domain.QuestionLike;
 import kr.co.teacherforboss.domain.enums.BooleanType;
-import kr.co.teacherforboss.domain.Question;
-import kr.co.teacherforboss.domain.QuestionHashtag;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 
@@ -21,7 +23,7 @@ public class BoardConverter {
     public static BoardResponseDTO.SavePostDTO toSavePostDTO(Post post) {
         return BoardResponseDTO.SavePostDTO.builder()
                 .postId(post.getId())
-                .createdAt(post.getCreatedAt())
+                .updatedAt(post.getUpdatedAt())
                 .build();
     }
 
@@ -225,5 +227,49 @@ public class BoardConverter {
                 .liked(questionLike.getLiked())
                 .updatedAt(questionLike.getUpdatedAt())
                 .build();
+    }
+
+    public static BoardResponseDTO.DeleteAnswerDTO toDeleteAnswerDTO(Answer answer) {
+        return BoardResponseDTO.DeleteAnswerDTO.builder()
+                .answerId(answer.getId())
+                .deletedAt(answer.getUpdatedAt())
+                .build();
+    }
+
+    public static QuestionBookmark toQuestionBookmark(Question questionToBookmark, Member member) {
+        return QuestionBookmark.builder()
+                .question(questionToBookmark)
+                .member(member)
+                .bookmarked(BooleanType.F)
+                .build();
+    }
+
+    public static BoardResponseDTO.BookmarkQuestionDTO toBookmarkQuestionDTO(QuestionBookmark questionBookmark) {
+        return BoardResponseDTO.BookmarkQuestionDTO.builder()
+                .questionId(questionBookmark.getQuestion().getId())
+                .bookmarked(questionBookmark.getBookmarked())
+                .updatedAt(questionBookmark.getUpdatedAt())
+                .build();
+    }
+
+    public static BoardResponseDTO.GetQuestionDTO toGetQuestionDTO(Question question, QuestionLike liked, QuestionBookmark bookmarked, List<String> hashtagList) {
+        return BoardResponseDTO.GetQuestionDTO.builder()
+                .title(question.getTitle())
+                .content(question.getContent())
+                .category(question.getCategory().getName())
+                .hashtagList(hashtagList)
+                .memberInfo(toMemberInfo(question.getMember()))
+                .liked((liked == null) ? BooleanType.F : liked.getLiked())
+                .bookmarked((bookmarked == null) ? BooleanType.F : bookmarked.getBookmarked())
+                .likeCount(question.getLikeCount())
+                .bookmarkCount(question.getBookmarkCount())
+                .createdAt(question.getCreatedAt())
+                .build();
+    }
+
+    public static List<String> toQuestionHashtagList(Question question) {
+        return question.getHashtagList()
+                .stream().map(questionHashtag -> questionHashtag.getHashtag().getName())
+                .toList();
     }
 }

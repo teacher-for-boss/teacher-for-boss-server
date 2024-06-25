@@ -34,4 +34,9 @@ public class QuestionBookmark extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'F'")
     private BooleanType bookmarked;
+
+    public void toggleLiked() {
+        if (this.bookmarked.equals(BooleanType.T)) this.bookmarked = BooleanType.F;
+        else this.bookmarked = BooleanType.T;
+    }
 }
