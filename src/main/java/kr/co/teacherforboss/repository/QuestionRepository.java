@@ -59,13 +59,14 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 	Integer countAllByTitleContainingAndStatus(String keyword, Status status);
 	@Query(value = """
 			SELECT * FROM question
-			WHERE title LIKE CONCAT('%', :keyword, '%')
+			WHERE title LIKE CONCAT('%', :keyword, '%') AND status = 'ACTIVE' 
 			ORDER BY created_at DESC
 	""", nativeQuery = true)
 	Slice<Question> findSliceByTitleContainingOrderByCreatedAtDesc(String keyword, PageRequest pageRequest);
 	@Query(value = """
 			SELECT * FROM question
-			WHERE title LIKE CONCAT('%', :keyword, '%') AND created_at < (SELECT created_at FROM question WHERE id = :questionId)
+			WHERE title LIKE CONCAT('%', :keyword, '%') AND status = 'ACTIVE' 
+				AND created_at < (SELECT created_at FROM question WHERE id = :questionId)
 			ORDER BY created_at DESC
 	""", nativeQuery = true)
 	Slice<Question> findSliceByTitleContainingOrderByCreatedAtDescWithLastQuestionId(String keyword, Long questionId, PageRequest pageRequest);
