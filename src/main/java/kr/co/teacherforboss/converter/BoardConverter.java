@@ -245,6 +245,27 @@ public class BoardConverter {
                 .build();
     }
 
+    public static BoardResponseDTO.GetQuestionDTO toGetQuestionDTO(Question question, QuestionLike liked, QuestionBookmark bookmarked, List<String> hashtagList) {
+        return BoardResponseDTO.GetQuestionDTO.builder()
+                .title(question.getTitle())
+                .content(question.getContent())
+                .category(question.getCategory().getName())
+                .hashtagList(hashtagList)
+                .memberInfo(toMemberInfo(question.getMember()))
+                .liked((liked == null) ? BooleanType.F : liked.getLiked())
+                .bookmarked((bookmarked == null) ? BooleanType.F : bookmarked.getBookmarked())
+                .likeCount(question.getLikeCount())
+                .bookmarkCount(question.getBookmarkCount())
+                .createdAt(question.getCreatedAt())
+                .build();
+    }
+
+    public static List<String> toQuestionHashtagList(Question question) {
+        return question.getHashtagList()
+                .stream().map(questionHashtag -> questionHashtag.getHashtag().getName())
+                .toList();
+    }
+
     public static BoardResponseDTO.GetQuestionListDTO.QuestionInfo toGetQuestionInfo(Question question, Answer selectedTeacher, boolean liked, boolean bookmarked, Integer answerCount) {
         if (selectedTeacher == null) {
             return new BoardResponseDTO.GetQuestionListDTO.QuestionInfo(

@@ -125,6 +125,11 @@ public class BoardController {
         return ApiResponse.onSuccess(BoardConverter.toBookmarkQuestionDTO(questionBookmark));
     }
 
+    @GetMapping("/teacher/questions/{questionId}")
+    public ApiResponse<BoardResponseDTO.GetQuestionDTO> getQuestion(@PathVariable("questionId") Long questionId){
+        return ApiResponse.onSuccess(boardQueryService.getQuestion(questionId));
+    }
+
     @GetMapping("/teacher/questions")
     public ApiResponse<BoardResponseDTO.GetQuestionListDTO> getQuestionList(@RequestParam(defaultValue = "0") Long lastQuestionId,
                                                                             @RequestParam(defaultValue = "10") int size,

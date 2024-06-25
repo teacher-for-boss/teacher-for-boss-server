@@ -165,6 +165,23 @@ public class BoardResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class GetQuestionDTO {
+        String title;
+        String content;
+        String category;
+        List<String> hashtagList;
+        MemberInfo memberInfo;
+        BooleanType liked;
+        BooleanType bookmarked;
+        Integer likeCount;
+        Integer bookmarkCount;
+        LocalDateTime createdAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
 	public static class GetQuestionListDTO {
         Integer totalCount;
         List<GetQuestionListDTO.QuestionInfo> questionList;

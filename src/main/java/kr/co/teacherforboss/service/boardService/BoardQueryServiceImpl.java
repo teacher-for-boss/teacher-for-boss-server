@@ -123,6 +123,21 @@ public class BoardQueryServiceImpl implements BoardQueryService {
 
     @Override
     @Transactional(readOnly = true)
+    public BoardResponseDTO.GetQuestionDTO getQuestion(Long questionId) {
+        Member member = authCommandService.getMember();
+        Question question = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
+
+        QuestionLike questionLike = questionLikeRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE).orElse(null);
+        QuestionBookmark questionBookmark = questionBookmarkRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE).orElse(null);
+
+        List<String> hashtagList = (question.getHashtagList().isEmpty()) ? null : BoardConverter.toQuestionHashtagList(question);
+
+        return BoardConverter.toGetQuestionDTO(question, questionLike, questionBookmark, hashtagList);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public BoardResponseDTO.GetQuestionListDTO getQuestionList(Long lastQuestionId, int size, String sortBy, String category) {
         Member member = authCommandService.getMember();
         PageRequest pageRequest = PageRequest.of(0, size);
