@@ -123,7 +123,7 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         Question question = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
 
-		QuestionLike questionLike = questionLikeRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE).orElse(null);
+        QuestionLike questionLike = questionLikeRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE).orElse(null);
         QuestionBookmark questionBookmark = questionBookmarkRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE).orElse(null);
 
         List<String> hashtagList = (question.getHashtagList().isEmpty()) ? null : BoardConverter.toQuestionHashtagList(question);
