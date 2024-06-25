@@ -24,7 +24,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             WHERE ((like_count < (SELECT like_count FROM post WHERE id = :postId)
                 OR (like_count = (SELECT like_count FROM post WHERE id = :postId) AND id > :postId)))
                 AND status = 'ACTIVE'
-            ORDER BY like_count DESC, created_at asc;
+            ORDER BY like_count DESC, created_at DESC;
     """, nativeQuery = true)
     Slice<Post> findSliceByIdLessThanOrderByLikeCountDesc(Long postId, PageRequest pageRequest);
     @Query(value = """
@@ -32,7 +32,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             WHERE ((view_count < (SELECT view_count FROM post WHERE id = :postId)
                 OR (view_count = (SELECT view_count FROM post WHERE id = :postId) AND id > :postId)))
                 AND status = 'ACTIVE'
-            ORDER BY view_count DESC, created_at asc;
+            ORDER BY view_count DESC, created_at DESC;
     """, nativeQuery = true)
     Slice<Post> findSliceByIdLessThanOrderByViewCountDesc(Long postId, PageRequest pageRequest);
     @Query(value = """
