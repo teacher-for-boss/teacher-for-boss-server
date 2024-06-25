@@ -16,7 +16,7 @@ public class BoardResponseDTO {
     @AllArgsConstructor
     public static class SavePostDTO {
         Long postId;
-        LocalDateTime createdAt;
+        LocalDateTime updatedAt;
     }
 
     @Builder
@@ -183,5 +183,22 @@ public class BoardResponseDTO {
         Long questionId;
         BooleanType bookmarked;
         LocalDateTime updatedAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetQuestionDTO {
+        String title;
+        String content;
+        String category;
+        List<String> hashtagList;
+        MemberInfo memberInfo;
+        BooleanType liked;
+        BooleanType bookmarked;
+        Integer likeCount;
+        Integer bookmarkCount;
+        LocalDateTime createdAt;
     }
 }
