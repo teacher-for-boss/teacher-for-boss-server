@@ -20,7 +20,6 @@ import kr.co.teacherforboss.domain.PostLike;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionBookmark;
 import kr.co.teacherforboss.domain.QuestionLike;
-import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.PostBookmarkRepository;
 import kr.co.teacherforboss.repository.PostLikeRepository;
@@ -124,20 +123,11 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         Question question = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
 
-		QuestionLike questionLike = questionLikeRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE)
-                .orElse(null);
-		BooleanType liked = (questionLike == null) ? BooleanType.F : questionLike.getLiked();
+		QuestionLike questionLike = questionLikeRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE).orElse(null);
+        QuestionBookmark questionBookmark = questionBookmarkRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE).orElse(null);
 
-        QuestionBookmark questionBookmark = questionBookmarkRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE)
-                .orElse(null);
-		BooleanType bookmarked = (questionBookmark == null) ? BooleanType.F : questionBookmark.getBookmarked();
+        List<String> hashtagList = (!question.getHashtagList().isEmpty()) ? null : BoardConverter.toQuestionHashtagList(question);
 
-        List<String> hashtagList = null;
-
-        if (!question.getHashtagList().isEmpty()) {
-            hashtagList = BoardConverter.toQuestionHashtagList(question);
-        }
-
-        return BoardConverter.toGetQuestionDTO(question, liked, bookmarked, hashtagList);
+        return BoardConverter.toGetQuestionDTO(question, questionLike, questionBookmark, hashtagList);
     }
 }

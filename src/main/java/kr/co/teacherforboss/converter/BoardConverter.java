@@ -245,15 +245,15 @@ public class BoardConverter {
                 .build();
     }
 
-    public static BoardResponseDTO.GetQuestionDTO toGetQuestionDTO(Question question, BooleanType liked, BooleanType bookmarked, List<String> hashtagList) {
+    public static BoardResponseDTO.GetQuestionDTO toGetQuestionDTO(Question question, QuestionLike liked, QuestionBookmark bookmarked, List<String> hashtagList) {
         return BoardResponseDTO.GetQuestionDTO.builder()
                 .title(question.getTitle())
                 .content(question.getContent())
                 .category(question.getCategory().getName())
                 .hashtagList(hashtagList)
                 .memberInfo(toMemberInfo(question.getMember()))
-                .liked(liked)
-                .bookmarked(bookmarked)
+                .liked((liked == null) ? BooleanType.F : liked.getLiked())
+                .bookmarked((bookmarked == null) ? BooleanType.F : bookmarked.getBookmarked())
                 .likeCount(question.getLikeCount())
                 .bookmarkCount(question.getBookmarkCount())
                 .createdAt(question.getCreatedAt())
