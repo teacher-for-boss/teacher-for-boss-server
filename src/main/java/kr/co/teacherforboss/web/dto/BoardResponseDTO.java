@@ -26,6 +26,7 @@ public class BoardResponseDTO {
     public static class GetPostDTO{
         String title;
         String content;
+        List<String> imageUrlList;
         List<String> hashtagList;
         MemberInfo memberInfo;
         String liked;

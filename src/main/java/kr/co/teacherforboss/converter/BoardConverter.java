@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import kr.co.teacherforboss.config.S3Config;
 import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.AnswerLike;
 import kr.co.teacherforboss.domain.Category;
@@ -19,6 +20,7 @@ import kr.co.teacherforboss.domain.QuestionHashtag;
 import kr.co.teacherforboss.domain.QuestionLike;
 import kr.co.teacherforboss.domain.TeacherInfo;
 import kr.co.teacherforboss.domain.enums.BooleanType;
+import kr.co.teacherforboss.domain.enums.ImageOrigin;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import org.springframework.data.domain.Slice;
@@ -36,6 +38,7 @@ public class BoardConverter {
         return BoardResponseDTO.GetPostDTO.builder()
                 .title(post.getTitle())
                 .content(post.getContent())
+                .imageUrlList(toImageUrlList(ImageOrigin.POST.getValue(), post.getImageUuid(), post.getImageIndex()))
                 .hashtagList(hashtagList)
                 .likeCount(post.getLikeCount())
                 .memberInfo(toMemberInfo(post.getMember()))
@@ -85,7 +88,22 @@ public class BoardConverter {
     public static List<String> extractImageIndexs(List<String> imageUrls) {
         return (imageUrls == null || imageUrls.isEmpty())
                 ? null
-                : imageUrls.stream().map(imageUrl -> imageUrl.split("_")[1]).toList();
+                : imageUrls.stream().map(imageUrl -> (!imageUrl.contains("?"))
+                        ? imageUrl.split("_")[1]
+                        : imageUrl.substring(imageUrl.indexOf("_"), imageUrl.indexOf("?"))).toList();
+    }
+
+    public static List<String> toImageUrlList(String origin, String imageUuid, List<String> imageIndexs) {
+        if (imageUuid == null || imageIndexs == null || imageIndexs.isEmpty()) {
+            return null;
+        }
+
+        // TODO: CloudFront 붙이기 !
+        List<String> imageUrlList = new ArrayList<>();
+        for (String index : imageIndexs) {
+            imageUrlList.add(String.format("https://%s.s3.%s.amazonaws.com/%s/%s_%s", S3Config.BUCKET_NAME, S3Config.REGION, origin, imageUuid, index));
+        }
+        return imageUrlList;
     }
 
     public static Hashtag toHashtag(String hashtag) {
