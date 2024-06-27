@@ -329,6 +329,7 @@ public class BoardConverter {
                         .selected(answer.getSelected().isIdentifier())
                         .createdAt(answer.getCreatedAt())
                         .memberInfo(toMemberInfo(answer.getMember(), teacherInfoMap.get(answer.getMember().getId())))
+                        .imageUrlList(toImageUrlList(ImageOrigin.ANSWER.getValue(), answer.getImageUuid(), answer.getImageIndex()))
                         .build())
                 .toList();
 

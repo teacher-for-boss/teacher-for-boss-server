@@ -93,6 +93,7 @@ public class BoardResponseDTO {
             boolean selected;
             LocalDateTime createdAt;
             MemberInfo memberInfo;
+            List<String> imageUrlList;
         }
     }
 
