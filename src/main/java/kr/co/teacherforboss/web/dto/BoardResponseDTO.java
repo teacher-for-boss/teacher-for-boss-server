@@ -26,6 +26,7 @@ public class BoardResponseDTO {
     public static class GetPostDTO{
         String title;
         String content;
+        List<String> imageUrlList;
         List<String> hashtagList;
         MemberInfo memberInfo;
         String liked;
@@ -92,6 +93,7 @@ public class BoardResponseDTO {
             boolean selected;
             LocalDateTime createdAt;
             MemberInfo memberInfo;
+            List<String> imageUrlList;
         }
     }
 
@@ -193,6 +195,7 @@ public class BoardResponseDTO {
         String title;
         String content;
         String category;
+        List<String> imageUrlList;
         List<String> hashtagList;
         MemberInfo memberInfo;
         BooleanType liked;
