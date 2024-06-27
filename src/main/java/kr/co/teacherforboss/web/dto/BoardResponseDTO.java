@@ -194,6 +194,7 @@ public class BoardResponseDTO {
         String title;
         String content;
         String category;
+        List<String> imageUrlList;
         List<String> hashtagList;
         MemberInfo memberInfo;
         BooleanType liked;

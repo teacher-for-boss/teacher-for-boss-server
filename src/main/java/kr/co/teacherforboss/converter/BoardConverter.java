@@ -1,6 +1,7 @@
 package kr.co.teacherforboss.converter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,7 +96,7 @@ public class BoardConverter {
 
     public static List<String> toImageUrlList(String origin, String imageUuid, List<String> imageIndexs) {
         if (imageUuid == null || imageIndexs == null || imageIndexs.isEmpty()) {
-            return null;
+            return Collections.emptyList();
         }
 
         // TODO: CloudFront 붙이기 !
@@ -292,6 +293,7 @@ public class BoardConverter {
                 .title(question.getTitle())
                 .content(question.getContent())
                 .category(question.getCategory().getName())
+                .imageUrlList(toImageUrlList(ImageOrigin.QUESTION.getValue(), question.getImageUuid(), question.getImageIndex()))
                 .hashtagList(hashtagList)
                 .memberInfo(toMemberInfo(question.getMember()))
                 .liked((liked == null) ? BooleanType.F : liked.getLiked())
