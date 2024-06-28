@@ -24,50 +24,18 @@ public class CommentCommandServiceImpl implements CommentCommandService {
     private final AuthCommandService authCommandService;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
-    private final CommentLikeRepository commentLikeRepository;
 
     @Override
     @Transactional
-    public Comment saveComment(CommentRequestDTO.SaveCommentDTO request, Long postId) {
+    public Comment saveComment(Long postId, CommentRequestDTO.SaveCommentDTO request) {
         Member member = authCommandService.getMember();
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
 
-        if(request.getParentId() != null) {
-            boolean checkParentId = commentRepository.existsByIdAndStatus(request.getParentId(), Status.ACTIVE);
-            if(!checkParentId) throw new BoardHandler(ErrorStatus.COMMENT_NOT_FOUND);
-        }
+        Comment parentComment = null;
+        if(request.getParentId() != null) parentComment = commentRepository.findByIdAndStatus(request.getParentId(), Status.ACTIVE);
 
-        Comment parentComment = commentRepository.findByIdAndStatus(request.getParentId(), Status.ACTIVE);
         Comment comment = CommentConverter.toCommentDTO(request, member, post, parentComment);
         return commentRepository.save(comment);
-    }
-
-    @Override
-    @Transactional
-    public CommentLike saveCommentLike(Long postId, Long commentId) {
-        return saveCommentLikeOrDislike(postId, commentId, BooleanType.T);
-    }
-
-    @Override
-    @Transactional
-    public CommentLike saveCommentDislike(Long postId, Long commentId) {
-        return saveCommentLikeOrDislike(postId, commentId, BooleanType.F);
-    }
-
-    private CommentLike saveCommentLikeOrDislike(Long postId, Long commentId, BooleanType type) {
-        Member member = authCommandService.getMember();
-        Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
-                .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
-        Comment comment = commentRepository.findByIdAndPostAndStatus(commentId, post, Status.ACTIVE)
-                .orElseThrow(() -> new BoardHandler(ErrorStatus.COMMENT_NOT_FOUND));
-
-        CommentLike commentLike = commentLikeRepository.findByCommentAndMemberAndStatus(comment, member, Status.ACTIVE);
-        if (commentLike == null) commentLike = CommentConverter.toCommentLiked(comment, member, type);
-
-        if (type == BooleanType.T) commentLike.setLiked();
-        else commentLike.setDisliked();
-
-        return commentLikeRepository.save(commentLike);
     }
 }

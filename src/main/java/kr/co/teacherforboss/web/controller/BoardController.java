@@ -1,13 +1,5 @@
 package kr.co.teacherforboss.web.controller;
 
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.converter.BoardConverter;
@@ -16,6 +8,7 @@ import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostLike;
 import kr.co.teacherforboss.domain.Question;
+import kr.co.teacherforboss.domain.QuestionBookmark;
 import kr.co.teacherforboss.domain.QuestionLike;
 import kr.co.teacherforboss.service.boardService.BoardCommandService;
 import kr.co.teacherforboss.service.boardService.BoardQueryService;
@@ -23,7 +16,15 @@ import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @Validated
@@ -47,12 +48,13 @@ public class BoardController {
     }
 
     @GetMapping("/boss/posts")
-    public ApiResponse<BoardResponseDTO.GetPostListDTO> getPostList(@RequestParam(defaultValue = "0") Long lastPostId, @RequestParam(defaultValue = "10") int size,
+    public ApiResponse<BoardResponseDTO.GetPostListDTO> getPostList(@RequestParam(defaultValue = "0") Long lastPostId,
+                                                                    @RequestParam(defaultValue = "10") int size,
                                                                     @RequestParam(defaultValue = "latest") String sortBy){
         return ApiResponse.onSuccess(boardQueryService.getPostList(lastPostId, size, sortBy));
     }
 
-    @PostMapping("/boss/posts/{postId}")
+    @PatchMapping("/boss/posts/{postId}")
     public ApiResponse<BoardResponseDTO.SavePostDTO> editPost(@PathVariable("postId") Long postId,
                                                               @RequestBody @Valid BoardRequestDTO.SavePostDTO request) {
         Post post = boardCommandService.editPost(postId, request);
@@ -110,4 +112,28 @@ public class BoardController {
         return ApiResponse.onSuccess(BoardConverter.toEditAnswerDTO(answer));
     }
 
+    @PostMapping("/teacher/questions/{questionId}/answers/{answerId}")
+    public ApiResponse<BoardResponseDTO.DeleteAnswerDTO> deleteAnswer(@PathVariable("questionId") Long questionId,
+                                                                      @PathVariable("answerId") Long answerId) {
+        Answer answer = boardCommandService.deleteAnswer(questionId, answerId);
+        return ApiResponse.onSuccess(BoardConverter.toDeleteAnswerDTO(answer));
+    }
+
+    @PostMapping("/teacher/questions/{questionId}/bookmark")
+    public ApiResponse<BoardResponseDTO.BookmarkQuestionDTO> toggleQuestionBookmark(@PathVariable("questionId") Long questionId) {
+        QuestionBookmark questionBookmark = boardCommandService.toggleQuestionBookmark(questionId);
+        return ApiResponse.onSuccess(BoardConverter.toBookmarkQuestionDTO(questionBookmark));
+    }
+
+    @GetMapping("/teacher/questions/{questionId}")
+    public ApiResponse<BoardResponseDTO.GetQuestionDTO> getQuestion(@PathVariable("questionId") Long questionId){
+        return ApiResponse.onSuccess(boardQueryService.getQuestion(questionId));
+    }
+
+    @GetMapping("/teacher/questions/{questionId}/answers")
+    public ApiResponse<BoardResponseDTO.GetAnswersDTO> getAnswers(@PathVariable("questionId") Long questionId,
+                                                                  @RequestParam(defaultValue = "0") Long lastAnswerId,
+                                                                  @RequestParam(defaultValue = "10") int size) {
+        return ApiResponse.onSuccess(boardQueryService.getAnswers(questionId, lastAnswerId, size));
+    }
 }

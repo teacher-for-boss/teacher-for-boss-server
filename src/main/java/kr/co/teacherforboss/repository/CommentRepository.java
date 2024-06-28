@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     Integer countAllByPostAndStatus(Post post, Status status);
+    Comment findByIdAndStatus(Long id, Status status);
+    boolean existsByIdAndStatus(Long id, Status status);
 }

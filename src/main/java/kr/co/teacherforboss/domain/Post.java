@@ -8,6 +8,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
+import java.util.ArrayList;
 import kr.co.teacherforboss.converter.StringConverter;
 import java.util.List;
 import kr.co.teacherforboss.domain.common.BaseEntity;
@@ -62,10 +63,13 @@ public class Post extends BaseEntity {
 
     @OneToMany(mappedBy = "post")
     @SQLRestriction(value = "status = 'ACTIVE'")
-    private List<PostHashtag> hashtagList;
+    @Builder.Default
+    private List<PostHashtag> hashtagList = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
-    private List<Comment> commentList;
+    @SQLRestriction(value = "status = 'ACTIVE'")
+    @Builder.Default
+    private List<Comment> commentList = new ArrayList<>();
 
     public void editPost(String title, String content, List<String> imageIndex) {
         this.title = title;

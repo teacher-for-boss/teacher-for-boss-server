@@ -13,11 +13,7 @@ import java.time.LocalDateTime;
 public class CommentConverter {
 
     public static CommentResponseDTO.SaveCommentResultDTO toSaveCommentResultDTO(Comment comment) {
-        Long parentId = null;
-        Comment parentComment = comment.getComment();
-        if (parentComment != null) {
-            parentId = parentComment.getId();
-        }
+        Long parentId = comment.getParent() != null ? comment.getParent().getId() : null;
 
         return CommentResponseDTO.SaveCommentResultDTO.builder()
                 .postId(comment.getPost().getId())
@@ -30,7 +26,7 @@ public class CommentConverter {
         return Comment.builder()
                 .post(post)
                 .member(member)
-                .comment(comment)
+                .parent(comment)
                 .content(request.getContent())
                 .likeCount(0)
                 .dislikeCount(0)

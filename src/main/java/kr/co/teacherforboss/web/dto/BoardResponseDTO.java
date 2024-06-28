@@ -16,7 +16,7 @@ public class BoardResponseDTO {
     @AllArgsConstructor
     public static class SavePostDTO {
         Long postId;
-        LocalDateTime createdAt;
+        LocalDateTime updatedAt;
     }
 
     @Builder
@@ -26,6 +26,7 @@ public class BoardResponseDTO {
     public static class GetPostDTO{
         String title;
         String content;
+        List<String> imageUrlList;
         List<String> hashtagList;
         MemberInfo memberInfo;
         String liked;
@@ -75,10 +76,36 @@ public class BoardResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class GetAnswersDTO {
+        boolean hasNext;
+        List<AnswerInfo> answerList;
+
+        @Getter
+        @Builder
+        @AllArgsConstructor
+        public static class AnswerInfo {
+            Long answerId;
+            String content;
+            int likeCount;
+            int dislikeCount;
+            boolean liked;
+            boolean disliked;
+            boolean selected;
+            LocalDateTime createdAt;
+            MemberInfo memberInfo;
+            List<String> imageUrlList;
+        }
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class MemberInfo {
         Long memberId;
         String name;
         String profileImg;
+        String level;
     }
 
     @Builder
@@ -86,7 +113,7 @@ public class BoardResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class GetPostListDTO {
-        Integer totalCount;
+        boolean hasNext;
         List<PostInfo> postList;
 
         @Getter
@@ -139,5 +166,42 @@ public class BoardResponseDTO {
         Long questionId;
         BooleanType liked;
         LocalDateTime updatedAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DeleteAnswerDTO {
+        Long answerId;
+        LocalDateTime deletedAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class BookmarkQuestionDTO {
+        Long questionId;
+        BooleanType bookmarked;
+        LocalDateTime updatedAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetQuestionDTO {
+        String title;
+        String content;
+        String category;
+        List<String> imageUrlList;
+        List<String> hashtagList;
+        MemberInfo memberInfo;
+        BooleanType liked;
+        BooleanType bookmarked;
+        Integer likeCount;
+        Integer bookmarkCount;
+        LocalDateTime createdAt;
     }
 }
