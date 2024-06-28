@@ -3,7 +3,9 @@ package kr.co.teacherforboss.web.controller;
 import jakarta.validation.Valid;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.converter.BoardConverter;
+import kr.co.teacherforboss.converter.CommentConverter;
 import kr.co.teacherforboss.domain.Answer;
+import kr.co.teacherforboss.domain.Comment;
 import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostLike;
@@ -12,6 +14,7 @@ import kr.co.teacherforboss.domain.QuestionBookmark;
 import kr.co.teacherforboss.domain.QuestionLike;
 import kr.co.teacherforboss.service.boardService.BoardCommandService;
 import kr.co.teacherforboss.service.boardService.BoardQueryService;
+import kr.co.teacherforboss.service.commentService.CommentCommandService;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +38,7 @@ public class BoardController {
 
     private final BoardCommandService boardCommandService;
     private final BoardQueryService boardQueryService;
+    private final CommentCommandService commentCommandService;
 
     @PostMapping("/boss/posts")
     public ApiResponse<BoardResponseDTO.SavePostDTO> savePost(@RequestBody @Valid BoardRequestDTO.SavePostDTO request){
@@ -135,5 +139,12 @@ public class BoardController {
                                                                   @RequestParam(defaultValue = "0") Long lastAnswerId,
                                                                   @RequestParam(defaultValue = "10") int size) {
         return ApiResponse.onSuccess(boardQueryService.getAnswers(questionId, lastAnswerId, size));
+    }
+
+    @PostMapping("/boss/posts/{postId}/comments")
+    public ApiResponse<BoardResponseDTO.SaveCommentDTO> saveComment(@PathVariable("postId") Long postId,
+                                                                   @RequestBody @Valid BoardRequestDTO.SaveCommentDTO request) {
+        Comment comment = commentCommandService.saveComment(postId, request);
+        return ApiResponse.onSuccess(CommentConverter.toSaveCommentDTO(comment));
     }
 }

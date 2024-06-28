@@ -204,4 +204,22 @@ public class BoardResponseDTO {
         Integer bookmarkCount;
         LocalDateTime createdAt;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SaveCommentDTO {
+        Long commentId;
+        LocalDateTime createdAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SaveCommentLikedDTO {
+        Boolean liked;
+        LocalDateTime updatedAt;
+    }
 }
