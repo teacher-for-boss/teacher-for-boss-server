@@ -111,4 +111,17 @@ public class BoardRequestDTO {
         @CheckImageUuid
         List<String> imageUrlList;
     }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class SaveCommentDTO {
+
+        Long parentId;
+
+        @NotNull(message = "댓글 내용은 필수 입력값입니다.")
+        @Size(max = 400, message = "댓글 내용은 최대 400자 입력 가능합니다.")
+        String content;
+    }
 }
