@@ -16,6 +16,6 @@ public interface CommentLikeRepository extends JpaRepository<CommentLike, Long> 
         UPDATE comment_like
         SET status = 'INACTIVE'
         WHERE comment_id IN (:commentIds);
-            """, nativeQuery = true)
+    """, nativeQuery = true)
     void softDeleteCommentLikeByComments(@Param(value = "commentIds") List<Long> commentIds);
 }

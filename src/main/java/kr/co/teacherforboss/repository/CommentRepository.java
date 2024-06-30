@@ -16,6 +16,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
         UPDATE comment
         SET status = 'INACTIVE'
         WHERE post_id = :postId
-                """, nativeQuery = true)
+    """, nativeQuery = true)
     void softDeleteCommentsByPostId(@Param(value = "postId") Long postId);
 }
