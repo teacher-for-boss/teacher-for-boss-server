@@ -250,4 +250,13 @@ public class BoardResponseDTO {
         Long selectedAnswerId;
         LocalDateTime updatedAt;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SaveCommentLikedDTO {
+        Boolean liked;
+        LocalDateTime updatedAt;
+    }
 }
