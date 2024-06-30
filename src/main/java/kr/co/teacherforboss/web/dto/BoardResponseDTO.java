@@ -124,8 +124,8 @@ public class BoardResponseDTO {
             Integer bookmarkCount;
             Integer commentCount;
             Integer likeCount;
-            Boolean like;
-            Boolean bookmark;
+            Boolean liked;
+            Boolean bookmarked;
             LocalDateTime createdAt;
         }
     }
