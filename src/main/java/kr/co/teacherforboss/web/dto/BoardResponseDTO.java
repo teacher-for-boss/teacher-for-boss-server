@@ -2,7 +2,6 @@ package kr.co.teacherforboss.web.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -182,7 +181,7 @@ public class BoardResponseDTO {
     @AllArgsConstructor
     public static class LikeAnswerDTO {
         Long answerId;
-        BooleanType liked;
+        Boolean liked;
         LocalDateTime updatedAt;
     }
 

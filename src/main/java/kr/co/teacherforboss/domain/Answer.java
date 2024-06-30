@@ -66,4 +66,20 @@ public class Answer extends BaseEntity {
         this.imageIndex = imageIndex;
         return this;
     }
+
+    public void increaseLikeCount() {
+        this.likeCount++;
+    }
+
+    public void decreaseLikeCount() {
+        this.likeCount--;
+    }
+
+    public void increaseDislikeCount() {
+        this.dislikeCount++;
+    }
+
+    public void decreaseDislikeCount() {
+        this.dislikeCount--;
+    }
 }

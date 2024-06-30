@@ -350,14 +350,14 @@ public class BoardConverter {
         return AnswerLike.builder()
                 .answer(answer)
                 .member(member)
-                .liked(BooleanType.F)
+                .liked(null)
                 .build();
     }
 
     public static BoardResponseDTO.LikeAnswerDTO toLikeAnswerDTO(AnswerLike answerLike) {
         return BoardResponseDTO.LikeAnswerDTO.builder()
                 .answerId(answerLike.getAnswer().getId())
-                .liked(answerLike.getLiked())
+                .liked((answerLike.getLiked() == null) ? null : answerLike.getLiked().isIdentifier())
                 .updatedAt(answerLike.getUpdatedAt())
                 .build();
     }

@@ -299,7 +299,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     @Transactional
     public AnswerLike toggleAnswerLike(Long questionId, Long answerId, boolean isLike) {
         Member member = authCommandService.getMember();
-        Answer answer = answerRepository.findByIdAndQuestionIdAndMemberIdAndStatus(answerId, questionId, member.getId(), Status.ACTIVE)
+        Answer answer = answerRepository.findByIdAndQuestionIdAndStatus(answerId, questionId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.ANSWER_NOT_FOUND));
         AnswerLike answerLike = answerLikeRepository.findByAnswerIdAndMemberIdAndStatus(answerId, member.getId(), Status.ACTIVE)
                 .orElse(BoardConverter.toAnswerLike(answer, member));
