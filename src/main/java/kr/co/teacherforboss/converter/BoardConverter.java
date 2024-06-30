@@ -5,6 +5,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.data.domain.Slice;
+
 import kr.co.teacherforboss.config.S3Config;
 import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.AnswerLike;
@@ -24,7 +27,6 @@ import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.ImageOrigin;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
-import org.springframework.data.domain.Slice;
 
 public class BoardConverter {
 
@@ -371,41 +373,25 @@ public class BoardConverter {
                 .build();
     }
 
-    public static BoardResponseDTO.GetQuestionListDTO.QuestionInfo toGetQuestionInfo(Question question, Answer selectedTeacher, boolean liked, boolean bookmarked, Integer answerCount) {
-        if (selectedTeacher == null) {
-            return new BoardResponseDTO.GetQuestionListDTO.QuestionInfo(
-                    question.getId(),
-                    question.getTitle(),
-                    question.getContent(),
-                    question.getSolved().isIdentifier(),
-                    null,
-                    question.getBookmarkCount(),
-                    answerCount,
-                    question.getLikeCount(),
-                    liked,
-                    bookmarked,
-                    question.getCreatedAt()
-            );
-        } else {
-            return new BoardResponseDTO.GetQuestionListDTO.QuestionInfo(
-                    question.getId(),
-                    question.getTitle(),
-                    question.getContent(),
-                    question.getSolved().isIdentifier(),
-                    selectedTeacher.getImageUuid(),
-                    question.getBookmarkCount(),
-                    answerCount,
-                    question.getLikeCount(),
-                    liked,
-                    bookmarked,
-                    question.getCreatedAt()
-            );
-        }
+    public static BoardResponseDTO.GetQuestionListDTO.QuestionInfo toGetQuestionInfo(Question question, Answer selectedAnswer, boolean liked, boolean bookmarked, Integer answerCount) {
+        return new BoardResponseDTO.GetQuestionListDTO.QuestionInfo(
+                question.getId(),
+                question.getTitle(),
+                question.getContent(),
+                question.getSolved().isIdentifier(),
+                (selectedAnswer == null) ? null : selectedAnswer.getMember().getProfileImg(),
+                question.getBookmarkCount(),
+                answerCount,
+                question.getLikeCount(),
+                liked,
+                bookmarked,
+                question.getCreatedAt()
+        );
     }
 
-    public static BoardResponseDTO.GetQuestionListDTO toGetQuestionListDTO(Integer questionsCount, List<BoardResponseDTO.GetQuestionListDTO.QuestionInfo> questionInfos) {
+    public static BoardResponseDTO.GetQuestionListDTO toGetQuestionListDTO(boolean hasNext, List<BoardResponseDTO.GetQuestionListDTO.QuestionInfo> questionInfos) {
         return BoardResponseDTO.GetQuestionListDTO.builder()
-                .totalCount(questionsCount)
+                .hasNext(hasNext)
                 .questionList(questionInfos)
                 .build();
     }

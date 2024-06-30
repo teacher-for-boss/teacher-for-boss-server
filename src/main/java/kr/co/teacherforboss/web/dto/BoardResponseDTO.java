@@ -3,8 +3,6 @@ package kr.co.teacherforboss.web.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import jakarta.annotation.Nullable;
-import kr.co.teacherforboss.domain.enums.BooleanType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -259,7 +257,7 @@ public class BoardResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
 	public static class GetQuestionListDTO {
-        Integer totalCount;
+        boolean hasNext;
         List<GetQuestionListDTO.QuestionInfo> questionList;
 
         @Getter
@@ -269,7 +267,6 @@ public class BoardResponseDTO {
             String title;
             String content;
             Boolean solved;
-            @Nullable
             String selectedTeacher;
             Integer bookmarkCount;
             Integer answerCount;
