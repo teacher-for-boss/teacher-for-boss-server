@@ -60,4 +60,10 @@ public class Answer extends BaseEntity {
     @Column
     @Convert(converter = StringConverter.class)
     private List<String> imageIndex;
+
+    public Answer editAnswer(String content, List<String> imageIndex) {
+        this.content = content;
+        this.imageIndex = imageIndex;
+        return this;
+    }
 }

@@ -2,6 +2,7 @@ package kr.co.teacherforboss.validation.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import kr.co.teacherforboss.domain.enums.ImageOrigin;
 import kr.co.teacherforboss.validation.annotation.CheckImageOrigin;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -21,7 +22,9 @@ public class CheckImageOriginValidator implements ConstraintValidator<CheckImage
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
         boolean isValid = value != null && !value.isEmpty() &&
-                (value.equals("profiles") || value.equals("posts") || value.equals("questions") || value.equals("answers"));
+                (value.equals(ImageOrigin.PROFILE.getValue()) ||
+                        value.equals(ImageOrigin.POST.getValue()) || value.equals(ImageOrigin.COMMENT.getValue()) ||
+                        value.equals(ImageOrigin.QUESTION.getValue()) || value.equals(ImageOrigin.ANSWER.getValue()));
 
         if (!isValid) {
             context.disableDefaultConstraintViolation();

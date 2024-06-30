@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.annotations.ColumnDefault;
@@ -22,6 +23,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLRestriction;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Getter
@@ -74,10 +79,14 @@ public class Question extends BaseEntity {
     private List<String> imageIndex;
 
     @OneToMany(mappedBy = "question")
-    private List<QuestionHashtag> hashtagList;
+    @SQLRestriction(value = "status = 'ACTIVE'")
+    @Builder.Default
+    private List<QuestionHashtag> hashtagList = new ArrayList<>();
 
     @OneToMany(mappedBy = "question")
-    private List<Answer> answerList;
+    @SQLRestriction(value = "status = 'ACTIVE'")
+    @Builder.Default
+    private List<Answer> answerList = new ArrayList<>();
 
     public Question editQuestion(Category category, String title, String content, List<String> imageIndex) {
         this.category = category;

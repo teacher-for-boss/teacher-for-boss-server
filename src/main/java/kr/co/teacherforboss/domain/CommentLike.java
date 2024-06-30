@@ -6,7 +6,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.validation.constraints.NotNull;
 import kr.co.teacherforboss.domain.common.BaseEntity;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import lombok.AccessLevel;
@@ -21,22 +20,27 @@ import org.hibernate.annotations.ColumnDefault;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class QuestionLike extends BaseEntity {
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "questionId")
-    private Question question;
+public class CommentLike extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memberId")
     private Member member;
 
-    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "commentId")
+    private Comment comment;
+
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'F'")
     private BooleanType liked;
 
-    public void toggleLiked() {
-        if (this.liked.equals(BooleanType.T)) this.liked = BooleanType.F;
+    public void setLiked() {
+        if (this.liked == BooleanType.T) liked = null;
         else this.liked = BooleanType.T;
+    }
+
+    public void setDisliked() {
+        if (this.liked == BooleanType.F) liked = null;
+        else this.liked = BooleanType.F;
     }
 }
