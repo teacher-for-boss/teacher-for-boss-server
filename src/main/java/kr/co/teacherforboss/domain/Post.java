@@ -80,4 +80,9 @@ public class Post extends BaseEntity {
     public void addHashtag(PostHashtag postHashtag) {
         this.hashtags.add(postHashtag);
     }
+
+    public Post updatePost() {
+        this.viewCount += 1;
+        return this;
+    }
 }

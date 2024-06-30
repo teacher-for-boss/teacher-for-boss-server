@@ -295,13 +295,13 @@ public class BoardConverter {
                 .build();
     }
 
-    public static BoardResponseDTO.GetQuestionDTO toGetQuestionDTO(Question question, QuestionLike liked, QuestionBookmark bookmarked, List<String> hashtags) {
+    public static BoardResponseDTO.GetQuestionDTO toGetQuestionDTO(Question question, QuestionLike liked, QuestionBookmark bookmarked) {
         return BoardResponseDTO.GetQuestionDTO.builder()
                 .title(question.getTitle())
                 .content(question.getContent())
                 .category(question.getCategory().getName())
                 .imageUrlList(toImageUrlList(ImageOrigin.QUESTION.getValue(), question.getImageUuid(), question.getImageIndex()))
-                .hashtagList(hashtags)
+                .hashtagList(toQuestionHashtags(question))
                 .memberInfo(toMemberInfo(question.getMember()))
                 .liked((liked == null) ? BooleanType.F : liked.getLiked())
                 .bookmarked((bookmarked == null) ? BooleanType.F : bookmarked.getBookmarked())
