@@ -267,7 +267,7 @@ public class BoardConverter {
     public static BoardResponseDTO.LikeQuestionDTO toLikeQuestionDTO(QuestionLike questionLike) {
         return BoardResponseDTO.LikeQuestionDTO.builder()
                 .questionId(questionLike.getQuestion().getId())
-                .liked(questionLike.getLiked())
+                .liked(questionLike.getLiked().isIdentifier())
                 .updatedAt(questionLike.getUpdatedAt())
                 .build();
     }
@@ -290,7 +290,7 @@ public class BoardConverter {
     public static BoardResponseDTO.BookmarkQuestionDTO toBookmarkQuestionDTO(QuestionBookmark questionBookmark) {
         return BoardResponseDTO.BookmarkQuestionDTO.builder()
                 .questionId(questionBookmark.getQuestion().getId())
-                .bookmarked(questionBookmark.getBookmarked())
+                .bookmarked(questionBookmark.getBookmarked().isIdentifier())
                 .updatedAt(questionBookmark.getUpdatedAt())
                 .build();
     }
@@ -303,8 +303,8 @@ public class BoardConverter {
                 .imageUrlList(toImageUrlList(ImageOrigin.QUESTION.getValue(), question.getImageUuid(), question.getImageIndex()))
                 .hashtagList(hashtagList)
                 .memberInfo(toMemberInfo(question.getMember()))
-                .liked((liked == null) ? BooleanType.F : liked.getLiked())
-                .bookmarked((bookmarked == null) ? BooleanType.F : bookmarked.getBookmarked())
+                .liked(liked != null && liked.getLiked().isIdentifier())
+                .bookmarked(bookmarked != null && bookmarked.getBookmarked().isIdentifier())
                 .likeCount(question.getLikeCount())
                 .bookmarkCount(question.getBookmarkCount())
                 .createdAt(question.getCreatedAt())

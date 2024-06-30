@@ -3,7 +3,6 @@ package kr.co.teacherforboss.web.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import kr.co.teacherforboss.domain.enums.BooleanType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -173,7 +172,7 @@ public class BoardResponseDTO {
     @AllArgsConstructor
     public static class LikeQuestionDTO {
         Long questionId;
-        BooleanType liked;
+        boolean liked;
         LocalDateTime updatedAt;
     }
 
@@ -192,7 +191,7 @@ public class BoardResponseDTO {
     @AllArgsConstructor
     public static class BookmarkQuestionDTO {
         Long questionId;
-        BooleanType bookmarked;
+        boolean bookmarked;
         LocalDateTime updatedAt;
     }
 
@@ -207,8 +206,8 @@ public class BoardResponseDTO {
         List<String> imageUrlList;
         List<String> hashtagList;
         MemberInfo memberInfo;
-        BooleanType liked;
-        BooleanType bookmarked;
+        boolean liked;
+        boolean bookmarked;
         Integer likeCount;
         Integer bookmarkCount;
         LocalDateTime createdAt;
