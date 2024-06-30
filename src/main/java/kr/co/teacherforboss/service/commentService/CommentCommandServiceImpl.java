@@ -10,7 +10,7 @@ import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.CommentRepository;
 import kr.co.teacherforboss.repository.PostRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
-import kr.co.teacherforboss.web.dto.CommentRequestDTO;
+import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,13 +24,16 @@ public class CommentCommandServiceImpl implements CommentCommandService {
 
     @Override
     @Transactional
-    public Comment saveComment(Long postId, CommentRequestDTO.SaveCommentDTO request) {
+    public Comment saveComment(Long postId, BoardRequestDTO.SaveCommentDTO request) {
         Member member = authCommandService.getMember();
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
 
         Comment parentComment = null;
-        if(request.getParentId() != null) parentComment = commentRepository.findByIdAndStatus(request.getParentId(), Status.ACTIVE);
+        if(request.getParentId() != null) {
+            parentComment = commentRepository.findByIdAndStatus(request.getParentId(), Status.ACTIVE);
+            if (parentComment == null) throw new BoardHandler(ErrorStatus.COMMENT_NOT_FOUND);
+        }
 
         Comment comment = CommentConverter.toCommentDTO(request, member, post, parentComment);
         return commentRepository.save(comment);

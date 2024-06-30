@@ -3,7 +3,6 @@ package kr.co.teacherforboss.web.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import kr.co.teacherforboss.domain.enums.BooleanType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,6 +25,7 @@ public class BoardResponseDTO {
     public static class GetPostDTO{
         String title;
         String content;
+        List<String> imageUrlList;
         List<String> hashtagList;
         MemberInfo memberInfo;
         String liked;
@@ -75,10 +75,36 @@ public class BoardResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class GetAnswersDTO {
+        boolean hasNext;
+        List<AnswerInfo> answerList;
+
+        @Getter
+        @Builder
+        @AllArgsConstructor
+        public static class AnswerInfo {
+            Long answerId;
+            String content;
+            int likeCount;
+            int dislikeCount;
+            boolean liked;
+            boolean disliked;
+            boolean selected;
+            LocalDateTime createdAt;
+            MemberInfo memberInfo;
+            List<String> imageUrlList;
+        }
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class MemberInfo {
         Long memberId;
         String name;
         String profileImg;
+        String level;
     }
 
     @Builder
@@ -86,7 +112,7 @@ public class BoardResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class GetPostListDTO {
-        Integer totalCount;
+        boolean hasNext;
         List<PostInfo> postList;
 
         @Getter
@@ -126,6 +152,15 @@ public class BoardResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class DeletePostDTO {
+        long postId;
+        LocalDateTime deletedAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class DeleteQuestionDTO {
         Long questionId;
         LocalDateTime deletedAt;
@@ -137,7 +172,7 @@ public class BoardResponseDTO {
     @AllArgsConstructor
     public static class LikeQuestionDTO {
         Long questionId;
-        BooleanType liked;
+        boolean liked;
         LocalDateTime updatedAt;
     }
 
@@ -166,7 +201,43 @@ public class BoardResponseDTO {
     @AllArgsConstructor
     public static class BookmarkQuestionDTO {
         Long questionId;
-        BooleanType bookmarked;
+        boolean bookmarked;
+        LocalDateTime updatedAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetQuestionDTO {
+        String title;
+        String content;
+        String category;
+        List<String> imageUrlList;
+        List<String> hashtagList;
+        MemberInfo memberInfo;
+        boolean liked;
+        boolean bookmarked;
+        Integer likeCount;
+        Integer bookmarkCount;
+        LocalDateTime createdAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SaveCommentDTO {
+        Long commentId;
+        LocalDateTime createdAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SaveCommentLikedDTO {
+        Boolean liked;
         LocalDateTime updatedAt;
     }
 }
