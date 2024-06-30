@@ -2,7 +2,6 @@ package kr.co.teacherforboss.converter;
 
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.MemberSurvey;
-import kr.co.teacherforboss.domain.enums.Role;
 import kr.co.teacherforboss.domain.enums.Survey;
 import kr.co.teacherforboss.web.dto.MemberRequestDTO;
 import kr.co.teacherforboss.web.dto.MemberResponseDTO;
@@ -32,12 +31,7 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDTO.MemberInfoDTO toMemberInfoDTO(Member member) {
-        String level = null;
-        if (member.getRole() == Role.TEACHER) {
-            // TODO 그 사람이 몇 레벨인지 어떻게 알지? (member Table에 없는데)
-        }
-
+    public static MemberResponseDTO.MemberInfoDTO toMemberInfoDTO(Member member, String level) {
         return MemberResponseDTO.MemberInfoDTO.builder()
                 .memberId(member.getId())
                 .nickname(member.getNickname())
