@@ -30,4 +30,37 @@ public class AnswerLike extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private BooleanType liked;
+
+    public void toggleLiked() {
+        if (this.liked == null) { // null -> T
+            this.liked = BooleanType.T;
+            this.answer.increaseLikeCount();
+        }
+        else if (this.liked.equals(BooleanType.F)) { // F -> T
+            this.liked = BooleanType.T;
+            this.answer.increaseLikeCount();
+            this.answer.decreaseDislikeCount();
+        }
+        else { // T -> null
+            this.liked = null;
+            this.answer.decreaseLikeCount();
+        }
+    }
+
+    public void toggleDisliked() {
+        if (this.liked == null) { // null -> F
+            this.liked = BooleanType.F;
+            this.answer.increaseDislikeCount();
+
+        }
+        else if (this.liked.equals(BooleanType.T)) { // T -> F
+            this.liked = BooleanType.F;
+            this.answer.increaseDislikeCount();
+            this.answer.decreaseLikeCount();
+        }
+        else { // F -> null
+            this.liked = null;
+            this.answer.decreaseDislikeCount();
+        }
+    }
 }

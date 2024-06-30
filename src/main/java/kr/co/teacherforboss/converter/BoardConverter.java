@@ -347,4 +347,20 @@ public class BoardConverter {
                 .answerList(answerInfos)
                 .build();
     }
+
+    public static AnswerLike toAnswerLike(Answer answer, Member member) {
+        return AnswerLike.builder()
+                .answer(answer)
+                .member(member)
+                .liked(null)
+                .build();
+    }
+
+    public static BoardResponseDTO.ToggleAnswerLikeDTO toToggleAnswerLikeDTO(AnswerLike answerLike) {
+        return BoardResponseDTO.ToggleAnswerLikeDTO.builder()
+                .answerId(answerLike.getAnswer().getId())
+                .liked((answerLike.getLiked() == null) ? null : answerLike.getLiked().isIdentifier())
+                .updatedAt(answerLike.getUpdatedAt())
+                .build();
+    }
 }

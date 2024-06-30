@@ -2,7 +2,6 @@ package kr.co.teacherforboss.web.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -174,6 +173,16 @@ public class BoardResponseDTO {
     public static class ToggleQuestionLikeDTO {
         Long questionId;
         boolean liked;
+        LocalDateTime updatedAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ToggleAnswerLikeDTO {
+        Long answerId;
+        Boolean liked;
         LocalDateTime updatedAt;
     }
 
