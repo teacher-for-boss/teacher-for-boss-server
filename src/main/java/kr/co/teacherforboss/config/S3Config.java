@@ -18,8 +18,19 @@ public class S3Config {
 	@Value("${cloud.aws.credentials.secret-key}")
 	private String secretKey;
 
+	public static String REGION;
+
+	public static String BUCKET_NAME;
+
 	@Value("${cloud.aws.region}")
-	private String region;
+	public void setRegion(String region) {
+		S3Config.REGION = region;
+	}
+
+	@Value("${cloud.aws.s3.bucket}")
+	public void setBucket(String bucket) {
+		S3Config.BUCKET_NAME = bucket;
+	}
 
 	@Bean
 	@Primary
@@ -31,7 +42,7 @@ public class S3Config {
 	@Bean
 	public AmazonS3 amazonS3() {
 		return AmazonS3ClientBuilder.standard()
-				.withRegion(region)
+				.withRegion(REGION)
 				.withCredentials(new AWSStaticCredentialsProvider(awsCredentialsProvider()))
 				.build();
 	}

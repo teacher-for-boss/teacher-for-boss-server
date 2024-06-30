@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import kr.co.teacherforboss.config.S3Config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -26,9 +27,6 @@ public class S3QueryServiceImpl implements S3QueryService{
 
 	private final AmazonS3 amazonS3;
 
-	@Value("${cloud.aws.s3.bucket}")
-	private String bucket;
-
 	private final long URL_EXPIRATION = 1000 * 60 * 10;	// 600s
 
 	@Override
@@ -39,7 +37,7 @@ public class S3QueryServiceImpl implements S3QueryService{
 		for (int index = lastIndex + 1; index <= lastIndex + imageCount; index++) {
 			String fileName = String.format("%s/%s_%d", origin, imageUuid, index);
 
-			GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePresignedUrlRequest(bucket, fileName);
+			GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePresignedUrlRequest(S3Config.BUCKET_NAME, fileName);
 			URL url = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
 
 			presignedUrlList.add(url.toString());

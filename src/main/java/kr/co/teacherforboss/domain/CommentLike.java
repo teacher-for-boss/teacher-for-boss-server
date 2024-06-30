@@ -1,6 +1,6 @@
 package kr.co.teacherforboss.domain;
 
-import jakarta.annotation.Nullable;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -14,7 +14,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter
@@ -22,16 +21,25 @@ import org.hibernate.annotations.ColumnDefault;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class CommentLike extends BaseEntity {
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "memberId")
-    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "commentId")
     private Comment comment;
 
-    @Nullable
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "memberId")
+    private Member member;
+
     @Enumerated(EnumType.STRING)
-    @ColumnDefault("'F'")
     private BooleanType liked;
+
+    public void setLiked() {
+        if (this.liked == BooleanType.T) liked = null;
+        else this.liked = BooleanType.T;
+    }
+
+    public void setDisliked() {
+        if (this.liked == BooleanType.F) liked = null;
+        else this.liked = BooleanType.F;
+    }
 }

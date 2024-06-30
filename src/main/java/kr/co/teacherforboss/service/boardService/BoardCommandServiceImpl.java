@@ -161,7 +161,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
     @Override
     @Transactional
-    public PostLike savePostLike(long postId) {
+    public PostLike savePostLike(Long postId) {
         Member member = authCommandService.getMember();
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));

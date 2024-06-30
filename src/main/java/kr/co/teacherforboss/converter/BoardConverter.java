@@ -1,8 +1,13 @@
 package kr.co.teacherforboss.converter;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
+import kr.co.teacherforboss.config.S3Config;
 import kr.co.teacherforboss.domain.Answer;
+import kr.co.teacherforboss.domain.AnswerLike;
 import kr.co.teacherforboss.domain.Category;
 import kr.co.teacherforboss.domain.Hashtag;
 import kr.co.teacherforboss.domain.Member;
@@ -14,9 +19,12 @@ import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.QuestionBookmark;
 import kr.co.teacherforboss.domain.QuestionHashtag;
 import kr.co.teacherforboss.domain.QuestionLike;
+import kr.co.teacherforboss.domain.TeacherInfo;
 import kr.co.teacherforboss.domain.enums.BooleanType;
+import kr.co.teacherforboss.domain.enums.ImageOrigin;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
+import org.springframework.data.domain.Slice;
 
 public class BoardConverter {
 
@@ -31,6 +39,7 @@ public class BoardConverter {
         return BoardResponseDTO.GetPostDTO.builder()
                 .title(post.getTitle())
                 .content(post.getContent())
+                .imageUrlList(toImageUrlList(ImageOrigin.POST.getValue(), post.getImageUuid(), post.getImageIndex()))
                 .hashtagList(hashtagList)
                 .likeCount(post.getLikeCount())
                 .memberInfo(toMemberInfo(post.getMember()))
@@ -46,6 +55,15 @@ public class BoardConverter {
                 .memberId(member.getId())
                 .name(member.getName())
                 .profileImg(member.getProfileImg())
+                .build();
+    }
+
+    public static BoardResponseDTO.MemberInfo toMemberInfo(Member member, TeacherInfo teacherInfo) {
+        return BoardResponseDTO.MemberInfo.builder()
+                .memberId(member.getId())
+                .name(member.getName())
+                .profileImg(member.getProfileImg())
+                .level((teacherInfo == null) ? null : teacherInfo.getLevel().getLevel())
                 .build();
     }
 
@@ -71,7 +89,22 @@ public class BoardConverter {
     public static List<String> extractImageIndexs(List<String> imageUrls) {
         return (imageUrls == null || imageUrls.isEmpty())
                 ? null
-                : imageUrls.stream().map(imageUrl -> imageUrl.split("_")[1]).toList();
+                : imageUrls.stream().map(imageUrl -> (!imageUrl.contains("?"))
+                        ? imageUrl.split("_")[1]
+                        : imageUrl.substring(imageUrl.indexOf("_"), imageUrl.indexOf("?"))).toList();
+    }
+
+    public static List<String> toImageUrlList(String origin, String imageUuid, List<String> imageIndexs) {
+        if (imageUuid == null || imageIndexs == null || imageIndexs.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // TODO: CloudFront 붙이기 !
+        List<String> imageUrlList = new ArrayList<>();
+        for (String index : imageIndexs) {
+            imageUrlList.add(String.format("https://%s.s3.%s.amazonaws.com/%s/%s_%s", S3Config.BUCKET_NAME, S3Config.REGION, origin, imageUuid, index));
+        }
+        return imageUrlList;
     }
 
     public static Hashtag toHashtag(String hashtag) {
@@ -99,9 +132,19 @@ public class BoardConverter {
                 like, bookmark, post.getCreatedAt());
     }
 
-    public static BoardResponseDTO.GetPostListDTO toGetPostListDTO(int postsCount, List<BoardResponseDTO.GetPostListDTO.PostInfo> postInfos) {
+    public static BoardResponseDTO.GetPostListDTO toGetPostListDTO(Slice<Post> posts, Map<Long, Boolean> postLikeMap, Map<Long, Boolean> postBookmarkMap) {
+
+        List<BoardResponseDTO.GetPostListDTO.PostInfo> postInfos = new ArrayList<>();
+
+        posts.getContent().forEach(post -> {
+            boolean like = postLikeMap.get(post.getId()) != null && postLikeMap.get(post.getId());
+            boolean bookmark = postBookmarkMap.get(post.getId()) != null && postBookmarkMap.get(post.getId());
+            Integer commentCount = post.getCommentList().size(); // TODO: query 나가는거 왜이러는지 찾아보기
+            postInfos.add(BoardConverter.toGetPostInfo(post, bookmark, like, commentCount));
+        });
+
         return BoardResponseDTO.GetPostListDTO.builder()
-                .totalCount(postsCount)
+                .hasNext(posts.hasNext())
                 .postList(postInfos)
                 .build();
     }
@@ -257,6 +300,7 @@ public class BoardConverter {
                 .title(question.getTitle())
                 .content(question.getContent())
                 .category(question.getCategory().getName())
+                .imageUrlList(toImageUrlList(ImageOrigin.QUESTION.getValue(), question.getImageUuid(), question.getImageIndex()))
                 .hashtagList(hashtagList)
                 .memberInfo(toMemberInfo(question.getMember()))
                 .liked((liked == null) ? BooleanType.F : liked.getLiked())
@@ -271,5 +315,34 @@ public class BoardConverter {
         return question.getHashtagList()
                 .stream().map(questionHashtag -> questionHashtag.getHashtag().getName())
                 .toList();
+    }
+
+    public static BoardResponseDTO.GetAnswersDTO toGetAnswersDTO(Slice<Answer> answers, List<AnswerLike> answerLikes,
+                                                                 List<TeacherInfo> teacherInfos) {
+        HashMap<Long, BooleanType> answerLiked = new HashMap<>();
+        answerLikes.forEach(answerLike -> answerLiked.put(answerLike.getAnswer().getId(), answerLike.getLiked()));
+
+        HashMap<Long, TeacherInfo> teacherInfoMap = new HashMap<>();
+        teacherInfos.forEach(teacherInfo -> teacherInfoMap.put(teacherInfo.getId(), teacherInfo));
+
+        List<BoardResponseDTO.GetAnswersDTO.AnswerInfo> answerInfos = answers.stream()
+                .map(answer -> BoardResponseDTO.GetAnswersDTO.AnswerInfo.builder()
+                        .answerId(answer.getId())
+                        .content(answer.getContent())
+                        .likeCount(answer.getLikeCount())
+                        .dislikeCount(answer.getDislikeCount())
+                        .liked(answerLiked.get(answer.getId()) == BooleanType.T)
+                        .disliked(answerLiked.get(answer.getId()) == BooleanType.F)
+                        .selected(answer.getSelected().isIdentifier())
+                        .createdAt(answer.getCreatedAt())
+                        .memberInfo(toMemberInfo(answer.getMember(), teacherInfoMap.get(answer.getMember().getId())))
+                        .imageUrlList(toImageUrlList(ImageOrigin.ANSWER.getValue(), answer.getImageUuid(), answer.getImageIndex()))
+                        .build())
+                .toList();
+
+        return BoardResponseDTO.GetAnswersDTO.builder()
+                .hasNext(answers.hasNext())
+                .answerList(answerInfos)
+                .build();
     }
 }
