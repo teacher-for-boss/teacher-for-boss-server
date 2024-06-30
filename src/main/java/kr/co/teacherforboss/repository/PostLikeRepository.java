@@ -18,9 +18,9 @@ public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
     List<PostLike> findByPostInAndMemberIdAndStatus(List<Post> postCollect, Long memberId, Status status);
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query(value = """
-        UPDATE post_like
+		UPDATE post_like
         SET status = 'INACTIVE'
-        WHERE comment_id IN (SELECT comment_id FROM comment WHERE post_id = :postId);
-    """, nativeQuery = true)
+        WHERE post_id = :postId
+	""", nativeQuery = true)
     void softDeletePostLikeByPostId(@Param(value = "postId") Long postId);
 }
