@@ -63,10 +63,11 @@ public class CommentConverter {
                 .build();
     }
 
-    public static CommentResponseDTO.GetCommentListDTO.CommentInfo toGetCommentInfo(Comment comment, MemberResponseDTO.MemberInfoDTO memberInfo, List<CommentResponseDTO.GetCommentListDTO.CommentInfo> children) {
+    public static CommentResponseDTO.GetCommentListDTO.CommentInfo toGetCommentInfo(Comment comment, Boolean isLiked, MemberResponseDTO.MemberInfoDTO memberInfo, List<CommentResponseDTO.GetCommentListDTO.CommentInfo> children) {
         return new CommentResponseDTO.GetCommentListDTO.CommentInfo(
                 comment.getId(),
                 comment.getContent(),
+                isLiked,
                 comment.getLikeCount(),
                 comment.getDislikeCount(),
                 comment.getCreatedAt(),

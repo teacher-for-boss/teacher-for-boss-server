@@ -42,6 +42,7 @@ public class CommentResponseDTO {
         public static class CommentInfo {
             Long commentId;
             String content;
+            Boolean isLiked;
             Integer likeCount;
             Integer dislikeCount;
             LocalDateTime createdAt;
