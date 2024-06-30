@@ -18,7 +18,7 @@ public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
     List<PostLike> findByPostInAndStatus(List<Post> postCollect, Status status);
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query(value = """
-		update comment_like
+		update post_like
         set status = 'INACTIVE'
         where comment_id in (select comment_id from comment where post_id = :postId);
 	""", nativeQuery = true)
