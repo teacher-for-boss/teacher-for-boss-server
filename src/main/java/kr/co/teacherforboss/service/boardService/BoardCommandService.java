@@ -22,4 +22,5 @@ public interface BoardCommandService {
     QuestionLike toggleQuestionLike(Long questionId);
     Answer deleteAnswer(Long questionId, Long answerId);
     QuestionBookmark toggleQuestionBookmark(Long questionId);
+    Answer selectAnswer(Long questionId, Long answerId);
 }

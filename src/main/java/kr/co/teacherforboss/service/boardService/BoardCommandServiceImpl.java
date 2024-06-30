@@ -267,4 +267,17 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         questionBookmark.toggleLiked();
         return questionBookmarkRepository.save(questionBookmark);
     }
+
+    @Override
+    @Transactional
+    public Answer selectAnswer(Long questionId, Long answerId) {
+        Member member = authCommandService.getMember();
+        Question question = questionRepository.findByIdAndMemberIdAndStatus(questionId, member.getId(), Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
+        Answer answer = answerRepository.findByIdAndQuestionIdAndMemberIdAndStatus(answerId, questionId, member.getId(), Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.ANSWER_NOT_FOUND));
+
+        question.selectAnswer(answer);
+        return answer;
+    }
 }

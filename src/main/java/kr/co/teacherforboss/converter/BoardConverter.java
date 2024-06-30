@@ -244,4 +244,11 @@ public class BoardConverter {
                 .updatedAt(questionBookmark.getUpdatedAt())
                 .build();
     }
+
+    public static BoardResponseDTO.SelectAnswerDTO toSelectAnswerDTO(Answer answer) {
+        return BoardResponseDTO.SelectAnswerDTO.builder()
+                .selectedAnswerId(answer.getId())
+                .updatedAt(answer.getUpdatedAt())
+                .build();
+    }
 }

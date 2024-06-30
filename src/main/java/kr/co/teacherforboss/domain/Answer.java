@@ -66,4 +66,8 @@ public class Answer extends BaseEntity {
         this.imageIndex = imageIndex;
         return this;
     }
+
+    public void select() {
+        this.selected = BooleanType.T;
+    }
 }

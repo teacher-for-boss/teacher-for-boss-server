@@ -159,4 +159,13 @@ public class BoardResponseDTO {
         BooleanType bookmarked;
         LocalDateTime updatedAt;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SelectAnswerDTO {
+        Long selectedAnswerId;
+        LocalDateTime updatedAt;
+    }
 }

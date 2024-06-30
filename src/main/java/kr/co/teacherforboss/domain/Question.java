@@ -91,5 +91,10 @@ public class Question extends BaseEntity {
         this.imageIndex = imageIndex;
         return this;
     }
+
+    public void selectAnswer(Answer answer) {
+        this.solved = BooleanType.T;
+        answer.select();
+    }
 }
 

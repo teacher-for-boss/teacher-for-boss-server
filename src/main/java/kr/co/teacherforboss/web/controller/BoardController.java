@@ -125,4 +125,10 @@ public class BoardController {
         return ApiResponse.onSuccess(BoardConverter.toBookmarkQuestionDTO(questionBookmark));
     }
 
+    @PatchMapping("/teacher/questions/{questionId}/answers/{answerId}/select")
+    public ApiResponse<BoardResponseDTO.SelectAnswerDTO> selectAnswer(@PathVariable("questionId") Long questionId,
+                                                                   @PathVariable("answerId") Long answerId) {
+        Answer answer = boardCommandService.selectAnswer(questionId, answerId);
+        return ApiResponse.onSuccess(BoardConverter.toSelectAnswerDTO(answer));
+    }
 }
