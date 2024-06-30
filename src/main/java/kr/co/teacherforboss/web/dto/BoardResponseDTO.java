@@ -16,7 +16,7 @@ public class BoardResponseDTO {
     @AllArgsConstructor
     public static class SavePostDTO {
         Long postId;
-        LocalDateTime updatedAt;
+        LocalDateTime createdAt;
     }
 
     @Builder

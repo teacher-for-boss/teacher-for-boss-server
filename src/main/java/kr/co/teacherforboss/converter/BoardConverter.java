@@ -31,7 +31,7 @@ public class BoardConverter {
     public static BoardResponseDTO.SavePostDTO toSavePostDTO(Post post) {
         return BoardResponseDTO.SavePostDTO.builder()
                 .postId(post.getId())
-                .updatedAt(post.getUpdatedAt())
+                .createdAt(post.getCreatedAt())
                 .build();
     }
 
