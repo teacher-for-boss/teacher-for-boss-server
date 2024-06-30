@@ -35,7 +35,7 @@ public class BoardConverter {
                 .build();
     }
 
-    public static BoardResponseDTO.GetPostDTO toGetPostDTO(Post post, List<String> hashtags, String liked, String bookmarked) {
+    public static BoardResponseDTO.GetPostDTO toGetPostDTO(Post post, List<String> hashtags, String liked, String bookmarked, boolean isMine) {
         return BoardResponseDTO.GetPostDTO.builder()
                 .title(post.getTitle())
                 .content(post.getContent())
@@ -47,6 +47,7 @@ public class BoardConverter {
                 .createdAt(post.getCreatedAt())
                 .liked(liked)
                 .bookmarked(bookmarked)
+                .isMine(isMine)
                 .build();
     }
 
@@ -295,7 +296,7 @@ public class BoardConverter {
                 .build();
     }
 
-    public static BoardResponseDTO.GetQuestionDTO toGetQuestionDTO(Question question, QuestionLike liked, QuestionBookmark bookmarked) {
+    public static BoardResponseDTO.GetQuestionDTO toGetQuestionDTO(Question question, QuestionLike liked, QuestionBookmark bookmarked, boolean isMine) {
         return BoardResponseDTO.GetQuestionDTO.builder()
                 .title(question.getTitle())
                 .content(question.getContent())
@@ -308,6 +309,7 @@ public class BoardConverter {
                 .likeCount(question.getLikeCount())
                 .bookmarkCount(question.getBookmarkCount())
                 .createdAt(question.getCreatedAt())
+                .isMine(isMine)
                 .build();
     }
 

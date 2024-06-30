@@ -61,6 +61,7 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         String liked = "F";
         String bookmarked = "F";
         List<String> hashtagList = null;
+        boolean isMine = post.getMember() == member;
 
         PostLike postLike = postLikeRepository.findByPostIdAndMemberIdAndStatus(post.getId(), member.getId(), Status.ACTIVE).orElse(null);
         if (postLike != null) {
@@ -76,7 +77,7 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         }
 
         postRepository.save(post);
-        return BoardConverter.toGetPostDTO(post, hashtagList, liked, bookmarked);
+        return BoardConverter.toGetPostDTO(post, hashtagList, liked, bookmarked, isMine);
     }
 
     @Override
@@ -123,12 +124,11 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         Question question = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
 
+        boolean isMine = question.getMember() == member;
         QuestionLike questionLike = questionLikeRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE).orElse(null);
         QuestionBookmark questionBookmark = questionBookmarkRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE).orElse(null);
 
-        List<String> hashtagList = (question.getHashtagList().isEmpty()) ? null : BoardConverter.toQuestionHashtags(question);
-
-        return BoardConverter.toGetQuestionDTO(question, questionLike, questionBookmark);
+        return BoardConverter.toGetQuestionDTO(question, questionLike, questionBookmark, isMine);
     }
 
     @Override
