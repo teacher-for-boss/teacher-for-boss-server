@@ -81,7 +81,7 @@ public class Post extends BaseEntity {
         this.hashtags.add(postHashtag);
     }
 
-    public Post updatePost() {
+    public Post increaseViewCount() {
         this.viewCount += 1;
         return this;
     }
