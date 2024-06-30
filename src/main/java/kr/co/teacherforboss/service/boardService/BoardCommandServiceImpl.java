@@ -5,6 +5,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import kr.co.teacherforboss.repository.CommentLikeRepository;
+import kr.co.teacherforboss.repository.CommentRepository;
+import kr.co.teacherforboss.repository.QuestionLikeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +37,6 @@ import kr.co.teacherforboss.repository.PostLikeRepository;
 import kr.co.teacherforboss.repository.PostRepository;
 import kr.co.teacherforboss.repository.QuestionBookmarkRepository;
 import kr.co.teacherforboss.repository.QuestionHashtagRepository;
-import kr.co.teacherforboss.repository.QuestionLikeRepository;
 import kr.co.teacherforboss.repository.QuestionRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
@@ -54,6 +56,8 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     private final CategoryRepository categoryRepository;
     private final PostBookmarkRepository postBookmarkRepository;
     private final PostLikeRepository postLikeRepository;
+    private final CommentRepository commentRepository;
+    private final CommentLikeRepository commentLikeRepository;
     private final QuestionLikeRepository questionLikeRepository;
     private final AnswerRepository answerRepository;
     private final QuestionBookmarkRepository questionBookmarkRepository;
@@ -165,6 +169,24 @@ public class BoardCommandServiceImpl implements BoardCommandService {
                         .orElse(BoardConverter.toPostLike(post, member));
         like.toggleLiked();
         return postLikeRepository.save(like);
+    }
+
+    @Override
+    @Transactional
+    public Post deletePost(Long postId) {
+        Member member = authCommandService.getMember();
+        Post post = postRepository.findByIdAndMemberIdAndStatus(postId, member.getId(), Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
+
+        List<Long> comments = post.getCommentList().stream().map(BaseEntity::getId).toList();
+        postHashtagRepository.softDeletePostHashtagByPostId(postId);
+        postLikeRepository.softDeletePostLikeByPostId(postId);
+        postBookmarkRepository.softDeletePostBookmarksByPostId(postId);
+
+        commentLikeRepository.softDeleteCommentLikeByComments(comments);
+        commentRepository.softDeleteCommentsByPostId(postId);
+        post.softDelete();
+        return postRepository.save(post);
     }
 
     @Override

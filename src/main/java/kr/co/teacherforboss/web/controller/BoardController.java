@@ -20,6 +20,7 @@ import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -83,6 +84,12 @@ public class BoardController {
         return ApiResponse.onSuccess(BoardConverter.toSavePostLikeDTO(like));
     }
 
+    @DeleteMapping("/boss/posts/{postId}")
+    public ApiResponse<BoardResponseDTO.DeletePostDTO> deletePost(@PathVariable("postId") Long postId){
+        Post post = boardCommandService.deletePost(postId);
+        return ApiResponse.onSuccess(BoardConverter.toDeletePostDTO(post));
+    }
+
     @PatchMapping("/teacher/questions/{questionId}")
     public ApiResponse<BoardResponseDTO.EditQuestionDTO> editQuestion(@PathVariable("questionId") Long questionId, @RequestBody @Valid BoardRequestDTO.EditQuestionDTO request) {
         Question question = boardCommandService.editQuestion(questionId, request);
@@ -96,7 +103,7 @@ public class BoardController {
         return ApiResponse.onSuccess(BoardConverter.toSaveAnswerDTO(answer));
     }
 
-    @PostMapping("/teacher/questions/{questionId}")
+    @DeleteMapping("/teacher/questions/{questionId}")
     public ApiResponse<BoardResponseDTO.DeleteQuestionDTO> deleteQuestion(@PathVariable("questionId") Long questionId) {
         Question question = boardCommandService.deleteQuestion(questionId);
         return ApiResponse.onSuccess(BoardConverter.toDeleteQuestionDTO(question));

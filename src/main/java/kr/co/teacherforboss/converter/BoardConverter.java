@@ -257,6 +257,13 @@ public class BoardConverter {
                 .build();
     }
 
+    public static BoardResponseDTO.DeletePostDTO toDeletePostDTO(Post post) {
+        return BoardResponseDTO.DeletePostDTO.builder()
+                .postId(post.getId())
+                .deletedAt(post.getUpdatedAt())
+                .build();
+    }
+
     public static BoardResponseDTO.LikeQuestionDTO toLikeQuestionDTO(QuestionLike questionLike) {
         return BoardResponseDTO.LikeQuestionDTO.builder()
                 .questionId(questionLike.getQuestion().getId())

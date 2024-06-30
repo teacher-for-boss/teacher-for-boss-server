@@ -153,6 +153,15 @@ public class BoardResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class DeletePostDTO {
+        long postId;
+        LocalDateTime deletedAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class DeleteQuestionDTO {
         Long questionId;
         LocalDateTime deletedAt;
