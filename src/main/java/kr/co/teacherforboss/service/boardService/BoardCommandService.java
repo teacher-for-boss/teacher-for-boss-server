@@ -1,6 +1,7 @@
 package kr.co.teacherforboss.service.boardService;
 
 import kr.co.teacherforboss.domain.Answer;
+import kr.co.teacherforboss.domain.Comment;
 import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.PostBookmark;
@@ -23,4 +24,5 @@ public interface BoardCommandService {
     QuestionLike toggleQuestionLike(Long questionId);
     Answer deleteAnswer(Long questionId, Long answerId);
     QuestionBookmark toggleQuestionBookmark(Long questionId);
+    Comment saveComment(Long postId, BoardRequestDTO.SaveCommentDTO request);
 }

@@ -19,6 +19,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -87,5 +88,13 @@ public class Member extends BaseEntity {
     public void setProfile(String nickname, String profileImg){
         this.nickname = nickname;
         this.profileImg = profileImg;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Member that = (Member) o;
+        return Objects.equals(getId(), that.getId());
     }
 }

@@ -61,7 +61,7 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         String liked = "F";
         String bookmarked = "F";
         List<String> hashtagList = null;
-        boolean isMine = post.getMember() == member;
+        boolean isMine = member.equals(post.getMember());
 
         PostLike postLike = postLikeRepository.findByPostIdAndMemberIdAndStatus(post.getId(), member.getId(), Status.ACTIVE).orElse(null);
         if (postLike != null) {
@@ -124,7 +124,7 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         Question question = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
 
-        boolean isMine = question.getMember() == member;
+        boolean isMine = member.equals(question.getMember());
         QuestionLike questionLike = questionLikeRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE).orElse(null);
         QuestionBookmark questionBookmark = questionBookmarkRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE).orElse(null);
 

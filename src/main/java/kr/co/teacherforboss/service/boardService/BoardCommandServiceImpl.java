@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import kr.co.teacherforboss.converter.CommentConverter;
+import kr.co.teacherforboss.domain.Comment;
 import kr.co.teacherforboss.repository.CommentLikeRepository;
 import kr.co.teacherforboss.repository.CommentRepository;
 import kr.co.teacherforboss.repository.QuestionLikeRepository;
@@ -288,5 +290,22 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
         questionBookmark.toggleLiked();
         return questionBookmarkRepository.save(questionBookmark);
+    }
+
+    @Override
+    @Transactional
+    public Comment saveComment(Long postId, BoardRequestDTO.SaveCommentDTO request) {
+        Member member = authCommandService.getMember();
+        Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
+
+        Comment parentComment = null;
+        if(request.getParentId() != null) {
+            parentComment = commentRepository.findByIdAndStatus(request.getParentId(), Status.ACTIVE);
+            if (parentComment == null) throw new BoardHandler(ErrorStatus.COMMENT_NOT_FOUND);
+        }
+
+        Comment comment = CommentConverter.toCommentDTO(request, member, post, parentComment);
+        return commentRepository.save(comment);
     }
 }

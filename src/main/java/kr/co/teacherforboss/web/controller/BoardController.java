@@ -14,7 +14,6 @@ import kr.co.teacherforboss.domain.QuestionBookmark;
 import kr.co.teacherforboss.domain.QuestionLike;
 import kr.co.teacherforboss.service.boardService.BoardCommandService;
 import kr.co.teacherforboss.service.boardService.BoardQueryService;
-import kr.co.teacherforboss.service.commentService.CommentCommandService;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +38,6 @@ public class BoardController {
 
     private final BoardCommandService boardCommandService;
     private final BoardQueryService boardQueryService;
-    private final CommentCommandService commentCommandService;
 
     @PostMapping("/boss/posts")
     public ApiResponse<BoardResponseDTO.SavePostDTO> savePost(@RequestBody @Valid BoardRequestDTO.SavePostDTO request){
@@ -151,7 +149,7 @@ public class BoardController {
     @PostMapping("/boss/posts/{postId}/comments")
     public ApiResponse<BoardResponseDTO.SaveCommentDTO> saveComment(@PathVariable("postId") Long postId,
                                                                    @RequestBody @Valid BoardRequestDTO.SaveCommentDTO request) {
-        Comment comment = commentCommandService.saveComment(postId, request);
+        Comment comment = boardCommandService.saveComment(postId, request);
         return ApiResponse.onSuccess(CommentConverter.toSaveCommentDTO(comment));
     }
 }
