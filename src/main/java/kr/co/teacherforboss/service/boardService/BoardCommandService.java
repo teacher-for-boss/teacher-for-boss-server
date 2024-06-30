@@ -3,6 +3,7 @@ package kr.co.teacherforboss.service.boardService;
 import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.Comment;
 import kr.co.teacherforboss.domain.AnswerLike;
+import kr.co.teacherforboss.domain.CommentLike;
 import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.PostBookmark;
@@ -26,6 +27,7 @@ public interface BoardCommandService {
     AnswerLike toggleAnswerLike(Long questionId, Long answerId, boolean isLike);
     Answer deleteAnswer(Long questionId, Long answerId);
     QuestionBookmark toggleQuestionBookmark(Long questionId);
-    Comment saveComment(Long postId, BoardRequestDTO.SaveCommentDTO request);
     Answer selectAnswer(Long questionId, Long answerId);
+    CommentLike toggleCommentLike(Long postId, Long commentId, boolean isLike);
+    Comment saveComment(Long postId, BoardRequestDTO.SaveCommentDTO request);
 }

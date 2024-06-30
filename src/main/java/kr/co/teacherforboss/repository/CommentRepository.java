@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.repository;
 
+import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.Comment;
 import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.enums.Status;
@@ -21,5 +22,5 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
         WHERE post_id = :postId
     """, nativeQuery = true)
     void softDeleteCommentsByPostId(@Param(value = "postId") Long postId);
-    Optional<Comment> findByIdAndPostAndStatus(Long id, Post post, Status status);
+    Optional<Comment> findByIdAndPostIdAndStatus(Long commentId, Long postId, Status status);
 }

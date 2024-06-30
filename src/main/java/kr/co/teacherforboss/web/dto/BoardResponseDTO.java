@@ -190,6 +190,17 @@ public class BoardResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class ToggleCommentLikeDTO {
+        Integer LikedCount;
+        Integer DislikedCount;
+        Boolean liked;
+        LocalDateTime updatedAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class DeleteAnswerDTO {
         Long answerId;
         LocalDateTime deletedAt;
@@ -237,26 +248,8 @@ public class BoardResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ToggleCommentLikeDTO {
-        Boolean liked;
-        LocalDateTime updatedAt;
-    }
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
     public static class SelectAnswerDTO {
         Long selectedAnswerId;
-        LocalDateTime updatedAt;
-    }
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class SaveCommentLikedDTO {
-        Boolean liked;
         LocalDateTime updatedAt;
     }
 }

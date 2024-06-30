@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CommentLikeRepository extends JpaRepository<CommentLike, Long> {
@@ -21,6 +22,5 @@ public interface CommentLikeRepository extends JpaRepository<CommentLike, Long> 
         WHERE comment_id IN (:commentIds);
     """, nativeQuery = true)
     void softDeleteCommentLikeByComments(@Param(value = "commentIds") List<Long> commentIds);
-
-    CommentLike findByCommentAndMemberAndStatus(Comment comment, Member member, Status status);
+    Optional<CommentLike> findByCommentIdAndMemberIdAndStatus(Long commentId, Long memberId, Status status);
 }
