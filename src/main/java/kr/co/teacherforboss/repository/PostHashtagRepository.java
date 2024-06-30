@@ -11,9 +11,9 @@ import org.springframework.stereotype.Repository;
 public interface PostHashtagRepository extends JpaRepository<PostHashtag, Long> {
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query(value = """
-		UPDATE post_hashtag
-		SET status = 'INACTIVE'
-		WHERE post_id = :postId
-	""", nativeQuery = true)
+  		UPDATE post_hashtag
+  		SET status = 'INACTIVE'
+  		WHERE post_id = :postId
+  	""", nativeQuery = true)
     void softDeletePostHashtagByPostId(@Param(value = "postId") Long postId);
 }

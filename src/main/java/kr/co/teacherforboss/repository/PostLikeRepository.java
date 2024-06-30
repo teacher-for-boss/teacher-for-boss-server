@@ -21,6 +21,6 @@ public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
         UPDATE post_like
         SET status = 'INACTIVE'
         WHERE comment_id IN (SELECT comment_id FROM comment WHERE post_id = :postId);
-	""", nativeQuery = true)
+    """, nativeQuery = true)
     void softDeletePostLikeByPostId(@Param(value = "postId") Long postId);
 }
