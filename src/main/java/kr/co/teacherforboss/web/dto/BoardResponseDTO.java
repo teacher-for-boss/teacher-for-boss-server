@@ -2,8 +2,6 @@ package kr.co.teacherforboss.web.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
-import kr.co.teacherforboss.domain.enums.BooleanType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +14,7 @@ public class BoardResponseDTO {
     @AllArgsConstructor
     public static class SavePostDTO {
         Long postId;
-        LocalDateTime updatedAt;
+        LocalDateTime createdAt;
     }
 
     @Builder
@@ -26,6 +24,7 @@ public class BoardResponseDTO {
     public static class GetPostDTO{
         String title;
         String content;
+        List<String> imageUrlList;
         List<String> hashtagList;
         MemberInfo memberInfo;
         String liked;
@@ -33,6 +32,7 @@ public class BoardResponseDTO {
         Integer likeCount;
         Integer bookmarkCount;
         LocalDateTime createdAt;
+        Boolean isMine;
     }
 
     @Getter
@@ -75,18 +75,44 @@ public class BoardResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class GetAnswersDTO {
+        boolean hasNext;
+        List<AnswerInfo> answerList;
+
+        @Getter
+        @Builder
+        @AllArgsConstructor
+        public static class AnswerInfo {
+            Long answerId;
+            String content;
+            int likeCount;
+            int dislikeCount;
+            boolean liked;
+            boolean disliked;
+            boolean selected;
+            LocalDateTime createdAt;
+            MemberInfo memberInfo;
+            List<String> imageUrlList;
+        }
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class MemberInfo {
         Long memberId;
         String name;
         String profileImg;
+        String level;
     }
 
     @Builder
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class GetPostListDTO {
-        Integer totalCount;
+    public static class GetPostsDTO {
+        boolean hasNext;
         List<PostInfo> postList;
 
         @Getter
@@ -98,8 +124,8 @@ public class BoardResponseDTO {
             Integer bookmarkCount;
             Integer commentCount;
             Integer likeCount;
-            Boolean like;
-            Boolean bookmark;
+            Boolean liked;
+            Boolean bookmarked;
             LocalDateTime createdAt;
         }
     }
@@ -108,7 +134,7 @@ public class BoardResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SavePostBookmarkDTO {
+    public static class TogglePostBookmarkDTO {
         Boolean bookmark;
         LocalDateTime updatedAt;
     }
@@ -117,9 +143,18 @@ public class BoardResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SavePostLikeDTO {
+    public static class TogglePostLikeDTO {
         Boolean like;
         LocalDateTime updatedAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DeletePostDTO {
+        long postId;
+        LocalDateTime deletedAt;
     }
 
     @Getter
@@ -135,9 +170,19 @@ public class BoardResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class LikeQuestionDTO {
+    public static class ToggleQuestionLikeDTO {
         Long questionId;
-        BooleanType liked;
+        boolean liked;
+        LocalDateTime updatedAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ToggleAnswerLikeDTO {
+        Long answerId;
+        Boolean liked;
         LocalDateTime updatedAt;
     }
 
@@ -154,9 +199,9 @@ public class BoardResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class BookmarkQuestionDTO {
+    public static class ToggleQuestionBookmarkDTO {
         Long questionId;
-        BooleanType bookmarked;
+        boolean bookmarked;
         LocalDateTime updatedAt;
     }
 
@@ -168,12 +213,41 @@ public class BoardResponseDTO {
         String title;
         String content;
         String category;
+        List<String> imageUrlList;
         List<String> hashtagList;
         MemberInfo memberInfo;
-        BooleanType liked;
-        BooleanType bookmarked;
+        boolean liked;
+        boolean bookmarked;
         Integer likeCount;
         Integer bookmarkCount;
         LocalDateTime createdAt;
+        Boolean isMine;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SaveCommentDTO {
+        Long commentId;
+        LocalDateTime createdAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ToggleCommentLikeDTO {
+        Boolean liked;
+        LocalDateTime updatedAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SelectAnswerDTO {
+        Long selectedAnswerId;
+        LocalDateTime updatedAt;
     }
 }
