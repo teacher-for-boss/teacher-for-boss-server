@@ -356,8 +356,8 @@ public class BoardConverter {
                 .build();
     }
 
-    public static BoardResponseDTO.LikeAnswerDTO toLikeAnswerDTO(AnswerLike answerLike) {
-        return BoardResponseDTO.LikeAnswerDTO.builder()
+    public static BoardResponseDTO.ToggleAnswerLikeDTO toToggleAnswerLikeDTO(AnswerLike answerLike) {
+        return BoardResponseDTO.ToggleAnswerLikeDTO.builder()
                 .answerId(answerLike.getAnswer().getId())
                 .liked((answerLike.getLiked() == null) ? null : answerLike.getLiked().isIdentifier())
                 .updatedAt(answerLike.getUpdatedAt())

@@ -180,7 +180,7 @@ public class BoardResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class LikeAnswerDTO {
+    public static class ToggleAnswerLikeDTO {
         Long answerId;
         Boolean liked;
         LocalDateTime updatedAt;

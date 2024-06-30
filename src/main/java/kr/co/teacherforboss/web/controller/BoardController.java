@@ -164,17 +164,17 @@ public class BoardController {
         return ApiResponse.onSuccess(CommentConverter.toSaveCommentDTO(comment));
     }
     @PostMapping("/teacher/questions/{questionId}/answers/{answerId}/likes")
-    public ApiResponse<BoardResponseDTO.LikeAnswerDTO> toggleAnswerLike(@PathVariable("questionId") Long questionId,
+    public ApiResponse<BoardResponseDTO.ToggleAnswerLikeDTO> toggleAnswerLike(@PathVariable("questionId") Long questionId,
                                                                        @PathVariable("answerId") Long answerId) {
         AnswerLike answerLike = boardCommandService.toggleAnswerLike(questionId, answerId, true);
-        return ApiResponse.onSuccess(BoardConverter.toLikeAnswerDTO(answerLike));
+        return ApiResponse.onSuccess(BoardConverter.toToggleAnswerLikeDTO(answerLike));
     }
 
     @PostMapping("/teacher/questions/{questionId}/answers/{answerId}/dislikes")
-    public ApiResponse<BoardResponseDTO.LikeAnswerDTO> toggleAnswerDislike(@PathVariable("questionId") Long questionId,
+    public ApiResponse<BoardResponseDTO.ToggleAnswerLikeDTO> toggleAnswerDislike(@PathVariable("questionId") Long questionId,
                                                                         @PathVariable("answerId") Long answerId) {
         AnswerLike answerLike = boardCommandService.toggleAnswerLike(questionId, answerId, false);
-        return ApiResponse.onSuccess(BoardConverter.toLikeAnswerDTO(answerLike));
+        return ApiResponse.onSuccess(BoardConverter.toToggleAnswerLikeDTO(answerLike));
     }
 
 }
