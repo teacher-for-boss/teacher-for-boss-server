@@ -55,11 +55,13 @@ public class BoardQueryServiceImpl implements BoardQueryService {
     public BoardResponseDTO.GetPostDTO getPost(Long postId) {
         Member member = authCommandService.getMember();
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
-                .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND))
+                .increaseViewCount();
 
         String liked = "F";
         String bookmarked = "F";
         List<String> hashtagList = null;
+        boolean isMine = member.equals(post.getMember());
 
         PostLike postLike = postLikeRepository.findByPostIdAndMemberIdAndStatus(post.getId(), member.getId(), Status.ACTIVE).orElse(null);
         if (postLike != null) {
@@ -70,16 +72,17 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         if (postBookmark != null) {
             bookmarked = String.valueOf(postBookmark.getBookmarked());
         }
-        if (!post.getHashtagList().isEmpty()) {
-            hashtagList = BoardConverter.toPostHashtagList(post);
+        if (!post.getHashtags().isEmpty()) {
+            hashtagList = BoardConverter.toPostHashtags(post);
         }
 
-        return BoardConverter.toGetPostDTO(post, hashtagList, liked, bookmarked);
+        postRepository.save(post);
+        return BoardConverter.toGetPostDTO(post, hashtagList, liked, bookmarked, isMine);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public BoardResponseDTO.GetPostListDTO getPostList(Long lastPostId, int size, String sortBy) {
+    public BoardResponseDTO.GetPostsDTO getPosts(Long lastPostId, int size, String sortBy) {
         Member member = authCommandService.getMember();
         PageRequest pageRequest = PageRequest.of(0, size);
         Slice<Post> posts;
@@ -111,7 +114,7 @@ public class BoardQueryServiceImpl implements BoardQueryService {
 
         // TODO : 좋아요 수, 북마크 수, 조회수 동시성 제어
 
-        return BoardConverter.toGetPostListDTO(posts, postLikeMap, postBookmarkMap);
+        return BoardConverter.toGetPostsDTO(posts, postLikeMap, postBookmarkMap);
     }
 
     @Override
@@ -121,12 +124,11 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         Question question = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
 
+        boolean isMine = member.equals(question.getMember());
         QuestionLike questionLike = questionLikeRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE).orElse(null);
         QuestionBookmark questionBookmark = questionBookmarkRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE).orElse(null);
 
-        List<String> hashtagList = (question.getHashtagList().isEmpty()) ? null : BoardConverter.toQuestionHashtagList(question);
-
-        return BoardConverter.toGetQuestionDTO(question, questionLike, questionBookmark, hashtagList);
+        return BoardConverter.toGetQuestionDTO(question, questionLike, questionBookmark, isMine);
     }
 
     @Override

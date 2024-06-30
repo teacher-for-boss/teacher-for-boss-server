@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import kr.co.teacherforboss.converter.CommentConverter;
+import kr.co.teacherforboss.domain.Comment;
 import kr.co.teacherforboss.repository.CommentLikeRepository;
 import kr.co.teacherforboss.repository.CommentRepository;
 import kr.co.teacherforboss.repository.QuestionLikeRepository;
@@ -98,7 +100,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     }
 
     private void editPostHashtags(Post post, List<String> newHashtagList) {
-        List<String> originalHashtagList = post.getHashtagList().stream()
+        List<String> originalHashtagList = post.getHashtags().stream()
                 .map(postHashtag -> postHashtag.getHashtag().getName()).toList();
 
         List<String> hashtagsToBeAdded = new ArrayList<>(newHashtagList);
@@ -114,7 +116,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
         List<String> hashtagsToBeRemoved = new ArrayList<>(originalHashtagList);
         hashtagsToBeRemoved.removeAll(newHashtagList);
-        hashtagsToBeRemoved.forEach(tag -> post.getHashtagList().stream()
+        hashtagsToBeRemoved.forEach(tag -> post.getHashtags().stream()
                 .filter(postHashtag -> postHashtag.getHashtag().getName().equals(tag))
                 .findFirst()
                 .ifPresent(PostHashtag::softDelete));
@@ -148,7 +150,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
     @Override
     @Transactional
-    public PostBookmark savePostBookmark(Long postId) {
+    public PostBookmark togglePostBookmark(Long postId) {
         Member member = authCommandService.getMember();
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
@@ -161,7 +163,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
     @Override
     @Transactional
-    public PostLike savePostLike(Long postId) {
+    public PostLike togglePostLike(Long postId) {
         Member member = authCommandService.getMember();
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
@@ -178,7 +180,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         Post post = postRepository.findByIdAndMemberIdAndStatus(postId, member.getId(), Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
 
-        List<Long> comments = post.getCommentList().stream().map(BaseEntity::getId).toList();
+        List<Long> comments = post.getComments().stream().map(BaseEntity::getId).toList();
         postHashtagRepository.softDeletePostHashtagByPostId(postId);
         postLikeRepository.softDeletePostLikeByPostId(postId);
         postBookmarkRepository.softDeletePostBookmarksByPostId(postId);
@@ -288,5 +290,22 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
         questionBookmark.toggleLiked();
         return questionBookmarkRepository.save(questionBookmark);
+    }
+
+    @Override
+    @Transactional
+    public Comment saveComment(Long postId, BoardRequestDTO.SaveCommentDTO request) {
+        Member member = authCommandService.getMember();
+        Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
+
+        Comment parentComment = null;
+        if(request.getParentId() != null) {
+            parentComment = commentRepository.findByIdAndStatus(request.getParentId(), Status.ACTIVE);
+            if (parentComment == null) throw new BoardHandler(ErrorStatus.COMMENT_NOT_FOUND);
+        }
+
+        Comment comment = CommentConverter.toCommentDTO(request, member, post, parentComment);
+        return commentRepository.save(comment);
     }
 }
