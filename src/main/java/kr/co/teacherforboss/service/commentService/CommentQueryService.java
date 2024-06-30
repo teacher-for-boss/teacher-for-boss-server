@@ -1,7 +1,7 @@
 package kr.co.teacherforboss.service.commentService;
 
-import kr.co.teacherforboss.web.dto.CommentResponseDTO;
+import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 
 public interface CommentQueryService {
-    CommentResponseDTO.GetCommentListDTO getCommentListDTO(Long postId);
+    BoardResponseDTO.GetCommentListDTO getCommentListDTO(Long postId);
 }

@@ -17,7 +17,7 @@ import kr.co.teacherforboss.repository.CommentRepository;
 import kr.co.teacherforboss.repository.PostRepository;
 import kr.co.teacherforboss.repository.TeacherInfoRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
-import kr.co.teacherforboss.web.dto.CommentResponseDTO;
+import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import kr.co.teacherforboss.web.dto.MemberResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -41,7 +41,7 @@ public class CommentQueryServiceImpl implements CommentQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public CommentResponseDTO.GetCommentListDTO getCommentListDTO(Long postId) {
+    public BoardResponseDTO.GetCommentListDTO getCommentListDTO(Long postId) {
         Member member = authCommandService.getMember();
 
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
@@ -55,8 +55,8 @@ public class CommentQueryServiceImpl implements CommentQueryService {
         List<CommentLike> commentLikes = commentLikeRepository.findByMemberAndCommentInAndStatus(member, comments, Status.ACTIVE);
         Map<Long, Boolean> commentLikedMap = getCommentLikedMap(comments, commentLikes);
 
-        Map<Long, CommentResponseDTO.GetCommentListDTO.CommentInfo> parentCommentMap = new HashMap<>();
-        List<CommentResponseDTO.GetCommentListDTO.CommentInfo> commentList = new ArrayList<>();
+        Map<Long, BoardResponseDTO.GetCommentListDTO.CommentInfo> parentCommentMap = new HashMap<>();
+        List<BoardResponseDTO.GetCommentListDTO.CommentInfo> commentList = new ArrayList<>();
 
         for (Comment comment : comments) {
             String level = null;
@@ -67,7 +67,7 @@ public class CommentQueryServiceImpl implements CommentQueryService {
             Boolean isLiked = commentLikedMap.get(comment.getId());
 
             MemberResponseDTO.MemberInfoDTO memberInfo = MemberConverter.toMemberInfoDTO(comment.getMember(), level);
-            CommentResponseDTO.GetCommentListDTO.CommentInfo commentInfo;
+            BoardResponseDTO.GetCommentListDTO.CommentInfo commentInfo;
 
             if (comment.getParent() == null) {
                 commentInfo = CommentConverter.toGetCommentInfo(comment, isLiked, memberInfo, new ArrayList<>());
@@ -75,7 +75,7 @@ public class CommentQueryServiceImpl implements CommentQueryService {
                 parentCommentMap.put(comment.getId(), commentInfo);
             } else {
                 commentInfo = CommentConverter.toGetCommentInfo(comment, isLiked, memberInfo, null);
-                CommentResponseDTO.GetCommentListDTO.CommentInfo parentCommentInfo = parentCommentMap.get(comment.getParent().getId());
+                BoardResponseDTO.GetCommentListDTO.CommentInfo parentCommentInfo = parentCommentMap.get(comment.getParent().getId());
                 if (parentCommentInfo != null) {
                     parentCommentInfo.getChildren().add(commentInfo);
                 }

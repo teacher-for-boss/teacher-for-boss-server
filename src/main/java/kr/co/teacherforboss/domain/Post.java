@@ -67,6 +67,7 @@ public class Post extends BaseEntity {
     private List<PostHashtag> hashtagList = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
+    @SQLRestriction(value = "status = 'ACTIVE'")
     @Builder.Default
     private List<Comment> commentList = new ArrayList<>();
 
