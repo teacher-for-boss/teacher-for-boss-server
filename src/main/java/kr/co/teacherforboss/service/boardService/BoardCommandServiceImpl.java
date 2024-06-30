@@ -257,6 +257,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     }
 
     @Override
+    @Transactional
     public QuestionBookmark toggleQuestionBookmark(Long questionId) {
         Member member = authCommandService.getMember();
         Question questionToBookmark = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
