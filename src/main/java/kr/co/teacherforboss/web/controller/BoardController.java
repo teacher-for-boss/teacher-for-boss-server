@@ -53,10 +53,10 @@ public class BoardController {
     }
 
     @GetMapping("/boss/posts")
-    public ApiResponse<BoardResponseDTO.GetPostListDTO> getPostList(@RequestParam(defaultValue = "0") Long lastPostId,
+    public ApiResponse<BoardResponseDTO.GetPostsDTO> getPosts(@RequestParam(defaultValue = "0") Long lastPostId,
                                                                     @RequestParam(defaultValue = "10") int size,
                                                                     @RequestParam(defaultValue = "latest") String sortBy){
-        return ApiResponse.onSuccess(boardQueryService.getPostList(lastPostId, size, sortBy));
+        return ApiResponse.onSuccess(boardQueryService.getPosts(lastPostId, size, sortBy));
     }
 
     @PatchMapping("/boss/posts/{postId}")
@@ -110,7 +110,7 @@ public class BoardController {
     }
 
     @PostMapping("/teacher/questions/{questionId}/likes")
-    public ApiResponse<BoardResponseDTO.LikeQuestionDTO> toggleQuestionLike(@PathVariable("questionId") Long questionId) {
+    public ApiResponse<BoardResponseDTO.ToggleQuestionLikeDTO> toggleQuestionLike(@PathVariable("questionId") Long questionId) {
         QuestionLike questionLike = boardCommandService.toggleQuestionLike(questionId);
         return ApiResponse.onSuccess(BoardConverter.toToggleQuestionLikeDTO(questionLike));
     }
@@ -131,7 +131,7 @@ public class BoardController {
     }
 
     @PostMapping("/teacher/questions/{questionId}/bookmark")
-    public ApiResponse<BoardResponseDTO.BookmarkQuestionDTO> toggleQuestionBookmark(@PathVariable("questionId") Long questionId) {
+    public ApiResponse<BoardResponseDTO.ToggleQuestionBookmarkDTO> toggleQuestionBookmark(@PathVariable("questionId") Long questionId) {
         QuestionBookmark questionBookmark = boardCommandService.toggleQuestionBookmark(questionId);
         return ApiResponse.onSuccess(BoardConverter.toToggleQuestionBookmarkDTO(questionBookmark));
     }

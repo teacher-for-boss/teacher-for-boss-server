@@ -30,9 +30,9 @@ public class CommentConverter {
                 .build();
     }
 
-    public static BoardResponseDTO.SaveCommentLikedDTO toSaveCommentLikedDTO(CommentLike liked) {
+    public static BoardResponseDTO.ToggleCommentLikeDTO toToggleCommentLikeDTO(CommentLike liked) {
         Boolean likeStatus = (liked.getLiked() != null) ? liked.getLiked().isIdentifier() : null;
-        return BoardResponseDTO.SaveCommentLikedDTO.builder()
+        return BoardResponseDTO.ToggleCommentLikeDTO.builder()
                 .liked(likeStatus)
                 .updatedAt(LocalDateTime.now())
                 .build();

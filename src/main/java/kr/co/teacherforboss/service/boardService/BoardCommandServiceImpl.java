@@ -98,7 +98,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     }
 
     private void editPostHashtags(Post post, List<String> newHashtagList) {
-        List<String> originalHashtagList = post.getHashtagList().stream()
+        List<String> originalHashtagList = post.getHashtags().stream()
                 .map(postHashtag -> postHashtag.getHashtag().getName()).toList();
 
         List<String> hashtagsToBeAdded = new ArrayList<>(newHashtagList);
@@ -114,7 +114,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
         List<String> hashtagsToBeRemoved = new ArrayList<>(originalHashtagList);
         hashtagsToBeRemoved.removeAll(newHashtagList);
-        hashtagsToBeRemoved.forEach(tag -> post.getHashtagList().stream()
+        hashtagsToBeRemoved.forEach(tag -> post.getHashtags().stream()
                 .filter(postHashtag -> postHashtag.getHashtag().getName().equals(tag))
                 .findFirst()
                 .ifPresent(PostHashtag::softDelete));
@@ -178,7 +178,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         Post post = postRepository.findByIdAndMemberIdAndStatus(postId, member.getId(), Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
 
-        List<Long> comments = post.getCommentList().stream().map(BaseEntity::getId).toList();
+        List<Long> comments = post.getComments().stream().map(BaseEntity::getId).toList();
         postHashtagRepository.softDeletePostHashtagByPostId(postId);
         postLikeRepository.softDeletePostLikeByPostId(postId);
         postBookmarkRepository.softDeletePostBookmarksByPostId(postId);

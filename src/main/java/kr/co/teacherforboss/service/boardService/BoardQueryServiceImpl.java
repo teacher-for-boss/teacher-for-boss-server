@@ -70,8 +70,8 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         if (postBookmark != null) {
             bookmarked = String.valueOf(postBookmark.getBookmarked());
         }
-        if (!post.getHashtagList().isEmpty()) {
-            hashtagList = BoardConverter.toPostHashtagList(post);
+        if (!post.getHashtags().isEmpty()) {
+            hashtagList = BoardConverter.toPostHashtags(post);
         }
 
         postRepository.save(post);
@@ -80,7 +80,7 @@ public class BoardQueryServiceImpl implements BoardQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public BoardResponseDTO.GetPostListDTO getPostList(Long lastPostId, int size, String sortBy) {
+    public BoardResponseDTO.GetPostsDTO getPosts(Long lastPostId, int size, String sortBy) {
         Member member = authCommandService.getMember();
         PageRequest pageRequest = PageRequest.of(0, size);
         Slice<Post> posts;
@@ -112,7 +112,7 @@ public class BoardQueryServiceImpl implements BoardQueryService {
 
         // TODO : 좋아요 수, 북마크 수, 조회수 동시성 제어
 
-        return BoardConverter.toGetPostListDTO(posts, postLikeMap, postBookmarkMap);
+        return BoardConverter.toGetPostsDTO(posts, postLikeMap, postBookmarkMap);
     }
 
     @Override
@@ -125,7 +125,7 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         QuestionLike questionLike = questionLikeRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE).orElse(null);
         QuestionBookmark questionBookmark = questionBookmarkRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE).orElse(null);
 
-        List<String> hashtagList = (question.getHashtagList().isEmpty()) ? null : BoardConverter.toQuestionHashtagList(question);
+        List<String> hashtagList = (question.getHashtagList().isEmpty()) ? null : BoardConverter.toQuestionHashtags(question);
 
         return BoardConverter.toGetQuestionDTO(question, questionLike, questionBookmark, hashtagList);
     }

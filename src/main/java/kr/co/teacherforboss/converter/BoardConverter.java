@@ -35,12 +35,12 @@ public class BoardConverter {
                 .build();
     }
 
-    public static BoardResponseDTO.GetPostDTO toGetPostDTO(Post post, List<String> hashtagList, String liked, String bookmarked) {
+    public static BoardResponseDTO.GetPostDTO toGetPostDTO(Post post, List<String> hashtags, String liked, String bookmarked) {
         return BoardResponseDTO.GetPostDTO.builder()
                 .title(post.getTitle())
                 .content(post.getContent())
                 .imageUrlList(toImageUrlList(ImageOrigin.POST.getValue(), post.getImageUuid(), post.getImageIndex()))
-                .hashtagList(hashtagList)
+                .hashtagList(hashtags)
                 .likeCount(post.getLikeCount())
                 .memberInfo(toMemberInfo(post.getMember()))
                 .bookmarkCount(post.getBookmarkCount())
@@ -120,30 +120,30 @@ public class BoardConverter {
                 .build();
     }
 
-    public static List<String> toPostHashtagList(Post post) {
-        return post.getHashtagList()
+    public static List<String> toPostHashtags(Post post) {
+        return post.getHashtags()
                 .stream().map(hashtag ->
                         hashtag.getHashtag().getName())
                 .toList();
     }
 
-    public static BoardResponseDTO.GetPostListDTO.PostInfo toGetPostInfo(Post post, boolean bookmark, boolean like, Integer commentCount) {
-        return new BoardResponseDTO.GetPostListDTO.PostInfo(post.getId(), post.getTitle(), post.getContent(), post.getBookmarkCount(), commentCount, post.getLikeCount(),
+    public static BoardResponseDTO.GetPostsDTO.PostInfo toGetPostInfo(Post post, boolean bookmark, boolean like, Integer commentCount) {
+        return new BoardResponseDTO.GetPostsDTO.PostInfo(post.getId(), post.getTitle(), post.getContent(), post.getBookmarkCount(), commentCount, post.getLikeCount(),
                 like, bookmark, post.getCreatedAt());
     }
 
-    public static BoardResponseDTO.GetPostListDTO toGetPostListDTO(Slice<Post> posts, Map<Long, Boolean> postLikeMap, Map<Long, Boolean> postBookmarkMap) {
+    public static BoardResponseDTO.GetPostsDTO toGetPostsDTO(Slice<Post> posts, Map<Long, Boolean> postLikeMap, Map<Long, Boolean> postBookmarkMap) {
 
-        List<BoardResponseDTO.GetPostListDTO.PostInfo> postInfos = new ArrayList<>();
+        List<BoardResponseDTO.GetPostsDTO.PostInfo> postInfos = new ArrayList<>();
 
         posts.getContent().forEach(post -> {
             boolean like = postLikeMap.get(post.getId()) != null && postLikeMap.get(post.getId());
             boolean bookmark = postBookmarkMap.get(post.getId()) != null && postBookmarkMap.get(post.getId());
-            Integer commentCount = post.getCommentList().size(); // TODO: query 나가는거 왜이러는지 찾아보기
+            Integer commentCount = post.getComments().size(); // TODO: query 나가는거 왜이러는지 찾아보기
             postInfos.add(BoardConverter.toGetPostInfo(post, bookmark, like, commentCount));
         });
 
-        return BoardResponseDTO.GetPostListDTO.builder()
+        return BoardResponseDTO.GetPostsDTO.builder()
                 .hasNext(posts.hasNext())
                 .postList(postInfos)
                 .build();
@@ -264,8 +264,8 @@ public class BoardConverter {
                 .build();
     }
 
-    public static BoardResponseDTO.LikeQuestionDTO toToggleQuestionLikeDTO(QuestionLike questionLike) {
-        return BoardResponseDTO.LikeQuestionDTO.builder()
+    public static BoardResponseDTO.ToggleQuestionLikeDTO toToggleQuestionLikeDTO(QuestionLike questionLike) {
+        return BoardResponseDTO.ToggleQuestionLikeDTO.builder()
                 .questionId(questionLike.getQuestion().getId())
                 .liked(questionLike.getLiked())
                 .updatedAt(questionLike.getUpdatedAt())
@@ -287,21 +287,21 @@ public class BoardConverter {
                 .build();
     }
 
-    public static BoardResponseDTO.BookmarkQuestionDTO toToggleQuestionBookmarkDTO(QuestionBookmark questionBookmark) {
-        return BoardResponseDTO.BookmarkQuestionDTO.builder()
+    public static BoardResponseDTO.ToggleQuestionBookmarkDTO toToggleQuestionBookmarkDTO(QuestionBookmark questionBookmark) {
+        return BoardResponseDTO.ToggleQuestionBookmarkDTO.builder()
                 .questionId(questionBookmark.getQuestion().getId())
                 .bookmarked(questionBookmark.getBookmarked())
                 .updatedAt(questionBookmark.getUpdatedAt())
                 .build();
     }
 
-    public static BoardResponseDTO.GetQuestionDTO toGetQuestionDTO(Question question, QuestionLike liked, QuestionBookmark bookmarked, List<String> hashtagList) {
+    public static BoardResponseDTO.GetQuestionDTO toGetQuestionDTO(Question question, QuestionLike liked, QuestionBookmark bookmarked, List<String> hashtags) {
         return BoardResponseDTO.GetQuestionDTO.builder()
                 .title(question.getTitle())
                 .content(question.getContent())
                 .category(question.getCategory().getName())
                 .imageUrlList(toImageUrlList(ImageOrigin.QUESTION.getValue(), question.getImageUuid(), question.getImageIndex()))
-                .hashtagList(hashtagList)
+                .hashtagList(hashtags)
                 .memberInfo(toMemberInfo(question.getMember()))
                 .liked((liked == null) ? BooleanType.F : liked.getLiked())
                 .bookmarked((bookmarked == null) ? BooleanType.F : bookmarked.getBookmarked())
@@ -311,7 +311,7 @@ public class BoardConverter {
                 .build();
     }
 
-    public static List<String> toQuestionHashtagList(Question question) {
+    public static List<String> toQuestionHashtags(Question question) {
         return question.getHashtagList()
                 .stream().map(questionHashtag -> questionHashtag.getHashtag().getName())
                 .toList();

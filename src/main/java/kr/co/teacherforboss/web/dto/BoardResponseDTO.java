@@ -112,7 +112,7 @@ public class BoardResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class GetPostListDTO {
+    public static class GetPostsDTO {
         boolean hasNext;
         List<PostInfo> postList;
 
@@ -171,7 +171,7 @@ public class BoardResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class LikeQuestionDTO {
+    public static class ToggleQuestionLikeDTO {
         Long questionId;
         BooleanType liked;
         LocalDateTime updatedAt;
@@ -190,7 +190,7 @@ public class BoardResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class BookmarkQuestionDTO {
+    public static class ToggleQuestionBookmarkDTO {
         Long questionId;
         BooleanType bookmarked;
         LocalDateTime updatedAt;
@@ -227,7 +227,7 @@ public class BoardResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SaveCommentLikedDTO {
+    public static class ToggleCommentLikeDTO {
         Boolean liked;
         LocalDateTime updatedAt;
     }
