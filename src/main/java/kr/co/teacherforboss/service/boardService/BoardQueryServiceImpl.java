@@ -56,7 +56,7 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         Member member = authCommandService.getMember();
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND))
-                .updatePost();
+                .increaseViewCount();
 
         String liked = "F";
         String bookmarked = "F";
