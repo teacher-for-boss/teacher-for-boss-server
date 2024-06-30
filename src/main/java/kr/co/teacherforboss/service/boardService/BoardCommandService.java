@@ -27,4 +27,5 @@ public interface BoardCommandService {
     Answer deleteAnswer(Long questionId, Long answerId);
     QuestionBookmark toggleQuestionBookmark(Long questionId);
     Comment saveComment(Long postId, BoardRequestDTO.SaveCommentDTO request);
+    Answer selectAnswer(Long questionId, Long answerId);
 }

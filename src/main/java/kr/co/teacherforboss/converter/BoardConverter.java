@@ -363,4 +363,11 @@ public class BoardConverter {
                 .updatedAt(answerLike.getUpdatedAt())
                 .build();
     }
+
+    public static BoardResponseDTO.SelectAnswerDTO toSelectAnswerDTO(Answer answer) {
+        return BoardResponseDTO.SelectAnswerDTO.builder()
+                .selectedAnswerId(answer.getId())
+                .updatedAt(answer.getUpdatedAt())
+                .build();
+    }
 }

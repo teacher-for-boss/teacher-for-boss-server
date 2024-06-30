@@ -327,4 +327,17 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         else answerLike.toggleDisliked();
         return answerLikeRepository.save(answerLike);
     }
+
+    @Override
+    @Transactional
+    public Answer selectAnswer(Long questionId, Long answerId) {
+        Member member = authCommandService.getMember();
+        Question question = questionRepository.findByIdAndMemberIdAndStatus(questionId, member.getId(), Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
+        Answer answer = answerRepository.findByIdAndQuestionIdAndStatus(answerId, questionId, Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.ANSWER_NOT_FOUND));
+
+        question.selectAnswer(answer);
+        return answer;
+    }
 }

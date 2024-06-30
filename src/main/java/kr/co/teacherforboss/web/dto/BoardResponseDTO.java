@@ -241,4 +241,13 @@ public class BoardResponseDTO {
         Boolean liked;
         LocalDateTime updatedAt;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SelectAnswerDTO {
+        Long selectedAnswerId;
+        LocalDateTime updatedAt;
+    }
 }
