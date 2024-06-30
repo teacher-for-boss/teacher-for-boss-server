@@ -57,7 +57,7 @@ public class PostHashtag extends BaseEntity {
     @Override
     public boolean softDelete() {
         if (super.softDelete()) {
-            post.getHashtagList().remove(this);
+            post.getHashtags().remove(this);
             return true;
         }
         return false;

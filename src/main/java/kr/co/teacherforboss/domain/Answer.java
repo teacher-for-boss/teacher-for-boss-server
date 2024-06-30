@@ -67,6 +67,22 @@ public class Answer extends BaseEntity {
         return this;
     }
 
+    public void increaseLikeCount() {
+        this.likeCount++;
+    }
+
+    public void decreaseLikeCount() {
+        this.likeCount--;
+    }
+
+    public void increaseDislikeCount() {
+        this.dislikeCount++;
+    }
+
+    public void decreaseDislikeCount() {
+        this.dislikeCount--;
+    }
+
     public void select() {
         this.selected = BooleanType.T;
     }
