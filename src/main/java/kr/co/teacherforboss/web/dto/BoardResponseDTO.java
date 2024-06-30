@@ -32,6 +32,7 @@ public class BoardResponseDTO {
         Integer likeCount;
         Integer bookmarkCount;
         LocalDateTime createdAt;
+        boolean isMine;
     }
 
     @Getter
@@ -110,7 +111,7 @@ public class BoardResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class GetPostListDTO {
+    public static class GetPostsDTO {
         boolean hasNext;
         List<PostInfo> postList;
 
@@ -133,7 +134,7 @@ public class BoardResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SavePostBookmarkDTO {
+    public static class TogglePostBookmarkDTO {
         Boolean bookmark;
         LocalDateTime updatedAt;
     }
@@ -142,7 +143,7 @@ public class BoardResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SavePostLikeDTO {
+    public static class TogglePostLikeDTO {
         Boolean like;
         LocalDateTime updatedAt;
     }
@@ -169,7 +170,7 @@ public class BoardResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class LikeQuestionDTO {
+    public static class ToggleQuestionLikeDTO {
         Long questionId;
         boolean liked;
         LocalDateTime updatedAt;
@@ -198,7 +199,7 @@ public class BoardResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class BookmarkQuestionDTO {
+    public static class ToggleQuestionBookmarkDTO {
         Long questionId;
         boolean bookmarked;
         LocalDateTime updatedAt;
@@ -220,6 +221,7 @@ public class BoardResponseDTO {
         Integer likeCount;
         Integer bookmarkCount;
         LocalDateTime createdAt;
+        boolean isMine;
     }
 
     @Getter
@@ -235,7 +237,7 @@ public class BoardResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SaveCommentLikedDTO {
+    public static class ToggleCommentLikeDTO {
         Boolean liked;
         LocalDateTime updatedAt;
     }
