@@ -4,7 +4,6 @@ import kr.co.teacherforboss.domain.Comment;
 import kr.co.teacherforboss.domain.CommentLike;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.Post;
-import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 
@@ -38,11 +37,11 @@ public class CommentConverter {
                 .build();
     }
 
-    public static CommentLike toCommentLiked(Comment comment, Member member, BooleanType liked) {
-        return CommentLike.builder()
-                .comment(comment)
-                .member(member)
-                .liked(liked)
+    public static BoardResponseDTO.SaveCommentLikedDTO toSaveCommentLikedDTO(CommentLike liked) {
+        Boolean likeStatus = (liked.getLiked() != null) ? liked.getLiked().isIdentifier() : null;
+        return BoardResponseDTO.SaveCommentLikedDTO.builder()
+                .liked(likeStatus)
+                .updatedAt(LocalDateTime.now())
                 .build();
     }
 }
