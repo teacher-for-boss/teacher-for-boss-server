@@ -16,8 +16,6 @@ import kr.co.teacherforboss.apiPayload.exception.handler.BoardHandler;
 import kr.co.teacherforboss.converter.BoardConverter;
 import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.Category;
-import kr.co.teacherforboss.domain.Comment;
-import kr.co.teacherforboss.domain.CommentLike;
 import kr.co.teacherforboss.domain.Hashtag;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.Post;
@@ -182,56 +180,15 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
         if (post.getMember() != member) throw new BoardHandler(ErrorStatus.POST_MEMBER_NOT_FOUND);
 
-        softDeletePostHashtags(post);
-        softDeletePostLikes(post);
-        softDeletePostBookmarks(post);
-        softDeleteComments(post);
+        List<Long> comments = post.getCommentList().stream().map(BaseEntity::getId).toList();
+        postHashtagRepository.softDeletePostHashtagByPostId(postId);
+        postLikeRepository.softDeletePostLikeByPostId(postId);
+        postBookmarkRepository.softDeletePostBookmarksByPostId(postId);
 
+        commentLikeRepository.softDeleteCommentLikeByComments(comments);
+        commentRepository.softDeleteCommentsByPostId(postId);
         post.softDelete();
         return postRepository.save(post);
-    }
-
-    private void softDeletePostHashtags(Post post) {
-        List<PostHashtag> postHashtags = postHashtagRepository.findAllByPostAndStatus(post, Status.ACTIVE);
-        if (postHashtags != null) {
-            postHashtags.forEach(BaseEntity::softDelete);
-            postHashtagRepository.saveAll(postHashtags);
-        }
-    }
-
-    private void softDeleteCommentLikes(Comment comment) {
-        List<CommentLike> commentLikes = commentLikeRepository.findAllByCommentAndStatus(comment, Status.ACTIVE);
-        if (commentLikes != null) {
-            commentLikes.forEach(BaseEntity::softDelete);
-            commentLikeRepository.saveAll(commentLikes);
-        }
-        comment.softDelete();
-    }
-
-
-    private void softDeletePostLikes(Post post) {
-        List<PostLike> postLikes = postLikeRepository.findAllByPostAndStatus(post, Status.ACTIVE);
-        if (postLikes != null) {
-            postLikes.forEach(BaseEntity::softDelete);
-            postLikeRepository.saveAll(postLikes);
-        }
-    }
-
-    private void softDeletePostBookmarks(Post post) {
-        List<PostBookmark> postBookmarks = postBookmarkRepository.findAllByPostAndStatus(post, Status.ACTIVE);
-        if (postBookmarks != null) {
-            postBookmarks.forEach(BaseEntity::softDelete);
-            postBookmarkRepository.saveAll(postBookmarks);
-        }
-    }
-
-    private void softDeleteComments(Post post) {
-        List<Comment> comments = commentRepository.findAllByPostAndStatus(post, Status.ACTIVE);
-        if (comments != null) {
-            comments.forEach(this::softDeleteCommentLikes);
-            comments.forEach(BaseEntity::softDelete);
-            commentRepository.saveAll(comments);
-        }
     }
 
     @Override

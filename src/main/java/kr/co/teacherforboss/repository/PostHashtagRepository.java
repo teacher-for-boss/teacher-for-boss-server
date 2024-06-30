@@ -1,14 +1,19 @@
 package kr.co.teacherforboss.repository;
 
-import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostHashtag;
-import kr.co.teacherforboss.domain.enums.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface PostHashtagRepository extends JpaRepository<PostHashtag, Long> {
-    List<PostHashtag> findAllByPostAndStatus(Post post, Status status);
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query(value = """
+		UPDATE post_hashtag p
+		SET p.status = 'INACTIVE'
+		WHERE p.post_id = :postId
+	""", nativeQuery = true)
+    void softDeletePostHashtagByPostId(@Param(value = "postId") Long postId);
 }
