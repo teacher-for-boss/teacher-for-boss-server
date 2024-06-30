@@ -13,9 +13,9 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     Comment findByIdAndStatus(Long id, Status status);
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query(value = """
-            UPDATE comment
-            SET status = 'INACTIVE'
-            WHERE post_id = :postId
+        UPDATE comment
+        SET status = 'INACTIVE'
+        WHERE post_id = :postId
                 """, nativeQuery = true)
     void softDeleteCommentsByPostId(@Param(value = "postId") Long postId);
 }

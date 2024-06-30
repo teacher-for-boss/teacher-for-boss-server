@@ -13,9 +13,9 @@ import java.util.List;
 public interface CommentLikeRepository extends JpaRepository<CommentLike, Long> {
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query(value = """
-            UPDATE comment_like cl
-            SET status = 'INACTIVE'
-            WHERE cl.comment_id IN (:commentIds);
+        UPDATE comment_like
+        SET status = 'INACTIVE'
+        WHERE comment_id IN (:commentIds);
             """, nativeQuery = true)
     void softDeleteCommentLikeByComments(@Param(value = "commentIds") List<Long> commentIds);
 }

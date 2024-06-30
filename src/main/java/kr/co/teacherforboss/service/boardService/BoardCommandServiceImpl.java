@@ -175,10 +175,8 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     @Transactional
     public Post deletePost(Long postId) {
         Member member = authCommandService.getMember();
-        Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
+        Post post = postRepository.findByIdAndMemberIdAndStatus(postId, member.getId(), Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
-
-        if (post.getMember() != member) throw new BoardHandler(ErrorStatus.POST_MEMBER_NOT_FOUND);
 
         List<Long> comments = post.getCommentList().stream().map(BaseEntity::getId).toList();
         postHashtagRepository.softDeletePostHashtagByPostId(postId);

@@ -18,9 +18,9 @@ public interface PostBookmarkRepository extends JpaRepository<PostBookmark, Long
     List<PostBookmark> findByPostInAndStatus(List<Post> posts, Status status);
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query(value = """
-		UPDATE post_bookmark p
-		SET p.status = 'INACTIVE'
-		WHERE p.post_id = :postId
+		UPDATE post_bookmark
+		SET status = 'INACTIVE'
+		WHERE post_id = :postId
 	""", nativeQuery = true)
     void softDeletePostBookmarksByPostId(@Param(value = "postId") Long postId);
 }
