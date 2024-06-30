@@ -32,7 +32,7 @@ public class BoardResponseDTO {
         Integer likeCount;
         Integer bookmarkCount;
         LocalDateTime createdAt;
-        boolean isMine;
+        Boolean isMine;
     }
 
     @Getter
@@ -221,7 +221,7 @@ public class BoardResponseDTO {
         Integer likeCount;
         Integer bookmarkCount;
         LocalDateTime createdAt;
-        boolean isMine;
+        Boolean isMine;
     }
 
     @Getter
