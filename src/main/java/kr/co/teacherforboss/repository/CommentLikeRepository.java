@@ -11,7 +11,6 @@ import java.util.List;
 
 @Repository
 public interface CommentLikeRepository extends JpaRepository<CommentLike, Long> {
-    CommentLike findByCommentAndMemberAndStatus(Comment comment, Member member, Status status);
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query(value = """
         UPDATE comment_like

@@ -16,7 +16,6 @@ import java.util.List;
 public interface PostBookmarkRepository extends JpaRepository<PostBookmark, Long> {
     Optional<PostBookmark> findByPostIdAndMemberIdAndStatus(Long postId, Long memberId, Status status);
     List<PostBookmark> findByPostInAndMemberIdAndStatus(List<Post> posts, Long memberId, Status status);
-    List<PostBookmark> findByPostInAndStatus(List<Post> posts, Status status);
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query(value = """
 		UPDATE post_bookmark
