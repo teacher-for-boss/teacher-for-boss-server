@@ -12,6 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
+    boolean existsByIdAndStatus(Long questionId, Status status);
     Optional<Post> findByIdAndStatus(Long postId, Status status);
     Optional<Post> findByIdAndMemberIdAndStatus(Long postId, Long memberId, Status status);
     // TODO: 아래 3개는 native query 쓰지 말고 그냥 메서드로 하기 + 변수명 수정

@@ -96,25 +96,27 @@ public class BoardResponseDTO {
         }
     }
 
-    @Builder
     @Getter
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class GetCommentListDTO {
-        Integer totalCount;
+    public static class GetCommentsDTO {
+        boolean hasNext;
         List<CommentInfo> commentList;
 
+        @Builder
         @Getter
         @AllArgsConstructor
         public static class CommentInfo {
             Long commentId;
             String content;
-            Boolean isLiked;
-            Integer likeCount;
-            Integer dislikeCount;
+            int likeCount;
+            int dislikeCount;
+            boolean liked;
+            boolean disliked;
             LocalDateTime createdAt;
-            MemberResponseDTO.MemberInfoDTO memberInfo;
-            List<GetCommentListDTO.CommentInfo> children;
+            MemberInfo memberInfo;
+            List<CommentInfo> children;
         }
     }
 

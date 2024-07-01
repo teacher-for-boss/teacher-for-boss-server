@@ -24,4 +24,5 @@ public interface CommentLikeRepository extends JpaRepository<CommentLike, Long> 
     void softDeleteCommentLikeByComments(@Param(value = "commentIds") List<Long> commentIds);
     Optional<CommentLike> findByCommentIdAndMemberIdAndStatus(Long commentId, Long memberId, Status status);
     List<CommentLike> findByMemberAndCommentInAndStatus(Member member, List<Comment> comments, Status status);
+    List<CommentLike> findAllByCommentIdInAndStatus(List<Long> commentIds, Status status);
 }

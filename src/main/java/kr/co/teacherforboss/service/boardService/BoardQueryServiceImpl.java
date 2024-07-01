@@ -170,83 +170,26 @@ public class BoardQueryServiceImpl implements BoardQueryService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public BoardResponseDTO.GetCommentListDTO getComments(Long postId) {
-        Member member = authCommandService.getMember();
+    @Transactional
+    public BoardResponseDTO.GetCommentsDTO getComments(Long postId, Long lastCommentId, int size) {
+        if(!postRepository.existsByIdAndStatus(postId, Status.ACTIVE))
+            throw new BoardHandler(ErrorStatus.POST_NOT_FOUND);
 
-        Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
-                .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
+        PageRequest pageRequest = PageRequest.of(0, size);
+        Slice<Comment> comments;
 
-        Integer totalCount = commentRepository.countAllByPostAndStatus(post, Status.ACTIVE);
-
-        List<Comment> comments = commentRepository.findAllByPostAndStatus(post, Status.ACTIVE);
-        Map<Long, String> teacherLevelMap = getTeacherLevelMap(comments);
-
-        List<CommentLike> commentLikes = commentLikeRepository.findByMemberAndCommentInAndStatus(member, comments, Status.ACTIVE);
-        Map<Long, Boolean> commentLikedMap = getCommentLikedMap(comments, commentLikes);
-
-        Map<Long, BoardResponseDTO.GetCommentListDTO.CommentInfo> parentCommentMap = new HashMap<>();
-        List<BoardResponseDTO.GetCommentListDTO.CommentInfo> commentList = new ArrayList<>();
-
-        for (Comment comment : comments) {
-            String level = null;
-            if (comment.getMember().getRole() == Role.TEACHER) {
-                level = teacherLevelMap.get(comment.getMember().getId());
-            }
-
-            Boolean isLiked = commentLikedMap.get(comment.getId());
-
-            MemberResponseDTO.MemberInfoDTO memberInfo = MemberConverter.toMemberInfoDTO(comment.getMember(), level);
-            BoardResponseDTO.GetCommentListDTO.CommentInfo commentInfo;
-
-            if (comment.getParent() == null) {
-                commentInfo = BoardConverter.toGetCommentInfo(comment, isLiked, memberInfo, new ArrayList<>());
-                commentList.add(commentInfo);
-                parentCommentMap.put(comment.getId(), commentInfo);
-            } else {
-                commentInfo = BoardConverter.toGetCommentInfo(comment, isLiked, memberInfo, null);
-                BoardResponseDTO.GetCommentListDTO.CommentInfo parentCommentInfo = parentCommentMap.get(comment.getParent().getId());
-                if (parentCommentInfo != null) {
-                    parentCommentInfo.getChildren().add(commentInfo);
-                }
-            }
+        if (lastCommentId == 0) {
+            comments = commentRepository.findSliceByStatusOrderByCreatedAtDesc(Status.ACTIVE, pageRequest);
         }
-
-        return BoardConverter.toGetCommentListDTO(totalCount, commentList);
-    }
-
-    private Map<Long, String> getTeacherLevelMap(List<Comment> comments) {
-        Set<Member> teacherMembers = new HashSet<>();
-        for (Comment comment : comments) {
-            if (comment.getMember().getRole() == Role.TEACHER) {
-                teacherMembers.add(comment.getMember());
-            }
+        else {
+            comments = commentRepository.findSliceByIdLessThanAndStatusOrderByCreatedAtDesc(lastCommentId, pageRequest);
         }
+        List<Long> commentIds = comments.stream().map(BaseEntity::getId).toList();
+        List<Long> memberIds = comments.stream().map(comment -> comment.getMember().getId()).toList();
 
-        Map<Long, String> teacherLevelMap = new HashMap<>();
-        if (!teacherMembers.isEmpty()) {
-            List<TeacherInfo> teacherInfos = teacherInfoRepository.findByMemberInAndStatus(new ArrayList<>(teacherMembers), Status.ACTIVE);
-            for (TeacherInfo teacherInfo : teacherInfos) {
-                teacherLevelMap.put(teacherInfo.getMember().getId(), teacherInfo.getLevel().getLevel());
-            }
-        }
-        return teacherLevelMap;
-    }
+        List<CommentLike> commentLikes = commentLikeRepository.findAllByCommentIdInAndStatus(commentIds, Status.ACTIVE);
+        List<TeacherInfo> teacherInfos = teacherInfoRepository.findAllByMemberIdInAndStatus(memberIds, Status.ACTIVE);
 
-    private Map<Long, Boolean> getCommentLikedMap(List<Comment> comments, List<CommentLike> commentLikes) {
-        Map<Long, Boolean> commentLikedMap = new HashMap<>();
-
-        for (Comment comment : comments) {
-            commentLikedMap.put(comment.getId(), null);
-        }
-
-        for (CommentLike commentLike : commentLikes) {
-            Boolean isLiked = null;
-            if (commentLike.getLiked() == BooleanType.T) isLiked = true;
-            else if (commentLike.getLiked() == BooleanType.F) isLiked = false;
-            commentLikedMap.put(commentLike.getComment().getId(), isLiked);
-        }
-
-        return commentLikedMap;
+        return BoardConverter.toGetCommentsDTO(comments, commentLikes, teacherInfos);
     }
 }

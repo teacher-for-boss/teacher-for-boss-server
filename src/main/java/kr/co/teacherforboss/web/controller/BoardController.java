@@ -149,12 +149,20 @@ public class BoardController {
         return ApiResponse.onSuccess(boardQueryService.getAnswers(questionId, lastAnswerId, size));
     }
 
+    @GetMapping("/boss/posts/{postId}/comments")
+    public ApiResponse<BoardResponseDTO.GetCommentsDTO> getCommentList(@PathVariable("postId") Long postId,
+                                                                       @RequestParam(defaultValue = "0") Long lastCommentId,
+                                                                       @RequestParam(defaultValue = "10") int size) {
+        return ApiResponse.onSuccess(boardQueryService.getComments(postId, lastCommentId, size));
+    }
+
     @PostMapping("/boss/posts/{postId}/comments")
     public ApiResponse<BoardResponseDTO.SaveCommentDTO> saveComment(@PathVariable("postId") Long postId,
                                                                    @RequestBody @Valid BoardRequestDTO.SaveCommentDTO request) {
         Comment comment = boardCommandService.saveComment(postId, request);
         return ApiResponse.onSuccess(BoardConverter.toSaveCommentDTO(comment));
     }
+
     @PostMapping("/teacher/questions/{questionId}/answers/{answerId}/likes")
     public ApiResponse<BoardResponseDTO.ToggleAnswerLikeDTO> toggleAnswerLike(@PathVariable("questionId") Long questionId,
                                                                        @PathVariable("answerId") Long answerId) {
@@ -188,10 +196,5 @@ public class BoardController {
                                                                    @PathVariable("answerId") Long answerId) {
         Answer answer = boardCommandService.selectAnswer(questionId, answerId);
         return ApiResponse.onSuccess(BoardConverter.toSelectAnswerDTO(answer));
-    }
-
-    @GetMapping("/boss/posts/{postId}/comments")
-    public ApiResponse<BoardResponseDTO.GetCommentListDTO> getCommentList(@PathVariable("postId") Long postId) {
-        return ApiResponse.onSuccess(boardQueryService.getComments(postId));
     }
 }
