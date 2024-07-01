@@ -379,9 +379,10 @@ public class BoardConverter {
 
     public static BoardResponseDTO.ToggleCommentLikeDTO toToggleCommentLikeDTO(CommentLike commentLike) {
         return BoardResponseDTO.ToggleCommentLikeDTO.builder()
-                .LikedCount(commentLike.getComment().getLikeCount())
-                .DislikedCount(commentLike.getComment().getDislikeCount())
+                .commentId(commentLike.getComment().getId())
                 .liked((commentLike.getLiked() == null) ? null : commentLike.getLiked().isIdentifier())
+                .likedCount(commentLike.getComment().getLikeCount())
+                .dislikedCount(commentLike.getComment().getDislikeCount())
                 .updatedAt(commentLike.getUpdatedAt())
                 .build();
     }

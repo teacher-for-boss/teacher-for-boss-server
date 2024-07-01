@@ -193,9 +193,10 @@ public class BoardResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ToggleCommentLikeDTO {
-        Integer LikedCount;
-        Integer DislikedCount;
+        Long commentId;
         Boolean liked;
+        Integer likedCount;
+        Integer dislikedCount;
         LocalDateTime updatedAt;
     }
 
