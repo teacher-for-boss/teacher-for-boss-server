@@ -5,8 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import kr.co.teacherforboss.converter.CommentConverter;
 import kr.co.teacherforboss.domain.Comment;
+import kr.co.teacherforboss.domain.CommentLike;
 import kr.co.teacherforboss.repository.CommentLikeRepository;
 import kr.co.teacherforboss.repository.CommentRepository;
 import kr.co.teacherforboss.repository.QuestionLikeRepository;
@@ -310,7 +310,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
             if (parentComment == null) throw new BoardHandler(ErrorStatus.COMMENT_NOT_FOUND);
         }
 
-        Comment comment = CommentConverter.toCommentDTO(request, member, post, parentComment);
+        Comment comment = BoardConverter.toCommentDTO(request, member, post, parentComment);
         return commentRepository.save(comment);
     }
 
@@ -326,6 +326,20 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         if (isLike) answerLike.toggleLiked();
         else answerLike.toggleDisliked();
         return answerLikeRepository.save(answerLike);
+    }
+
+    @Override
+    @Transactional
+    public CommentLike toggleCommentLike(Long postId, Long commentId, boolean isLike) {
+        Member member = authCommandService.getMember();
+        Comment comment = commentRepository.findByIdAndPostIdAndStatus(commentId, postId, Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.COMMENT_NOT_FOUND));
+        CommentLike commentLike = commentLikeRepository.findByCommentIdAndMemberIdAndStatus(commentId, member.getId(), Status.ACTIVE)
+                .orElse(BoardConverter.toCommentLike(comment, member));
+
+        if(isLike) commentLike.toggleLiked();
+        else commentLike.toggleDisliked();
+        return commentLikeRepository.save(commentLike);
     }
 
     @Override

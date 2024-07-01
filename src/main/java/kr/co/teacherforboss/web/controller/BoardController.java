@@ -1,6 +1,7 @@
 package kr.co.teacherforboss.web.controller;
 
 import kr.co.teacherforboss.domain.AnswerLike;
+import kr.co.teacherforboss.domain.CommentLike;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.converter.BoardConverter;
-import kr.co.teacherforboss.converter.CommentConverter;
 import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.Comment;
 import kr.co.teacherforboss.domain.Post;
@@ -29,16 +29,8 @@ import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+
 
 @Slf4j
 @Validated
@@ -161,7 +153,7 @@ public class BoardController {
     public ApiResponse<BoardResponseDTO.SaveCommentDTO> saveComment(@PathVariable("postId") Long postId,
                                                                    @RequestBody @Valid BoardRequestDTO.SaveCommentDTO request) {
         Comment comment = boardCommandService.saveComment(postId, request);
-        return ApiResponse.onSuccess(CommentConverter.toSaveCommentDTO(comment));
+        return ApiResponse.onSuccess(BoardConverter.toSaveCommentDTO(comment));
     }
     @PostMapping("/teacher/questions/{questionId}/answers/{answerId}/likes")
     public ApiResponse<BoardResponseDTO.ToggleAnswerLikeDTO> toggleAnswerLike(@PathVariable("questionId") Long questionId,
@@ -175,6 +167,20 @@ public class BoardController {
                                                                         @PathVariable("answerId") Long answerId) {
         AnswerLike answerLike = boardCommandService.toggleAnswerLike(questionId, answerId, false);
         return ApiResponse.onSuccess(BoardConverter.toToggleAnswerLikeDTO(answerLike));
+    }
+
+    @PostMapping("/boss/posts/{postId}/comments/{commentId}/likes")
+    public ApiResponse<BoardResponseDTO.ToggleCommentLikeDTO> saveCommentLike(@PathVariable("postId") Long postId,
+                                                                              @PathVariable("commentId") Long commentId) {
+        CommentLike commentLike = boardCommandService.toggleCommentLike(postId, commentId, true);
+        return ApiResponse.onSuccess(BoardConverter.toToggleCommentLikeDTO(commentLike));
+    }
+
+    @PostMapping("/boss/posts/{postId}/comments/{commentId}/dislikes")
+    public ApiResponse<BoardResponseDTO.ToggleCommentLikeDTO> saveCommentDisLike(@PathVariable("postId") Long postId,
+                                                                                 @PathVariable("commentId") Long commentId) {
+        CommentLike commentLike = boardCommandService.toggleCommentLike(postId, commentId, false);
+        return ApiResponse.onSuccess(BoardConverter.toToggleCommentLikeDTO(commentLike));
     }
 
     @PatchMapping("/teacher/questions/{questionId}/answers/{answerId}/select")

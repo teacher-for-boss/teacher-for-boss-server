@@ -6,6 +6,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import kr.co.teacherforboss.domain.common.BaseEntity;
+import kr.co.teacherforboss.domain.enums.BooleanType;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -48,4 +49,21 @@ public class Comment extends BaseEntity {
     @Column
     @ColumnDefault("0")
     private Integer dislikeCount;
+
+
+    public void increaseLikeCount() {
+        this.likeCount++;
+    }
+
+    public void decreaseLikeCount() {
+        this.likeCount--;
+    }
+
+    public void increaseDislikeCount() {
+        this.dislikeCount++;
+    }
+
+    public void decreaseDislikeCount() {
+        this.dislikeCount--;
+    }
 }
