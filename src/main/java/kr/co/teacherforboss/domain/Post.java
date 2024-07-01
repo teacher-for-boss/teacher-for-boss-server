@@ -64,12 +64,12 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post")
     @SQLRestriction(value = "status = 'ACTIVE'")
     @Builder.Default
-    private List<PostHashtag> hashtagList = new ArrayList<>();
+    private List<PostHashtag> hashtags = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
     @SQLRestriction(value = "status = 'ACTIVE'")
     @Builder.Default
-    private List<Comment> commentList = new ArrayList<>();
+    private List<Comment> comments = new ArrayList<>();
 
     public void editPost(String title, String content, List<String> imageIndex) {
         this.title = title;
@@ -78,6 +78,11 @@ public class Post extends BaseEntity {
     }
 
     public void addHashtag(PostHashtag postHashtag) {
-        this.hashtagList.add(postHashtag);
+        this.hashtags.add(postHashtag);
+    }
+
+    public Post increaseViewCount() {
+        this.viewCount += 1;
+        return this;
     }
 }

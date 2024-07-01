@@ -14,7 +14,6 @@ import java.util.Optional;
 public interface PostRepository extends JpaRepository<Post, Long> {
     Optional<Post> findByIdAndStatus(Long postId, Status status);
     Optional<Post> findByIdAndMemberIdAndStatus(Long postId, Long memberId, Status status);
-    Integer countAllByStatus(Status status);
     // TODO: 아래 3개는 native query 쓰지 말고 그냥 메서드로 하기 + 변수명 수정
     Slice<Post> findSliceByStatusOrderByLikeCountDesc(Status status, PageRequest pageRequest);
     Slice<Post> findSliceByStatusOrderByViewCountDesc(Status status, PageRequest pageRequest);
