@@ -371,6 +371,8 @@ public class BoardConverter {
         return BoardResponseDTO.ToggleAnswerLikeDTO.builder()
                 .answerId(answerLike.getAnswer().getId())
                 .liked((answerLike.getLiked() == null) ? null : answerLike.getLiked().isIdentifier())
+                .likedCount(answerLike.getAnswer().getLikeCount())
+                .dislikedCount(answerLike.getAnswer().getDislikeCount())
                 .updatedAt(answerLike.getUpdatedAt())
                 .build();
     }

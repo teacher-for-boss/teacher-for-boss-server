@@ -183,6 +183,8 @@ public class BoardResponseDTO {
     public static class ToggleAnswerLikeDTO {
         Long answerId;
         Boolean liked;
+        Integer likedCount;
+        Integer dislikedCount;
         LocalDateTime updatedAt;
     }
 
