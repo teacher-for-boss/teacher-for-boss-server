@@ -144,8 +144,8 @@ public class BoardController {
 
     @GetMapping("/teacher/questions/{questionId}/answers")
     public ApiResponse<BoardResponseDTO.GetAnswersDTO> getAnswers(@PathVariable("questionId") Long questionId,
-                                                                  @RequestParam(defaultValue = "0") Long lastAnswerId,
-                                                                  @RequestParam(defaultValue = "10") int size) {
+                                                                  @RequestParam(name = "lastAnswerId", defaultValue = "0") Long lastAnswerId,
+                                                                  @RequestParam(name = "size", defaultValue = "10") int size) {
         return ApiResponse.onSuccess(boardQueryService.getAnswers(questionId, lastAnswerId, size));
     }
 

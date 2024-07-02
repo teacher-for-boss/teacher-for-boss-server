@@ -160,6 +160,8 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         else {
             answers = answerRepository.findSliceByIdLessThanAndStatusOrderByCreatedAtDesc(lastAnswerId, pageRequest);
         }
+
+
         List<Long> answerIds = answers.stream().map(BaseEntity::getId).toList();
         List<Long> memberIds = answers.stream().map(answer -> answer.getMember().getId()).toList();
 
@@ -172,24 +174,27 @@ public class BoardQueryServiceImpl implements BoardQueryService {
     @Override
     @Transactional
     public BoardResponseDTO.GetCommentsDTO getComments(Long postId, Long lastCommentId, int size) {
-        if(!postRepository.existsByIdAndStatus(postId, Status.ACTIVE))
+        if (!postRepository.existsByIdAndStatus(postId, Status.ACTIVE)) {
             throw new BoardHandler(ErrorStatus.POST_NOT_FOUND);
+        }
 
         PageRequest pageRequest = PageRequest.of(0, size);
         Slice<Comment> comments;
 
         if (lastCommentId == 0) {
-            comments = commentRepository.findSliceByStatusOrderByCreatedAtDesc(Status.ACTIVE, pageRequest);
+            comments = commentRepository.findSliceByParentIsNullAndStatusOrderByCreatedAtDesc(Status.ACTIVE, pageRequest);
+        } else {
+            comments = commentRepository.findSliceByIdLessThanAndParentIsNullAndStatusOrderByCreatedAtDesc(lastCommentId, Status.ACTIVE, pageRequest);
         }
-        else {
-            comments = commentRepository.findSliceByIdLessThanAndStatusOrderByCreatedAtDesc(lastCommentId, pageRequest);
-        }
+
         List<Long> commentIds = comments.stream().map(BaseEntity::getId).toList();
         List<Long> memberIds = comments.stream().map(comment -> comment.getMember().getId()).toList();
+
+        List<Comment> allComments = commentRepository.findAllByParentIdInAndStatus(commentIds, Status.ACTIVE);
 
         List<CommentLike> commentLikes = commentLikeRepository.findAllByCommentIdInAndStatus(commentIds, Status.ACTIVE);
         List<TeacherInfo> teacherInfos = teacherInfoRepository.findAllByMemberIdInAndStatus(memberIds, Status.ACTIVE);
 
-        return BoardConverter.toGetCommentsDTO(comments, commentLikes, teacherInfos);
+        return BoardConverter.toGetCommentsDTO(comments, allComments, commentLikes, teacherInfos);
     }
 }

@@ -33,5 +33,5 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
 			AND status = 'ACTIVE'
 		ORDER BY created_at DESC
 	""", nativeQuery = true)
-	Slice<Answer> findSliceByIdLessThanAndStatusOrderByCreatedAtDesc(Long lastAnswerId, Pageable pageable);
+	Slice<Answer> findSliceByIdLessThanAndStatusOrderByCreatedAtDesc(@Param(value = "lastAnswerId") Long lastAnswerId, Pageable pageable);
 }
