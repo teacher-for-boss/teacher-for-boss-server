@@ -32,10 +32,10 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     Slice<Comment> findSliceByStatusOrderByCreatedAtDesc(Status status, Pageable pageable);
     @Query(value = """
-        SELECT * FROM comment
-        WHERE created_at < (SELECT created_at FROM comment WHERE id = :lastCommentId)
-            AND status = 'ACTIVE'
-        ORDER BY created_at DESC
-    """, nativeQuery = true)
-    Slice<Comment> findSliceByIdLessThanAndStatusOrderByCreatedAtDesc(Long lastCommentId, Pageable pageable);
+		SELECT * FROM comment
+		WHERE created_at < (SELECT created_at FROM answer WHERE id = :lastCommentId)
+			AND status = 'ACTIVE'
+		ORDER BY created_at DESC
+	""", nativeQuery = true)
+    Slice<Comment> findSliceByIdLessThanAndStatusOrderByCreatedAtDesc(@Param(value = "lastCommentId") Long lastCommentId, Pageable pageable);
 }

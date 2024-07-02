@@ -150,9 +150,9 @@ public class BoardController {
     }
 
     @GetMapping("/boss/posts/{postId}/comments")
-    public ApiResponse<BoardResponseDTO.GetCommentsDTO> getCommentList(@PathVariable("postId") Long postId,
-                                                                       @RequestParam(defaultValue = "0") Long lastCommentId,
-                                                                       @RequestParam(defaultValue = "10") int size) {
+    public ApiResponse<BoardResponseDTO.GetCommentsDTO> getComments(@PathVariable("postId") Long postId,
+                                                                    @RequestParam(name = "lastCommentId", defaultValue = "0") Long lastCommentId,
+                                                                    @RequestParam(name = "size", defaultValue = "10") int size) {
         return ApiResponse.onSuccess(boardQueryService.getComments(postId, lastCommentId, size));
     }
 

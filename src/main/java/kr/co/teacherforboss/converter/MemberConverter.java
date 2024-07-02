@@ -30,13 +30,4 @@ public class MemberConverter {
                 .question4(request.getQuestion4())
                 .build();
     }
-
-    public static MemberResponseDTO.MemberInfoDTO toMemberInfoDTO(Member member, String level) {
-        return MemberResponseDTO.MemberInfoDTO.builder()
-                .memberId(member.getId())
-                .nickname(member.getNickname())
-                .profileImg(member.getProfileImg())
-                .level(level)
-                .build();
-    }
 }

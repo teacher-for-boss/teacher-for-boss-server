@@ -27,6 +27,7 @@ import kr.co.teacherforboss.domain.QuestionLike;
 import kr.co.teacherforboss.domain.TeacherInfo;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.ImageOrigin;
+import kr.co.teacherforboss.domain.enums.Role;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import kr.co.teacherforboss.web.dto.MemberResponseDTO;
@@ -356,50 +357,48 @@ public class BoardConverter {
 
     public static BoardResponseDTO.GetCommentsDTO toGetCommentsDTO(Slice<Comment> comments, List<CommentLike> commentLikes,
                                                                    List<TeacherInfo> teacherInfos) {
-        HashMap<Long, BooleanType> commentLiked = new HashMap<>();
-        commentLikes.forEach(commentLike -> commentLiked.put(commentLike.getComment().getId(), commentLike.getLiked()));
+        HashMap<Long, BooleanType> commentLikedMap = new HashMap<>();
+        commentLikes.forEach(answerLike -> commentLikedMap.put(answerLike.getComment().getId(), answerLike.getLiked()));
 
         HashMap<Long, TeacherInfo> teacherInfoMap = new HashMap<>();
-        teacherInfos.forEach(teacherInfo -> teacherInfoMap.put(teacherInfo.getId(), teacherInfo));
+        teacherInfos.forEach(teacherInfo -> teacherInfoMap.put(teacherInfo.getMember().getId(), teacherInfo));
 
         Map<Long, BoardResponseDTO.GetCommentsDTO.CommentInfo> commentMap = comments.stream()
                 .collect(Collectors.toMap(
                         Comment::getId,
-                        comment -> BoardResponseDTO.GetCommentsDTO.CommentInfo.builder()
-                                .commentId(comment.getId())
-                                .content(comment.getContent())
-                                .likeCount(comment.getLikeCount())
-                                .dislikeCount(comment.getDislikeCount())
-                                .liked(commentLiked.get(comment.getId()) == BooleanType.T)
-                                .disliked(commentLiked.get(comment.getId()) == BooleanType.F)
-                                .createdAt(comment.getCreatedAt())
-                                .memberInfo(toMemberInfo(comment.getMember(), teacherInfoMap.get(comment.getMember().getId())))
-                                .children(new ArrayList<>())
-                                .build()
+                        comment -> {
+                            TeacherInfo teacherInfo = null;
+                            if (teacherInfoMap.get(comment.getMember().getId()) != null) {
+                                teacherInfo = teacherInfoMap.get(comment.getMember().getId());
+                            }
+
+                            BoardResponseDTO.MemberInfo memberInfo = BoardConverter.toMemberInfo(comment.getMember(), teacherInfo);
+                            return BoardResponseDTO.GetCommentsDTO.CommentInfo.builder()
+                                    .commentId(comment.getId())
+                                    .content(comment.getContent())
+                                    .likeCount(comment.getLikeCount())
+                                    .dislikeCount(comment.getDislikeCount())
+                                    .liked(commentLikedMap.get(comment.getId()) == BooleanType.T)
+                                    .disliked(commentLikedMap.get(comment.getId()) == BooleanType.F)
+                                    .createdAt(comment.getCreatedAt())
+                                    .memberInfo(memberInfo)
+                                    .children(new ArrayList<>())
+                                    .build();
+                        }
                 ));
 
-        commentMap.values().forEach(commentInfo -> {
-            Comment parentComment = comments.stream()
-                    .filter(comment -> comment.getId().equals(commentInfo.getCommentId()))
-                    .findFirst()
-                    .orElse(null);
-
-            if (parentComment != null && parentComment.getParent() != null) {
-                BoardResponseDTO.GetCommentsDTO.CommentInfo parentCommentInfo = commentMap.get(parentComment.getParent().getId());
+        for (Comment comment : comments) {
+            if (comment.getParent() != null) {
+                BoardResponseDTO.GetCommentsDTO.CommentInfo parentCommentInfo = commentMap.get(comment.getParent().getId());
                 if (parentCommentInfo != null) {
-                    parentCommentInfo.getChildren().add(commentInfo);
+                    parentCommentInfo.getChildren().add(commentMap.get(comment.getId()));
                 }
             }
-        });
+        }
 
         List<BoardResponseDTO.GetCommentsDTO.CommentInfo> commentInfos = commentMap.values().stream()
-                .filter(commentInfo -> {
-                    Comment parentComment = comments.stream()
-                            .filter(comment -> comment.getId().equals(commentInfo.getCommentId()))
-                            .findFirst()
-                            .orElse(null);
-                    return parentComment != null && parentComment.getParent() == null;
-                })
+                .filter(commentInfo -> comments.stream()
+                        .anyMatch(comment -> comment.getId().equals(commentInfo.getCommentId()) && comment.getParent() == null))
                 .toList();
 
         return BoardResponseDTO.GetCommentsDTO.builder()
@@ -407,6 +406,7 @@ public class BoardConverter {
                 .commentList(commentInfos)
                 .build();
     }
+
 
     public static AnswerLike toAnswerLike(Answer answer, Member member) {
         return AnswerLike.builder()
