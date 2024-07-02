@@ -38,7 +38,7 @@ public class BoardConverter {
                 .build();
     }
 
-    public static BoardResponseDTO.GetPostDTO toGetPostDTO(Post post, List<String> hashtags, String liked, String bookmarked, boolean isMine) {
+    public static BoardResponseDTO.GetPostDTO toGetPostDTO(Post post, List<String> hashtags, boolean liked, boolean bookmarked, boolean isMine) {
         return BoardResponseDTO.GetPostDTO.builder()
                 .title(post.getTitle())
                 .content(post.getContent())
