@@ -182,15 +182,15 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         Slice<Comment> comments;
 
         if (lastCommentId == 0) {
-            comments = commentRepository.findSliceByParentIsNullAndStatusOrderByCreatedAtDesc(Status.ACTIVE, pageRequest);
+            comments = commentRepository.findSliceByPostIdAndParentIsNullAndStatusOrderByCreatedAtDesc(postId, Status.ACTIVE, pageRequest);
         } else {
-            comments = commentRepository.findSliceByIdLessThanAndParentIsNullAndStatusOrderByCreatedAtDesc(lastCommentId, Status.ACTIVE, pageRequest);
+            comments = commentRepository.findSliceByPostIdAndIdLessThanAndParentIsNullAndStatusOrderByCreatedAtDesc(postId, lastCommentId, Status.ACTIVE, pageRequest);
         }
 
         List<Long> commentIds = comments.stream().map(BaseEntity::getId).toList();
         List<Long> memberIds = comments.stream().map(comment -> comment.getMember().getId()).toList();
 
-        List<Comment> allComments = commentRepository.findAllByParentIdInAndStatus(commentIds, Status.ACTIVE);
+        List<Comment> allComments = commentRepository.findAllByPostIdAndParentIdInAndStatus(postId, commentIds, Status.ACTIVE);
 
         List<CommentLike> commentLikes = commentLikeRepository.findAllByCommentIdInAndStatus(commentIds, Status.ACTIVE);
         List<TeacherInfo> teacherInfos = teacherInfoRepository.findAllByMemberIdInAndStatus(memberIds, Status.ACTIVE);
