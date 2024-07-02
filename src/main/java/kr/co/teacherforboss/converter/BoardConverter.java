@@ -356,7 +356,7 @@ public class BoardConverter {
                 .build();
     }
 
-    public static BoardResponseDTO.GetCommentsDTO toGetCommentsDTO(Slice<Comment> comments, List<Comment> allComments, List<CommentLike> commentLikes, List<TeacherInfo> teacherInfos) {
+    public static BoardResponseDTO.GetCommentsDTO toGetCommentsDTO(Slice<Comment> comments, List<CommentLike> commentLikes, List<TeacherInfo> teacherInfos) {
         HashMap<Long, BooleanType> commentLikedMap = new HashMap<>();
         commentLikes.forEach(commentLike -> commentLikedMap.put(commentLike.getComment().getId(), commentLike.getLiked()));
 
@@ -364,6 +364,8 @@ public class BoardConverter {
         teacherInfos.forEach(teacherInfo -> teacherInfoMap.put(teacherInfo.getMember().getId(), teacherInfo));
 
         Map<Long, BoardResponseDTO.GetCommentsDTO.CommentInfo> commentMap = new HashMap<>();
+
+        List<BoardResponseDTO.GetCommentsDTO.CommentInfo> rootComments = new ArrayList<>();
 
         comments.forEach(comment -> {
             TeacherInfo teacherInfo = teacherInfoMap.get(comment.getMember().getId());
@@ -382,10 +384,14 @@ public class BoardConverter {
                     .build();
 
             commentMap.put(comment.getId(), commentInfo);
+
+            if (comment.getParent() == null) {
+                rootComments.add(commentInfo);
+            }
         });
 
-        allComments.forEach(comment -> {
-            if (comment.getParent() != null && commentMap.containsKey(comment.getParent().getId())) {
+        comments.forEach(comment -> {
+            if (comment.getParent() != null) {
                 BoardResponseDTO.GetCommentsDTO.CommentInfo parentCommentInfo = commentMap.get(comment.getParent().getId());
                 if (parentCommentInfo != null) {
                     parentCommentInfo.getChildren().add(commentMap.get(comment.getId()));
@@ -393,14 +399,9 @@ public class BoardConverter {
             }
         });
 
-        List<BoardResponseDTO.GetCommentsDTO.CommentInfo> commentInfos = comments.stream()
-                .map(comment -> commentMap.get(comment.getId()))
-                .filter(Objects::nonNull)
-                .toList();
-
         return BoardResponseDTO.GetCommentsDTO.builder()
                 .hasNext(comments.hasNext())
-                .commentList(commentInfos)
+                .commentList(rootComments)
                 .build();
     }
 

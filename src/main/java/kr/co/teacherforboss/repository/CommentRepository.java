@@ -33,28 +33,22 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query(value = """
         SELECT * FROM comment
         WHERE post_id = :postId
-          AND parent_id IS NULL
-          AND status = :status
+          AND status = 'ACTIVE'
         ORDER BY created_at DESC
     """, nativeQuery = true)
-    Slice<Comment> findSliceByPostIdAndParentIsNullAndStatusOrderByCreatedAtDesc(
+    Slice<Comment> findSliceByPostIdAndStatusOrderByCreatedAtDesc(
             @Param("postId") Long postId,
-            @Param("status") Status status,
             Pageable pageable);
 
     @Query(value = """
         SELECT * FROM comment
         WHERE post_id = :postId
-          AND id < :lastCommentId
-          AND parent_id IS NULL
-          AND status = :status
+          AND created_at < (SELECT created_at FROM comment WHERE id = :lastCommentId)
+          AND status = 'ACTIVE'
         ORDER BY created_at DESC
     """, nativeQuery = true)
-    Slice<Comment> findSliceByPostIdAndIdLessThanAndParentIsNullAndStatusOrderByCreatedAtDesc(
+    Slice<Comment> findSliceByPostIdAndIdLessThanAndAndStatusOrderByCreatedAtDesc(
             @Param("postId") Long postId,
             @Param("lastCommentId") Long lastCommentId,
-            @Param("status") Status status,
             Pageable pageable);
-
-    List<Comment> findAllByPostIdAndParentIdInAndStatus(Long postId, List<Long> parentIds, Status status);
 }
