@@ -189,4 +189,12 @@ public class BoardController {
         Answer answer = boardCommandService.selectAnswer(questionId, answerId);
         return ApiResponse.onSuccess(BoardConverter.toSelectAnswerDTO(answer));
     }
+
+    @GetMapping("/boss/posts/search")
+    public ApiResponse<BoardResponseDTO.GetPostsDTO> searchPosts(@RequestParam String keyword,
+                                                              @RequestParam(defaultValue = "0") Long lastPostId,
+                                                              @RequestParam(defaultValue = "10") int size,
+                                                              @RequestParam(defaultValue = "latest") String sortBy){
+        return ApiResponse.onSuccess(boardQueryService.searchPosts(keyword, lastPostId, size, sortBy));
+    }
 }

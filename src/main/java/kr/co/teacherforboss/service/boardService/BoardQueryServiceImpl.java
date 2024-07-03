@@ -154,4 +154,51 @@ public class BoardQueryServiceImpl implements BoardQueryService {
 
         return BoardConverter.toGetAnswersDTO(answers, answerLikes, teacherInfos);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public BoardResponseDTO.GetPostsDTO searchPosts(String keyword, Long lastPostId, int size, String sortBy) {
+        Member member = authCommandService.getMember();
+
+        if (keyword.length() > 30 || keyword.isEmpty())
+            throw new BoardHandler(ErrorStatus.KEYWORD_LENGTH_INVALID);
+
+        if (postRepository.countAllByTitleLikeOrContentLikeAndStatus(keyword, keyword, Status.ACTIVE) == 0)
+                throw new BoardHandler(ErrorStatus.POST_NOT_FOUND);
+
+        PageRequest pageRequest = PageRequest.of(0, size);
+        Slice<Post> posts;
+
+        if (lastPostId == 0) {
+            posts = switch (sortBy) {
+                case "likes" -> postRepository.findSliceByTitleContainingOrContentContainingAndStatusOrderByLikeCountDesc(
+                        keyword, keyword, Status.ACTIVE, pageRequest);
+                case "views" -> postRepository.findSliceByTitleContainingOrContentContainingAndStatusOrderByViewCountDesc(
+                        keyword, keyword, Status.ACTIVE, pageRequest);
+                default -> postRepository.findSliceByTitleContainingOrContentContainingAndStatusOrderByCreatedAtDesc(
+                        keyword, keyword, Status.ACTIVE, pageRequest);
+            };
+        }
+        else {
+            posts = switch (sortBy) {
+                case "likes" -> postRepository.findSliceByIdAndKeywordLessThanOrderByLikeCountDesc(keyword, lastPostId, pageRequest);
+                case "views" -> postRepository.findSliceByIdAndKeywordLessThanOrderByViewCountDesc(keyword, lastPostId, pageRequest);
+                default -> postRepository.findSliceByIdAndKeywordLessThanOrderByCreatedAtDesc(keyword, lastPostId, pageRequest);
+            };
+        }
+
+        List<PostLike> postLikes = postLikeRepository.findByPostInAndMemberIdAndStatus(posts.getContent(),
+                member.getId(), Status.ACTIVE);
+        List<PostBookmark> postBookmarks = postBookmarkRepository.findByPostInAndMemberIdAndStatus(posts.getContent(),
+                member.getId(), Status.ACTIVE);
+
+        Map<Long, Boolean> postLikeMap = postLikes.stream()
+                .collect(Collectors.toMap(like -> like.getPost().getId(), like -> like.getLiked().isIdentifier()));
+        Map<Long, Boolean> postBookmarkMap = postBookmarks.stream()
+                .collect(Collectors.toMap(bookmark -> bookmark.getPost().getId(), bookmark -> bookmark.getBookmarked().isIdentifier()));
+
+        // TODO : 좋아요 수, 북마크 수, 조회수 동시성 제어
+
+        return BoardConverter.toGetPostsDTO(posts, postLikeMap, postBookmarkMap);
+    }
 }

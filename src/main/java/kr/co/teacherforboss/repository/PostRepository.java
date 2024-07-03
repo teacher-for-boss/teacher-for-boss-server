@@ -41,4 +41,34 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             ORDER BY created_at DESC
     """, nativeQuery = true)
     Slice<Post> findSliceByIdLessThanOrderByCreatedAtDesc(Long postId, PageRequest pageRequest);
+    Long countAllByTitleLikeOrContentLikeAndStatus(String titleKeyword, String contentKeyword, Status status);
+    Slice<Post> findSliceByTitleContainingOrContentContainingAndStatusOrderByLikeCountDesc(String titleKeyword, String contentKeyword, Status status, PageRequest pageRequest);
+    Slice<Post> findSliceByTitleContainingOrContentContainingAndStatusOrderByViewCountDesc(String titleKeyword, String contentKeyword, Status status, PageRequest pageRequest);
+    Slice<Post> findSliceByTitleContainingOrContentContainingAndStatusOrderByCreatedAtDesc(String titleKeyword, String contentKeyword, Status status, PageRequest pageRequest);
+    @Query(value = """
+            SELECT * FROM post
+            WHERE (title LIKE CONCAT('%', :keyword, '%') OR content LIKE CONCAT('%', :keyword, '%'))
+                AND ((like_count < (SELECT like_count FROM post WHERE id = :postId)
+                OR (like_count = (SELECT like_count FROM post WHERE id = :postId) AND id > :postId)))
+                AND status = 'ACTIVE'
+            ORDER BY like_count DESC, created_at DESC;
+    """, nativeQuery = true)
+    Slice<Post> findSliceByIdAndKeywordLessThanOrderByLikeCountDesc(String keyword, Long postId, PageRequest pageRequest);
+    @Query(value = """
+            SELECT * FROM post
+            WHERE (title LIKE CONCAT('%', :keyword, '%') OR content LIKE CONCAT('%', :keyword, '%'))
+                AND ((view_count < (SELECT view_count FROM post WHERE id = :postId)
+                OR (view_count = (SELECT view_count FROM post WHERE id = :postId) AND id > :postId)))
+                AND status = 'ACTIVE'
+            ORDER BY view_count DESC, created_at DESC;
+    """, nativeQuery = true)
+    Slice<Post> findSliceByIdAndKeywordLessThanOrderByViewCountDesc(String keyword, Long postId, PageRequest pageRequest);
+    @Query(value = """
+            SELECT * FROM post 
+            WHERE (title LIKE CONCAT('%', :keyword, '%') OR content LIKE CONCAT('%', :keyword, '%'))
+                AND created_at < (SELECT created_at FROM post WHERE id = :postId) 
+                AND status = 'ACTIVE'
+            ORDER BY created_at DESC
+    """, nativeQuery = true)
+    Slice<Post> findSliceByIdAndKeywordLessThanOrderByCreatedAtDesc(String keyword, Long postId, PageRequest pageRequest);
 }
