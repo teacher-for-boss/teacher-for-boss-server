@@ -16,9 +16,9 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     Optional<Question> findByIdAndStatus(Long questionId, Status status);
     Optional<Question> findByIdAndMemberIdAndStatus(Long questionId, Long memberId, Status status);
     boolean existsByIdAndStatus(Long questionId, Status status);
-	Slice<Question> findSliceByStatusAndCategoryIdOrderByLikeCountDescCreatedAtDesc(Status status, Long categoryId, PageRequest pageRequest);
-	Slice<Question> findSliceByStatusAndCategoryIdOrderByViewCountDescCreatedAtDesc(Status status, Long categoryId, PageRequest pageRequest);
-	Slice<Question> findSliceByStatusAndCategoryIdOrderByCreatedAtDesc(Status status, Long categoryId, PageRequest pageRequest);
+	Slice<Question> findSliceByCategoryIdAndStatusOrderByLikeCountDescCreatedAtDesc(Long categoryId, Status status, PageRequest pageRequest);
+	Slice<Question> findSliceByCategoryIdAndStatusOrderByViewCountDescCreatedAtDesc(Long categoryId, Status status, PageRequest pageRequest);
+	Slice<Question> findSliceByCategoryIdAndStatusOrderByCreatedAtDesc(Long categoryId, Status status, PageRequest pageRequest);
 	@Query(value = """
 		SELECT * FROM question
 		WHERE category_id = :categoryId AND status = 'ACTIVE' 

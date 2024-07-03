@@ -1,6 +1,5 @@
 package kr.co.teacherforboss.converter;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -414,8 +413,8 @@ public class BoardConverter {
                 .build();
     }
 
-    public static BoardResponseDTO.GetQuestionListDTO.QuestionInfo toGetQuestionInfo(Question question, Answer selectedAnswer, boolean liked, boolean bookmarked, Integer answerCount) {
-        return new BoardResponseDTO.GetQuestionListDTO.QuestionInfo(
+    public static BoardResponseDTO.GetQuestionsDTO.QuestionInfo toGetQuestionInfo(Question question, Answer selectedAnswer, boolean liked, boolean bookmarked, Integer answerCount) {
+        return new BoardResponseDTO.GetQuestionsDTO.QuestionInfo(
                 question.getId(),
                 question.getTitle(),
                 question.getContent(),
@@ -430,8 +429,8 @@ public class BoardConverter {
         );
     }
 
-    public static BoardResponseDTO.GetQuestionListDTO toGetQuestionListDTO(boolean hasNext, List<BoardResponseDTO.GetQuestionListDTO.QuestionInfo> questionInfos) {
-        return BoardResponseDTO.GetQuestionListDTO.builder()
+    public static BoardResponseDTO.GetQuestionsDTO toGetQuestionsDTO(boolean hasNext, List<BoardResponseDTO.GetQuestionsDTO.QuestionInfo> questionInfos) {
+        return BoardResponseDTO.GetQuestionsDTO.builder()
                 .hasNext(hasNext)
                 .questionList(questionInfos)
                 .build();

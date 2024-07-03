@@ -162,7 +162,7 @@ public class BoardQueryServiceImpl implements BoardQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public BoardResponseDTO.GetQuestionListDTO getQuestionList(Long lastQuestionId, int size, String sortBy, String category) {
+    public BoardResponseDTO.GetQuestionsDTO getQuestions(Long lastQuestionId, int size, String sortBy, String category) {
         Member member = authCommandService.getMember();
         PageRequest pageRequest = PageRequest.of(0, size);
         // TODO : 카테고리 전체 조회가 안됨 -> 곧 수정할게요
@@ -171,9 +171,9 @@ public class BoardQueryServiceImpl implements BoardQueryService {
 
         if (lastQuestionId == 0) {
             questionsPage = switch (sortBy) {
-                case "likes" -> questionRepository.findSliceByStatusAndCategoryIdOrderByLikeCountDescCreatedAtDesc(Status.ACTIVE, categoryId, pageRequest);
-                case "views" -> questionRepository.findSliceByStatusAndCategoryIdOrderByViewCountDescCreatedAtDesc(Status.ACTIVE, categoryId, pageRequest);
-                default -> questionRepository.findSliceByStatusAndCategoryIdOrderByCreatedAtDesc(Status.ACTIVE, categoryId, pageRequest);
+                case "likes" -> questionRepository.findSliceByCategoryIdAndStatusOrderByLikeCountDescCreatedAtDesc(categoryId, Status.ACTIVE, pageRequest);
+                case "views" -> questionRepository.findSliceByCategoryIdAndStatusOrderByViewCountDescCreatedAtDesc(categoryId, Status.ACTIVE, pageRequest);
+                default -> questionRepository.findSliceByCategoryIdAndStatusOrderByCreatedAtDesc(categoryId, Status.ACTIVE, pageRequest);
             };
         } else {
             questionsPage = switch (sortBy) {
@@ -183,17 +183,21 @@ public class BoardQueryServiceImpl implements BoardQueryService {
             };
         }
 
-        List<BoardResponseDTO.GetQuestionListDTO.QuestionInfo> questionInfos = new ArrayList<>();
+        List<BoardResponseDTO.GetQuestionsDTO.QuestionInfo> questionInfos = new ArrayList<>();
 
         List<QuestionLike> questionLikes = questionLikeRepository.findByQuestionInAndMemberIdAndStatus(questionsPage.getContent(), member.getId(), Status.ACTIVE);
         List<QuestionBookmark> questionBookmarks = questionBookmarkRepository.findByQuestionInAndMemberIdAndStatus(questionsPage.getContent(), member.getId(), Status.ACTIVE);
+        // List<Answer> selectedAnswers = answerRepository.findByQuestionInAndSelected(questionsPage.getContent(), BooleanType.T);
 
         Map<Long, QuestionLike> questionLikeMap = questionLikes.stream()
                 .collect(Collectors.toMap(like -> like.getQuestion().getId(), like -> like));
         Map<Long, QuestionBookmark> questionBookmarkMap = questionBookmarks.stream()
                 .collect(Collectors.toMap(bookmark -> bookmark.getQuestion().getId(), bookmark -> bookmark));
+        // Map<Long, Answer> selectedAnswerMap = selectedAnswers.stream()
+        //         .collect(Collectors.toMap(answer -> answer.getQuestion().getId(), answer -> answer));
 
         questionsPage.getContent().forEach(question -> {
+            // Answer selectedAnswer = selectedAnswerMap.getOrDefault(question.getId(), null);
             Answer selectedAnswer = answerRepository.findByQuestionIdAndSelectedAndStatus(question.getId(), BooleanType.T, Status.ACTIVE)
                     .orElse(null);
             QuestionLike questionLike = questionLikeMap.get(question.getId());
@@ -204,6 +208,6 @@ public class BoardQueryServiceImpl implements BoardQueryService {
             questionInfos.add(BoardConverter.toGetQuestionInfo(question, selectedAnswer, liked, bookmarked, answerCount));
         });
 
-        return BoardConverter.toGetQuestionListDTO(questionsPage.hasNext(), questionInfos);
+        return BoardConverter.toGetQuestionsDTO(questionsPage.hasNext(), questionInfos);
     }
 }

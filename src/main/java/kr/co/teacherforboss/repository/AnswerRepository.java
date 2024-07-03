@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import kr.co.teacherforboss.domain.Answer;
+import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.Status;
 
@@ -38,4 +39,5 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
 	""", nativeQuery = true)
 	Slice<Answer> findSliceByIdLessThanAndStatusOrderByCreatedAtDesc(Long lastAnswerId, Pageable pageable);
 	Optional<Answer> findByQuestionIdAndSelectedAndStatus(Long questionId, BooleanType selected, Status status);
+	List<Answer> findByQuestionInAndSelected(List<Question> content, BooleanType booleanType);
 }

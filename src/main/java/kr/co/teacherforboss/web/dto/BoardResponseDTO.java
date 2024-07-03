@@ -261,9 +261,9 @@ public class BoardResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-	public static class GetQuestionListDTO {
+	public static class GetQuestionsDTO {
         boolean hasNext;
-        List<GetQuestionListDTO.QuestionInfo> questionList;
+        List<GetQuestionsDTO.QuestionInfo> questionList;
 
         @Getter
         @AllArgsConstructor
