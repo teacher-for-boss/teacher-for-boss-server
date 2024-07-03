@@ -192,7 +192,7 @@ public class BoardConverter {
 
     public static BoardResponseDTO.TogglePostBookmarkDTO toTogglePostBookmarkDTO(PostBookmark bookmark) {
         return BoardResponseDTO.TogglePostBookmarkDTO.builder()
-                .bookmark(BooleanType.T.isIdentifier())
+                .bookmark(bookmark.getBookmarked().isIdentifier())
                 .updatedAt(bookmark.getUpdatedAt())
                 .build();
     }
