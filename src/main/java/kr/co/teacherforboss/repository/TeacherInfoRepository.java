@@ -11,5 +11,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TeacherInfoRepository extends JpaRepository<TeacherInfo, Long> {
     List<TeacherInfo> findAllByMemberIdInAndStatus(List<Long> memberIdCollect, Status status);
-    List<TeacherInfo> findByMemberInAndStatus(List<Member> memberList, Status status);
 }

@@ -1,16 +1,13 @@
 package kr.co.teacherforboss.service.boardService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.BoardHandler;
 import kr.co.teacherforboss.converter.BoardConverter;
-import kr.co.teacherforboss.converter.MemberConverter;
 import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.AnswerLike;
 import kr.co.teacherforboss.domain.Comment;
@@ -24,8 +21,6 @@ import kr.co.teacherforboss.domain.QuestionBookmark;
 import kr.co.teacherforboss.domain.QuestionLike;
 import kr.co.teacherforboss.domain.TeacherInfo;
 import kr.co.teacherforboss.domain.common.BaseEntity;
-import kr.co.teacherforboss.domain.enums.BooleanType;
-import kr.co.teacherforboss.domain.enums.Role;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.AnswerLikeRepository;
 import kr.co.teacherforboss.repository.AnswerRepository;
@@ -40,7 +35,6 @@ import kr.co.teacherforboss.repository.QuestionRepository;
 import kr.co.teacherforboss.repository.TeacherInfoRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
-import kr.co.teacherforboss.web.dto.MemberResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
@@ -179,20 +173,24 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         }
 
         PageRequest pageRequest = PageRequest.of(0, size);
-        Slice<Comment> comments;
+        Slice<Comment> parentComments;
 
         if (lastCommentId == 0) {
-            comments = commentRepository.findSliceByPostIdAndStatusOrderByCreatedAtDesc(postId, pageRequest);
+            parentComments = commentRepository.findSliceByPostIdAndParentIdIsNullAndStatusOrderByCreatedAtDesc(postId, pageRequest);
         } else {
-            comments = commentRepository.findSliceByPostIdAndIdLessThanAndAndStatusOrderByCreatedAtDesc(postId, lastCommentId, pageRequest);
+            parentComments = commentRepository.findSliceByPostIdAndParentIdIsNullIdLessThanAndAndStatusOrderByCreatedAtDesc(postId, lastCommentId, pageRequest);
         }
 
-        List<Long> commentIds = comments.stream().map(BaseEntity::getId).toList();
-        List<Long> memberIds = comments.stream().map(comment -> comment.getMember().getId()).toList();
+        List<Long> parentCommentIds = parentComments.stream().map(BaseEntity::getId).toList();
+        List<Comment> childComments = commentRepository.findAllByParentIdInAndPostIdAndStatus(parentCommentIds, postId);
 
-        List<CommentLike> commentLikes = commentLikeRepository.findAllByCommentIdInAndStatus(commentIds, Status.ACTIVE);
+        List<Comment> allComments = Stream.concat(parentComments.stream(), childComments.stream()).toList();
+        List<Long> allCommentIds = allComments.stream().map(BaseEntity::getId).toList();
+
+        List<Long> memberIds = allComments.stream().map(comment -> comment.getMember().getId()).toList();
+        List<CommentLike> commentLikes = commentLikeRepository.findAllByCommentIdInAndStatus(allCommentIds, Status.ACTIVE);
         List<TeacherInfo> teacherInfos = teacherInfoRepository.findAllByMemberIdInAndStatus(memberIds, Status.ACTIVE);
 
-        return BoardConverter.toGetCommentsDTO(comments, commentLikes, teacherInfos);
+        return BoardConverter.toGetCommentsDTO(parentComments, allComments, commentLikes, teacherInfos);
     }
 }
