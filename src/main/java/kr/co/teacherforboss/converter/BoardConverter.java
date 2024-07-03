@@ -429,9 +429,22 @@ public class BoardConverter {
         );
     }
 
-    public static BoardResponseDTO.GetQuestionsDTO toGetQuestionsDTO(boolean hasNext, List<BoardResponseDTO.GetQuestionsDTO.QuestionInfo> questionInfos) {
+    public static BoardResponseDTO.GetQuestionsDTO toGetQuestionsDTO(Slice<Question> questionsPage, Map<Long, QuestionLike> questionLikeMap, Map<Long, QuestionBookmark> questionBookmarkMap, Map<Long, Answer> selectedAnswerMap) {
+
+        List<BoardResponseDTO.GetQuestionsDTO.QuestionInfo> questionInfos = new ArrayList<>();
+
+        questionsPage.getContent().forEach(question -> {
+            Answer selectedAnswer = selectedAnswerMap.getOrDefault(question.getId(), null);
+            QuestionLike questionLike = questionLikeMap.get(question.getId());
+            QuestionBookmark questionBookmark = questionBookmarkMap.get(question.getId());
+            boolean liked = (questionLike == null) ? false : questionLike.getLiked().isIdentifier();
+            boolean bookmarked = (questionBookmark == null) ? false : questionBookmark.getBookmarked().isIdentifier();
+            Integer answerCount = question.getAnswerList().size();
+            questionInfos.add(BoardConverter.toGetQuestionInfo(question, selectedAnswer, liked, bookmarked, answerCount));
+        });
+
         return BoardResponseDTO.GetQuestionsDTO.builder()
-                .hasNext(hasNext)
+                .hasNext(questionsPage.hasNext())
                 .questionList(questionInfos)
                 .build();
     }
