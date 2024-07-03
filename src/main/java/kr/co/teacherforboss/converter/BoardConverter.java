@@ -1,11 +1,13 @@
 package kr.co.teacherforboss.converter;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.data.domain.Slice;
+
 import kr.co.teacherforboss.config.S3Config;
 import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.AnswerLike;
@@ -27,7 +29,6 @@ import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.ImageOrigin;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
-import org.springframework.data.domain.Slice;
 
 public class BoardConverter {
 
@@ -409,6 +410,42 @@ public class BoardConverter {
                 .content(request.getContent())
                 .likeCount(0)
                 .dislikeCount(0)
+                .build();
+    }
+
+    public static BoardResponseDTO.GetQuestionsDTO.QuestionInfo toGetQuestionInfo(Question question, Answer selectedAnswer, boolean liked, boolean bookmarked, Integer answerCount) {
+        return new BoardResponseDTO.GetQuestionsDTO.QuestionInfo(
+                question.getId(),
+                question.getTitle(),
+                question.getContent(),
+                question.getSolved().isIdentifier(),
+                (selectedAnswer == null) ? null : selectedAnswer.getMember().getProfileImg(),
+                question.getBookmarkCount(),
+                answerCount,
+                question.getLikeCount(),
+                liked,
+                bookmarked,
+                question.getCreatedAt()
+        );
+    }
+
+    public static BoardResponseDTO.GetQuestionsDTO toGetQuestionsDTO(Slice<Question> questionsPage, Map<Long, QuestionLike> questionLikeMap, Map<Long, QuestionBookmark> questionBookmarkMap, Map<Long, Answer> selectedAnswerMap) {
+
+        List<BoardResponseDTO.GetQuestionsDTO.QuestionInfo> questionInfos = new ArrayList<>();
+
+        questionsPage.getContent().forEach(question -> {
+            Answer selectedAnswer = selectedAnswerMap.getOrDefault(question.getId(), null);
+            QuestionLike questionLike = questionLikeMap.get(question.getId());
+            QuestionBookmark questionBookmark = questionBookmarkMap.get(question.getId());
+            boolean liked = (questionLike == null) ? false : questionLike.getLiked().isIdentifier();
+            boolean bookmarked = (questionBookmark == null) ? false : questionBookmark.getBookmarked().isIdentifier();
+            Integer answerCount = question.getAnswerList().size();
+            questionInfos.add(BoardConverter.toGetQuestionInfo(question, selectedAnswer, liked, bookmarked, answerCount));
+        });
+
+        return BoardResponseDTO.GetQuestionsDTO.builder()
+                .hasNext(questionsPage.hasNext())
+                .questionList(questionInfos)
                 .build();
     }
 }
