@@ -169,23 +169,9 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         PageRequest pageRequest = PageRequest.of(0, size);
         Slice<Post> posts;
 
-        if (lastPostId == 0) {
-            posts = switch (sortBy) {
-                case "likes" -> postRepository.findSliceByTitleContainingOrContentContainingAndStatusOrderByLikeCountDesc(
-                        keyword, keyword, Status.ACTIVE, pageRequest);
-                case "views" -> postRepository.findSliceByTitleContainingOrContentContainingAndStatusOrderByViewCountDesc(
-                        keyword, keyword, Status.ACTIVE, pageRequest);
-                default -> postRepository.findSliceByTitleContainingOrContentContainingAndStatusOrderByCreatedAtDesc(
-                        keyword, keyword, Status.ACTIVE, pageRequest);
-            };
-        }
-        else {
-            posts = switch (sortBy) {
-                case "likes" -> postRepository.findSliceByIdAndKeywordLessThanOrderByLikeCountDesc(keyword, lastPostId, pageRequest);
-                case "views" -> postRepository.findSliceByIdAndKeywordLessThanOrderByViewCountDesc(keyword, lastPostId, pageRequest);
-                default -> postRepository.findSliceByIdAndKeywordLessThanOrderByCreatedAtDesc(keyword, lastPostId, pageRequest);
-            };
-        }
+        posts = lastPostId == 0 ?
+                postRepository.findSliceByTitleContainingOrContentContainingAndStatusOrderByCreatedAtDesc(keyword, keyword, Status.ACTIVE, pageRequest)
+                : postRepository.findSliceByIdAndKeywordLessThanOrderByCreatedAtDesc(keyword, lastPostId, pageRequest);
 
         List<PostLike> postLikes = postLikeRepository.findByPostInAndMemberIdAndStatus(posts.getContent(),
                 member.getId(), Status.ACTIVE);
