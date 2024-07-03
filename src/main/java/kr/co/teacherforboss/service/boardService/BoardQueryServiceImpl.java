@@ -63,19 +63,19 @@ public class BoardQueryServiceImpl implements BoardQueryService {
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND))
                 .increaseViewCount();
 
-        String liked = "F";
-        String bookmarked = "F";
+        boolean liked = false;
+        boolean bookmarked = false;
         List<String> hashtagList = null;
         boolean isMine = member.equals(post.getMember());
 
         PostLike postLike = postLikeRepository.findByPostIdAndMemberIdAndStatus(post.getId(), member.getId(), Status.ACTIVE).orElse(null);
         if (postLike != null) {
-            liked = String.valueOf(postLike.getLiked());
+            liked = postLike.getLiked().isIdentifier();
         }
 
         PostBookmark postBookmark = postBookmarkRepository.findByPostIdAndMemberIdAndStatus(post.getId(), member.getId(), Status.ACTIVE).orElse(null);
         if (postBookmark != null) {
-            bookmarked = String.valueOf(postBookmark.getBookmarked());
+            bookmarked = postBookmark.getBookmarked().isIdentifier();
         }
         if (!post.getHashtags().isEmpty()) {
             hashtagList = BoardConverter.toPostHashtags(post);

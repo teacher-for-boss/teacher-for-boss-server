@@ -28,8 +28,8 @@ public class BoardResponseDTO {
         List<String> imageUrlList;
         List<String> hashtagList;
         MemberInfo memberInfo;
-        String liked;
-        String bookmarked;
+        boolean liked;
+        boolean bookmarked;
         Integer likeCount;
         Integer bookmarkCount;
         LocalDateTime createdAt;
@@ -184,6 +184,20 @@ public class BoardResponseDTO {
     public static class ToggleAnswerLikeDTO {
         Long answerId;
         Boolean liked;
+        Integer likedCount;
+        Integer dislikedCount;
+        LocalDateTime updatedAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ToggleCommentLikeDTO {
+        Long commentId;
+        Boolean liked;
+        Integer likedCount;
+        Integer dislikedCount;
         LocalDateTime updatedAt;
     }
 
@@ -232,15 +246,6 @@ public class BoardResponseDTO {
     public static class SaveCommentDTO {
         Long commentId;
         LocalDateTime createdAt;
-    }
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class ToggleCommentLikeDTO {
-        Boolean liked;
-        LocalDateTime updatedAt;
     }
 
     @Getter

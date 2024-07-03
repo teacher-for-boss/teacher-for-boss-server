@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.converter;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -12,6 +13,8 @@ import kr.co.teacherforboss.config.S3Config;
 import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.AnswerLike;
 import kr.co.teacherforboss.domain.Category;
+import kr.co.teacherforboss.domain.Comment;
+import kr.co.teacherforboss.domain.CommentLike;
 import kr.co.teacherforboss.domain.Hashtag;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.Post;
@@ -37,7 +40,7 @@ public class BoardConverter {
                 .build();
     }
 
-    public static BoardResponseDTO.GetPostDTO toGetPostDTO(Post post, List<String> hashtags, String liked, String bookmarked, boolean isMine) {
+    public static BoardResponseDTO.GetPostDTO toGetPostDTO(Post post, List<String> hashtags, boolean liked, boolean bookmarked, boolean isMine) {
         return BoardResponseDTO.GetPostDTO.builder()
                 .title(post.getTitle())
                 .content(post.getContent())
@@ -191,7 +194,7 @@ public class BoardConverter {
 
     public static BoardResponseDTO.TogglePostBookmarkDTO toTogglePostBookmarkDTO(PostBookmark bookmark) {
         return BoardResponseDTO.TogglePostBookmarkDTO.builder()
-                .bookmark(BooleanType.T.isIdentifier())
+                .bookmark(bookmark.getBookmarked().isIdentifier())
                 .updatedAt(bookmark.getUpdatedAt())
                 .build();
     }
@@ -358,11 +361,31 @@ public class BoardConverter {
                 .build();
     }
 
+    public static CommentLike toCommentLike(Comment comment, Member member) {
+        return CommentLike.builder()
+                .comment(comment)
+                .member(member)
+                .liked(null)
+                .build();
+    }
+
     public static BoardResponseDTO.ToggleAnswerLikeDTO toToggleAnswerLikeDTO(AnswerLike answerLike) {
         return BoardResponseDTO.ToggleAnswerLikeDTO.builder()
                 .answerId(answerLike.getAnswer().getId())
                 .liked((answerLike.getLiked() == null) ? null : answerLike.getLiked().isIdentifier())
+                .likedCount(answerLike.getAnswer().getLikeCount())
+                .dislikedCount(answerLike.getAnswer().getDislikeCount())
                 .updatedAt(answerLike.getUpdatedAt())
+                .build();
+    }
+
+    public static BoardResponseDTO.ToggleCommentLikeDTO toToggleCommentLikeDTO(CommentLike commentLike) {
+        return BoardResponseDTO.ToggleCommentLikeDTO.builder()
+                .commentId(commentLike.getComment().getId())
+                .liked((commentLike.getLiked() == null) ? null : commentLike.getLiked().isIdentifier())
+                .likedCount(commentLike.getComment().getLikeCount())
+                .dislikedCount(commentLike.getComment().getDislikeCount())
+                .updatedAt(commentLike.getUpdatedAt())
                 .build();
     }
 
@@ -370,6 +393,24 @@ public class BoardConverter {
         return BoardResponseDTO.SelectAnswerDTO.builder()
                 .selectedAnswerId(answer.getId())
                 .updatedAt(answer.getUpdatedAt())
+                .build();
+    }
+
+    public static BoardResponseDTO.SaveCommentDTO toSaveCommentDTO(Comment comment) {
+        return BoardResponseDTO.SaveCommentDTO.builder()
+                .commentId(comment.getId())
+                .createdAt(comment.getCreatedAt())
+                .build();
+    }
+
+    public static Comment toCommentDTO(BoardRequestDTO.SaveCommentDTO request, Member member, Post post, Comment comment) {
+        return Comment.builder()
+                .post(post)
+                .member(member)
+                .parent(comment)
+                .content(request.getContent())
+                .likeCount(0)
+                .dislikeCount(0)
                 .build();
     }
 
