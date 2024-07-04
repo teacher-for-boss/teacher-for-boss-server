@@ -171,7 +171,7 @@ public class BoardQueryServiceImpl implements BoardQueryService {
 
         posts = lastPostId == 0 ?
                 postRepository.findSliceByTitleContainingOrContentContainingAndStatusOrderByCreatedAtDesc(keyword, keyword, Status.ACTIVE, pageRequest)
-                : postRepository.findSliceByIdAndKeywordLessThanOrderByCreatedAtDesc(keyword, lastPostId, pageRequest);
+                : postRepository.findSliceByIdLessThanAndKeywordOrderByCreatedAtDesc(keyword, lastPostId, pageRequest);
 
         List<PostLike> postLikes = postLikeRepository.findByPostInAndMemberIdAndStatus(posts.getContent(),
                 member.getId(), Status.ACTIVE);
