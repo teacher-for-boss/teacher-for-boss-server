@@ -160,12 +160,6 @@ public class BoardQueryServiceImpl implements BoardQueryService {
     public BoardResponseDTO.GetPostsDTO searchPosts(String keyword, Long lastPostId, int size, String sortBy) {
         Member member = authCommandService.getMember();
 
-        if (keyword.length() > 30 || keyword.isEmpty())
-            throw new BoardHandler(ErrorStatus.KEYWORD_LENGTH_INVALID);
-
-        if (postRepository.countAllByTitleLikeOrContentLikeAndStatus(keyword, keyword, Status.ACTIVE) == 0)
-                throw new BoardHandler(ErrorStatus.POST_NOT_FOUND);
-
         PageRequest pageRequest = PageRequest.of(0, size);
         Slice<Post> posts;
 

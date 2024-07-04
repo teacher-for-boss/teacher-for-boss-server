@@ -1,5 +1,7 @@
 package kr.co.teacherforboss.web.controller;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import kr.co.teacherforboss.domain.AnswerLike;
 import kr.co.teacherforboss.domain.CommentLike;
 import org.springframework.validation.annotation.Validated;
@@ -191,7 +193,7 @@ public class BoardController {
     }
 
     @GetMapping("/boss/posts/search")
-    public ApiResponse<BoardResponseDTO.GetPostsDTO> searchPosts(@RequestParam String keyword,
+    public ApiResponse<BoardResponseDTO.GetPostsDTO> searchPosts(@RequestParam @Size(max = 30, message = "키워드는 최대 30자 입력 가능합니다.") @NotNull String keyword,
                                                               @RequestParam(defaultValue = "0") Long lastPostId,
                                                               @RequestParam(defaultValue = "10") int size,
                                                               @RequestParam(defaultValue = "latest") String sortBy){
