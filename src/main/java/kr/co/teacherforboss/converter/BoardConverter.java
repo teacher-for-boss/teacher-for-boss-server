@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Slice;
+
 import kr.co.teacherforboss.config.S3Config;
 import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.AnswerLike;
@@ -27,7 +29,6 @@ import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.ImageOrigin;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
-import org.springframework.data.domain.Slice;
 
 public class BoardConverter {
 
@@ -38,7 +39,7 @@ public class BoardConverter {
                 .build();
     }
 
-    public static BoardResponseDTO.GetPostDTO toGetPostDTO(Post post, List<String> hashtags, String liked, String bookmarked, boolean isMine) {
+    public static BoardResponseDTO.GetPostDTO toGetPostDTO(Post post, List<String> hashtags, boolean liked, boolean bookmarked, boolean isMine) {
         return BoardResponseDTO.GetPostDTO.builder()
                 .title(post.getTitle())
                 .content(post.getContent())
@@ -192,7 +193,7 @@ public class BoardConverter {
 
     public static BoardResponseDTO.TogglePostBookmarkDTO toTogglePostBookmarkDTO(PostBookmark bookmark) {
         return BoardResponseDTO.TogglePostBookmarkDTO.builder()
-                .bookmark(BooleanType.T.isIdentifier())
+                .bookmark(bookmark.getBookmarked().isIdentifier())
                 .updatedAt(bookmark.getUpdatedAt())
                 .build();
     }
@@ -351,62 +352,6 @@ public class BoardConverter {
                 .build();
     }
 
-    public static BoardResponseDTO.GetCommentsDTO toGetCommentsDTO(Slice<Comment> parentComments,
-                                                                   List<Comment> childComments,
-                                                                   List<CommentLike> commentLikes,
-                                                                   List<TeacherInfo> teacherInfos) {
-        HashMap<Long, BooleanType> commentLikedMap = new HashMap<>();
-        commentLikes.forEach(commentLike -> commentLikedMap.put(commentLike.getComment().getId(), commentLike.getLiked()));
-
-        HashMap<Long, TeacherInfo> teacherInfoMap = new HashMap<>();
-        teacherInfos.forEach(teacherInfo -> teacherInfoMap.put(teacherInfo.getMember().getId(), teacherInfo));
-
-        Map<Long, BoardResponseDTO.GetCommentsDTO.CommentInfo> parentCommentMap = new HashMap<>();
-        Map<Long, BoardResponseDTO.GetCommentsDTO.CommentInfo> childCommentMap = new HashMap<>();
-        List<BoardResponseDTO.GetCommentsDTO.CommentInfo> totalComments = new ArrayList<>();
-
-        parentComments.forEach(comment -> {
-            BoardResponseDTO.GetCommentsDTO.CommentInfo commentInfo = toCommentInfo(comment, teacherInfoMap, commentLikedMap);
-            parentCommentMap.put(comment.getId(), commentInfo);
-            totalComments.add(commentInfo);
-        });
-
-        childComments.forEach(comment -> {
-            BoardResponseDTO.GetCommentsDTO.CommentInfo commentInfo = toCommentInfo(comment, teacherInfoMap, commentLikedMap);
-            childCommentMap.put(comment.getId(), commentInfo);
-
-            BoardResponseDTO.GetCommentsDTO.CommentInfo parentCommentInfo = parentCommentMap.get(comment.getParent().getId());
-            if (parentCommentInfo != null) {
-                parentCommentInfo.getChildren().add(commentInfo);
-            }
-        });
-
-        return BoardResponseDTO.GetCommentsDTO.builder()
-                .hasNext(parentComments.hasNext())
-                .commentList(totalComments)
-                .build();
-    }
-
-    public static BoardResponseDTO.GetCommentsDTO.CommentInfo toCommentInfo (Comment comment,
-                                                                             Map<Long, TeacherInfo> teacherInfoMap,
-                                                                             Map<Long, BooleanType> commentLikedMap) {
-
-        TeacherInfo teacherInfo = teacherInfoMap.get(comment.getMember().getId());
-        BoardResponseDTO.MemberInfo memberInfo = BoardConverter.toMemberInfo(comment.getMember(), teacherInfo);
-
-        return BoardResponseDTO.GetCommentsDTO.CommentInfo.builder()
-                .commentId(comment.getId())
-                .content(comment.getContent())
-                .likeCount(comment.getLikeCount())
-                .dislikeCount(comment.getDislikeCount())
-                .liked(commentLikedMap.get(comment.getId()) == BooleanType.T)
-                .disliked(commentLikedMap.get(comment.getId()) == BooleanType.F)
-                .createdAt(comment.getCreatedAt())
-                .memberInfo(memberInfo)
-                .children(new ArrayList<>())
-                .build();
-    }
-
     public static AnswerLike toAnswerLike(Answer answer, Member member) {
         return AnswerLike.builder()
                 .answer(answer)
@@ -465,6 +410,42 @@ public class BoardConverter {
                 .content(request.getContent())
                 .likeCount(0)
                 .dislikeCount(0)
+                .build();
+    }
+
+    public static BoardResponseDTO.GetQuestionsDTO.QuestionInfo toGetQuestionInfo(Question question, Answer selectedAnswer, boolean liked, boolean bookmarked, Integer answerCount) {
+        return new BoardResponseDTO.GetQuestionsDTO.QuestionInfo(
+                question.getId(),
+                question.getTitle(),
+                question.getContent(),
+                question.getSolved().isIdentifier(),
+                (selectedAnswer == null) ? null : selectedAnswer.getMember().getProfileImg(),
+                question.getBookmarkCount(),
+                answerCount,
+                question.getLikeCount(),
+                liked,
+                bookmarked,
+                question.getCreatedAt()
+        );
+    }
+
+    public static BoardResponseDTO.GetQuestionsDTO toGetQuestionsDTO(Slice<Question> questionsPage, Map<Long, QuestionLike> questionLikeMap, Map<Long, QuestionBookmark> questionBookmarkMap, Map<Long, Answer> selectedAnswerMap) {
+
+        List<BoardResponseDTO.GetQuestionsDTO.QuestionInfo> questionInfos = new ArrayList<>();
+
+        questionsPage.getContent().forEach(question -> {
+            Answer selectedAnswer = selectedAnswerMap.getOrDefault(question.getId(), null);
+            QuestionLike questionLike = questionLikeMap.get(question.getId());
+            QuestionBookmark questionBookmark = questionBookmarkMap.get(question.getId());
+            boolean liked = (questionLike == null) ? false : questionLike.getLiked().isIdentifier();
+            boolean bookmarked = (questionBookmark == null) ? false : questionBookmark.getBookmarked().isIdentifier();
+            Integer answerCount = question.getAnswerList().size();
+            questionInfos.add(BoardConverter.toGetQuestionInfo(question, selectedAnswer, liked, bookmarked, answerCount));
+        });
+
+        return BoardResponseDTO.GetQuestionsDTO.builder()
+                .hasNext(questionsPage.hasNext())
+                .questionList(questionInfos)
                 .build();
     }
 }
