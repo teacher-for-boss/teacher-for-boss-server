@@ -1,7 +1,6 @@
 package kr.co.teacherforboss.repository;
 
 import kr.co.teacherforboss.domain.Comment;
-import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.enums.Status;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -26,16 +25,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     void softDeleteCommentsByPostId(@Param(value = "postId") Long postId);
     Optional<Comment> findByIdAndPostIdAndStatus(Long commentId, Long postId, Status status);
 
-    @Query(value = """
-        SELECT * FROM comment
-        WHERE post_id = :postId
-          AND parent_id IS NULL
-          AND status = 'ACTIVE'
-        ORDER BY created_at DESC
-    """, nativeQuery = true)
-    Slice<Comment> findSliceByPostIdAndParentIdIsNullAndStatusOrderByCreatedAtDesc(
-            @Param("postId") Long postId,
-            Pageable pageable);
+    Slice<Comment> findSliceByPostIdAndParentIdIsNullAndStatusOrderByCreatedAtDesc(Long postId, Pageable pageable, Status status);
 
     @Query(value = """
         SELECT * FROM comment
@@ -57,7 +47,5 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             AND status = 'ACTIVE'
         ORDER BY created_at DESC
     """, nativeQuery = true)
-    List<Comment> findAllByParentIdInAndPostIdAndStatus(
-            @Param("parentIds") List<Long> parentIds,
-            @Param("postId") Long postId);
+    List<Comment> findAllByPostIdAndParentIdInAndStatus(Long postId, List<Long> parentIds);
 }

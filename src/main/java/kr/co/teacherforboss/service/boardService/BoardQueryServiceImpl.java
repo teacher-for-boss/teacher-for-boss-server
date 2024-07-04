@@ -176,13 +176,13 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         Slice<Comment> parentComments;
 
         if (lastCommentId == 0) {
-            parentComments = commentRepository.findSliceByPostIdAndParentIdIsNullAndStatusOrderByCreatedAtDesc(postId, pageRequest);
+            parentComments = commentRepository.findSliceByPostIdAndParentIdIsNullAndStatusOrderByCreatedAtDesc(postId, pageRequest, Status.ACTIVE);
         } else {
             parentComments = commentRepository.findSliceByPostIdAndParentIdIsNullIdLessThanAndAndStatusOrderByCreatedAtDesc(postId, lastCommentId, pageRequest);
         }
 
         List<Long> parentCommentIds = parentComments.stream().map(BaseEntity::getId).toList();
-        List<Comment> childComments = commentRepository.findAllByParentIdInAndPostIdAndStatus(parentCommentIds, postId);
+        List<Comment> childComments = commentRepository.findAllByPostIdAndParentIdInAndStatus(postId, parentCommentIds);
 
         List<Comment> allComments = Stream.concat(parentComments.stream(), childComments.stream()).toList();
         List<Long> allCommentIds = allComments.stream().map(BaseEntity::getId).toList();
@@ -191,6 +191,6 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         List<CommentLike> commentLikes = commentLikeRepository.findAllByCommentIdInAndStatus(allCommentIds, Status.ACTIVE);
         List<TeacherInfo> teacherInfos = teacherInfoRepository.findAllByMemberIdInAndStatus(memberIds, Status.ACTIVE);
 
-        return BoardConverter.toGetCommentsDTO(parentComments, allComments, commentLikes, teacherInfos);
+        return BoardConverter.toGetCommentsDTO(parentComments, childComments, commentLikes, teacherInfos);
     }
 }

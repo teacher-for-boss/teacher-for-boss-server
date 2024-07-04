@@ -352,7 +352,7 @@ public class BoardConverter {
     }
 
     public static BoardResponseDTO.GetCommentsDTO toGetCommentsDTO(Slice<Comment> parentComments,
-                                                                   List<Comment> allComments,
+                                                                   List<Comment> childComments,
                                                                    List<CommentLike> commentLikes,
                                                                    List<TeacherInfo> teacherInfos) {
         HashMap<Long, BooleanType> commentLikedMap = new HashMap<>();
@@ -362,6 +362,7 @@ public class BoardConverter {
         teacherInfos.forEach(teacherInfo -> teacherInfoMap.put(teacherInfo.getMember().getId(), teacherInfo));
 
         Map<Long, BoardResponseDTO.GetCommentsDTO.CommentInfo> parentCommentMap = new HashMap<>();
+        Map<Long, BoardResponseDTO.GetCommentsDTO.CommentInfo> childCommentMap = new HashMap<>();
         List<BoardResponseDTO.GetCommentsDTO.CommentInfo> totalComments = new ArrayList<>();
 
         parentComments.forEach(comment -> {
@@ -370,12 +371,15 @@ public class BoardConverter {
             totalComments.add(commentInfo);
         });
 
-        allComments.stream().filter(comment -> comment.getParent() != null)
-                .forEach(comment -> {
-                    BoardResponseDTO.GetCommentsDTO.CommentInfo commentInfo = toCommentInfo(comment, teacherInfoMap, commentLikedMap);
-                    BoardResponseDTO.GetCommentsDTO.CommentInfo parentCommentInfo = parentCommentMap.get(comment.getParent().getId());
-                    parentCommentInfo.getChildren().add(commentInfo);
-                });
+        childComments.forEach(comment -> {
+            BoardResponseDTO.GetCommentsDTO.CommentInfo commentInfo = toCommentInfo(comment, teacherInfoMap, commentLikedMap);
+            childCommentMap.put(comment.getId(), commentInfo);
+
+            BoardResponseDTO.GetCommentsDTO.CommentInfo parentCommentInfo = parentCommentMap.get(comment.getParent().getId());
+            if (parentCommentInfo != null) {
+                parentCommentInfo.getChildren().add(commentInfo);
+            }
+        });
 
         return BoardResponseDTO.GetCommentsDTO.builder()
                 .hasNext(parentComments.hasNext())
