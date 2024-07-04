@@ -2,6 +2,7 @@ package kr.co.teacherforboss.web.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -93,6 +94,30 @@ public class BoardResponseDTO {
             LocalDateTime createdAt;
             MemberInfo memberInfo;
             List<String> imageUrlList;
+        }
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetCommentsDTO {
+        boolean hasNext;
+        List<CommentInfo> commentList;
+
+        @Builder
+        @Getter
+        @AllArgsConstructor
+        public static class CommentInfo {
+            Long commentId;
+            String content;
+            int likeCount;
+            int dislikeCount;
+            boolean liked;
+            boolean disliked;
+            LocalDateTime createdAt;
+            MemberInfo memberInfo;
+            List<CommentInfo> children;
         }
     }
 
@@ -255,4 +280,29 @@ public class BoardResponseDTO {
         Long selectedAnswerId;
         LocalDateTime updatedAt;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+	public static class GetQuestionsDTO {
+        boolean hasNext;
+        List<GetQuestionsDTO.QuestionInfo> questionList;
+
+        @Getter
+        @AllArgsConstructor
+        public static class QuestionInfo {
+            Long questionId;
+            String title;
+            String content;
+            Boolean solved;
+            String selectedTeacher;
+            Integer bookmarkCount;
+            Integer answerCount;
+            Integer likeCount;
+            Boolean liked;
+            Boolean bookmarked;
+            LocalDateTime createdAt;
+        }
+	}
 }

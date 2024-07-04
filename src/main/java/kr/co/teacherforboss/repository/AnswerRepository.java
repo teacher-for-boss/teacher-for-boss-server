@@ -2,8 +2,7 @@ package kr.co.teacherforboss.repository;
 
 import java.util.List;
 import java.util.Optional;
-import kr.co.teacherforboss.domain.Answer;
-import kr.co.teacherforboss.domain.enums.Status;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,6 +10,11 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import kr.co.teacherforboss.domain.Answer;
+import kr.co.teacherforboss.domain.Question;
+import kr.co.teacherforboss.domain.enums.BooleanType;
+import kr.co.teacherforboss.domain.enums.Status;
 
 @Repository
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
@@ -33,5 +37,7 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
 			AND status = 'ACTIVE'
 		ORDER BY created_at DESC
 	""", nativeQuery = true)
-	Slice<Answer> findSliceByIdLessThanAndStatusOrderByCreatedAtDesc(Long lastAnswerId, Pageable pageable);
+	Slice<Answer> findSliceByIdLessThanAndStatusOrderByCreatedAtDesc(@Param(value = "lastAnswerId") Long lastAnswerId, Pageable pageable);
+	Optional<Answer> findByQuestionIdAndSelectedAndStatus(Long questionId, BooleanType selected, Status status);
+	List<Answer> findByQuestionInAndSelected(List<Question> content, BooleanType booleanType);
 }

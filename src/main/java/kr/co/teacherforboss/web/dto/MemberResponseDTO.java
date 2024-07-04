@@ -24,4 +24,15 @@ public class MemberResponseDTO {
         Long surveyId;
         LocalDateTime createdAt;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MemberInfoDTO {
+        Long memberId;
+        String nickname;
+        String profileImg;
+        String level;
+    }
 }

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Size;
 import kr.co.teacherforboss.domain.AnswerLike;
 import kr.co.teacherforboss.domain.CommentLike;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,8 +32,6 @@ import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.DeleteMapping;
-
 
 @Slf4j
 @Validated
@@ -146,9 +145,16 @@ public class BoardController {
 
     @GetMapping("/teacher/questions/{questionId}/answers")
     public ApiResponse<BoardResponseDTO.GetAnswersDTO> getAnswers(@PathVariable("questionId") Long questionId,
-                                                                  @RequestParam(defaultValue = "0") Long lastAnswerId,
-                                                                  @RequestParam(defaultValue = "10") int size) {
+                                                                  @RequestParam(name = "lastAnswerId", defaultValue = "0") Long lastAnswerId,
+                                                                  @RequestParam(name = "size", defaultValue = "10") int size) {
         return ApiResponse.onSuccess(boardQueryService.getAnswers(questionId, lastAnswerId, size));
+    }
+
+    @GetMapping("/boss/posts/{postId}/comments")
+    public ApiResponse<BoardResponseDTO.GetCommentsDTO> getComments(@PathVariable("postId") Long postId,
+                                                                    @RequestParam(name = "lastCommentId", defaultValue = "0") Long lastCommentId,
+                                                                    @RequestParam(name = "size", defaultValue = "10") int size) {
+        return ApiResponse.onSuccess(boardQueryService.getComments(postId, lastCommentId, size));
     }
 
     @PostMapping("/boss/posts/{postId}/comments")
@@ -157,6 +163,7 @@ public class BoardController {
         Comment comment = boardCommandService.saveComment(postId, request);
         return ApiResponse.onSuccess(BoardConverter.toSaveCommentDTO(comment));
     }
+
     @PostMapping("/teacher/questions/{questionId}/answers/{answerId}/likes")
     public ApiResponse<BoardResponseDTO.ToggleAnswerLikeDTO> toggleAnswerLike(@PathVariable("questionId") Long questionId,
                                                                        @PathVariable("answerId") Long answerId) {
@@ -190,6 +197,13 @@ public class BoardController {
                                                                    @PathVariable("answerId") Long answerId) {
         Answer answer = boardCommandService.selectAnswer(questionId, answerId);
         return ApiResponse.onSuccess(BoardConverter.toSelectAnswerDTO(answer));
+    }
+    @GetMapping("/teacher/questions")
+    public ApiResponse<BoardResponseDTO.GetQuestionsDTO> getQuestions(@RequestParam(defaultValue = "0") Long lastQuestionId,
+                                                                            @RequestParam(defaultValue = "10") int size,
+                                                                            @RequestParam(defaultValue = "latest") String sortBy,
+                                                                            @RequestParam(defaultValue = "전체") String category) {
+        return ApiResponse.onSuccess(boardQueryService.getQuestions(lastQuestionId, size, sortBy, category));
     }
 
     @GetMapping("/boss/posts/search")
