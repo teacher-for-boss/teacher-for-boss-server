@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import kr.co.teacherforboss.domain.Question;
@@ -25,19 +26,25 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 			AND (like_count <= (SELECT like_count FROM question WHERE id = :questionId) AND id != :questionId)
 		ORDER BY like_count DESC, created_at DESC
 	""", nativeQuery = true)
-	Slice<Question> findSliceByIdLessThanOrderByLikeCountDesc(Long categoryId, Long questionId, PageRequest pageRequest);
+	Slice<Question> findSliceByIdLessThanOrderByLikeCountDesc(@Param(value = "categoryId") Long categoryId,
+															  @Param(value = "questionId") Long questionId,
+															  PageRequest pageRequest);
 	@Query(value = """
 		SELECT * FROM question
 		WHERE category_id = :categoryId AND status = 'ACTIVE' 
 			AND (view_count <= (SELECT view_count FROM question WHERE id = :questionId) AND id != :questionId)
 		ORDER BY view_count DESC, created_at DESC
 	""", nativeQuery = true)
-	Slice<Question> findSliceByIdLessThanOrderByViewCountDesc(Long categoryId, Long questionId, PageRequest pageRequest);
+	Slice<Question> findSliceByIdLessThanOrderByViewCountDesc(@Param(value = "categoryId") Long categoryId,
+															  @Param(value = "questionId") Long questionId,
+															  PageRequest pageRequest);
 	@Query(value = """
 		SELECT * FROM question
 		WHERE category_id = :categoryId AND status = 'ACTIVE' 
 			AND created_at < (SELECT created_at FROM question WHERE id = :questionId)
 		ORDER BY created_at DESC
 	""", nativeQuery = true)
-	Slice<Question> findSliceByIdLessThanOrderByCreatedAtDesc(Long categoryId, Long questionId, PageRequest pageRequest);
+	Slice<Question> findSliceByIdLessThanOrderByCreatedAtDesc(@Param(value = "categoryId") Long categoryId,
+															  @Param(value = "questionId") Long questionId,
+															  PageRequest pageRequest);
 }

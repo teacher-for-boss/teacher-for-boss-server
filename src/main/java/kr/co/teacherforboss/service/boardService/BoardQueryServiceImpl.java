@@ -180,7 +180,7 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         if (lastCommentId == 0) {
             parentComments = commentRepository.findSliceByPostIdAndParentIdIsNullAndStatusOrderByCreatedAtDesc(postId, pageRequest, Status.ACTIVE);
         } else {
-            parentComments = commentRepository.findSliceByPostIdAndParentIdIsNullIdLessThanAndAndStatusOrderByCreatedAtDesc(postId, lastCommentId, pageRequest);
+            parentComments = commentRepository.findSliceByIdLessThanAndPostIdAndParentIdIsNullOrderByCreatedAtDesc(postId, lastCommentId, pageRequest);
         }
 
         List<Long> parentCommentIds = parentComments.stream().map(BaseEntity::getId).toList();
