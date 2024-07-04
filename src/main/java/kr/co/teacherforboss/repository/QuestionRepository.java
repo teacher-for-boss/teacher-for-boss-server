@@ -26,25 +26,19 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 			AND (like_count <= (SELECT like_count FROM question WHERE id = :questionId) AND id != :questionId)
 		ORDER BY like_count DESC, created_at DESC
 	""", nativeQuery = true)
-	Slice<Question> findSliceByIdLessThanOrderByLikeCountDesc(@Param(value = "categoryId") Long categoryId,
-															  @Param(value = "questionId") Long questionId,
-															  PageRequest pageRequest);
+	Slice<Question> findSliceByIdLessThanOrderByLikeCountDesc(@Param(value = "categoryId") Long categoryId, @Param(value = "questionId") Long questionId, PageRequest pageRequest);
 	@Query(value = """
 		SELECT * FROM question
 		WHERE category_id = :categoryId AND status = 'ACTIVE' 
 			AND (view_count <= (SELECT view_count FROM question WHERE id = :questionId) AND id != :questionId)
 		ORDER BY view_count DESC, created_at DESC
 	""", nativeQuery = true)
-	Slice<Question> findSliceByIdLessThanOrderByViewCountDesc(@Param(value = "categoryId") Long categoryId,
-															  @Param(value = "questionId") Long questionId,
-															  PageRequest pageRequest);
+	Slice<Question> findSliceByIdLessThanOrderByViewCountDesc(@Param(value = "categoryId") Long categoryId, @Param(value = "questionId") Long questionId, PageRequest pageRequest);
 	@Query(value = """
 		SELECT * FROM question
 		WHERE category_id = :categoryId AND status = 'ACTIVE' 
 			AND created_at < (SELECT created_at FROM question WHERE id = :questionId)
 		ORDER BY created_at DESC
 	""", nativeQuery = true)
-	Slice<Question> findSliceByIdLessThanOrderByCreatedAtDesc(@Param(value = "categoryId") Long categoryId,
-															  @Param(value = "questionId") Long questionId,
-															  PageRequest pageRequest);
+	Slice<Question> findSliceByIdLessThanOrderByCreatedAtDesc(@Param(value = "categoryId") Long categoryId, @Param(value = "questionId") Long questionId, PageRequest pageRequest);
 }
