@@ -22,7 +22,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query(value = """
             SELECT * FROM post
             WHERE ((like_count < (SELECT like_count FROM post WHERE id = :postId)
-                OR (like_count = (SELECT like_count FROM post WHERE id = :postId) AND id > :postId)))
+                OR (like_count = (SELECT like_count FROM post WHERE id = :postId) AND id != :postId)))
                 AND status = 'ACTIVE'
             ORDER BY like_count DESC, created_at DESC;
     """, nativeQuery = true)
@@ -31,7 +31,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query(value = """
             SELECT * FROM post
             WHERE ((view_count < (SELECT view_count FROM post WHERE id = :postId)
-                OR (view_count = (SELECT view_count FROM post WHERE id = :postId) AND id > :postId)))
+                OR (view_count = (SELECT view_count FROM post WHERE id = :postId) AND id != :postId)))
                 AND status = 'ACTIVE'
             ORDER BY view_count DESC, created_at DESC;
     """, nativeQuery = true)
@@ -43,5 +43,15 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                 AND status = 'ACTIVE'
             ORDER BY created_at DESC
     """, nativeQuery = true)
-    Slice<Post> findSliceByIdLessThanOrderByCreatedAtDesc(@Param(value = "postId") Long postId, PageRequest pageRequest);
+    Slice<Post> findSliceByIdLessThanOrderByCreatedAtDesc(Long postId, PageRequest pageRequest);
+    Long countAllByTitleLikeOrContentLikeAndStatus(String titleKeyword, String contentKeyword, Status status);
+    Slice<Post> findSliceByTitleContainingOrContentContainingAndStatusOrderByCreatedAtDesc(String titleKeyword, String contentKeyword, Status status, PageRequest pageRequest);
+    @Query(value = """
+            SELECT * FROM post 
+            WHERE (title LIKE CONCAT('%', :keyword, '%') OR content LIKE CONCAT('%', :keyword, '%'))
+                AND created_at < (SELECT created_at FROM post WHERE id = :postId) 
+                AND status = 'ACTIVE'
+            ORDER BY created_at DESC
+    """, nativeQuery = true)
+    Slice<Post> findSliceByIdLessThanAndKeywordOrderByCreatedAtDesc(String keyword, Long postId, PageRequest pageRequest);
 }

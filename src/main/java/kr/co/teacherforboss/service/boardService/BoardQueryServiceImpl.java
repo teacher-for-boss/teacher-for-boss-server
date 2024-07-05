@@ -195,8 +195,8 @@ public class BoardQueryServiceImpl implements BoardQueryService {
 
         return BoardConverter.toGetCommentsDTO(parentComments, childComments, commentLikes, teacherInfos);
     }
- 
-  
+
+
   @Override
   @Transactional(readOnly = true)
     public BoardResponseDTO.GetQuestionsDTO getQuestions(Long lastQuestionId, int size, String sortBy, String category) {
@@ -232,5 +232,32 @@ public class BoardQueryServiceImpl implements BoardQueryService {
                 .collect(Collectors.toMap(answer -> answer.getQuestion().getId(), answer -> answer));
 
         return BoardConverter.toGetQuestionsDTO(questionsPage, questionLikeMap, questionBookmarkMap, selectedAnswerMap);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public BoardResponseDTO.GetPostsDTO searchPosts(String keyword, Long lastPostId, int size) {
+        Member member = authCommandService.getMember();
+
+        PageRequest pageRequest = PageRequest.of(0, size);
+        Slice<Post> posts;
+
+        posts = lastPostId == 0 ?
+                postRepository.findSliceByTitleContainingOrContentContainingAndStatusOrderByCreatedAtDesc(keyword, keyword, Status.ACTIVE, pageRequest)
+                : postRepository.findSliceByIdLessThanAndKeywordOrderByCreatedAtDesc(keyword, lastPostId, pageRequest);
+
+        List<PostLike> postLikes = postLikeRepository.findByPostInAndMemberIdAndStatus(posts.getContent(),
+                member.getId(), Status.ACTIVE);
+        List<PostBookmark> postBookmarks = postBookmarkRepository.findByPostInAndMemberIdAndStatus(posts.getContent(),
+                member.getId(), Status.ACTIVE);
+
+        Map<Long, Boolean> postLikeMap = postLikes.stream()
+                .collect(Collectors.toMap(like -> like.getPost().getId(), like -> like.getLiked().isIdentifier()));
+        Map<Long, Boolean> postBookmarkMap = postBookmarks.stream()
+                .collect(Collectors.toMap(bookmark -> bookmark.getPost().getId(), bookmark -> bookmark.getBookmarked().isIdentifier()));
+
+        // TODO : 좋아요 수, 북마크 수, 조회수 동시성 제어
+
+        return BoardConverter.toGetPostsDTO(posts, postLikeMap, postBookmarkMap);
     }
 }
