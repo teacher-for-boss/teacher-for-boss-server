@@ -40,6 +40,15 @@ public class BoardResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class EditPostDTO {
+        Long postId;
+        LocalDateTime updatedAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class SaveQuestionDTO {
         Long questionId;
         LocalDateTime createdAt;

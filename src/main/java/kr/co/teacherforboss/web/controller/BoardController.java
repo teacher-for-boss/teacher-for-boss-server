@@ -62,10 +62,10 @@ public class BoardController {
     }
 
     @PatchMapping("/boss/posts/{postId}")
-    public ApiResponse<BoardResponseDTO.SavePostDTO> editPost(@PathVariable("postId") Long postId,
+    public ApiResponse<BoardResponseDTO.EditPostDTO> editPost(@PathVariable("postId") Long postId,
                                                               @RequestBody @Valid BoardRequestDTO.SavePostDTO request) {
         Post post = boardCommandService.editPost(postId, request);
-        return ApiResponse.onSuccess(BoardConverter.toSavePostDTO(post));
+        return ApiResponse.onSuccess(BoardConverter.toEditPostDTO(post));
     }
 
     @PostMapping("/teacher/questions")

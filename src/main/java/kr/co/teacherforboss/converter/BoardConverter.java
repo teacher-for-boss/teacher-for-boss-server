@@ -53,6 +53,13 @@ public class BoardConverter {
                 .build();
     }
 
+    public static BoardResponseDTO.EditPostDTO toEditPostDTO(Post post) {
+        return BoardResponseDTO.EditPostDTO.builder()
+                .postId(post.getId())
+                .updatedAt(post.getUpdatedAt())
+                .build();
+    }
+
     public static BoardResponseDTO.MemberInfo toMemberInfo(Member member) {
         return BoardResponseDTO.MemberInfo.builder()
                 .memberId(member.getId())
