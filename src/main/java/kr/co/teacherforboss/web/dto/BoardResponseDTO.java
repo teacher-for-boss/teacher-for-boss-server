@@ -101,6 +101,30 @@ public class BoardResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class GetCommentsDTO {
+        boolean hasNext;
+        List<CommentInfo> commentList;
+
+        @Builder
+        @Getter
+        @AllArgsConstructor
+        public static class CommentInfo {
+            Long commentId;
+            String content;
+            int likeCount;
+            int dislikeCount;
+            boolean liked;
+            boolean disliked;
+            LocalDateTime createdAt;
+            MemberInfo memberInfo;
+            List<CommentInfo> children;
+        }
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class MemberInfo {
         Long memberId;
         String name;

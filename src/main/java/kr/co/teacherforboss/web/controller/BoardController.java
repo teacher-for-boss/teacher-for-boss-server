@@ -1,5 +1,9 @@
 package kr.co.teacherforboss.web.controller;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import kr.co.teacherforboss.domain.AnswerLike;
+import kr.co.teacherforboss.domain.CommentLike;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,9 +19,7 @@ import jakarta.validation.Valid;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.converter.BoardConverter;
 import kr.co.teacherforboss.domain.Answer;
-import kr.co.teacherforboss.domain.AnswerLike;
 import kr.co.teacherforboss.domain.Comment;
-import kr.co.teacherforboss.domain.CommentLike;
 import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostLike;
@@ -143,9 +145,16 @@ public class BoardController {
 
     @GetMapping("/teacher/questions/{questionId}/answers")
     public ApiResponse<BoardResponseDTO.GetAnswersDTO> getAnswers(@PathVariable("questionId") Long questionId,
-                                                                  @RequestParam(defaultValue = "0") Long lastAnswerId,
-                                                                  @RequestParam(defaultValue = "10") int size) {
+                                                                  @RequestParam(name = "lastAnswerId", defaultValue = "0") Long lastAnswerId,
+                                                                  @RequestParam(name = "size", defaultValue = "10") int size) {
         return ApiResponse.onSuccess(boardQueryService.getAnswers(questionId, lastAnswerId, size));
+    }
+
+    @GetMapping("/boss/posts/{postId}/comments")
+    public ApiResponse<BoardResponseDTO.GetCommentsDTO> getComments(@PathVariable("postId") Long postId,
+                                                                    @RequestParam(name = "lastCommentId", defaultValue = "0") Long lastCommentId,
+                                                                    @RequestParam(name = "size", defaultValue = "10") int size) {
+        return ApiResponse.onSuccess(boardQueryService.getComments(postId, lastCommentId, size));
     }
 
     @PostMapping("/boss/posts/{postId}/comments")
@@ -154,6 +163,7 @@ public class BoardController {
         Comment comment = boardCommandService.saveComment(postId, request);
         return ApiResponse.onSuccess(BoardConverter.toSaveCommentDTO(comment));
     }
+
     @PostMapping("/teacher/questions/{questionId}/answers/{answerId}/likes")
     public ApiResponse<BoardResponseDTO.ToggleAnswerLikeDTO> toggleAnswerLike(@PathVariable("questionId") Long questionId,
                                                                        @PathVariable("answerId") Long answerId) {
@@ -194,5 +204,12 @@ public class BoardController {
                                                                             @RequestParam(defaultValue = "latest") String sortBy,
                                                                             @RequestParam(defaultValue = "전체") String category) {
         return ApiResponse.onSuccess(boardQueryService.getQuestions(lastQuestionId, size, sortBy, category));
+    }
+
+    @GetMapping("/boss/posts/search")
+    public ApiResponse<BoardResponseDTO.GetPostsDTO> searchPosts(@RequestParam @Size(max = 30, message = "키워드는 최대 30자 입력 가능합니다.") @NotNull String keyword,
+                                                              @RequestParam(defaultValue = "0") Long lastPostId,
+                                                              @RequestParam(defaultValue = "10") int size){
+        return ApiResponse.onSuccess(boardQueryService.searchPosts(keyword, lastPostId, size));
     }
 }
