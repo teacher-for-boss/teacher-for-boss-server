@@ -209,8 +209,7 @@ public class BoardController {
     @GetMapping("/boss/posts/search")
     public ApiResponse<BoardResponseDTO.GetPostsDTO> searchPosts(@RequestParam @Size(max = 30, message = "키워드는 최대 30자 입력 가능합니다.") @NotNull String keyword,
                                                               @RequestParam(defaultValue = "0") Long lastPostId,
-                                                              @RequestParam(defaultValue = "10") int size,
-                                                              @RequestParam(defaultValue = "latest") String sortBy){
-        return ApiResponse.onSuccess(boardQueryService.searchPosts(keyword, lastPostId, size, sortBy));
+                                                              @RequestParam(defaultValue = "10") int size){
+        return ApiResponse.onSuccess(boardQueryService.searchPosts(keyword, lastPostId, size));
     }
 }

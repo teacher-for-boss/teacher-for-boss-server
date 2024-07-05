@@ -236,7 +236,7 @@ public class BoardQueryServiceImpl implements BoardQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public BoardResponseDTO.GetPostsDTO searchPosts(String keyword, Long lastPostId, int size, String sortBy) {
+    public BoardResponseDTO.GetPostsDTO searchPosts(String keyword, Long lastPostId, int size) {
         Member member = authCommandService.getMember();
 
         PageRequest pageRequest = PageRequest.of(0, size);
