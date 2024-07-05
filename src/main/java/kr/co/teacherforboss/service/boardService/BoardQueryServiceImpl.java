@@ -76,12 +76,9 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         if (postBookmark != null) {
             bookmarked = postBookmark.getBookmarked().isIdentifier();
         }
-        if (!post.getHashtags().isEmpty()) {
-            hashtagList = BoardConverter.toPostHashtags(post);
-        }
 
         postRepository.save(post);
-        return BoardConverter.toGetPostDTO(post, hashtagList, liked, bookmarked, isMine);
+        return BoardConverter.toGetPostDTO(post, liked, bookmarked, isMine);
     }
 
     @Override

@@ -39,12 +39,12 @@ public class BoardConverter {
                 .build();
     }
 
-    public static BoardResponseDTO.GetPostDTO toGetPostDTO(Post post, List<String> hashtags, boolean liked, boolean bookmarked, boolean isMine) {
+    public static BoardResponseDTO.GetPostDTO toGetPostDTO(Post post, boolean liked, boolean bookmarked, boolean isMine) {
         return BoardResponseDTO.GetPostDTO.builder()
                 .title(post.getTitle())
                 .content(post.getContent())
                 .imageUrlList(toImageUrlList(ImageOrigin.POST.getValue(), post.getImageUuid(), post.getImageIndex()))
-                .hashtagList(hashtags)
+                .hashtagList(toPostHashtags(post))
                 .likeCount(post.getLikeCount())
                 .memberInfo(toMemberInfo(post.getMember()))
                 .bookmarkCount(post.getBookmarkCount())
