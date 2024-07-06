@@ -132,7 +132,7 @@ public class BoardController {
                                                                             @RequestParam(defaultValue = "전체") String category) {
         return ApiResponse.onSuccess(boardQueryService.getQuestionList(lastQuestionId, size, sortBy, category));
     }
-    @GetMapping("/teacher/search")
+    @GetMapping("/teacher/questions/search")
     public ApiResponse<BoardResponseDTO.SearchQuestionDTO> searchQuestion(@RequestParam String keyword,
                                                                           @RequestParam(defaultValue = "0") Long lastQuestionId,
                                                                           @RequestParam(defaultValue = "10") int size) {
