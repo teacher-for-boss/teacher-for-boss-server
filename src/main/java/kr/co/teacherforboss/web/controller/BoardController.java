@@ -125,7 +125,7 @@ public class BoardController {
         return ApiResponse.onSuccess(BoardConverter.toEditAnswerDTO(answer));
     }
 
-    @PostMapping("/teacher/questions/{questionId}/answers/{answerId}")
+    @DeleteMapping("/teacher/questions/{questionId}/answers/{answerId}")
     public ApiResponse<BoardResponseDTO.DeleteAnswerDTO> deleteAnswer(@PathVariable("questionId") Long questionId,
                                                                       @PathVariable("answerId") Long answerId) {
         Answer answer = boardCommandService.deleteAnswer(questionId, answerId);
