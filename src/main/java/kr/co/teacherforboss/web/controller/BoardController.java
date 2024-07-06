@@ -1,9 +1,5 @@
 package kr.co.teacherforboss.web.controller;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import kr.co.teacherforboss.domain.AnswerLike;
-import kr.co.teacherforboss.domain.CommentLike;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,10 +12,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.converter.BoardConverter;
 import kr.co.teacherforboss.domain.Answer;
+import kr.co.teacherforboss.domain.AnswerLike;
 import kr.co.teacherforboss.domain.Comment;
+import kr.co.teacherforboss.domain.CommentLike;
 import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostLike;
@@ -213,9 +213,9 @@ public class BoardController {
         return ApiResponse.onSuccess(boardQueryService.searchPosts(keyword, lastPostId, size));
     }
     @GetMapping("/teacher/questions/search")
-    public ApiResponse<BoardResponseDTO.SearchQuestionDTO> searchQuestion(@RequestParam String keyword,
+    public ApiResponse<BoardResponseDTO.GetQuestionsDTO> searchQuestions(@RequestParam String keyword,
                                                                           @RequestParam(defaultValue = "0") Long lastQuestionId,
                                                                           @RequestParam(defaultValue = "10") int size) {
-        return ApiResponse.onSuccess(boardQueryService.searchQuestion(keyword, lastQuestionId, size));
+        return ApiResponse.onSuccess(boardQueryService.searchQuestions(keyword, lastQuestionId, size));
     }
 }

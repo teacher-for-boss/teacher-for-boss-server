@@ -5,7 +5,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.springframework.data.domain.Slice;
+
 import kr.co.teacherforboss.config.S3Config;
 import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.AnswerLike;
@@ -498,53 +500,14 @@ public class BoardConverter {
             Answer selectedAnswer = selectedAnswerMap.getOrDefault(question.getId(), null);
             QuestionLike questionLike = questionLikeMap.get(question.getId());
             QuestionBookmark questionBookmark = questionBookmarkMap.get(question.getId());
-            boolean liked = (questionLike == null) ? false : questionLike.getLiked().isIdentifier();
-            boolean bookmarked = (questionBookmark == null) ? false : questionBookmark.getBookmarked().isIdentifier();
+            boolean liked = questionLike != null && questionLike.getLiked().isIdentifier();
+            boolean bookmarked = questionBookmark != null && questionBookmark.getBookmarked().isIdentifier();
             Integer answerCount = question.getAnswerList().size();
             questionInfos.add(BoardConverter.toGetQuestionInfo(question, selectedAnswer, liked, bookmarked, answerCount));
         });
 
         return BoardResponseDTO.GetQuestionsDTO.builder()
                 .hasNext(questionsPage.hasNext())
-                .questionList(questionInfos)
-                .build();
-    }
-
-    public static BoardResponseDTO.SearchQuestionDTO.QuestionInfo toSearchQuestionInfo(Question question, Answer selectedTeacher, boolean liked, boolean bookmarked, Integer answerCount) {
-        if (selectedTeacher == null) {
-            return new BoardResponseDTO.SearchQuestionDTO.QuestionInfo(
-                    question.getId(),
-                    question.getTitle(),
-                    question.getContent(),
-                    question.getSolved().isIdentifier(),
-                    null,
-                    question.getBookmarkCount(),
-                    answerCount,
-                    question.getLikeCount(),
-                    liked,
-                    bookmarked,
-                    question.getCreatedAt()
-            );
-        } else {
-            return new BoardResponseDTO.SearchQuestionDTO.QuestionInfo(
-                    question.getId(),
-                    question.getTitle(),
-                    question.getContent(),
-                    question.getSolved().isIdentifier(),
-                    selectedTeacher.getImageUuid(),
-                    question.getBookmarkCount(),
-                    answerCount,
-                    question.getLikeCount(),
-                    liked,
-                    bookmarked,
-                    question.getCreatedAt()
-            );
-        }
-    }
-
-    public static BoardResponseDTO.SearchQuestionDTO toSearchQuestionDTO(Integer questionsCount, List<BoardResponseDTO.SearchQuestionDTO.QuestionInfo> questionInfos) {
-        return BoardResponseDTO.SearchQuestionDTO.builder()
-                .totalCount(questionsCount)
                 .questionList(questionInfos)
                 .build();
     }

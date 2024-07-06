@@ -1,6 +1,5 @@
 package kr.co.teacherforboss.service.boardService;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -261,39 +260,28 @@ public class BoardQueryServiceImpl implements BoardQueryService {
     }
 
     @Override
-    public BoardResponseDTO.SearchQuestionDTO searchQuestion(String keyword, Long lastQuestionId, int size) {
+    public BoardResponseDTO.GetQuestionsDTO searchQuestions(String keyword, Long lastQuestionId, int size) {
         Member member = authCommandService.getMember();
         PageRequest pageRequest = PageRequest.of(0, size);
-        Integer totalCount = questionRepository.countAllByTitleContainingAndStatus(keyword, Status.ACTIVE);
         Slice<Question> questionsPage;
 
         if (lastQuestionId == 0) {
             questionsPage = questionRepository.findSliceByTitleContainingOrderByCreatedAtDesc(keyword, pageRequest);
         } else {
-            questionsPage = questionRepository.findSliceByTitleContainingOrderByCreatedAtDescWithLastQuestionId(keyword, lastQuestionId, pageRequest);
+            questionsPage = questionRepository.findSliceByIdLessThanTitleContainingOrderByCreatedAtDesc(keyword, lastQuestionId, pageRequest);
         }
 
-        List<BoardResponseDTO.SearchQuestionDTO.QuestionInfo> questionInfos = new ArrayList<>();
-
-        List<QuestionLike> questionLikes = questionLikeRepository.findByQuestionInAndStatus(questionsPage.getContent(), Status.ACTIVE);
-        List<QuestionBookmark> questionBookmarks = questionBookmarkRepository.findByQuestionInAndStatus(questionsPage.getContent(), Status.ACTIVE);
+        List<QuestionLike> questionLikes = questionLikeRepository.findByQuestionInAndMemberIdAndStatus(questionsPage.getContent(), member.getId(), Status.ACTIVE);
+        List<QuestionBookmark> questionBookmarks = questionBookmarkRepository.findByQuestionInAndMemberIdAndStatus(questionsPage.getContent(), member.getId(), Status.ACTIVE);
+        List<Answer> selectedAnswers = answerRepository.findByQuestionInAndSelected(questionsPage.getContent(), BooleanType.T);
 
         Map<Long, QuestionLike> questionLikeMap = questionLikes.stream()
                 .collect(Collectors.toMap(like -> like.getQuestion().getId(), like -> like));
         Map<Long, QuestionBookmark> questionBookmarkMap = questionBookmarks.stream()
                 .collect(Collectors.toMap(bookmark -> bookmark.getQuestion().getId(), bookmark -> bookmark));
+        Map<Long, Answer> selectedAnswerMap = selectedAnswers.stream()
+                .collect(Collectors.toMap(answer -> answer.getQuestion().getId(), answer -> answer));
 
-        questionsPage.getContent().forEach(question -> {
-            Answer selectedTeacher = answerRepository.findByQuestionIdAndSelected(question.getId(), BooleanType.T)
-                    .orElse(null);
-            QuestionLike questionLike = questionLikeMap.get(question.getId());
-            QuestionBookmark questionBookmark = questionBookmarkMap.get(question.getId());
-            boolean liked = (questionLike == null) ? false : questionLike.getLiked().isIdentifier();
-            boolean bookmarked = (questionBookmark == null) ? false : questionBookmark.getBookmarked().isIdentifier();
-            Integer answerCount = question.getAnswerList().size();
-            questionInfos.add(BoardConverter.toSearchQuestionInfo(question, selectedTeacher, liked, bookmarked, answerCount));
-        });
-
-        return BoardConverter.toSearchQuestionDTO(totalCount, questionInfos);
+        return BoardConverter.toGetQuestionsDTO(questionsPage, questionLikeMap, questionBookmarkMap, selectedAnswerMap);
     }
 }

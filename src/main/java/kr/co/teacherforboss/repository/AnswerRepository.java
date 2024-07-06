@@ -28,8 +28,6 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
 		WHERE a.question_id = :questionId
 	""", nativeQuery = true)
 	void softDeleteAnswersByQuestionId(@Param(value = "questionId") Long questionId);
-    List<Answer> findAllByQuestionIdAndStatusOrderByCreatedAt(Long questionId, Status status);
-
 	Slice<Answer> findSliceByStatusOrderByCreatedAtDesc(Status status, Pageable pageable);
 	@Query(value = """
 		SELECT * FROM answer
@@ -38,7 +36,5 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
 		ORDER BY created_at DESC
 	""", nativeQuery = true)
 	Slice<Answer> findSliceByIdLessThanAndStatusOrderByCreatedAtDesc(@Param(value = "lastAnswerId") Long lastAnswerId, Pageable pageable);
-	Optional<Answer> findByQuestionIdAndSelectedAndStatus(Long questionId, BooleanType selected, Status status);
 	List<Answer> findByQuestionInAndSelected(List<Question> content, BooleanType booleanType);
-	Optional<Answer> findByQuestionIdAndSelected(Long quesionId, BooleanType selected);
 }
