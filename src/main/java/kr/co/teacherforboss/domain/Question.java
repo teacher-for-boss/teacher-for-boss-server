@@ -1,8 +1,10 @@
 package kr.co.teacherforboss.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLRestriction;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -22,10 +24,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.SQLRestriction;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Getter
@@ -79,16 +77,29 @@ public class Question extends BaseEntity {
 
     @OneToMany(mappedBy = "question")
     @SQLRestriction(value = "status = 'ACTIVE'")
-    private List<QuestionHashtag> hashtagList;
+    @Builder.Default
+    private List<QuestionHashtag> hashtagList = new ArrayList<>();
 
     @OneToMany(mappedBy = "question")
-    private List<Answer> answerList;
+    @SQLRestriction(value = "status = 'ACTIVE'")
+    @Builder.Default
+    private List<Answer> answerList = new ArrayList<>();
 
     public Question editQuestion(Category category, String title, String content, List<String> imageIndex) {
         this.category = category;
         this.title = title;
         this.content = content;
         this.imageIndex = imageIndex;
+        return this;
+    }
+
+    public void selectAnswer(Answer answer) {
+        this.solved = BooleanType.T;
+        answer.select();
+    }
+
+    public Question increaseViewCount() {
+        this.viewCount += 1;
         return this;
     }
 }

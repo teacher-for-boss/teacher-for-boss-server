@@ -13,6 +13,6 @@ import kr.co.teacherforboss.domain.enums.Status;
 @Repository
 public interface QuestionLikeRepository extends JpaRepository<QuestionLike, Long> {
 	Optional<QuestionLike> findByQuestionIdAndMemberIdAndStatus(Long questionId, Long memberId, Status status);
-
+	List<QuestionLike> findByQuestionInAndMemberIdAndStatus(List<Question> questions, Long memberId, Status status);
 	List<QuestionLike> findByQuestionInAndStatus(List<Question> questions, Status status);
 }

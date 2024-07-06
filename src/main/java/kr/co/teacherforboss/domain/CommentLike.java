@@ -13,54 +13,58 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class AnswerLike extends BaseEntity {
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "answerId")
-    private Answer answer;
+public class CommentLike extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memberId")
     private Member member;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "commentId")
+    private Comment comment;
+
     @Enumerated(EnumType.STRING)
+    @ColumnDefault("'F'")
     private BooleanType liked;
 
+
     public void toggleLiked() {
-        if (this.liked == null) { // null -> T
+        if (this.liked == null) {
             this.liked = BooleanType.T;
-            this.answer.increaseLikeCount();
+            this.comment.increaseLikeCount();
         }
-        else if (this.liked.equals(BooleanType.F)) { // F -> T
+        else if (this.liked.equals(BooleanType.F)) {
             this.liked = BooleanType.T;
-            this.answer.increaseLikeCount();
-            this.answer.decreaseDislikeCount();
+            this.comment.increaseLikeCount();
+            this.comment.decreaseDislikeCount();
         }
-        else { // T -> null
+        else {
             this.liked = null;
-            this.answer.decreaseLikeCount();
+            this.comment.decreaseLikeCount();
         }
     }
 
     public void toggleDisliked() {
-        if (this.liked == null) { // null -> F
+        if (this.liked == null) {
             this.liked = BooleanType.F;
-            this.answer.increaseDislikeCount();
+            this.comment.increaseDislikeCount();
 
         }
-        else if (this.liked.equals(BooleanType.T)) { // T -> F
+        else if (this.liked.equals(BooleanType.T)) {
             this.liked = BooleanType.F;
-            this.answer.increaseDislikeCount();
-            this.answer.decreaseLikeCount();
+            this.comment.increaseDislikeCount();
+            this.comment.decreaseLikeCount();
         }
-        else { // F -> null
+        else {
             this.liked = null;
-            this.answer.decreaseDislikeCount();
+            this.comment.decreaseDislikeCount();
         }
     }
 }

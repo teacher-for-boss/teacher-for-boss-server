@@ -13,6 +13,6 @@ import kr.co.teacherforboss.domain.enums.Status;
 @Repository
 public interface QuestionBookmarkRepository extends JpaRepository<QuestionBookmark, Long> {
 	Optional<QuestionBookmark> findByQuestionIdAndMemberIdAndStatus(Long questionId, Long memberId, Status status);
-
+	List<QuestionBookmark> findByQuestionInAndMemberIdAndStatus(List<Question> questions, Long memberId, Status status);
 	List<QuestionBookmark> findByQuestionInAndStatus(List<Question> questions, Status status);
 }
