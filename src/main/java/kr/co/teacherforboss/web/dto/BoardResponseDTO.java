@@ -316,4 +316,13 @@ public class BoardResponseDTO {
             LocalDateTime createdAt;
         }
 	}
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DeleteCommentDTO {
+        Long commentId;
+        LocalDateTime deletedAt;
+    }
 }

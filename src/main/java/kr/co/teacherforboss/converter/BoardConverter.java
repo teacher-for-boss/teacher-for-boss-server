@@ -513,4 +513,11 @@ public class BoardConverter {
                 .questionList(questionInfos)
                 .build();
     }
+
+    public static BoardResponseDTO.DeleteCommentDTO toDeleteCommentDTO(Comment comment) {
+        return BoardResponseDTO.DeleteCommentDTO.builder()
+                .commentId(comment.getId())
+                .deletedAt(comment.getUpdatedAt())
+                .build();
+    }
 }

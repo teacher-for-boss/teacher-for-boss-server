@@ -354,4 +354,15 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         question.selectAnswer(answer);
         return answer;
     }
+
+    @Override
+    @Transactional
+    public Comment deleteComment(Long postId, Long commentId) {
+        Member member = authCommandService.getMember();
+        Comment commentToDelete = commentRepository.findByIdAndPostIdAndMemberIdAndStatus(commentId, postId, member.getId(), Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.COMMENT_NOT_FOUND));
+
+        commentToDelete.softDelete();
+        return commentToDelete;
+    }
 }
