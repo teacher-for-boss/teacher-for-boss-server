@@ -128,7 +128,6 @@ public class BoardResponseDTO {
             boolean disliked;
             LocalDateTime createdAt;
             MemberInfo memberInfo;
-            Boolean isMine;
             List<CommentInfo> children;
         }
     }

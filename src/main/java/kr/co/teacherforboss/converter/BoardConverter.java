@@ -362,8 +362,7 @@ public class BoardConverter {
                                                                    Slice<Comment> parentComments,
                                                                    List<Comment> childComments,
                                                                    List<CommentLike> commentLikes,
-                                                                   List<TeacherInfo> teacherInfos,
-                                                                   Member member) {
+                                                                   List<TeacherInfo> teacherInfos) {
         HashMap<Long, BooleanType> commentLikedMap = new HashMap<>();
         commentLikes.forEach(commentLike -> commentLikedMap.put(commentLike.getComment().getId(), commentLike.getLiked()));
 
@@ -400,8 +399,6 @@ public class BoardConverter {
                                                                              Comment comment,
                                                                              Map<Long, TeacherInfo> teacherInfoMap,
                                                                              Map<Long, BooleanType> commentLikedMap) {
-                                                                             Map<Long, BooleanType> commentLikedMap,
-                                                                             Member member) {
         TeacherInfo teacherInfo = teacherInfoMap.get(comment.getMember().getId());
         BoardResponseDTO.MemberInfo memberInfo = BoardConverter.toMemberInfo(comment.getMember(), teacherInfo);
 
