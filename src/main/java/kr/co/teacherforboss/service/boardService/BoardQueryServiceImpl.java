@@ -148,10 +148,10 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         Slice<Answer> answers;
 
         if (lastAnswerId == 0) {
-            answers = answerRepository.findSliceByStatusOrderByCreatedAtDesc(Status.ACTIVE, pageRequest);
+            answers = answerRepository.findSliceByQuestionIdAndStatusOrderByCreatedAtDesc(questionId, Status.ACTIVE, pageRequest);
         }
         else {
-            answers = answerRepository.findSliceByIdLessThanAndStatusOrderByCreatedAtDesc(lastAnswerId, pageRequest);
+            answers = answerRepository.findSliceByIdLessThanAndQuestionIdAndStatusOrderByCreatedAtDesc(lastAnswerId, questionId, pageRequest);
         }
 
 
