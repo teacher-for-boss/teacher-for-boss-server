@@ -118,6 +118,7 @@ public class BoardResponseDTO {
         @Getter
         @AllArgsConstructor
         public static class CommentInfo {
+            boolean isMine;
             Long commentId;
             String content;
             int likeCount;

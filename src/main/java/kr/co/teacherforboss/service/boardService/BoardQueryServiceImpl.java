@@ -171,6 +171,8 @@ public class BoardQueryServiceImpl implements BoardQueryService {
             throw new BoardHandler(ErrorStatus.POST_NOT_FOUND);
         }
 
+        Member member = authCommandService.getMember();
+
         PageRequest pageRequest = PageRequest.of(0, size);
         Slice<Comment> parentComments;
 
@@ -190,7 +192,7 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         List<CommentLike> commentLikes = commentLikeRepository.findAllByCommentIdInAndStatus(allCommentIds, Status.ACTIVE);
         List<TeacherInfo> teacherInfos = teacherInfoRepository.findAllByMemberIdInAndStatus(memberIds, Status.ACTIVE);
 
-        return BoardConverter.toGetCommentsDTO(parentComments, childComments, commentLikes, teacherInfos);
+        return BoardConverter.toGetCommentsDTO(member, parentComments, childComments, commentLikes, teacherInfos);
     }
 
 

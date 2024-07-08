@@ -357,7 +357,8 @@ public class BoardConverter {
                 .build();
     }
 
-    public static BoardResponseDTO.GetCommentsDTO toGetCommentsDTO(Slice<Comment> parentComments,
+    public static BoardResponseDTO.GetCommentsDTO toGetCommentsDTO(Member member,
+                                                                   Slice<Comment> parentComments,
                                                                    List<Comment> childComments,
                                                                    List<CommentLike> commentLikes,
                                                                    List<TeacherInfo> teacherInfos) {
@@ -372,13 +373,13 @@ public class BoardConverter {
         List<BoardResponseDTO.GetCommentsDTO.CommentInfo> totalComments = new ArrayList<>();
 
         parentComments.forEach(comment -> {
-            BoardResponseDTO.GetCommentsDTO.CommentInfo commentInfo = toCommentInfo(comment, teacherInfoMap, commentLikedMap);
+            BoardResponseDTO.GetCommentsDTO.CommentInfo commentInfo = toCommentInfo(member, comment, teacherInfoMap, commentLikedMap);
             parentCommentMap.put(comment.getId(), commentInfo);
             totalComments.add(commentInfo);
         });
 
         childComments.forEach(comment -> {
-            BoardResponseDTO.GetCommentsDTO.CommentInfo commentInfo = toCommentInfo(comment, teacherInfoMap, commentLikedMap);
+            BoardResponseDTO.GetCommentsDTO.CommentInfo commentInfo = toCommentInfo(member, comment, teacherInfoMap, commentLikedMap);
             childCommentMap.put(comment.getId(), commentInfo);
 
             BoardResponseDTO.GetCommentsDTO.CommentInfo parentCommentInfo = parentCommentMap.get(comment.getParent().getId());
@@ -393,14 +394,15 @@ public class BoardConverter {
                 .build();
     }
 
-    public static BoardResponseDTO.GetCommentsDTO.CommentInfo toCommentInfo (Comment comment,
+    public static BoardResponseDTO.GetCommentsDTO.CommentInfo toCommentInfo (Member member,
+                                                                             Comment comment,
                                                                              Map<Long, TeacherInfo> teacherInfoMap,
                                                                              Map<Long, BooleanType> commentLikedMap) {
-
         TeacherInfo teacherInfo = teacherInfoMap.get(comment.getMember().getId());
         BoardResponseDTO.MemberInfo memberInfo = BoardConverter.toMemberInfo(comment.getMember(), teacherInfo);
 
         return BoardResponseDTO.GetCommentsDTO.CommentInfo.builder()
+                .isMine(comment.getMember().getId() == member.getId())
                 .commentId(comment.getId())
                 .content(comment.getContent())
                 .likeCount(comment.getLikeCount())
