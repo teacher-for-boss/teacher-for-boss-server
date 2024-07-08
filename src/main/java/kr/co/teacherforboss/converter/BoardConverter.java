@@ -329,7 +329,7 @@ public class BoardConverter {
     }
 
     public static BoardResponseDTO.GetAnswersDTO toGetAnswersDTO(Slice<Answer> answers, List<AnswerLike> answerLikes,
-                                                                 List<TeacherInfo> teacherInfos) {
+                                                                 List<TeacherInfo> teacherInfos, Member member) {
         HashMap<Long, BooleanType> answerLiked = new HashMap<>();
         answerLikes.forEach(answerLike -> answerLiked.put(answerLike.getAnswer().getId(), answerLike.getLiked()));
 
@@ -348,6 +348,7 @@ public class BoardConverter {
                         .createdAt(answer.getCreatedAt())
                         .memberInfo(toMemberInfo(answer.getMember(), teacherInfoMap.get(answer.getMember().getId())))
                         .imageUrlList(toImageUrlList(ImageOrigin.ANSWER.getValue(), answer.getImageUuid(), answer.getImageIndex()))
+                        .isMine(answer.getMember().equals(member))
                         .build())
                 .toList();
 
@@ -360,7 +361,8 @@ public class BoardConverter {
     public static BoardResponseDTO.GetCommentsDTO toGetCommentsDTO(Slice<Comment> parentComments,
                                                                    List<Comment> childComments,
                                                                    List<CommentLike> commentLikes,
-                                                                   List<TeacherInfo> teacherInfos) {
+                                                                   List<TeacherInfo> teacherInfos,
+                                                                   Member member) {
         HashMap<Long, BooleanType> commentLikedMap = new HashMap<>();
         commentLikes.forEach(commentLike -> commentLikedMap.put(commentLike.getComment().getId(), commentLike.getLiked()));
 
@@ -372,13 +374,13 @@ public class BoardConverter {
         List<BoardResponseDTO.GetCommentsDTO.CommentInfo> totalComments = new ArrayList<>();
 
         parentComments.forEach(comment -> {
-            BoardResponseDTO.GetCommentsDTO.CommentInfo commentInfo = toCommentInfo(comment, teacherInfoMap, commentLikedMap);
+            BoardResponseDTO.GetCommentsDTO.CommentInfo commentInfo = toCommentInfo(comment, teacherInfoMap, commentLikedMap, member);
             parentCommentMap.put(comment.getId(), commentInfo);
             totalComments.add(commentInfo);
         });
 
         childComments.forEach(comment -> {
-            BoardResponseDTO.GetCommentsDTO.CommentInfo commentInfo = toCommentInfo(comment, teacherInfoMap, commentLikedMap);
+            BoardResponseDTO.GetCommentsDTO.CommentInfo commentInfo = toCommentInfo(comment, teacherInfoMap, commentLikedMap, member);
             childCommentMap.put(comment.getId(), commentInfo);
 
             BoardResponseDTO.GetCommentsDTO.CommentInfo parentCommentInfo = parentCommentMap.get(comment.getParent().getId());
@@ -395,7 +397,8 @@ public class BoardConverter {
 
     public static BoardResponseDTO.GetCommentsDTO.CommentInfo toCommentInfo (Comment comment,
                                                                              Map<Long, TeacherInfo> teacherInfoMap,
-                                                                             Map<Long, BooleanType> commentLikedMap) {
+                                                                             Map<Long, BooleanType> commentLikedMap,
+                                                                             Member member) {
 
         TeacherInfo teacherInfo = teacherInfoMap.get(comment.getMember().getId());
         BoardResponseDTO.MemberInfo memberInfo = BoardConverter.toMemberInfo(comment.getMember(), teacherInfo);
@@ -409,6 +412,7 @@ public class BoardConverter {
                 .disliked(commentLikedMap.get(comment.getId()) == BooleanType.F)
                 .createdAt(comment.getCreatedAt())
                 .memberInfo(memberInfo)
+                .isMine(comment.getMember().equals(member))
                 .children(new ArrayList<>())
                 .build();
     }
