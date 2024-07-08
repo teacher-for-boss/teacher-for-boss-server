@@ -51,7 +51,13 @@ public class JwtTokenProvider {
         String refreshToken = generateToken(claims, REFRESH_TOKEN_EXPIRE_TIME);
 
         tokenManager.addRefreshToken(email, refreshToken);
-        return new AuthResponseDTO.TokenResponseDTO(email, name, accessToken, refreshToken);
+        return AuthResponseDTO.TokenResponseDTO.builder()
+                .role(role.name())
+                .email(email)
+                .name(name)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 
     private List<String> getRolesByUserType(Role role) {
