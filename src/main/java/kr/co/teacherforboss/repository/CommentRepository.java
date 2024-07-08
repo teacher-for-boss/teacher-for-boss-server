@@ -49,4 +49,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     """, nativeQuery = true)
     List<Comment> findAllByPostIdAndParentIdInAndStatus(@Param("postId") Long postId,
                                                         @Param("parentIds") List<Long> parentIds);
+
+    Optional<Comment> findByIdAndPostIdAndMemberIdAndStatus(Long commentId, Long postId, Long memberId, Status status);
 }
