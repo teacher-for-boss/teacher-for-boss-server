@@ -10,5 +10,5 @@ public interface BoardQueryService {
     BoardResponseDTO.GetCommentsDTO getComments(Long postId, Long lastCommentId, int size);
     BoardResponseDTO.GetQuestionsDTO getQuestions(Long lastQuestionId, int size, String sortBy, String category);
     BoardResponseDTO.GetPostsDTO searchPosts(String keyword, Long lastPostId, int size);
-	BoardResponseDTO.GetQuestionsDTO searchQuestions(String keyword, Long lastQuestionId, int size);
+    BoardResponseDTO.GetQuestionsDTO searchQuestions(String keyword, Long lastQuestionId, int size);
 }

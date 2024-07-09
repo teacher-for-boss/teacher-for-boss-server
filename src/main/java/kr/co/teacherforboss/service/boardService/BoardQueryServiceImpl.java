@@ -270,7 +270,7 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         Slice<Question> questionsPage;
 
         if (lastQuestionId == 0) {
-            questionsPage = questionRepository.findSliceByTitleContainingOrderByCreatedAtDesc(keyword, pageRequest);
+            questionsPage = questionRepository.findSliceByTitleContainingOrContentContainingAndStatusOrderByCreatedAtDesc(keyword, keyword, Status.ACTIVE, pageRequest);
         } else {
             questionsPage = questionRepository.findSliceByIdLessThanTitleContainingOrderByCreatedAtDesc(keyword, lastQuestionId, pageRequest);
         }

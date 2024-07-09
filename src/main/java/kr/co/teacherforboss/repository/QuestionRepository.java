@@ -41,12 +41,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 		ORDER BY created_at DESC
 	""", nativeQuery = true)
 	Slice<Question> findSliceByIdLessThanOrderByCreatedAtDesc(@Param(value = "categoryId") Long categoryId, @Param(value = "questionId") Long questionId, PageRequest pageRequest);
-	@Query(value = """
-			SELECT * FROM question
-			WHERE (title LIKE CONCAT('%', :keyword, '%') OR content LIKE CONCAT('%', :keyword, '%')) AND status = 'ACTIVE'
-			ORDER BY created_at DESC
-	""", nativeQuery = true)
-	Slice<Question> findSliceByTitleContainingOrderByCreatedAtDesc(String keyword, PageRequest pageRequest);
+	Slice<Question> findSliceByTitleContainingOrContentContainingAndStatusOrderByCreatedAtDesc(String titleKeyword, String contentKeyword, Status status, PageRequest pageRequest);
 	@Query(value = """
 			SELECT * FROM question
 			WHERE (title LIKE CONCAT('%', :keyword, '%') OR content LIKE CONCAT('%', :keyword, '%')) AND status = 'ACTIVE'
