@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.BoardHandler;
 import kr.co.teacherforboss.converter.BoardConverter;
@@ -260,5 +261,31 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         // TODO : 좋아요 수, 북마크 수, 조회수 동시성 제어
 
         return BoardConverter.toGetPostsDTO(posts, postLikeMap, postBookmarkMap);
+    }
+
+    @Override
+    public BoardResponseDTO.GetQuestionsDTO searchQuestions(String keyword, Long lastQuestionId, int size) {
+        Member member = authCommandService.getMember();
+        PageRequest pageRequest = PageRequest.of(0, size);
+        Slice<Question> questionsPage;
+
+        if (lastQuestionId == 0) {
+            questionsPage = questionRepository.findSliceByTitleContainingOrContentContainingAndStatusOrderByCreatedAtDesc(keyword, keyword, Status.ACTIVE, pageRequest);
+        } else {
+            questionsPage = questionRepository.findSliceByIdLessThanTitleContainingOrderByCreatedAtDesc(keyword, lastQuestionId, pageRequest);
+        }
+
+        List<QuestionLike> questionLikes = questionLikeRepository.findByQuestionInAndMemberIdAndStatus(questionsPage.getContent(), member.getId(), Status.ACTIVE);
+        List<QuestionBookmark> questionBookmarks = questionBookmarkRepository.findByQuestionInAndMemberIdAndStatus(questionsPage.getContent(), member.getId(), Status.ACTIVE);
+        List<Answer> selectedAnswers = answerRepository.findByQuestionInAndSelected(questionsPage.getContent(), BooleanType.T);
+
+        Map<Long, QuestionLike> questionLikeMap = questionLikes.stream()
+                .collect(Collectors.toMap(like -> like.getQuestion().getId(), like -> like));
+        Map<Long, QuestionBookmark> questionBookmarkMap = questionBookmarks.stream()
+                .collect(Collectors.toMap(bookmark -> bookmark.getQuestion().getId(), bookmark -> bookmark));
+        Map<Long, Answer> selectedAnswerMap = selectedAnswers.stream()
+                .collect(Collectors.toMap(answer -> answer.getQuestion().getId(), answer -> answer));
+
+        return BoardConverter.toGetQuestionsDTO(questionsPage, questionLikeMap, questionBookmarkMap, selectedAnswerMap);
     }
 }

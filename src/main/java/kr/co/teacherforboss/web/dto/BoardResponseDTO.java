@@ -3,6 +3,7 @@ package kr.co.teacherforboss.web.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -325,4 +326,5 @@ public class BoardResponseDTO {
         Long commentId;
         LocalDateTime deletedAt;
     }
+
 }

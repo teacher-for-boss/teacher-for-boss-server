@@ -29,7 +29,6 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
 	""", nativeQuery = true)
 	void softDeleteAnswersByQuestionId(@Param(value = "questionId") Long questionId);
     List<Answer> findAllByQuestionIdAndStatusOrderByCreatedAt(Long questionId, Status status);
-
 	Slice<Answer> findSliceByQuestionIdAndStatusOrderByCreatedAtDesc(Long questionId, Status status, Pageable pageable);
 	@Query(value = """
 		SELECT * FROM answer
