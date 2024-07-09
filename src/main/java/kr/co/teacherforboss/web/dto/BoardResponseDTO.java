@@ -327,29 +327,4 @@ public class BoardResponseDTO {
         LocalDateTime deletedAt;
     }
 
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class SearchQuestionDTO {
-        Integer totalCount;
-        List<SearchQuestionDTO.QuestionInfo> questionList;
-
-        @Getter
-        @AllArgsConstructor
-        public static class QuestionInfo {
-            Long questionId;
-            String title;
-            String content;
-            Boolean solved;
-            @Nullable
-            String selectedTeacher;
-            Integer bookmarkCount;
-            Integer answerCount;
-            Integer likeCount;
-            Boolean liked;
-            Boolean bookmarked;
-            LocalDateTime createdAt;
-        }
-    }
 }
