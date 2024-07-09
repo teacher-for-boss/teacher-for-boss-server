@@ -30,4 +30,5 @@ public interface BoardCommandService {
     Answer selectAnswer(Long questionId, Long answerId);
     CommentLike toggleCommentLike(Long postId, Long commentId, boolean isLike);
     Comment saveComment(Long postId, BoardRequestDTO.SaveCommentDTO request);
+    Comment deleteComment(Long postId, Long commentId);
 }

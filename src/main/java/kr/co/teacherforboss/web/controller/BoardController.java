@@ -125,7 +125,7 @@ public class BoardController {
         return ApiResponse.onSuccess(BoardConverter.toEditAnswerDTO(answer));
     }
 
-    @PostMapping("/teacher/questions/{questionId}/answers/{answerId}")
+    @DeleteMapping("/teacher/questions/{questionId}/answers/{answerId}")
     public ApiResponse<BoardResponseDTO.DeleteAnswerDTO> deleteAnswer(@PathVariable("questionId") Long questionId,
                                                                       @PathVariable("answerId") Long answerId) {
         Answer answer = boardCommandService.deleteAnswer(questionId, answerId);
@@ -211,6 +211,13 @@ public class BoardController {
                                                               @RequestParam(defaultValue = "0") Long lastPostId,
                                                               @RequestParam(defaultValue = "10") int size){
         return ApiResponse.onSuccess(boardQueryService.searchPosts(keyword, lastPostId, size));
+    }
+
+    @DeleteMapping("/boss/posts/{postId}/comments/{commentId}")
+    public ApiResponse<BoardResponseDTO.DeleteCommentDTO> deleteComment(@PathVariable("postId") Long postId,
+                                                                        @PathVariable("commentId") Long commentId) {
+        Comment comment = boardCommandService.deleteComment(postId, commentId);
+        return ApiResponse.onSuccess(BoardConverter.toDeleteCommentDTO(comment));
     }
     @GetMapping("/teacher/questions/search")
     public ApiResponse<BoardResponseDTO.GetQuestionsDTO> searchQuestions(@RequestParam String keyword,

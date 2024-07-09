@@ -104,6 +104,7 @@ public class BoardResponseDTO {
             LocalDateTime createdAt;
             MemberInfo memberInfo;
             List<String> imageUrlList;
+            Boolean isMine;
         }
     }
 
@@ -127,6 +128,7 @@ public class BoardResponseDTO {
             boolean disliked;
             LocalDateTime createdAt;
             MemberInfo memberInfo;
+            Boolean isMine;
             List<CommentInfo> children;
         }
     }
@@ -315,6 +317,15 @@ public class BoardResponseDTO {
             LocalDateTime createdAt;
         }
 	}
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DeleteCommentDTO {
+        Long commentId;
+        LocalDateTime deletedAt;
+    }
 
     @Getter
     @Builder
