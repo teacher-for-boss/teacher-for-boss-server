@@ -115,6 +115,13 @@ public class AuthConverter {
                 .build();
     }
 
+    public static AuthResponseDTO.WithdrawDTO toWithdrawResultDTO(Member member) {
+        return AuthResponseDTO.WithdrawDTO.builder()
+                .memberId(member.getId())
+                .withdrewAt(member.getUpdatedAt())
+                .build();
+    }
+
     public static AuthResponseDTO.ResetPasswordResultDTO toResetPasswordResultDTO(Member member) {
         return AuthResponseDTO.ResetPasswordResultDTO.builder()
                 .memberId(member.getId())

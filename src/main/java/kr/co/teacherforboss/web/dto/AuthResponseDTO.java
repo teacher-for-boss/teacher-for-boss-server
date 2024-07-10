@@ -115,4 +115,13 @@ public class AuthResponseDTO {
         Long businessAuthId;
         boolean isChecked;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class WithdrawDTO {
+        Long memberId;
+        LocalDateTime withdrewAt;
+    }
 }

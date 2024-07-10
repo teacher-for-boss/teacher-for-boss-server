@@ -329,4 +329,13 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         if (request.getProfileImg() == null)
             throw new AuthHandler(ErrorStatus.MEMBER_PROFILE_IMG_EMPTY);
     }
+
+    @Override
+    @Transactional
+    public Member withdraw() {
+        Member member = getMember();
+        if (member != null) member.softDelete();
+
+        return member;
+    }
 }
