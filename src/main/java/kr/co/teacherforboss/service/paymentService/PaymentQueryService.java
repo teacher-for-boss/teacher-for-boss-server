@@ -4,5 +4,5 @@ import kr.co.teacherforboss.domain.TeacherInfo;
 
 
 public interface PaymentQueryService {
-    TeacherInfo getTeacherAccount();
+    TeacherInfo getTeacherInfo();
 }

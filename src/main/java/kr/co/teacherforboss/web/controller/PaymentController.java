@@ -22,7 +22,7 @@ public class PaymentController {
 
     @GetMapping("/accounts")
     public ApiResponse<PaymentResponseDTO.GetTeacherAccountDTO> getTeacherAccount() {
-        TeacherInfo teacherInfo = paymentQueryService.getTeacherAccount();
+        TeacherInfo teacherInfo = paymentQueryService.getTeacherInfo();
         return ApiResponse.onSuccess(PaymentConverter.toGetTeacherAccountDTO(teacherInfo));
     }
 }

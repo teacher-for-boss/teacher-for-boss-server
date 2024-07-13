@@ -12,7 +12,7 @@ public class PaymentResponseDTO {
     @AllArgsConstructor
     public static class GetTeacherAccountDTO {
         String bank;
-        String account_number;
-        String account_holder;
+        String accountNumber;
+        String accountHolder;
     }
 }

@@ -9,8 +9,8 @@ public class PaymentConverter {
     public static PaymentResponseDTO.GetTeacherAccountDTO toGetTeacherAccountDTO(TeacherInfo teacherInfo) {
         return PaymentResponseDTO.GetTeacherAccountDTO.builder()
                 .bank(teacherInfo.getBank())
-                .account_number(AES256Util.decrypt(teacherInfo.getAccountNumber()))
-                .account_holder(teacherInfo.getAccountHolder())
+                .accountNumber(AES256Util.decrypt(teacherInfo.getAccountNumber()))
+                .accountHolder(teacherInfo.getAccountHolder())
                 .build();
     }
 }
