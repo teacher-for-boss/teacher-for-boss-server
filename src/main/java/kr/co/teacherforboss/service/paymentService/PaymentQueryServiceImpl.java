@@ -21,7 +21,7 @@ public class PaymentQueryServiceImpl implements PaymentQueryService {
 
     @Override
     @Transactional
-    public TeacherInfo getTeacherAccount(){
+    public TeacherInfo getTeacherAccount() {
         Member member = authCommandService.getMember();
         if (member.getRole() != Role.TEACHER) throw new MemberHandler(ErrorStatus.MEMBER_ROLE_NOT_TEACHER);
         return teacherInfoRepository.findByMemberIdAndStatus(member.getId(), Status.ACTIVE)
