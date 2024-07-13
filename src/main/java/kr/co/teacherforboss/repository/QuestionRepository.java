@@ -73,4 +73,34 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 			ORDER BY created_at DESC
 	""", nativeQuery = true)
 	Slice<Question> findSliceByIdLessThanTitleContainingOrderByCreatedAtDesc(String keyword, Long questionId, PageRequest pageRequest);
+
+	@Query(value = """
+		SELECT q.* FROM question q
+		WHERE q.id IN (
+			SELECT a.question_id FROM answer a
+			WHERE a.member_id = :memberId
+		) AND q.status = 'ACTIVE'
+		AND (
+			SELECT MAX(a.created_at) FROM answer a
+			WHERE a.question_id = q.id
+			AND a.member_id = :memberId
+		) < (
+			SELECT MAX(a.created_at) FROM answer a
+			WHERE a.question_id = :lastQuestionId
+			AND a.member_id = :memberId
+		)
+		ORDER BY ( SELECT MAX(a.created_at) FROM answer a
+			WHERE a.question_id = q.id AND a.member_id = :memberId
+		) DESC
+	""", nativeQuery = true)
+	Slice<Question> findSliceByAnsweredListOrderByCreatedAtDesc(Long memberId, Long lastQuestionId, PageRequest pageRequest);
+
+	@Query(value = """
+		SELECT * FROM question q
+        WHERE q.id IN (
+            SELECT answer.question_id FROM answer WHERE member_id = :memberId
+    	    ) AND status = 'ACTIVE'
+		ORDER BY (SELECT MAX(a.created_at) FROM answer a WHERE a.question_id = q.id AND a.member_id = :memberId) DESC
+	""", nativeQuery = true)
+	Slice<Question> findFirstSliceByAnsweredListOrderByCreatedAtDesc(Long memberId, PageRequest pageRequest);
 }
