@@ -67,7 +67,7 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_NICKNAME_EMPTY(BAD_REQUEST, "MEMBER40021", "닉네임을 입력해주세요."),
     MEMBER_PHONE_EMPTY(BAD_REQUEST, "MEMBER40022", "전화번호를 입력해주세요."),
     MEMBER_PROFILE_IMG_EMPTY(BAD_REQUEST, "MEMBER40023", "프로필 이미지를 선택해주세요."),
-    MEMBER_ROLE_NOT_TEACHER(BAD_REQUEST, "MEMBER40024", "티쳐 role에 해당되지 않은 유저 정보입니다."),
+    MEMBER_ROLE_NOT_TEACHER(BAD_REQUEST, "MEMBER40024", "티쳐가 아닙니다."),
 
     MEMBER_NOT_FOUND(NOT_FOUND, "MEMBER4041", "사용자가 없습니다."),
     TEACHER_INFO_NOT_FOUND(NOT_FOUND, "MEMBER4042", "사용자에 해당되는 티쳐 정보가 없습니다."),
