@@ -35,4 +35,13 @@ public class MemberResponseDTO {
         String profileImg;
         String level;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class EditMemberProfileDTO {
+        String nickname;
+        String profileImg;
+    }
 }

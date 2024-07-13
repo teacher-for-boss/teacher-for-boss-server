@@ -10,4 +10,8 @@ public enum BooleanType {
     F(false);
 
     private final boolean identifier;
+
+    public static BooleanType of(String booleanType) {
+        return booleanType.equals("T") ? T : F;
+    }
 }
