@@ -6,11 +6,9 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
-
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.GeneralException;
 import org.apache.commons.codec.DecoderException;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -61,7 +59,7 @@ public class AES256Util {
     public static String decrypt(String str) {
         try {
             SecretKey key = generateKey(KEY);
-            byte[] decrypted = doFinal(Cipher.DECRYPT_MODE, key, IV, decodeBase64(str));
+            byte[] decrypted = doFinal(Cipher.DECRYPT_MODE, key, IV, decodeHex(str));
             return new String(decrypted, "UTF-8");
         } catch (Exception e) {
             throw new GeneralException(ErrorStatus.DECRYPT_FAIL);
@@ -71,7 +69,7 @@ public class AES256Util {
     public static String decrypt(String str, String salt) {
         try {
             SecretKey key = generateKey(KEY, salt);
-            byte[] decrypted = doFinal(Cipher.DECRYPT_MODE, key, IV, decodeBase64(str));
+            byte[] decrypted = doFinal(Cipher.DECRYPT_MODE, key, IV, decodeHex(str));
             return new String(decrypted, "UTF-8");
         } catch (Exception e) {
             throw new GeneralException(ErrorStatus.DECRYPT_FAIL);
@@ -114,11 +112,6 @@ public class AES256Util {
 
     private static byte[] decodeHex(String str) throws Exception {
         return Hex.decodeHex(str.toCharArray());
-    }
-
-    private static byte[] decodeBase64(String str) {
-        byte[] decodeByte = Base64.decodeBase64(str);
-        return Base64.decodeBase64(decodeByte);
     }
 
 }
