@@ -54,4 +54,34 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             ORDER BY created_at DESC
     """, nativeQuery = true)
     Slice<Post> findSliceByIdLessThanAndKeywordOrderByCreatedAtDesc(String keyword, Long postId, PageRequest pageRequest);
+
+    @Query(value = """
+		SELECT p.* FROM post p
+		WHERE p.id IN (
+			SELECT c.post_id FROM comment c
+			WHERE c.member_id = :memberId
+		) AND p.status = 'ACTIVE'
+		AND (
+			SELECT MAX(c.created_at) FROM comment c
+			WHERE c.post_id = p.id
+			AND c.member_id = :memberId
+		) < (
+			SELECT MAX(c.created_at) FROM comment c
+			WHERE c.post_id = :lastPostId
+			AND c.member_id = :memberId
+		)
+		ORDER BY ( SELECT MAX(c.created_at) FROM comment c
+			WHERE c.post_id = p.id AND c.member_id = :memberId
+		) DESC
+	""", nativeQuery = true)
+    Slice<Post> findSlicePostsByAnsweredListOrderByCreatedAtDesc(Long memberId, Long lastPostId, PageRequest pageRequest);
+
+    @Query(value = """
+		SELECT * FROM post p
+        WHERE p.id IN (
+            SELECT comment.post_id FROM comment WHERE member_id = :memberId
+    	    ) AND status = 'ACTIVE'
+		ORDER BY (SELECT MAX(c.created_at) FROM comment c WHERE c.post_id = p.id AND c.member_id = :memberId) DESC
+	""", nativeQuery = true)
+    Slice<Post> findFirstSlicePostsByAnsweredListOrderByCreatedAtDesc(Long memberId, PageRequest pageRequest);
 }
