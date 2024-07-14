@@ -3,10 +3,15 @@ package kr.co.teacherforboss.service.memberService;
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.GeneralException;
 import kr.co.teacherforboss.domain.Member;
+import kr.co.teacherforboss.domain.TeacherInfo;
 import kr.co.teacherforboss.domain.enums.Status;
+import kr.co.teacherforboss.repository.AnswerRepository;
 import kr.co.teacherforboss.repository.MemberRepository;
+import kr.co.teacherforboss.repository.TeacherInfoRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandServiceImpl;
 import kr.co.teacherforboss.util.AuthTestUtil;
+import kr.co.teacherforboss.util.MemberTestUtil;
+import kr.co.teacherforboss.web.dto.MemberResponseDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,8 +40,14 @@ class MemberQueryServiceImplTest {
     private AuthCommandServiceImpl authCommandService;
     @Mock
     private MemberRepository memberRepository;
+    @Mock
+    private TeacherInfoRepository teacherInfoRepository;
+    @Mock
+    private AnswerRepository answerRepository;
     @InjectMocks
     private AuthTestUtil authTestUtil;
+    @InjectMocks
+    private MemberTestUtil memberTestUtil;
 
     /*
     // TODO: 멤버 조회 테스트
@@ -46,16 +57,21 @@ class MemberQueryServiceImplTest {
     void getMemberProfile() {
         // given
         Member member = authTestUtil.generateMemberDummy("email@gmail.com");
+        TeacherInfo teacherInfo = memberTestUtil.generateTeacherInfoDummy(member);
         when(authCommandService.getMember())
                 .thenReturn(member);
         when(memberRepository.findByIdAndStatus(any(), any()))
                 .thenReturn(Optional.of(member));
+        when(teacherInfoRepository.findByMemberIdAndStatus(any(), any()))
+                .thenReturn(Optional.ofNullable(teacherInfo));
+        when(answerRepository.countAllByMemberIdAndSelectedAndStatus(any(), any(), any()))
+                .thenReturn(100);
 
         // when
-        Member result = memberQueryService.getMemberProfile();
+        MemberResponseDTO.GetMemberProfileDTO result = memberQueryService.getMemberProfile();
 
         // then
-        assertThat(result).isEqualTo(member);
+        assertThat(result.getName()).isEqualTo(member.getName());
         verify(memberRepository, times(1)).findByIdAndStatus(any(), any());
     }
 

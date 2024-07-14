@@ -2,15 +2,29 @@ package kr.co.teacherforboss.converter;
 
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.MemberSurvey;
+import kr.co.teacherforboss.domain.TeacherInfo;
+import kr.co.teacherforboss.domain.enums.Level;
 import kr.co.teacherforboss.domain.enums.Survey;
 import kr.co.teacherforboss.web.dto.MemberRequestDTO;
 import kr.co.teacherforboss.web.dto.MemberResponseDTO;
 
 public class MemberConverter {
-    public static MemberResponseDTO.GetMemberProfileDTO toGetMemberProfileDTO(Member member) {
+    public static MemberResponseDTO.GetMemberProfileDTO toGetMemberProfileDTO(Member member, TeacherInfo teacherInfo, Integer answerCount) {
         return MemberResponseDTO.GetMemberProfileDTO.builder()
                 .name(member.getName())
                 .profileImg(member.getProfileImg())
+                .role(member.getRole().toString())
+                .teacherInfo(toTeacherInfo(teacherInfo, answerCount))
+                .build();
+    }
+
+    public static MemberResponseDTO.GetMemberProfileDTO.TeacherInfo toTeacherInfo(TeacherInfo teacherInfo, int answerCount) {
+        if (teacherInfo == null) return null;
+        int leftAnswerCount = 0;
+        if (!teacherInfo.getLevel().equals(Level.LEVEL5)) leftAnswerCount = teacherInfo.getLevel().getLast() - answerCount;
+        return MemberResponseDTO.GetMemberProfileDTO.TeacherInfo.builder()
+                .level(teacherInfo.getLevel().getLevel())
+                .leftAnswerCount(leftAnswerCount)
                 .build();
     }
 

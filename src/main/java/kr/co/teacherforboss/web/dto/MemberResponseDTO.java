@@ -14,6 +14,15 @@ public class MemberResponseDTO {
     public static class GetMemberProfileDTO {
         String name;
         String profileImg;
+        String role;
+        TeacherInfo teacherInfo;
+
+        @Getter
+        @Builder
+        public static class TeacherInfo {
+            String level;
+            int leftAnswerCount;
+        }
     }
 
     @Getter
