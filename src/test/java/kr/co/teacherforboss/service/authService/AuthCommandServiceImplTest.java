@@ -16,6 +16,7 @@ import kr.co.teacherforboss.domain.AgreementTerm;
 import kr.co.teacherforboss.domain.EmailAuth;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.PhoneAuth;
+import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.Purpose;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.domain.vo.mailVO.CodeMail;
@@ -215,7 +216,7 @@ public class AuthCommandServiceImplTest {
         AuthRequestDTO.FindEmailDTO request = toFindEmail(1L);
         doReturn(Optional.of(phoneAuth)).when(phoneAuthRepository).findById(any(Long.class));
         doReturn(true).when(phoneAuthRepository)
-                .existsByIdAndPurposeAndIsChecked(any(Long.class), any(Purpose.class), any(String.class));
+                .existsByIdAndPurposeAndIsChecked(any(Long.class), any(Purpose.class), any(BooleanType.class));
         doReturn(member).when(memberRepository).findByPhoneAndStatus(any(String.class), any(Status.class));
 
         // when

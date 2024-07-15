@@ -204,22 +204,38 @@ public class BoardQueryServiceImpl implements BoardQueryService {
     public BoardResponseDTO.GetQuestionsDTO getQuestions(Long lastQuestionId, int size, String sortBy, String category) {
         Member member = authCommandService.getMember();
         PageRequest pageRequest = PageRequest.of(0, size);
-        // TODO : 카테고리 전체 조회가 안됨 -> 곧 수정할게요
-        Long categoryId = QuestionCategory.getIdentifier(category);
+
+        long categoryId = QuestionCategory.getIdentifier(category);
         Slice<Question> questionsPage;
 
-        if (lastQuestionId == 0) {
-            questionsPage = switch (sortBy) {
-                case "likes" -> questionRepository.findSliceByCategoryIdAndStatusOrderByLikeCountDescCreatedAtDesc(categoryId, Status.ACTIVE, pageRequest);
-                case "views" -> questionRepository.findSliceByCategoryIdAndStatusOrderByViewCountDescCreatedAtDesc(categoryId, Status.ACTIVE, pageRequest);
-                default -> questionRepository.findSliceByCategoryIdAndStatusOrderByCreatedAtDesc(categoryId, Status.ACTIVE, pageRequest);
-            };
+        if (categoryId == 0) {
+            if (lastQuestionId == 0) {
+                questionsPage = switch (sortBy) {
+                    case "likes" -> questionRepository.findSliceByStatusOrderByLikeCountDescCreatedAtDesc(Status.ACTIVE, pageRequest);
+                    case "views" -> questionRepository.findSliceByStatusOrderByViewCountDescCreatedAtDesc(Status.ACTIVE, pageRequest);
+                    default -> questionRepository.findSliceByStatusOrderByCreatedAtDesc(Status.ACTIVE, pageRequest);
+                };
+            } else {
+                questionsPage = switch (sortBy) {
+                    case "likes" -> questionRepository.findSliceByIdLessThanOrderByLikeCountDesc(lastQuestionId, pageRequest);
+                    case "views" -> questionRepository.findSliceByIdLessThanOrderByViewCountDesc(lastQuestionId, pageRequest);
+                    default -> questionRepository.findSliceByIdLessThanOrderByCreatedAtDesc(lastQuestionId, pageRequest);
+                };
+            }
         } else {
-            questionsPage = switch (sortBy) {
-                case "likes" -> questionRepository.findSliceByIdLessThanOrderByLikeCountDesc(categoryId, lastQuestionId, pageRequest);
-                case "views" -> questionRepository.findSliceByIdLessThanOrderByViewCountDesc(categoryId, lastQuestionId, pageRequest);
-                default -> questionRepository.findSliceByIdLessThanOrderByCreatedAtDesc(categoryId, lastQuestionId, pageRequest);
-            };
+            if (lastQuestionId == 0) {
+                questionsPage = switch (sortBy) {
+                    case "likes" -> questionRepository.findSliceByCategoryIdAndStatusOrderByLikeCountDescCreatedAtDesc(categoryId, Status.ACTIVE, pageRequest);
+                    case "views" -> questionRepository.findSliceByCategoryIdAndStatusOrderByViewCountDescCreatedAtDesc(categoryId, Status.ACTIVE, pageRequest);
+                    default -> questionRepository.findSliceByCategoryIdAndStatusOrderByCreatedAtDesc(categoryId, Status.ACTIVE, pageRequest);
+                };
+            } else {
+                questionsPage = switch (sortBy) {
+                    case "likes" -> questionRepository.findSliceByIdLessThanOrderByLikeCountDesc(categoryId, lastQuestionId, pageRequest);
+                    case "views" -> questionRepository.findSliceByIdLessThanOrderByViewCountDesc(categoryId, lastQuestionId, pageRequest);
+                    default -> questionRepository.findSliceByIdLessThanOrderByCreatedAtDesc(categoryId, lastQuestionId, pageRequest);
+                };
+            }
         }
 
         List<QuestionLike> questionLikes = questionLikeRepository.findByQuestionInAndMemberIdAndStatus(questionsPage.getContent(), member.getId(), Status.ACTIVE);
