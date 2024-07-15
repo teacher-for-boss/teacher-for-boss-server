@@ -6,6 +6,11 @@ import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.service.memberService.MemberQueryService;
 import kr.co.teacherforboss.web.dto.MemberResponseDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import jakarta.validation.Valid;
 import kr.co.teacherforboss.domain.MemberSurvey;
 import kr.co.teacherforboss.service.memberService.MemberCommandService;
@@ -37,5 +42,17 @@ public class MemberController {
     public ApiResponse<MemberResponseDTO.SurveyResultDTO> saveSurvey(@RequestBody @Valid MemberRequestDTO.SurveyDTO request) {
         MemberSurvey memberSurvey = memberCommandService.saveSurvey(request);
         return ApiResponse.onSuccess(MemberConverter.toSurveyResultDTO(memberSurvey));
+    }
+
+    @PatchMapping("/profiles/boss")
+    public ApiResponse<MemberResponseDTO.EditMemberProfileDTO> editBossProfile(MemberRequestDTO.EditBossProfileDTO request) {
+        Member member = memberCommandService.editBossProfile(request);
+        return ApiResponse.onSuccess(MemberConverter.toEditMemberProfileDTO(member));
+    }
+
+    @PatchMapping("/profiles/teacher")
+    public ApiResponse<MemberResponseDTO.EditMemberProfileDTO> editTeacherProfile(MemberRequestDTO.EditTeacherProfileDTO request) {
+        Member member = memberCommandService.editTeacherProfile(request);
+        return ApiResponse.onSuccess(MemberConverter.toEditMemberProfileDTO(member));
     }
 }

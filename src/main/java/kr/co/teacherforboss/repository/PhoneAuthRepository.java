@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
 public interface PhoneAuthRepository extends JpaRepository<PhoneAuth, Long> {
     boolean existsByIdAndPhoneAndPurposeAndIsChecked(Long phoneAuthId, String phone, Purpose purpose, BooleanType isChecked);
 
-    boolean existsByIdAndPurposeAndIsChecked(Long phoneAuthId, Purpose purpose, String isChecked);
+    boolean existsByIdAndPurposeAndIsChecked(Long phoneAuthId, Purpose purpose, BooleanType isChecked);
 }

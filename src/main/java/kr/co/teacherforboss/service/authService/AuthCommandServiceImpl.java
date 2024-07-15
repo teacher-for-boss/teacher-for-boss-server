@@ -216,10 +216,11 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         PhoneAuth phoneAuth = phoneAuthRepository.findById(request.getPhoneAuthId())
                 .orElseThrow(() -> new AuthHandler(ErrorStatus._DATA_NOT_FOUND));
 
-        if(!phoneAuthRepository.existsByIdAndPurposeAndIsChecked(request.getPhoneAuthId(), Purpose.of(2), "T"))
+        if(!phoneAuthRepository.existsByIdAndPurposeAndIsChecked(request.getPhoneAuthId(), Purpose.of(2), BooleanType.T))
             throw new AuthHandler(ErrorStatus.PHONE_NOT_CHECKED);
 
-        return memberRepository.findByPhoneAndStatus(phoneAuth.getPhone(), Status.ACTIVE);
+        return memberRepository.findByPhoneAndStatus(phoneAuth.getPhone(), Status.ACTIVE)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
 
     @Override
