@@ -1,12 +1,10 @@
 package kr.co.teacherforboss.web.dto;
 
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class AuthResponseDTO {
     @Builder
@@ -123,6 +121,6 @@ public class AuthResponseDTO {
     @AllArgsConstructor
     public static class WithdrawDTO {
         Long memberId;
-        LocalDate inactiveDate;
+        LocalDateTime inactiveDate;
     }
 }

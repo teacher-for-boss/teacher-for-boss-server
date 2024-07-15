@@ -7,6 +7,10 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
 import kr.co.teacherforboss.domain.common.BaseEntity;
 import kr.co.teacherforboss.domain.enums.Gender;
 import kr.co.teacherforboss.domain.enums.LoginType;
@@ -16,10 +20,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Getter
@@ -78,9 +78,9 @@ public class Member extends BaseEntity {
     private LocalDate birthDate;
 
     @Column
-    private LocalDate inactiveDate;
+    private LocalDateTime inactiveDate;
 
-    public void setInactiveDate(LocalDate inactiveDate) {
+    public void setInactiveDate(LocalDateTime inactiveDate) {
         this.inactiveDate = inactiveDate;
     }
 
@@ -100,5 +100,11 @@ public class Member extends BaseEntity {
         if (o == null || getClass() != o.getClass()) return false;
         Member that = (Member) o;
         return Objects.equals(getId(), that.getId());
+    }
+
+    @Override
+    public boolean softDelete() {
+        setInactiveDate(LocalDateTime.now());
+        return super.softDelete();
     }
 }

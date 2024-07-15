@@ -336,14 +336,14 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Transactional
     public Member withdraw() {
         Member member = getMember();
-        member.softDelete();
-        member.setInactiveDate(LocalDate.now());
 
         if (member.getRole() == Role.TEACHER) {
-            TeacherInfo teacherInfo = teacherInfoRepository.findByMemberIdAndStatus(member.getId(), Status.ACTIVE);
+            TeacherInfo teacherInfo = teacherInfoRepository.findByMemberIdAndStatus(member.getId(), Status.ACTIVE)
+                            .orElseThrow(() -> new MemberHandler(ErrorStatus.TEACHER_INFO_NOT_FOUND));
             teacherInfo.softDelete();
         }
 
+        member.softDelete();
         return member;
     }
 }
