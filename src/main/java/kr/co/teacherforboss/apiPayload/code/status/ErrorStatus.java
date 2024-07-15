@@ -70,7 +70,8 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_ROLE_NOT_TEACHER(BAD_REQUEST, "MEMBER40024", "티쳐가 아닙니다."),
 
     MEMBER_NOT_FOUND(NOT_FOUND, "MEMBER4041", "사용자가 없습니다."),
-    TEACHER_INFO_NOT_FOUND(NOT_FOUND, "MEMBER4042", "사용자에 해당되는 티쳐 정보가 없습니다."),
+    MEMBER_TEACHER_INFO_NOT_FOUND(NOT_FOUND, "MEMBER4042", "사용자가 없습니다."),
+    TEACHER_INFO_NOT_FOUND(NOT_FOUND, "MEMBER4043", "사용자에 해당되는 티쳐 정보가 없습니다."),
 
     // Survey
     SURVEY_DUPLICATED(BAD_REQUEST, "SURVEY4001", "이미 사전정보가 존재합니다."),

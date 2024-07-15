@@ -30,4 +30,11 @@ public class MemberConverter {
                 .question4(request.getQuestion4())
                 .build();
     }
+
+    public static MemberResponseDTO.EditMemberProfileDTO toEditMemberProfileDTO(Member member) {
+        return MemberResponseDTO.EditMemberProfileDTO.builder()
+                .nickname(member.getNickname())
+                .profileImg(member.getProfileImg())
+                .build();
+    }
 }
