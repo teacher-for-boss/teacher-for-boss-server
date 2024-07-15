@@ -17,8 +17,11 @@ import kr.co.teacherforboss.service.memberService.MemberCommandService;
 import kr.co.teacherforboss.web.dto.MemberRequestDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @Validated
@@ -28,7 +31,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class MemberController {
     private final MemberQueryService memberQueryService;
     private final MemberCommandService memberCommandService;
-    @GetMapping("/profiles")
+
+    @GetMapping("/profile")
     public ApiResponse<MemberResponseDTO.GetMemberProfileDTO> getMemberProfile() {
         Member member = memberQueryService.getMemberProfile();
         return ApiResponse.onSuccess(MemberConverter.toGetMemberProfileDTO(member));

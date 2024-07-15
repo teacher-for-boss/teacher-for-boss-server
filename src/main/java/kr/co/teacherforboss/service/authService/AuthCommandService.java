@@ -21,4 +21,5 @@ public interface AuthCommandService {
     Member getMember();
     Member socialLogin(AuthRequestDTO.SocialLoginDTO request, int socialType);
     BusinessAuth checkBusinessNumber(AuthRequestDTO.CheckBusinessNumberDTO request);
+    Member withdraw();
 }
