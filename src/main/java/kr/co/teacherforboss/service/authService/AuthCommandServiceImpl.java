@@ -334,7 +334,12 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Transactional
     public Member withdraw() {
         Member member = getMember();
-        if (member != null) member.softDelete();
+        member.softDelete();
+
+        if (member.getRole() == Role.TEACHER) {
+            TeacherInfo teacherInfo = teacherInfoRepository.findByMemberIdAndStatus(member.getId(), Status.ACTIVE);
+            teacherInfo.softDelete();
+        }
 
         return member;
     }
