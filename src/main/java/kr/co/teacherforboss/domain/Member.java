@@ -80,6 +80,10 @@ public class Member extends BaseEntity {
     @Column
     private LocalDate inactiveDate;
 
+    public void setInactiveDate(LocalDate inactiveDate) {
+        this.inactiveDate = inactiveDate;
+    }
+
     public void setPassword(List<String> passwordList){
         this.pwSalt = passwordList.get(0);
         this.pwHash = passwordList.get(1);

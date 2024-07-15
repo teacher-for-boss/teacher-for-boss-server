@@ -1,6 +1,7 @@
 package kr.co.teacherforboss.service.authService;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -335,6 +336,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     public Member withdraw() {
         Member member = getMember();
         member.softDelete();
+        member.setInactiveDate(LocalDate.now());
 
         if (member.getRole() == Role.TEACHER) {
             TeacherInfo teacherInfo = teacherInfoRepository.findByMemberIdAndStatus(member.getId(), Status.ACTIVE);

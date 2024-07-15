@@ -118,7 +118,7 @@ public class AuthConverter {
     public static AuthResponseDTO.WithdrawDTO toWithdrawResultDTO(Member member) {
         return AuthResponseDTO.WithdrawDTO.builder()
                 .memberId(member.getId())
-                .withdrewAt(member.getUpdatedAt())
+                .inactiveDate(member.getInactiveDate())
                 .build();
     }
 
