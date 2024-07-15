@@ -11,7 +11,7 @@ public enum BooleanType {
 
     private final boolean identifier;
 
-    public static BooleanType of(String booleanType) {
-        return booleanType.equals("T") ? T : F;
+    public static BooleanType of(boolean identifier) {
+        return identifier ? T : F;
     }
 }

@@ -57,12 +57,9 @@ public class MemberCommandServiceImpl implements MemberCommandService{
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_TEACHER_INFO_NOT_FOUND));
 
         member.setProfile(request.getNickname(), request.getProfileImg());
-        if (member.getRole().equals(Role.TEACHER)) editTeacherInfo(request, teacherInfo);
+        teacherInfo.editTeacherInfo(request.getField(), request.getCareer(), request.getIntroduction(), request.getKeywords(),
+                request.getEmail(), BooleanType.of(request.isEmailOpen()), request.getPhone(), BooleanType.of(request.isPhoneOpen()));
         return memberRepository.save(member);
     }
 
-    private void editTeacherInfo(MemberRequestDTO.EditTeacherProfileDTO request, TeacherInfo teacherInfo) {
-        teacherInfo.editTeacherInfo(request.getField(), request.getCareer(), request.getIntroduction(), request.getKeywords(),
-                request.getEmail(), BooleanType.of(request.getEmailOpen()), request.getPhone(), BooleanType.of(request.getPhoneOpen()));
-    }
 }

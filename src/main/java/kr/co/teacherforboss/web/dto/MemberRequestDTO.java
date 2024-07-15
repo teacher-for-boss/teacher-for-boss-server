@@ -59,15 +59,13 @@ public class MemberRequestDTO {
         @Pattern(regexp = "010([2-9])\\d{7,8}", message = "전화번호는 10 ~ 11 자리의 숫자만 입력 가능합니다.")
         String phone;
 
-        @CheckTrueOrFalse
-        String phoneOpen;
+        boolean phoneOpen;
 
         @Email(message = "이메일 형식이 아닙니다.")
         @NotNull(message = "이메일이 없습니다.")
         String email;
 
-        @CheckTrueOrFalse
-        String emailOpen;
+        boolean emailOpen;
 
         @Size(max = 20, message = "분야는 최대 20자 이내로 입력 가능합니다.")
         String field;
