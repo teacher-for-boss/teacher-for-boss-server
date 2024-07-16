@@ -1,8 +1,12 @@
 package kr.co.teacherforboss.converter;
 
+import java.util.List;
+import java.util.Map;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.MemberSurvey;
+import kr.co.teacherforboss.domain.TeacherInfo;
 import kr.co.teacherforboss.domain.enums.Survey;
+import kr.co.teacherforboss.web.dto.HomeResponseDTO;
 import kr.co.teacherforboss.web.dto.MemberRequestDTO;
 import kr.co.teacherforboss.web.dto.MemberResponseDTO;
 
@@ -35,6 +39,17 @@ public class MemberConverter {
         return MemberResponseDTO.EditMemberProfileDTO.builder()
                 .nickname(member.getNickname())
                 .profileImg(member.getProfileImg())
+                .build();
+    }
+
+    public static HomeResponseDTO.GetHotTeachersDTO toGetHotTeachersDTO(List<Long> memberIds, Map<Long, Member> memberMap, Map<Long, TeacherInfo> teacherInfoMap) {
+        return HomeResponseDTO.GetHotTeachersDTO.builder()
+                .hotTeacherList(memberIds.stream().map(memberId -> {
+                    Member member = memberMap.get(memberId);
+                    TeacherInfo teacherInfo = teacherInfoMap.get(memberId);
+                    return new HomeResponseDTO.GetHotTeachersDTO.HotTeacherInfo(member.getId(), member.getNickname(), member.getProfileImg(),
+                            teacherInfo.getField(), teacherInfo.getCareer(), teacherInfo.getKeywords());
+                }).toList())
                 .build();
     }
 }

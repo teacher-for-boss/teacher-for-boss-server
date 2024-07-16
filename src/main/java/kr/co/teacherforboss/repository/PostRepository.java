@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.repository;
 
+import java.util.List;
 import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.enums.Status;
 import org.springframework.data.domain.PageRequest;
@@ -44,7 +45,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             ORDER BY created_at DESC
     """, nativeQuery = true)
     Slice<Post> findSliceByIdLessThanOrderByCreatedAtDesc(Long postId, PageRequest pageRequest);
-    Long countAllByTitleLikeOrContentLikeAndStatus(String titleKeyword, String contentKeyword, Status status);
     Slice<Post> findSliceByTitleContainingOrContentContainingAndStatusOrderByCreatedAtDesc(String titleKeyword, String contentKeyword, Status status, PageRequest pageRequest);
     @Query(value = """
             SELECT * FROM post 
@@ -54,4 +54,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             ORDER BY created_at DESC
     """, nativeQuery = true)
     Slice<Post> findSliceByIdLessThanAndKeywordOrderByCreatedAtDesc(String keyword, Long postId, PageRequest pageRequest);
+
+    @Query(value = """
+            SELECT * FROM post
+            WHERE like_count >= 5 AND status = 'ACTIVE'
+            ORDER BY view_count DESC, created_at DESC
+            LIMIT 5
+    """, nativeQuery = true)
+    List<Post> findHotPosts(); //TODO: 최근 일주일
 }

@@ -127,6 +127,9 @@ public enum ErrorStatus implements BaseErrorCode {
     POST_MEMBER_NOT_FOUND(NOT_FOUND, "BOARD4044", "사용자가 작성한 게시물을 찾을 수 없습니다."),
     COMMENT_NOT_FOUND(NOT_FOUND, "BOARD4045", "댓글을 찾을 수 없습니다."),
 
+    // Home
+    INVALID_HOT_TEACHER_DATA(NOT_FOUND, "HOME4041", "인기 티쳐 정보를 찾을 수 없습니다."),
+
     // For test
     TEMP_EXCEPTION(BAD_REQUEST, "TEMP4001", "이거는 테스트");
 
