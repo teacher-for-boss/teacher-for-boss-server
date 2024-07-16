@@ -54,4 +54,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             ORDER BY created_at DESC
     """, nativeQuery = true)
     Slice<Post> findSliceByIdLessThanAndKeywordOrderByCreatedAtDesc(String keyword, Long postId, PageRequest pageRequest);
+
+    @Query(value = """
+            SELECT * FROM post
+            WHERE like_count >= 5 AND status = 'ACTIVE'
+            ORDER BY view_count DESC, created_at DESC
+            LIMIT 5
+    """, nativeQuery = true)
+    List<Post> findHotPosts(); //TODO: 최근 일주일
 }
