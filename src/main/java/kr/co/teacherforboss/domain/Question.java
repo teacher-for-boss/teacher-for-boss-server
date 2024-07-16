@@ -110,5 +110,23 @@ public class Question extends BaseEntity {
     public boolean isSelectTermExpired() {
         return this.getCreatedAt().plusDays(7).isBefore(now());
     }
+
+    public Question updateLikeCount(boolean isLike) {
+        if (isLike) {
+            this.likeCount += 1;
+        } else {
+            this.likeCount -= 1;
+        }
+        return this;
+    }
+
+    public Question updateBookmarkCount(boolean isBookmark) {
+        if (isBookmark) {
+            this.bookmarkCount += 1;
+        } else {
+            this.bookmarkCount -= 1;
+        }
+        return this;
+    }
 }
 

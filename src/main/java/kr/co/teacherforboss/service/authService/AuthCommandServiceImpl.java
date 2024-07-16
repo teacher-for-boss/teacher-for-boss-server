@@ -1,6 +1,7 @@
 package kr.co.teacherforboss.service.authService;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -340,5 +341,20 @@ public class AuthCommandServiceImpl implements AuthCommandService {
             throw new AuthHandler(ErrorStatus.MEMBER_PHONE_EMPTY);
         if (request.getProfileImg() == null)
             throw new AuthHandler(ErrorStatus.MEMBER_PROFILE_IMG_EMPTY);
+    }
+
+    @Override
+    @Transactional
+    public Member withdraw() {
+        Member member = getMember();
+
+        if (member.getRole() == Role.TEACHER) {
+            TeacherInfo teacherInfo = teacherInfoRepository.findByMemberIdAndStatus(member.getId(), Status.ACTIVE)
+                            .orElseThrow(() -> new MemberHandler(ErrorStatus.TEACHER_INFO_NOT_FOUND));
+            teacherInfo.softDelete();
+        }
+
+        member.softDelete();
+        return member;
     }
 }
