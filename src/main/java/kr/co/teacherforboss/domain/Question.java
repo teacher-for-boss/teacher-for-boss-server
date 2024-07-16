@@ -1,5 +1,7 @@
 package kr.co.teacherforboss.domain;
 
+import static java.time.LocalDateTime.now;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +33,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Question extends BaseEntity {
+
+    public final static int POINT = 100;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoryId")
@@ -101,6 +105,10 @@ public class Question extends BaseEntity {
     public Question increaseViewCount() {
         this.viewCount += 1;
         return this;
+    }
+
+    public boolean isSelectTermExpired() {
+        return this.getCreatedAt().plusDays(7).isBefore(now());
     }
 }
 

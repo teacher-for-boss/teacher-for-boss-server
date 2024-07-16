@@ -13,12 +13,14 @@ import kr.co.teacherforboss.config.jwt.TokenManager;
 import kr.co.teacherforboss.converter.AuthConverter;
 import kr.co.teacherforboss.domain.BusinessAuth;
 import kr.co.teacherforboss.domain.TeacherInfo;
+import kr.co.teacherforboss.domain.TeacherSelectInfo;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.LoginType;
 import kr.co.teacherforboss.domain.AgreementTerm;
 import kr.co.teacherforboss.domain.enums.Role;
 import kr.co.teacherforboss.repository.AgreementTermRepository;
 import kr.co.teacherforboss.repository.BusinessAuthRepository;
+import kr.co.teacherforboss.repository.TeacherSelectInfoRepository;
 import kr.co.teacherforboss.util.BusinessUtil;
 import kr.co.teacherforboss.repository.TeacherInfoRepository;
 import kr.co.teacherforboss.util.PasswordUtil;
@@ -54,6 +56,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private final AgreementTermRepository agreementTermRepository;
     private final BusinessAuthRepository businessAuthRepository;
     private final TeacherInfoRepository teacherInfoRepository;
+    private final TeacherSelectInfoRepository teacherSelectInfoRepository;
     private final MailCommandService mailCommandService;
     private final PasswordEncoder passwordEncoder;
     private final TokenManager tokenManager;
@@ -264,7 +267,10 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         newMember.setPassword(passwordList);
 
         newMember.setProfile(request.getNickname(), request.getProfileImg());
-        if (Role.of(request.getRole()).equals(Role.TEACHER)) saveTeacherInfo(request);
+        if (Role.of(request.getRole()).equals(Role.TEACHER)) {
+            saveTeacherInfo(request);
+            saveTeacherSelectInfo();
+        }
 
         return memberRepository.save(newMember);
     }
@@ -314,6 +320,11 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
         TeacherInfo newTeacher = AuthConverter.toTeacher(request);
         teacherInfoRepository.save(newTeacher);
+    }
+
+    private void saveTeacherSelectInfo() {
+        TeacherSelectInfo teacherSelectInfo = TeacherSelectInfo.builder().build();
+        teacherSelectInfoRepository.save(teacherSelectInfo);
     }
 
     private void validateRequiredFields (AuthRequestDTO.JoinCommonDTO request) {
