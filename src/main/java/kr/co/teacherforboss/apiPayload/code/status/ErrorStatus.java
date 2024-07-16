@@ -70,8 +70,8 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_ROLE_NOT_TEACHER(BAD_REQUEST, "MEMBER40024", "티쳐가 아닙니다."),
 
     MEMBER_NOT_FOUND(NOT_FOUND, "MEMBER4041", "사용자가 없습니다."),
-    MEMBER_TEACHER_INFO_NOT_FOUND(NOT_FOUND, "MEMBER4042", "사용자가 없습니다."),
-    TEACHER_INFO_NOT_FOUND(NOT_FOUND, "MEMBER4043", "사용자에 해당되는 티쳐 정보가 없습니다."),
+    TEACHER_INFO_NOT_FOUND(NOT_FOUND, "MEMBER4042", "사용자에 해당되는 티쳐 정보가 없습니다."),
+    TEACHER_SELECT_INFO_NOT_FOUND(NOT_FOUND, "MEMBER4043", "사용자에 해당되는 티쳐 채택 정보가 없습니다."),
 
     // Survey
     SURVEY_DUPLICATED(BAD_REQUEST, "SURVEY4001", "이미 사전정보가 존재합니다."),
@@ -119,6 +119,8 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // Board
     INVALID_IMAGE_TIMESTAMP(BAD_REQUEST, "BOARD4001", "이미지 타임스탬프 값이 없습니다."),
+    QUESTION_ALREADY_SOLVED(BAD_REQUEST, "BOARD4002", "이미 답변이 채택된 질문입니다."),
+    QUESTION_SELECT_TERM_EXPIRED(BAD_REQUEST, "BOARD4003", "답변 채택 기간이 지났습니다."),
     POST_NOT_FOUND(NOT_FOUND, "BOARD4041", "게시물을 찾을 수 없습니다."),
     QUESTION_NOT_FOUND(NOT_FOUND, "BOARD4042", "질문을 찾을 수 없습니다."),
     ANSWER_NOT_FOUND(NOT_FOUND, "BOARD4043", "답변을 찾을 수 없습니다."),

@@ -54,7 +54,7 @@ public class MemberCommandServiceImpl implements MemberCommandService{
         Member member = authCommandService.getMember();
         if (!member.getRole().equals(Role.TEACHER)) throw new MemberHandler(ErrorStatus.MEMBER_ROLE_INVALID);
         TeacherInfo teacherInfo = teacherInfoRepository.findByMemberIdAndStatus(member.getId(), Status.ACTIVE)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_TEACHER_INFO_NOT_FOUND));
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.TEACHER_INFO_NOT_FOUND));
 
         member.setProfile(request.getNickname(), request.getProfileImg());
         teacherInfo.editTeacherInfo(request.getField(), request.getCareer(), request.getIntroduction(), request.getKeywords(),

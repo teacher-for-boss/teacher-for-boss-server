@@ -7,11 +7,13 @@ import java.util.Set;
 
 import kr.co.teacherforboss.domain.Comment;
 import kr.co.teacherforboss.domain.CommentLike;
+import kr.co.teacherforboss.domain.TeacherSelectInfo;
 import kr.co.teacherforboss.repository.CommentLikeRepository;
 import kr.co.teacherforboss.repository.CommentRepository;
 import kr.co.teacherforboss.repository.QuestionLikeRepository;
 import kr.co.teacherforboss.domain.AnswerLike;
 import kr.co.teacherforboss.repository.AnswerLikeRepository;
+import kr.co.teacherforboss.repository.TeacherSelectInfoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,6 +68,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     private final AnswerRepository answerRepository;
     private final QuestionBookmarkRepository questionBookmarkRepository;
     private final AnswerLikeRepository answerLikeRepository;
+    private final TeacherSelectInfoRepository teacherSelectInfoRepository;
 
     @Override
     @Transactional
@@ -350,12 +353,21 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     @Transactional
     public Answer selectAnswer(Long questionId, Long answerId) {
         Member member = authCommandService.getMember();
+
         Question question = questionRepository.findByIdAndMemberIdAndStatus(questionId, member.getId(), Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
+        if (question.getSolved().isIdentifier()) throw new BoardHandler(ErrorStatus.QUESTION_ALREADY_SOLVED);
+        if (question.isSelectTermExpired()) throw new BoardHandler(ErrorStatus.QUESTION_SELECT_TERM_EXPIRED);
+
         Answer answer = answerRepository.findByIdAndQuestionIdAndStatus(answerId, questionId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.ANSWER_NOT_FOUND));
+        TeacherSelectInfo teacherSelectInfo = teacherSelectInfoRepository.findByMemberIdAndStatus(answer.getMember().getId(), Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.TEACHER_SELECT_INFO_NOT_FOUND));  // TODO: teacher 가입할 때 teacherSelectInfo 생성
 
         question.selectAnswer(answer);
+        teacherSelectInfo.increaseSelectCount();
+        teacherSelectInfo.addPoint(Question.POINT);
+
         return answer;
     }
 
