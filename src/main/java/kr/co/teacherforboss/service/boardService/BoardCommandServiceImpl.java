@@ -157,12 +157,12 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         Member member = authCommandService.getMember();
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
-        PostBookmark bookmark = postBookmarkRepository.findByPostIdAndMemberIdAndStatus(post.getId(), member.getId(), Status.ACTIVE)
+        PostBookmark postBookmark = postBookmarkRepository.findByPostIdAndMemberIdAndStatus(post.getId(), member.getId(), Status.ACTIVE)
                 .orElse(BoardConverter.toSavePostBookmark(post, member));
 
-        bookmark.toggleBookmarked();
-        post.updateBookmarkCount(bookmark.getBookmarked().isIdentifier());
-        return postBookmarkRepository.save(bookmark);
+        postBookmark.toggleBookmarked();
+        post.updateBookmarkCount(postBookmark.getBookmarked().isIdentifier());
+        return postBookmarkRepository.save(postBookmark);
     }
 
     @Override
@@ -171,11 +171,11 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         Member member = authCommandService.getMember();
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
-        PostLike like = postLikeRepository.findByPostIdAndMemberIdAndStatus(post.getId(), member.getId(), Status.ACTIVE)
+        PostLike postLike = postLikeRepository.findByPostIdAndMemberIdAndStatus(post.getId(), member.getId(), Status.ACTIVE)
                         .orElse(BoardConverter.toPostLike(post, member));
-        like.toggleLiked();
-        post.updateLikeCount(like.getLiked().isIdentifier());
-        return postLikeRepository.save(like);
+        postLike.toggleLiked();
+        post.updateLikeCount(postLike.getLiked().isIdentifier());
+        return postLikeRepository.save(postLike);
     }
 
     @Override
