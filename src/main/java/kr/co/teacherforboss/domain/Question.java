@@ -102,5 +102,23 @@ public class Question extends BaseEntity {
         this.viewCount += 1;
         return this;
     }
+
+    public Question updateLikeCount(boolean isLike) {
+        if (isLike) {
+            this.likeCount += 1;
+        } else {
+            this.likeCount -= 1;
+        }
+        return this;
+    }
+
+    public Question updateBookmarkCount(boolean isBookmark) {
+        if (isBookmark) {
+            this.bookmarkCount += 1;
+        } else {
+            this.bookmarkCount -= 1;
+        }
+        return this;
+    }
 }
 

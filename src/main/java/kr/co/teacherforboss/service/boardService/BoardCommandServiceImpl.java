@@ -266,12 +266,13 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     @Transactional
     public QuestionLike toggleQuestionLike(Long questionId) {
         Member member = authCommandService.getMember();
-        Question questionToLike = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
+        Question question = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
-        QuestionLike questionLike = questionLikeRepository.findByQuestionIdAndMemberIdAndStatus(questionToLike.getId(), member.getId(), Status.ACTIVE)
-                .orElse(BoardConverter.toQuestionLike(questionToLike, member));
+        QuestionLike questionLike = questionLikeRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE)
+                .orElse(BoardConverter.toQuestionLike(question, member));
 
         questionLike.toggleLiked();
+        question.updateLikeCount(questionLike.getLiked().isIdentifier());
         return questionLikeRepository.save(questionLike);
     }
 
@@ -290,12 +291,13 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     @Transactional
     public QuestionBookmark toggleQuestionBookmark(Long questionId) {
         Member member = authCommandService.getMember();
-        Question questionToBookmark = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
+        Question question = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
-        QuestionBookmark questionBookmark = questionBookmarkRepository.findByQuestionIdAndMemberIdAndStatus(questionToBookmark.getId(), member.getId(), Status.ACTIVE)
-                .orElse(BoardConverter.toQuestionBookmark(questionToBookmark, member));
+        QuestionBookmark questionBookmark = questionBookmarkRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE)
+                .orElse(BoardConverter.toQuestionBookmark(question, member));
 
         questionBookmark.toggleLiked();
+        question.updateBookmarkCount(questionBookmark.getBookmarked().isIdentifier());
         return questionBookmarkRepository.save(questionBookmark);
     }
 
