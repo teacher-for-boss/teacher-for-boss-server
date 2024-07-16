@@ -85,4 +85,22 @@ public class Post extends BaseEntity {
         this.viewCount += 1;
         return this;
     }
+
+    public Post updateLikeCount(boolean isLike) {
+        if (isLike) {
+            this.likeCount += 1;
+        } else {
+            this.likeCount -= 1;
+        }
+        return this;
+    }
+
+    public Post updateBookmarkCount(boolean isBookmark) {
+        if (isBookmark) {
+            this.bookmarkCount += 1;
+        } else {
+            this.bookmarkCount -= 1;
+        }
+        return this;
+    }
 }

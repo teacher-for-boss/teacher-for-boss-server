@@ -161,6 +161,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
                 .orElse(BoardConverter.toSavePostBookmark(post, member));
 
         bookmark.toggleBookmarked();
+        post.updateBookmarkCount(bookmark.getBookmarked().isIdentifier());
         return postBookmarkRepository.save(bookmark);
     }
 
@@ -173,6 +174,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         PostLike like = postLikeRepository.findByPostIdAndMemberIdAndStatus(post.getId(), member.getId(), Status.ACTIVE)
                         .orElse(BoardConverter.toPostLike(post, member));
         like.toggleLiked();
+        post.updateLikeCount(like.getLiked().isIdentifier());
         return postLikeRepository.save(like);
     }
 
