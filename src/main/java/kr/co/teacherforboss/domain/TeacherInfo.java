@@ -2,6 +2,8 @@ package kr.co.teacherforboss.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
@@ -18,6 +20,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter
@@ -78,13 +81,15 @@ public class TeacherInfo extends BaseEntity {
     @Column(length = 100)
     private String email;
 
-    @Column
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault("'F'")
     private BooleanType emailOpen;
 
     @Column(length = 50)
     private String phone;
 
-    @Column
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault("'F'")
     private BooleanType phoneOpen;
 
     public void editTeacherInfo(String field, Integer career, String introduction, List<String> keywordsList, String email,
