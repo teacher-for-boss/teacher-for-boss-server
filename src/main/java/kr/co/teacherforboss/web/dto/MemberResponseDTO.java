@@ -1,6 +1,8 @@
 package kr.co.teacherforboss.web.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -43,5 +45,22 @@ public class MemberResponseDTO {
     public static class EditMemberProfileDTO {
         String nickname;
         String profileImg;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetTeacherProfileDTO {
+        String nickname;
+        String profileImg;
+        String introduction;
+        String phone;
+        String email;
+        String field;
+        Integer career;
+        List<String> keywords;
+        String level;
+        boolean isMine;
     }
 }
