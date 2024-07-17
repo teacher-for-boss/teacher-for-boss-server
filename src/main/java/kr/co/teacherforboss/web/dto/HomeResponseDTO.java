@@ -59,7 +59,7 @@ public class HomeResponseDTO {
             String imageUrl;
             String field;
             int career;
-            String keywords;
+            List<String> keywords;
         }
     }
 }
