@@ -17,11 +17,8 @@ import kr.co.teacherforboss.service.memberService.MemberCommandService;
 import kr.co.teacherforboss.web.dto.MemberRequestDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @Validated
@@ -36,6 +33,11 @@ public class MemberController {
     public ApiResponse<MemberResponseDTO.GetMemberProfileDTO> getMemberProfile() {
         Member member = memberQueryService.getMemberProfile();
         return ApiResponse.onSuccess(MemberConverter.toGetMemberProfileDTO(member));
+    }
+
+    @GetMapping("/profiles/detail")
+    public ApiResponse<MemberResponseDTO.GetTeacherProfileDTO> getMemberProfileDetail() {
+        return ApiResponse.onSuccess(memberQueryService.getTeacherProfile());
     }
 
     @PostMapping("/survey")
