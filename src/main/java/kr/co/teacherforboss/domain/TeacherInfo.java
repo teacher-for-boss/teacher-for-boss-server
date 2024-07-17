@@ -12,6 +12,7 @@ import java.util.List;
 import kr.co.teacherforboss.domain.common.BaseEntity;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.Level;
+import kr.co.teacherforboss.util.AES256Util;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -97,5 +98,14 @@ public class TeacherInfo extends BaseEntity {
         this.emailOpen = emailOpen;
         this.phone = phone;
         this.phoneOpen = phoneOpen;
+    }
+
+    public void editTeacherAccount(String bank, String accountNumber, String accountHolder) {
+        if (accountNumber != null)
+            this.accountNumber = AES256Util.encrypt(accountNumber);
+        if (bank != null)
+            this.bank = bank;
+        if (accountHolder != null)
+            this.accountHolder = accountHolder;
     }
 }
