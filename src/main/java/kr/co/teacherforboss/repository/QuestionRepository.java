@@ -106,10 +106,10 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 	Slice<Question> findFirstSliceByAnsweredListOrderByCreatedAtDesc(Long memberId, PageRequest pageRequest);
 
 	@Query(value = """
-			SELECT * FROM question
-			WHERE status = 'ACTIVE'
-			ORDER BY view_count DESC, created_at DESC
-			LIMIT 5
+   		SELECT * FROM question
+   		WHERE status = 'ACTIVE'
+   		ORDER BY view_count DESC, created_at DESC
+   		LIMIT 5
 	""", nativeQuery = true)
 	List<Question> findHotQuestions(); // TODO: 최근 일주일
 }
