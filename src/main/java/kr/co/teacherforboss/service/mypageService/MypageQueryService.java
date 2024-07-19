@@ -1,8 +1,7 @@
 package kr.co.teacherforboss.service.mypageService;
 
-import kr.co.teacherforboss.domain.Question;
-import org.springframework.data.domain.Slice;
+import kr.co.teacherforboss.web.dto.MypageResponseDTO;
 
 public interface MypageQueryService {
-    Slice<Question> getAnsweredQuestions(Long lastQuestionId, int size);
+    MypageResponseDTO.GetAnsweredQuestionsDTO getAnsweredQuestions(Long lastQuestionId, int size);
 }

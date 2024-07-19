@@ -540,13 +540,14 @@ public class BoardConverter {
                 .build();
     }
 
-    public static MypageResponseDTO.GetAnsweredQuestionsDTO toGetAnsweredQuestionsDTO(Slice<Question> questions) {
+    public static MypageResponseDTO.GetAnsweredQuestionsDTO toGetAnsweredQuestionsDTO(Slice<Question> questions, Member member) {
         return MypageResponseDTO.GetAnsweredQuestionsDTO.builder()
                 .hasNext(questions.hasNext())
                 .answeredQuestionList(questions.stream().map(question ->
                         new MypageResponseDTO.GetAnsweredQuestionsDTO.AnsweredQuestion(
-                                question.getTitle(), question.getContent(), question.getCreatedAt(),
-                                question.getCategory().getName(), question.getSolved().isIdentifier(), question.getId())).toList())
+                                question.getId(), question.getCategory().getName(), question.getTitle(),
+                                question.getContent(), question.getSolved().isIdentifier(),
+                                member.getProfileImg(), question.getCreatedAt())).toList())
                 .build();
     }
 }

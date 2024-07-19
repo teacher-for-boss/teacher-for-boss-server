@@ -5,14 +5,11 @@ import java.util.List;
 import java.util.Map;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.MemberSurvey;
-import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.TeacherInfo;
 import kr.co.teacherforboss.domain.enums.Survey;
 import kr.co.teacherforboss.web.dto.HomeResponseDTO;
 import kr.co.teacherforboss.web.dto.MemberRequestDTO;
 import kr.co.teacherforboss.web.dto.MemberResponseDTO;
-import kr.co.teacherforboss.web.dto.MypageResponseDTO;
-import org.springframework.data.domain.Slice;
 
 public class MemberConverter {
     public static MemberResponseDTO.GetMemberProfileDTO toGetMemberProfileDTO(Member member) {
