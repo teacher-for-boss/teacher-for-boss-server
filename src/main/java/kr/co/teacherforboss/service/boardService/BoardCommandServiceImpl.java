@@ -7,11 +7,13 @@ import java.util.Set;
 
 import kr.co.teacherforboss.domain.Comment;
 import kr.co.teacherforboss.domain.CommentLike;
+import kr.co.teacherforboss.domain.TeacherSelectInfo;
 import kr.co.teacherforboss.repository.CommentLikeRepository;
 import kr.co.teacherforboss.repository.CommentRepository;
 import kr.co.teacherforboss.repository.QuestionLikeRepository;
 import kr.co.teacherforboss.domain.AnswerLike;
 import kr.co.teacherforboss.repository.AnswerLikeRepository;
+import kr.co.teacherforboss.repository.TeacherSelectInfoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,6 +68,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     private final AnswerRepository answerRepository;
     private final QuestionBookmarkRepository questionBookmarkRepository;
     private final AnswerLikeRepository answerLikeRepository;
+    private final TeacherSelectInfoRepository teacherSelectInfoRepository;
 
     @Override
     @Transactional
@@ -157,11 +160,12 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         Member member = authCommandService.getMember();
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
-        PostBookmark bookmark = postBookmarkRepository.findByPostIdAndMemberIdAndStatus(post.getId(), member.getId(), Status.ACTIVE)
+        PostBookmark postBookmark = postBookmarkRepository.findByPostIdAndMemberIdAndStatus(post.getId(), member.getId(), Status.ACTIVE)
                 .orElse(BoardConverter.toSavePostBookmark(post, member));
 
-        bookmark.toggleBookmarked();
-        return postBookmarkRepository.save(bookmark);
+        postBookmark.toggleBookmarked();
+        post.updateBookmarkCount(postBookmark.getBookmarked().isIdentifier());
+        return postBookmarkRepository.save(postBookmark);
     }
 
     @Override
@@ -170,10 +174,11 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         Member member = authCommandService.getMember();
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
-        PostLike like = postLikeRepository.findByPostIdAndMemberIdAndStatus(post.getId(), member.getId(), Status.ACTIVE)
+        PostLike postLike = postLikeRepository.findByPostIdAndMemberIdAndStatus(post.getId(), member.getId(), Status.ACTIVE)
                         .orElse(BoardConverter.toPostLike(post, member));
-        like.toggleLiked();
-        return postLikeRepository.save(like);
+        postLike.toggleLiked();
+        post.updateLikeCount(postLike.getLiked().isIdentifier());
+        return postLikeRepository.save(postLike);
     }
 
     @Override
@@ -264,12 +269,13 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     @Transactional
     public QuestionLike toggleQuestionLike(Long questionId) {
         Member member = authCommandService.getMember();
-        Question questionToLike = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
+        Question question = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
-        QuestionLike questionLike = questionLikeRepository.findByQuestionIdAndMemberIdAndStatus(questionToLike.getId(), member.getId(), Status.ACTIVE)
-                .orElse(BoardConverter.toQuestionLike(questionToLike, member));
+        QuestionLike questionLike = questionLikeRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE)
+                .orElse(BoardConverter.toQuestionLike(question, member));
 
         questionLike.toggleLiked();
+        question.updateLikeCount(questionLike.getLiked().isIdentifier());
         return questionLikeRepository.save(questionLike);
     }
 
@@ -288,12 +294,13 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     @Transactional
     public QuestionBookmark toggleQuestionBookmark(Long questionId) {
         Member member = authCommandService.getMember();
-        Question questionToBookmark = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
+        Question question = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
-        QuestionBookmark questionBookmark = questionBookmarkRepository.findByQuestionIdAndMemberIdAndStatus(questionToBookmark.getId(), member.getId(), Status.ACTIVE)
-                .orElse(BoardConverter.toQuestionBookmark(questionToBookmark, member));
+        QuestionBookmark questionBookmark = questionBookmarkRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE)
+                .orElse(BoardConverter.toQuestionBookmark(question, member));
 
         questionBookmark.toggleLiked();
+        question.updateBookmarkCount(questionBookmark.getBookmarked().isIdentifier());
         return questionBookmarkRepository.save(questionBookmark);
     }
 
@@ -346,12 +353,21 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     @Transactional
     public Answer selectAnswer(Long questionId, Long answerId) {
         Member member = authCommandService.getMember();
+
         Question question = questionRepository.findByIdAndMemberIdAndStatus(questionId, member.getId(), Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
+        if (question.getSolved().isIdentifier()) throw new BoardHandler(ErrorStatus.QUESTION_ALREADY_SOLVED);
+        if (question.isSelectTermExpired()) throw new BoardHandler(ErrorStatus.QUESTION_SELECT_TERM_EXPIRED);
+
         Answer answer = answerRepository.findByIdAndQuestionIdAndStatus(answerId, questionId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.ANSWER_NOT_FOUND));
+        TeacherSelectInfo teacherSelectInfo = teacherSelectInfoRepository.findByMemberIdAndStatus(answer.getMember().getId(), Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.TEACHER_SELECT_INFO_NOT_FOUND));  // TODO: teacher 가입할 때 teacherSelectInfo 생성
 
         question.selectAnswer(answer);
+        teacherSelectInfo.increaseSelectCount();
+        teacherSelectInfo.addPoint(Question.POINT);
+
         return answer;
     }
 

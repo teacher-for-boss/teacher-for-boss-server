@@ -7,6 +7,7 @@ import kr.co.teacherforboss.service.memberService.MemberQueryService;
 import kr.co.teacherforboss.web.dto.MemberResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,8 +17,11 @@ import kr.co.teacherforboss.service.memberService.MemberCommandService;
 import kr.co.teacherforboss.web.dto.MemberRequestDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @Validated
@@ -27,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class MemberController {
     private final MemberQueryService memberQueryService;
     private final MemberCommandService memberCommandService;
+
     @GetMapping("/profile")
     public ApiResponse<MemberResponseDTO.GetMemberProfileDTO> getMemberProfile() {
         Member member = memberQueryService.getMemberProfile();
@@ -37,5 +42,17 @@ public class MemberController {
     public ApiResponse<MemberResponseDTO.SurveyResultDTO> saveSurvey(@RequestBody @Valid MemberRequestDTO.SurveyDTO request) {
         MemberSurvey memberSurvey = memberCommandService.saveSurvey(request);
         return ApiResponse.onSuccess(MemberConverter.toSurveyResultDTO(memberSurvey));
+    }
+
+    @PatchMapping("/profiles/boss")
+    public ApiResponse<MemberResponseDTO.EditMemberProfileDTO> editBossProfile(MemberRequestDTO.EditBossProfileDTO request) {
+        Member member = memberCommandService.editBossProfile(request);
+        return ApiResponse.onSuccess(MemberConverter.toEditMemberProfileDTO(member));
+    }
+
+    @PatchMapping("/profiles/teacher")
+    public ApiResponse<MemberResponseDTO.EditMemberProfileDTO> editTeacherProfile(MemberRequestDTO.EditTeacherProfileDTO request) {
+        Member member = memberCommandService.editTeacherProfile(request);
+        return ApiResponse.onSuccess(MemberConverter.toEditMemberProfileDTO(member));
     }
 }

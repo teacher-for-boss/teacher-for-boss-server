@@ -130,7 +130,8 @@ public class BoardQueryServiceImpl implements BoardQueryService {
     public BoardResponseDTO.GetQuestionDTO getQuestion(Long questionId) {
         Member member = authCommandService.getMember();
         Question question = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
-                .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND))
+                .increaseViewCount();
 
         boolean isMine = member.equals(question.getMember());
         QuestionLike questionLike = questionLikeRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE).orElse(null);

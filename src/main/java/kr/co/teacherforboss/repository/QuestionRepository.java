@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.PageRequest;
@@ -103,4 +104,12 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 		ORDER BY (SELECT MAX(a.created_at) FROM answer a WHERE a.question_id = q.id AND a.member_id = :memberId) DESC
 	""", nativeQuery = true)
 	Slice<Question> findFirstSliceByAnsweredListOrderByCreatedAtDesc(Long memberId, PageRequest pageRequest);
+
+	@Query(value = """
+			SELECT * FROM question
+			WHERE status = 'ACTIVE'
+			ORDER BY view_count DESC, created_at DESC
+			LIMIT 5
+	""", nativeQuery = true)
+	List<Question> findHotQuestions(); // TODO: 최근 일주일
 }

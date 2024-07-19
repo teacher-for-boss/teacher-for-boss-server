@@ -1,6 +1,7 @@
 package kr.co.teacherforboss.service.authService;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -13,12 +14,14 @@ import kr.co.teacherforboss.config.jwt.TokenManager;
 import kr.co.teacherforboss.converter.AuthConverter;
 import kr.co.teacherforboss.domain.BusinessAuth;
 import kr.co.teacherforboss.domain.TeacherInfo;
+import kr.co.teacherforboss.domain.TeacherSelectInfo;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.LoginType;
 import kr.co.teacherforboss.domain.AgreementTerm;
 import kr.co.teacherforboss.domain.enums.Role;
 import kr.co.teacherforboss.repository.AgreementTermRepository;
 import kr.co.teacherforboss.repository.BusinessAuthRepository;
+import kr.co.teacherforboss.repository.TeacherSelectInfoRepository;
 import kr.co.teacherforboss.util.BusinessUtil;
 import kr.co.teacherforboss.repository.TeacherInfoRepository;
 import kr.co.teacherforboss.util.PasswordUtil;
@@ -54,6 +57,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private final AgreementTermRepository agreementTermRepository;
     private final BusinessAuthRepository businessAuthRepository;
     private final TeacherInfoRepository teacherInfoRepository;
+    private final TeacherSelectInfoRepository teacherSelectInfoRepository;
     private final MailCommandService mailCommandService;
     private final PasswordEncoder passwordEncoder;
     private final TokenManager tokenManager;
@@ -264,7 +268,10 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         newMember.setPassword(passwordList);
 
         newMember.setProfile(request.getNickname(), request.getProfileImg());
-        if (Role.of(request.getRole()).equals(Role.TEACHER)) saveTeacherInfo(request);
+        if (Role.of(request.getRole()).equals(Role.TEACHER)) {
+            saveTeacherInfo(request);
+            saveTeacherSelectInfo();
+        }
 
         return memberRepository.save(newMember);
     }
@@ -316,6 +323,11 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         teacherInfoRepository.save(newTeacher);
     }
 
+    private void saveTeacherSelectInfo() {
+        TeacherSelectInfo teacherSelectInfo = TeacherSelectInfo.builder().build();
+        teacherSelectInfoRepository.save(teacherSelectInfo);
+    }
+
     private void validateRequiredFields (AuthRequestDTO.JoinCommonDTO request) {
         if (request.getRole() == null)
             throw new AuthHandler(ErrorStatus.MEMBER_ROLE_EMPTY);
@@ -329,5 +341,20 @@ public class AuthCommandServiceImpl implements AuthCommandService {
             throw new AuthHandler(ErrorStatus.MEMBER_PHONE_EMPTY);
         if (request.getProfileImg() == null)
             throw new AuthHandler(ErrorStatus.MEMBER_PROFILE_IMG_EMPTY);
+    }
+
+    @Override
+    @Transactional
+    public Member withdraw() {
+        Member member = getMember();
+
+        if (member.getRole() == Role.TEACHER) {
+            TeacherInfo teacherInfo = teacherInfoRepository.findByMemberIdAndStatus(member.getId(), Status.ACTIVE)
+                            .orElseThrow(() -> new MemberHandler(ErrorStatus.TEACHER_INFO_NOT_FOUND));
+            teacherInfo.softDelete();
+        }
+
+        member.softDelete();
+        return member;
     }
 }

@@ -5,9 +5,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.data.domain.Slice;
-
 import kr.co.teacherforboss.config.S3Config;
 import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.AnswerLike;
@@ -29,6 +26,8 @@ import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.ImageOrigin;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
+import kr.co.teacherforboss.web.dto.HomeResponseDTO;
+import org.springframework.data.domain.Slice;
 
 public class BoardConverter {
 
@@ -520,6 +519,23 @@ public class BoardConverter {
         return BoardResponseDTO.DeleteCommentDTO.builder()
                 .commentId(comment.getId())
                 .deletedAt(comment.getUpdatedAt())
+                .build();
+    }
+
+    public static HomeResponseDTO.GetHotPostsDTO toGetHotPostsDTO(List<Post> hotPosts) {
+        List<HomeResponseDTO.GetHotPostsDTO.HotPostInfo> hotPostInfos = new ArrayList<>();
+        hotPosts.forEach(post -> hotPostInfos.add(new HomeResponseDTO.GetHotPostsDTO.HotPostInfo(post.getId(), post.getTitle())));
+        return HomeResponseDTO.GetHotPostsDTO.builder()
+                .hotPostList(hotPostInfos)
+                .build();
+    }
+
+    public static HomeResponseDTO.GetHotQuestionsDTO toGetHotQuestionsDTO(List<Question> hotQuestions) {
+        List<HomeResponseDTO.GetHotQuestionsDTO.HotQuestionInfo> hotQuestionInfos = new ArrayList<>();
+        hotQuestions.forEach(question -> hotQuestionInfos.add(new HomeResponseDTO.GetHotQuestionsDTO.HotQuestionInfo(
+                question.getId(), question.getCategory().getName(), question.getTitle(), question.getContent(), question.getAnswerList().size())));
+        return HomeResponseDTO.GetHotQuestionsDTO.builder()
+                .hotQuestionList(hotQuestionInfos)
                 .build();
     }
 }
