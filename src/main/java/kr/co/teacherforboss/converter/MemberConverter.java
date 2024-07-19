@@ -39,16 +39,6 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MypageResponseDTO.GetAnsweredQuestionsDTO toGetAnsweredQuestionsDTO(Slice<Question> questions) {
-        return MypageResponseDTO.GetAnsweredQuestionsDTO.builder()
-                .hasNext(questions.hasNext())
-                .answeredQuestionList(questions.stream().map(question ->
-                        new MypageResponseDTO.GetAnsweredQuestionsDTO.AnsweredQuestion(
-                                question.getTitle(), question.getContent(), question.getCreatedAt(),
-                                question.getCategory().getName(), question.getSolved().isIdentifier(), question.getId())).toList())
-                .build();
-    }
-
     public static MemberResponseDTO.EditMemberProfileDTO toEditMemberProfileDTO(Member member) {
         return MemberResponseDTO.EditMemberProfileDTO.builder()
                 .nickname(member.getNickname())

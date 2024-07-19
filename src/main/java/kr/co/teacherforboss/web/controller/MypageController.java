@@ -1,7 +1,7 @@
 package kr.co.teacherforboss.web.controller;
 
 import kr.co.teacherforboss.apiPayload.ApiResponse;
-import kr.co.teacherforboss.converter.MemberConverter;
+import kr.co.teacherforboss.converter.BoardConverter;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.service.mypageService.MypageQueryService;
 import kr.co.teacherforboss.web.dto.MypageResponseDTO;
@@ -28,6 +28,6 @@ public class MypageController {
     public ApiResponse<MypageResponseDTO.GetAnsweredQuestionsDTO> getAnsweredQuestions(@RequestParam(defaultValue = "0") Long lastQuestionId,
                                                                                        @RequestParam(defaultValue = "10") int size) {
         Slice<Question> questions = mypageQueryService.getAnsweredQuestions(lastQuestionId, size);
-        return ApiResponse.onSuccess(MemberConverter.toGetAnsweredQuestionsDTO(questions));
+        return ApiResponse.onSuccess(BoardConverter.toGetAnsweredQuestionsDTO(questions));
     }
 }
