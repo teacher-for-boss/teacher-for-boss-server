@@ -173,4 +173,11 @@ public class AuthConverter {
                 .isChecked(true)
                 .build();
     }
+
+    public static AuthResponseDTO.RecoverDTO toRecoverDTO(Member member) {
+        return AuthResponseDTO.RecoverDTO.builder()
+                .memberId(member.getId())
+                .activeDate(LocalDateTime.now())
+                .build();
+    }
 }
