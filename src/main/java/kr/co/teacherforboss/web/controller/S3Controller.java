@@ -26,7 +26,8 @@ public class S3Controller {
     public ApiResponse<S3ResponseDTO.GetPresignedUrlDTO> getPresignedUrl(@RequestParam @CheckImageOrigin String origin,
                                                                          @RequestParam(required = false) String uuid,
                                                                          @RequestParam(defaultValue = "0") int lastIndex,
-                                                                         @RequestParam(defaultValue = "1") int imageCount) {
-        return ApiResponse.onSuccess(s3QueryService.getPresignedUrl(origin, uuid, lastIndex, imageCount));
+                                                                         @RequestParam(defaultValue = "1") int imageCount,
+                                                                         @RequestParam String fileType) {
+        return ApiResponse.onSuccess(s3QueryService.getPresignedUrl(origin, uuid, lastIndex, imageCount, fileType));
     }
 }
