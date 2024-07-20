@@ -30,8 +30,9 @@ public class MypageQueryServiceImpl implements MypageQueryService {
 
         if (!member.getRole().equals(Role.TEACHER)) throw new MemberHandler(ErrorStatus.MEMBER_ROLE_INVALID);
 
-        Slice<Question> questions = lastQuestionId == 0 ? questionRepository.findAnsweredQuestionsSliceByMemberIdOrderByCreatedAtDesc(member.getId(), pageRequest) :
-                questionRepository.findAnsweredQuestionsSliceByIdLessthanAndMemberIdOrderByCreatedAtDesc(member.getId(), lastQuestionId, pageRequest);
+        Slice<Question> questions = lastQuestionId == 0
+                ? questionRepository.findAnsweredQuestionsSliceByMemberIdOrderByCreatedAtDesc(member.getId(), pageRequest)
+                : questionRepository.findAnsweredQuestionsSliceByIdLessthanAndMemberIdOrderByCreatedAtDesc(member.getId(), lastQuestionId, pageRequest);
         return BoardConverter.toGetAnsweredQuestionsDTO(questions, member);
     }
 }
