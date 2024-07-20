@@ -13,4 +13,10 @@ public class PaymentConverter {
                 .accountHolder(teacherInfo.getAccountHolder())
                 .build();
     }
+
+    public static PaymentResponseDTO.EditTeacherAccountDTO toEditTeacherAccountDTO(TeacherInfo teacherInfo) {
+        return PaymentResponseDTO.EditTeacherAccountDTO.builder()
+                .updatedAt(teacherInfo.getUpdatedAt())
+                .build();
+    }
 }
