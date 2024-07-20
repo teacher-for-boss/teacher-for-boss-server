@@ -51,8 +51,16 @@ public class MemberConverter {
                     Member member = memberMap.get(memberId);
                     TeacherInfo teacherInfo = teacherInfoMap.get(memberId);
                     return new HomeResponseDTO.GetHotTeachersDTO.HotTeacherInfo(member.getId(), member.getNickname(), member.getProfileImg(),
-                            teacherInfo.getField(), teacherInfo.getCareer(), teacherInfo.getKeywords());
+                            teacherInfo.getField(), teacherInfo.getCareer(), Arrays.stream(teacherInfo.getKeywords().split(";")).toList());
                 }).toList())
+                .build();
+    }
+
+    public static MemberResponseDTO.GetMemberAccountInfoDTO toGetMemberAccountInfoDTO(Member member) {
+        return MemberResponseDTO.GetMemberAccountInfoDTO.builder()
+                .loginType(member.getLoginType().name())
+                .email(member.getEmail())
+                .phone(member.getPhone())
                 .build();
     }
 

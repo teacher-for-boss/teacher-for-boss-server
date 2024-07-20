@@ -357,4 +357,21 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         member.softDelete();
         return member;
     }
+
+    @Override
+    @Transactional
+    public Member recover(String email) {
+        Member member = memberRepository.findByEmailAndStatus(email, Status.INACTIVE)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        if (member.getRole() == Role.TEACHER) {
+            TeacherInfo teacherInfo = teacherInfoRepository.findByMemberIdAndStatus(member.getId(), Status.INACTIVE)
+                            .orElseThrow(() -> new MemberHandler(ErrorStatus.TEACHER_INFO_NOT_FOUND));
+            teacherInfo.revertSoftDelete();
+        }
+
+        member.setInactiveDate(null);
+        member.revertSoftDelete();
+        return member;
+    }
 }

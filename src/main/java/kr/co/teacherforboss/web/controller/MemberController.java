@@ -57,4 +57,10 @@ public class MemberController {
         Member member = memberCommandService.editTeacherProfile(request);
         return ApiResponse.onSuccess(MemberConverter.toEditMemberProfileDTO(member));
     }
+
+    @GetMapping("/accounts")
+    public ApiResponse<MemberResponseDTO.GetMemberAccountInfoDTO> getAccountInfo() {
+        Member member = memberQueryService.getMemberProfile();
+        return ApiResponse.onSuccess(MemberConverter.toGetMemberAccountInfoDTO(member));
+    }
 }

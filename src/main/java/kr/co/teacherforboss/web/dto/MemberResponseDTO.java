@@ -51,6 +51,16 @@ public class MemberResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class GetMemberAccountInfoDTO {
+        String loginType;
+        String email;
+        String phone;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class GetTeacherProfileDTO {
         String nickname;
         String profileImg;
