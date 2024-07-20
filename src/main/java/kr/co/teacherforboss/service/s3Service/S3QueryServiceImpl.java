@@ -35,9 +35,9 @@ public class S3QueryServiceImpl implements S3QueryService{
 		String imageUuid = (uuid == null) ? createUuid() : uuid;
 
 		for (int index = lastIndex + 1; index <= lastIndex + imageCount; index++) {
-			String fileName = String.format("%s/%s_%d.%s", origin, imageUuid, index, fileType);
+			String fileName = String.format("%s/%s_%d", origin, imageUuid, index);
 
-			GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePresignedUrlRequest(S3Config.BUCKET_NAME, fileName);
+			GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePresignedUrlRequest(S3Config.BUCKET_NAME, fileName, fileType);
 			URL url = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
 
 			presignedUrlList.add(url.toString());
@@ -48,15 +48,13 @@ public class S3QueryServiceImpl implements S3QueryService{
 				.build();
 	}
 
-	private GeneratePresignedUrlRequest getGeneratePresignedUrlRequest(String bucket, String fileName) {
+	private GeneratePresignedUrlRequest getGeneratePresignedUrlRequest(String bucket, String fileName, String fileType) {
 		GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucket, fileName)
 				.withMethod(HttpMethod.PUT)
 				.withExpiration(getPresignedUrlExpiration());
 
-		generatePresignedUrlRequest.addRequestParameter(
-				Headers.S3_CANNED_ACL,
-				CannedAccessControlList.PublicRead.toString()
-		);
+		generatePresignedUrlRequest.addRequestParameter(Headers.S3_CANNED_ACL, CannedAccessControlList.PublicRead.toString());
+		generatePresignedUrlRequest.addRequestParameter(Headers.CONTENT_TYPE, fileType);
 
 		return generatePresignedUrlRequest;
 	}
