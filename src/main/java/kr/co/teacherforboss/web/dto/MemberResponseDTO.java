@@ -44,4 +44,14 @@ public class MemberResponseDTO {
         String nickname;
         String profileImg;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetMemberAccountInfoDTO {
+        String loginType;
+        String email;
+        String phone;
+    }
 }
