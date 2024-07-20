@@ -20,12 +20,13 @@ public class MypageResponseDTO {
         @Getter
         @AllArgsConstructor
         public static class AnsweredQuestion {
+            Long questionId;
+            String category;
             String title;
             String content;
-            LocalDateTime createdAt;
-            String category;
             boolean solved;
-            Long questionId;
+            String selectedTeacher;
+            LocalDateTime createdAt;
         }
     }
 }

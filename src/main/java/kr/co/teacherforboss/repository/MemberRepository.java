@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.repository;
 
+import java.util.List;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.enums.LoginType;
 import kr.co.teacherforboss.domain.enums.Status;
@@ -19,4 +20,5 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     boolean existsByEmailAndStatus(String email, Status status);
     boolean existsByPhoneAndStatus(String phone, Status status);
     boolean existsByNicknameAndStatus(String nickname, Status status);
+    List<Member> findAllByIdInAndStatus(List<Long> idCollect, Status status);
 }

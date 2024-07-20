@@ -1,11 +1,10 @@
 package kr.co.teacherforboss.web.dto;
 
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 public class AuthResponseDTO {
     @Builder
@@ -114,5 +113,23 @@ public class AuthResponseDTO {
     public static class CheckBusinessNumberResultDTO {
         Long businessAuthId;
         boolean isChecked;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class WithdrawDTO {
+        Long memberId;
+        LocalDateTime inactiveDate;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RecoverDTO {
+        Long memberId;
+        LocalDateTime activeDate;
     }
 }

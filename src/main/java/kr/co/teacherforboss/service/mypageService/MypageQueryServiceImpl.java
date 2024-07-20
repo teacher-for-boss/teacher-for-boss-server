@@ -15,7 +15,7 @@ import kr.co.teacherforboss.repository.PostLikeRepository;
 import kr.co.teacherforboss.repository.PostRepository;
 import kr.co.teacherforboss.repository.QuestionRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
-import kr.co.teacherforboss.web.dto.BoardResponseDTO;
+import kr.co.teacherforboss.web.dto.MypageResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
@@ -37,15 +37,17 @@ public class MypageQueryServiceImpl implements MypageQueryService {
     private final PostBookmarkRepository postBookmarkRepository;
 
     @Override
-    @Transactional(readOnly = true)
-    public Slice<Question> getAnsweredQuestions(Long lastQuestionId, int size) {
+    @Transactional
+    public MypageResponseDTO.GetAnsweredQuestionsDTO getAnsweredQuestions(Long lastQuestionId, int size) {
         Member member = authCommandService.getMember();
         PageRequest pageRequest = PageRequest.of(0, size);
 
         if (!member.getRole().equals(Role.TEACHER)) throw new MemberHandler(ErrorStatus.MEMBER_ROLE_INVALID);
 
-        return lastQuestionId == 0 ? questionRepository.findFirstSliceQuestionsByAnsweredListOrderByCreatedAtDesc(member.getId(), pageRequest) :
-                questionRepository.findSliceQuestionsByAnsweredListOrderByCreatedAtDesc(member.getId(), lastQuestionId, pageRequest);
+        Slice<Question> questions = lastQuestionId == 0
+                ? questionRepository.findAnsweredQuestionsSliceByMemberIdOrderByCreatedAtDesc(member.getId(), pageRequest)
+                : questionRepository.findAnsweredQuestionsSliceByIdLessthanAndMemberIdOrderByCreatedAtDesc(member.getId(), lastQuestionId, pageRequest);
+        return BoardConverter.toGetAnsweredQuestionsDTO(questions, member);
     }
 
     @Override

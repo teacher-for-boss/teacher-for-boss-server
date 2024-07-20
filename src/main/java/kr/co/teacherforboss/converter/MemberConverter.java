@@ -1,13 +1,15 @@
 package kr.co.teacherforboss.converter;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.MemberSurvey;
-import kr.co.teacherforboss.domain.Question;
+import kr.co.teacherforboss.domain.TeacherInfo;
 import kr.co.teacherforboss.domain.enums.Survey;
+import kr.co.teacherforboss.web.dto.HomeResponseDTO;
 import kr.co.teacherforboss.web.dto.MemberRequestDTO;
 import kr.co.teacherforboss.web.dto.MemberResponseDTO;
-import kr.co.teacherforboss.web.dto.MypageResponseDTO;
-import org.springframework.data.domain.Slice;
 
 public class MemberConverter {
     public static MemberResponseDTO.GetMemberProfileDTO toGetMemberProfileDTO(Member member) {
@@ -34,13 +36,29 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MypageResponseDTO.GetAnsweredQuestionsDTO toGetAnsweredQuestionsDTO(Slice<Question> questions) {
-        return MypageResponseDTO.GetAnsweredQuestionsDTO.builder()
-                .hasNext(questions.hasNext())
-                .answeredQuestionList(questions.stream().map(question ->
-                        new MypageResponseDTO.GetAnsweredQuestionsDTO.AnsweredQuestion(
-                                question.getTitle(), question.getContent(), question.getCreatedAt(),
-                                question.getCategory().getName(), question.getSolved().isIdentifier(), question.getId())).toList())
+    public static MemberResponseDTO.EditMemberProfileDTO toEditMemberProfileDTO(Member member) {
+        return MemberResponseDTO.EditMemberProfileDTO.builder()
+                .nickname(member.getNickname())
+                .profileImg(member.getProfileImg())
+                .build();
+    }
+
+    public static HomeResponseDTO.GetHotTeachersDTO toGetHotTeachersDTO(List<Long> memberIds, Map<Long, Member> memberMap, Map<Long, TeacherInfo> teacherInfoMap) {
+        return HomeResponseDTO.GetHotTeachersDTO.builder()
+                .hotTeacherList(memberIds.stream().map(memberId -> {
+                    Member member = memberMap.get(memberId);
+                    TeacherInfo teacherInfo = teacherInfoMap.get(memberId);
+                    return new HomeResponseDTO.GetHotTeachersDTO.HotTeacherInfo(member.getId(), member.getNickname(), member.getProfileImg(),
+                            teacherInfo.getField(), teacherInfo.getCareer(), Arrays.stream(teacherInfo.getKeywords().split(";")).toList());
+                }).toList())
+                .build();
+    }
+
+    public static MemberResponseDTO.GetMemberAccountInfoDTO toGetMemberAccountInfoDTO(Member member) {
+        return MemberResponseDTO.GetMemberAccountInfoDTO.builder()
+                .loginType(member.getLoginType().name())
+                .email(member.getEmail())
+                .phone(member.getPhone())
                 .build();
     }
 }
