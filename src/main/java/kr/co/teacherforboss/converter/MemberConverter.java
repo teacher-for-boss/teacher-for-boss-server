@@ -53,4 +53,12 @@ public class MemberConverter {
                 }).toList())
                 .build();
     }
+
+    public static MemberResponseDTO.GetMemberAccountInfoDTO toGetMemberAccountInfoDTO(Member member) {
+        return MemberResponseDTO.GetMemberAccountInfoDTO.builder()
+                .loginType(member.getLoginType().name())
+                .email(member.getEmail())
+                .phone(member.getPhone())
+                .build();
+    }
 }
