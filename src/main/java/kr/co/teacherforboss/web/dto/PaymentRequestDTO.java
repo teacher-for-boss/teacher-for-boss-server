@@ -22,4 +22,10 @@ public class PaymentRequestDTO {
         String accountHolder;
         String accountNumber;
     }
+
+    @Getter
+    @Builder
+    public static class ExchangeTeacherPointDTO {
+        int points;
+    }
 }

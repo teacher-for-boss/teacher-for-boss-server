@@ -2,6 +2,7 @@ package kr.co.teacherforboss.web.controller;
 
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.converter.PaymentConverter;
+import kr.co.teacherforboss.domain.Exchange;
 import kr.co.teacherforboss.domain.TeacherInfo;
 import kr.co.teacherforboss.service.paymentService.PaymentCommandService;
 import kr.co.teacherforboss.service.paymentService.PaymentQueryService;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,5 +36,10 @@ public class PaymentController {
     public ApiResponse<PaymentResponseDTO.EditTeacherAccountDTO> editTeacherAccount(PaymentRequestDTO.EditTeacherAccountDTO request) {
         TeacherInfo teacherInfo = paymentCommandService.editTeacherAccount(request);
         return ApiResponse.onSuccess(PaymentConverter.toEditTeacherAccountDTO(teacherInfo));
+    }
+    @PostMapping("/exchanges")
+    public ApiResponse<PaymentResponseDTO.ExchangeTeacherPointDTO> exchangeTeacherPoint(PaymentRequestDTO.ExchangeTeacherPointDTO request) {
+        Exchange exchange = paymentCommandService.exchangeTeacherPoint(request);
+        return ApiResponse.onSuccess(PaymentConverter.toExchangeTeacherPoint(exchange));
     }
 }
