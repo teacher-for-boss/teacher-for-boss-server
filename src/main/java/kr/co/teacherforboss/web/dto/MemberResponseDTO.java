@@ -74,45 +74,21 @@ public class MemberResponseDTO {
         boolean isMine;
     }
 
-
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class GetQuestionsDTO {
-        boolean hasNext;
-        List<BoardResponseDTO.GetQuestionsDTO.QuestionInfo> questionList;
-
-        @Getter
-        @AllArgsConstructor
-        public static class QuestionInfo {
-            Long questionId;
-            String title;
-            String content;
-            Boolean solved;
-            String selectedTeacher;
-            Integer bookmarkCount;
-            Integer answerCount;
-            Integer likeCount;
-            Boolean liked;
-            Boolean bookmarked;
-            LocalDateTime createdAt;
-        }
-    }
-
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class RecentAnswersDTO {
+    public static class GetRecentAnswersDTO {
         List<RecentAnswerInfo> recentAnswerList;
 
         @Getter
         @AllArgsConstructor
         public static class RecentAnswerInfo {
-
+            Long questionId;
+            String questionTitle;
+            String answer;
+            int answerLikeCount;
+            LocalDateTime answeredAt;
         }
     }
-
 }

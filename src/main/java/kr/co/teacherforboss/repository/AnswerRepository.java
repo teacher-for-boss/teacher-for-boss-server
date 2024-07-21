@@ -18,6 +18,14 @@ import kr.co.teacherforboss.domain.enums.Status;
 
 @Repository
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
+	@Query(value = """
+        SELECT * FROM answer
+        WHERE member_id = :memberId AND status = 'ACTIVE'
+        ORDER BY created_at DESC
+        LIMIT 20
+    """, nativeQuery = true)
+	List<Answer> findAllByMemberIdAndStatus(@Param(value = "memberId") Long memberId);
+
 	Optional<Answer> findByIdAndMemberIdAndStatus(Long answerId, Long memberId, Status status);
 	Optional<Answer> findByIdAndQuestionIdAndMemberIdAndStatus(Long answerId, Long questionId, Long memberId, Status status);
 	Optional<Answer> findByIdAndQuestionIdAndStatus(Long answerId, Long questionId, Status status);

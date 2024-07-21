@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.MemberSurvey;
 import kr.co.teacherforboss.domain.TeacherInfo;
@@ -76,6 +77,20 @@ public class MemberConverter {
                 .keywords(Arrays.stream(teacherInfo.getKeywords().split(";")).collect(Collectors.toList()))
                 .level(teacherInfo.getLevel().getLevel())
                 .isMine(isMine)
+                .build();
+    }
+
+    public static MemberResponseDTO.GetRecentAnswersDTO toGetRecentAnswersDTO(List<Answer> answers) {
+        return MemberResponseDTO.GetRecentAnswersDTO.builder()
+                .recentAnswerList(answers.stream().map(answer -> {
+                    return new MemberResponseDTO.GetRecentAnswersDTO.RecentAnswerInfo(
+                            answer.getQuestion().getId(),
+                            answer.getQuestion().getTitle(),
+                            answer.getContent(),
+                            answer.getLikeCount(),
+                            answer.getCreatedAt()
+                    );
+                }).toList())
                 .build();
     }
 }

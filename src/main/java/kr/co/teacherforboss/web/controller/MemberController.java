@@ -63,4 +63,9 @@ public class MemberController {
         Member member = memberQueryService.getMemberProfile();
         return ApiResponse.onSuccess(MemberConverter.toGetMemberAccountInfoDTO(member));
     }
+
+    @GetMapping("/profiles/teacher/detail/recentAnswers")
+    public ApiResponse<MemberResponseDTO.GetRecentAnswersDTO> getRecentAnswers() {
+        return ApiResponse.onSuccess(memberQueryService.getRecentAnswers());
+    }
 }
