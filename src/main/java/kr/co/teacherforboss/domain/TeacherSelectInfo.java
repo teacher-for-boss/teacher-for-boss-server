@@ -28,7 +28,7 @@ public class TeacherSelectInfo extends BaseEntity {
     @NotNull
     @Column
     @Builder.Default
-    private Integer point = 0;
+    private Integer points = 0;
 
     @NotNull
     @Column
@@ -39,8 +39,9 @@ public class TeacherSelectInfo extends BaseEntity {
         this.selectCount++;
     }
 
-    public void addPoint(int point) {
-        this.point += point;
+    public void addPoints(int points) {
+        this.points += points;
     }
 
+    public void decreasePoints(int points) { this.points -= points; }
 }
