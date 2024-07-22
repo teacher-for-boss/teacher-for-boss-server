@@ -5,5 +5,5 @@ import kr.co.teacherforboss.web.dto.MypageResponseDTO;
 
 public interface MypageQueryService {
     MypageResponseDTO.GetAnsweredQuestionsDTO getAnsweredQuestions(Long lastQuestionId, int size);
-    BoardResponseDTO.GetPostsDTO getAnsweredPosts(Long lastPostId, int size);
+    BoardResponseDTO.GetPostsDTO getCommentedPosts(Long lastPostId, int size);
 }

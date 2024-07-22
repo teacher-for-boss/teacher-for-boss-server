@@ -74,7 +74,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 			WHERE c.post_id = p.id AND c.member_id = :memberId
 		) DESC
 	""", nativeQuery = true)
-    Slice<Post> findSlicePostsByAnsweredListOrderByCreatedAtDesc(Long memberId, Long lastPostId, PageRequest pageRequest);
+    Slice<Post> findCommentedPostsSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(Long memberId, Long lastPostId, PageRequest pageRequest);
 
     @Query(value = """
 		SELECT * FROM post p
@@ -83,7 +83,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     	    ) AND status = 'ACTIVE'
 		ORDER BY (SELECT MAX(c.created_at) FROM comment c WHERE c.post_id = p.id AND c.member_id = :memberId) DESC
 	""", nativeQuery = true)
-    Slice<Post> findFirstSlicePostsByAnsweredListOrderByCreatedAtDesc(Long memberId, PageRequest pageRequest);
+    Slice<Post> findCommentedPostsSliceByMemberIdOrderByCreatedAtDesc(Long memberId, PageRequest pageRequest);
 
     @Query(value = """
             SELECT * FROM post

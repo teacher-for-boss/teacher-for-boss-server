@@ -31,9 +31,9 @@ public class MypageController {
         return ApiResponse.onSuccess(mypageQueryService.getAnsweredQuestions(lastQuestionId, size));
     }
 
-    @GetMapping("/board/answered-posts")
-    public ApiResponse<BoardResponseDTO.GetPostsDTO> getAnsweredPosts(@RequestParam(defaultValue = "0") Long lastPostId,
+    @GetMapping("/board/commented-posts")
+    public ApiResponse<BoardResponseDTO.GetPostsDTO> getCommentedPosts(@RequestParam(defaultValue = "0") Long lastPostId,
                                                                       @RequestParam(defaultValue = "10") int size) {
-        return ApiResponse.onSuccess(mypageQueryService.getAnsweredPosts(lastPostId, size));
+        return ApiResponse.onSuccess(mypageQueryService.getCommentedPosts(lastPostId, size));
     }
 }

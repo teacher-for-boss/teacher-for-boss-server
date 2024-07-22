@@ -47,18 +47,19 @@ public class MypageQueryServiceImpl implements MypageQueryService {
 
         Slice<Question> questions = lastQuestionId == 0
                 ? questionRepository.findAnsweredQuestionsSliceByMemberIdOrderByCreatedAtDesc(member.getId(), pageRequest)
-                : questionRepository.findAnsweredQuestionsSliceByIdLessthanAndMemberIdOrderByCreatedAtDesc(member.getId(), lastQuestionId, pageRequest);
+                : questionRepository.findAnsweredQuestionsSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(member.getId(), lastQuestionId, pageRequest);
         return BoardConverter.toGetAnsweredQuestionsDTO(questions, member);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public BoardResponseDTO.GetPostsDTO getAnsweredPosts(Long lastPostId, int size) {
+    public BoardResponseDTO.GetPostsDTO getCommentedPosts(Long lastPostId, int size) {
         Member member = authCommandService.getMember();
         PageRequest pageRequest = PageRequest.of(0, size);
 
-        Slice<Post> posts =  lastPostId == 0 ? postRepository.findFirstSlicePostsByAnsweredListOrderByCreatedAtDesc(member.getId(), pageRequest) :
-                postRepository.findSlicePostsByAnsweredListOrderByCreatedAtDesc(member.getId(), lastPostId, pageRequest);
+        Slice<Post> posts =  lastPostId == 0
+                ? postRepository.findCommentedPostsSliceByMemberIdOrderByCreatedAtDesc(member.getId(), pageRequest)
+                : postRepository.findCommentedPostsSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(member.getId(), lastPostId, pageRequest);
 
         List<PostLike> postLikes = postLikeRepository.findByPostInAndMemberIdAndStatus(posts.getContent(),
                 member.getId(), Status.ACTIVE);
