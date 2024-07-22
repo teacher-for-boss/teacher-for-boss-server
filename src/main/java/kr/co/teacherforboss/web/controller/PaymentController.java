@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,9 +38,16 @@ public class PaymentController {
         TeacherInfo teacherInfo = paymentCommandService.editTeacherAccount(request);
         return ApiResponse.onSuccess(PaymentConverter.toEditTeacherAccountDTO(teacherInfo));
     }
+
     @PostMapping("/exchanges")
     public ApiResponse<PaymentResponseDTO.ExchangeTeacherPointDTO> exchangeTeacherPoint(PaymentRequestDTO.ExchangeTeacherPointDTO request) {
         Exchange exchange = paymentCommandService.exchangeTeacherPoint(request);
         return ApiResponse.onSuccess(PaymentConverter.toExchangeTeacherPoint(exchange));
+    }
+
+    @PatchMapping("/exchanges/{exchangeId}/complete")
+    public ApiResponse<PaymentResponseDTO.CompleteExchangeProcessDTO> completeExchangeProcess(@PathVariable("exchangeId") Long exchangeId) {
+        Exchange exchange = paymentCommandService.completeExchangeProcess(exchangeId);
+        return ApiResponse.onSuccess(PaymentConverter.toCompleteExchangeProcess(exchange));
     }
 }

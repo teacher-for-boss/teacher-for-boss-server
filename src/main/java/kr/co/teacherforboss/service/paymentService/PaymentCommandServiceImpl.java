@@ -68,4 +68,16 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
         teacherSelectInfoRepository.save(teacherSelectInfo);
         return exchangeRepository.save(exchange);
     }
+
+    @Override
+    @Transactional
+    public Exchange completeExchangeProcess(Long exchangeId){
+        Member member = authCommandService.getMember();
+        if (member.getRole() != Role.ADMIN) throw new MemberHandler(ErrorStatus.MEMBER_ROLE_NOT_ADMIN);
+        Exchange exchange = exchangeRepository.findByIdAndStatus(exchangeId, Status.ACTIVE)
+                .orElseThrow(() -> new PaymentHandler(ErrorStatus.EXCHANGE_NOT_FOUND));
+        if (exchange.getIsComplete().isIdentifier()) throw new PaymentHandler(ErrorStatus.EXCHANGE_PROCESS_ALREADY_COMPLETE);
+        exchange.updateExchangeStatus();
+        return exchangeRepository.save(exchange);
+    }
 }

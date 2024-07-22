@@ -7,4 +7,5 @@ import kr.co.teacherforboss.web.dto.PaymentRequestDTO;
 public interface PaymentCommandService {
     TeacherInfo editTeacherAccount(PaymentRequestDTO.EditTeacherAccountDTO request);
     Exchange exchangeTeacherPoint(PaymentRequestDTO.ExchangeTeacherPointDTO request);
+    Exchange completeExchangeProcess(Long exchangeId);
 }

@@ -30,4 +30,8 @@ public class Exchange extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'F'")
     private BooleanType isComplete;
+
+    public void updateExchangeStatus() {
+        this.isComplete = BooleanType.T;
+    }
 }

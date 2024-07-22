@@ -34,4 +34,13 @@ public class PaymentResponseDTO {
         Long exchangeId;
         LocalDateTime createdAt;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CompleteExchangeProcessDTO {
+        boolean isComplete;
+        LocalDateTime updatedAt;
+    }
 }
