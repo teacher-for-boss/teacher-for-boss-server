@@ -4,6 +4,7 @@ import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.converter.BoardConverter;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.service.mypageService.MypageQueryService;
+import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import kr.co.teacherforboss.web.dto.MypageResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,5 +29,11 @@ public class MypageController {
     public ApiResponse<MypageResponseDTO.GetAnsweredQuestionsDTO> getAnsweredQuestions(@RequestParam(defaultValue = "0") Long lastQuestionId,
                                                                                        @RequestParam(defaultValue = "10") int size) {
         return ApiResponse.onSuccess(mypageQueryService.getAnsweredQuestions(lastQuestionId, size));
+    }
+
+    @GetMapping("/board/commented-posts")
+    public ApiResponse<BoardResponseDTO.GetPostsDTO> getCommentedPosts(@RequestParam(defaultValue = "0") Long lastPostId,
+                                                                      @RequestParam(defaultValue = "10") int size) {
+        return ApiResponse.onSuccess(mypageQueryService.getCommentedPosts(lastPostId, size));
     }
 }

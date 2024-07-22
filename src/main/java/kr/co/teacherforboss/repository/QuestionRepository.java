@@ -94,7 +94,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 			WHERE a.question_id = q.id AND a.member_id = :memberId
 		) DESC
 	""", nativeQuery = true)
-	Slice<Question> findAnsweredQuestionsSliceByIdLessthanAndMemberIdOrderByCreatedAtDesc(Long memberId, Long lastQuestionId, PageRequest pageRequest);
+	Slice<Question> findAnsweredQuestionsSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(Long memberId, Long lastQuestionId, PageRequest pageRequest);
 
 	@Query(value = """
 		SELECT * FROM question q
