@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class MypageResponseDTO {
+
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
@@ -30,6 +31,27 @@ public class MypageResponseDTO {
             Integer likeCount;
             Boolean liked;
             Boolean bookmarked;
+            LocalDateTime createdAt;
+        }
+    }
+    
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetAnsweredQuestionsDTO {
+        boolean hasNext;
+        List<AnsweredQuestion> answeredQuestionList;
+
+        @Getter
+        @AllArgsConstructor
+        public static class AnsweredQuestion {
+            Long questionId;
+            String category;
+            String title;
+            String content;
+            boolean solved;
+            String selectedTeacher;
             LocalDateTime createdAt;
         }
     }

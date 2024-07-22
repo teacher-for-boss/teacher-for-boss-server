@@ -18,6 +18,7 @@ import kr.co.teacherforboss.web.dto.AuthRequestDTO;
 import kr.co.teacherforboss.web.dto.AuthResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -127,5 +128,17 @@ public class AuthController {
     public ApiResponse<AuthResponseDTO.CheckNicknameResultDTO> checkNickname(@RequestBody @Valid AuthRequestDTO.CheckNicknameDTO request) {
         Boolean nicknameCheck = authQueryService.checkNickname(request);
         return ApiResponse.onSuccess(AuthConverter.toCheckNicknameDTO(nicknameCheck));
+    }
+
+    @DeleteMapping("/withdraw")
+    public ApiResponse<AuthResponseDTO.WithdrawDTO> withdraw() {
+        Member member = authCommandService.withdraw();
+        return ApiResponse.onSuccess(AuthConverter.toWithdrawResultDTO(member));
+    }
+
+    @PatchMapping("/recover/for-test")
+    public ApiResponse<AuthResponseDTO.RecoverDTO> recover(@RequestHeader("email") String email) {
+        Member member = authCommandService.recover(email);
+        return ApiResponse.onSuccess(AuthConverter.toRecoverDTO(member));
     }
 }

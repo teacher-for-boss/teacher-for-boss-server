@@ -115,6 +115,13 @@ public class AuthConverter {
                 .build();
     }
 
+    public static AuthResponseDTO.WithdrawDTO toWithdrawResultDTO(Member member) {
+        return AuthResponseDTO.WithdrawDTO.builder()
+                .memberId(member.getId())
+                .inactiveDate(member.getInactiveDate())
+                .build();
+    }
+
     public static AuthResponseDTO.ResetPasswordResultDTO toResetPasswordResultDTO(Member member) {
         return AuthResponseDTO.ResetPasswordResultDTO.builder()
                 .memberId(member.getId())
@@ -164,6 +171,13 @@ public class AuthConverter {
         return AuthResponseDTO.CheckBusinessNumberResultDTO.builder()
                 .businessAuthId(businessAuth.getId())
                 .isChecked(true)
+                .build();
+    }
+
+    public static AuthResponseDTO.RecoverDTO toRecoverDTO(Member member) {
+        return AuthResponseDTO.RecoverDTO.builder()
+                .memberId(member.getId())
+                .activeDate(LocalDateTime.now())
                 .build();
     }
 }
