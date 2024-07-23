@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -49,5 +50,11 @@ public class PaymentController {
     public ApiResponse<PaymentResponseDTO.CompleteExchangeProcessDTO> completeExchangeProcess(@PathVariable("exchangeId") Long exchangeId) {
         Exchange exchange = paymentCommandService.completeExchangeProcess(exchangeId);
         return ApiResponse.onSuccess(PaymentConverter.toCompleteExchangeProcess(exchange));
+    }
+
+    @GetMapping("/payments/exchanges/history")
+    public ApiResponse<PaymentResponseDTO.GetExchangeHistoryDTO> getExchangeHistory(@RequestParam(defaultValue = "0") Long lastExchangeId,
+                                                                                    @RequestParam(defaultValue = "10") int size) {
+        return ApiResponse.onSuccess(paymentQueryService.getExchangeHistory(lastExchangeId, size));
     }
 }
