@@ -15,7 +15,7 @@ import kr.co.teacherforboss.web.dto.MemberResponseDTO;
 public class MemberConverter {
     public static MemberResponseDTO.GetMemberProfileDTO toGetMemberProfileDTO(Member member, TeacherInfo teacherInfo, Integer answerCount) {
         return MemberResponseDTO.GetMemberProfileDTO.builder()
-                .name(member.getName())
+                .nickname(member.getNickname())
                 .profileImg(member.getProfileImg())
                 .role(member.getRole().toString())
                 .teacherInfo(toTeacherInfo(teacherInfo, answerCount))

@@ -12,7 +12,7 @@ public class MemberResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class GetMemberProfileDTO {
-        String name;
+        String nickname;
         String profileImg;
         String role;
         TeacherInfo teacherInfo;
