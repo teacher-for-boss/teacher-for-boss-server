@@ -63,7 +63,7 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
         ExchangeMail exchangeMail = new ExchangeMail(teacherSelectInfo.getPoints(), request.getPoints(), teacherInfo);
         mailCommandService.sendMail(member.getEmail(), exchangeMail);
 
-        Exchange exchange = PaymentConverter.toExchange(request.getPoints());
+        Exchange exchange = PaymentConverter.toExchange(request.getPoints(), member);
         teacherSelectInfo.decreasePoints(request.getPoints());
         teacherSelectInfoRepository.save(teacherSelectInfo);
         return exchangeRepository.save(exchange);
