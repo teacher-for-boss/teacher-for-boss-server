@@ -64,8 +64,8 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDTO.GetTeacherProfileDTO toGetTeacherProfileDTO(Member member, TeacherInfo teacherInfo, boolean isMine) {
-        return MemberResponseDTO.GetTeacherProfileDTO.builder()
+    public static MemberResponseDTO.GetTeacherProfileDetailDTO toGetTeacherProfileDetailDTO(Member member, TeacherInfo teacherInfo, boolean isMine) {
+        return MemberResponseDTO.GetTeacherProfileDetailDTO.builder()
                 .nickname(member.getNickname())
                 .profileImg(member.getProfileImg())
                 .introduction(teacherInfo.getIntroduction())

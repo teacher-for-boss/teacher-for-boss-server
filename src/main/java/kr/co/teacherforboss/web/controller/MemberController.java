@@ -37,8 +37,8 @@ public class MemberController {
     }
 
     @GetMapping("/profiles/teacher/detail")
-    public ApiResponse<MemberResponseDTO.GetTeacherProfileDTO> getMemberProfileDetail(@RequestParam(value = "memberId", required = false) Long memberId) {
-        return ApiResponse.onSuccess(memberQueryService.getTeacherProfile(memberId));
+    public ApiResponse<MemberResponseDTO.GetTeacherProfileDetailDTO> getTeacherProfileDetail(@RequestParam(value = "memberId", required = false) Long memberId) {
+        return ApiResponse.onSuccess(memberQueryService.getTeacherProfileDetail(memberId));
     }
 
     @PostMapping("/survey")

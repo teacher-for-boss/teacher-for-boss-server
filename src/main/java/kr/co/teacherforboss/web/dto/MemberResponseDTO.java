@@ -61,7 +61,7 @@ public class MemberResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class GetTeacherProfileDTO {
+    public static class GetTeacherProfileDetailDTO {
         String nickname;
         String profileImg;
         String introduction;

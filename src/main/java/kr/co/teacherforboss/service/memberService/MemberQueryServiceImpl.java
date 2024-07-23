@@ -33,13 +33,13 @@ public class MemberQueryServiceImpl implements MemberQueryService{
 
     @Override
     @Transactional
-    public MemberResponseDTO.GetTeacherProfileDTO getTeacherProfile(Long memberId) {
+    public MemberResponseDTO.GetTeacherProfileDetailDTO getTeacherProfileDetail(Long memberId) {
         Member member = authCommandService.getMember();
         TeacherInfo teacherInfo = teacherInfoRepository.findByMemberIdAndStatus(memberId == null ? member.getId() : memberId, Status.ACTIVE)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.TEACHER_INFO_NOT_FOUND));
 
         boolean isMine = member.equals(teacherInfo.getMember());
 
-        return MemberConverter.toGetTeacherProfileDTO(member, teacherInfo, isMine);
+        return MemberConverter.toGetTeacherProfileDetailDTO(member, teacherInfo, isMine);
     }
 }
