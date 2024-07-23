@@ -76,10 +76,40 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 	Slice<Question> findSliceByIdLessThanTitleContainingOrderByCreatedAtDesc(String keyword, Long questionId, PageRequest pageRequest);
 
 	@Query(value = """
-			SELECT * FROM question
-			WHERE status = 'ACTIVE'
-			ORDER BY view_count DESC, created_at DESC
-			LIMIT 5
+		SELECT q.* FROM question q
+		WHERE q.id IN (
+			SELECT a.question_id FROM answer a
+			WHERE a.member_id = :memberId
+		) AND q.status = 'ACTIVE'
+		AND (
+			SELECT MAX(a.created_at) FROM answer a
+			WHERE a.question_id = q.id
+			AND a.member_id = :memberId
+		) < (
+			SELECT MAX(a.created_at) FROM answer a
+			WHERE a.question_id = :lastQuestionId
+			AND a.member_id = :memberId
+		)
+		ORDER BY ( SELECT MAX(a.created_at) FROM answer a
+			WHERE a.question_id = q.id AND a.member_id = :memberId
+		) DESC
+	""", nativeQuery = true)
+	Slice<Question> findAnsweredQuestionsSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(Long memberId, Long lastQuestionId, PageRequest pageRequest);
+
+	@Query(value = """
+		SELECT * FROM question q
+        WHERE q.id IN (
+            SELECT answer.question_id FROM answer WHERE member_id = :memberId
+    	    ) AND status = 'ACTIVE'
+		ORDER BY (SELECT MAX(a.created_at) FROM answer a WHERE a.question_id = q.id AND a.member_id = :memberId) DESC
+	""", nativeQuery = true)
+	Slice<Question> findAnsweredQuestionsSliceByMemberIdOrderByCreatedAtDesc(Long memberId, PageRequest pageRequest);
+
+	@Query(value = """
+   		SELECT * FROM question
+   		WHERE status = 'ACTIVE'
+   		ORDER BY view_count DESC, created_at DESC
+   		LIMIT 5
 	""", nativeQuery = true)
 	List<Question> findHotQuestions(); // TODO: 최근 일주일
 }

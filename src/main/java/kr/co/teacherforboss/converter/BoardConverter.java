@@ -27,6 +27,7 @@ import kr.co.teacherforboss.domain.enums.ImageOrigin;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import kr.co.teacherforboss.web.dto.HomeResponseDTO;
+import kr.co.teacherforboss.web.dto.MypageResponseDTO;
 import org.springframework.data.domain.Slice;
 
 public class BoardConverter {
@@ -482,6 +483,7 @@ public class BoardConverter {
     public static BoardResponseDTO.GetQuestionsDTO.QuestionInfo toGetQuestionInfo(Question question, Answer selectedAnswer, boolean liked, boolean bookmarked, Integer answerCount) {
         return new BoardResponseDTO.GetQuestionsDTO.QuestionInfo(
                 question.getId(),
+                question.getCategory().getName(),
                 question.getTitle(),
                 question.getContent(),
                 question.getSolved().isIdentifier(),
@@ -536,6 +538,17 @@ public class BoardConverter {
                 question.getId(), question.getCategory().getName(), question.getTitle(), question.getContent(), question.getAnswerList().size())));
         return HomeResponseDTO.GetHotQuestionsDTO.builder()
                 .hotQuestionList(hotQuestionInfos)
+                .build();
+    }
+
+    public static MypageResponseDTO.GetAnsweredQuestionsDTO toGetAnsweredQuestionsDTO(Slice<Question> questions, Member member) {
+        return MypageResponseDTO.GetAnsweredQuestionsDTO.builder()
+                .hasNext(questions.hasNext())
+                .answeredQuestionList(questions.stream().map(question ->
+                        new MypageResponseDTO.GetAnsweredQuestionsDTO.AnsweredQuestion(
+                                question.getId(), question.getCategory().getName(), question.getTitle(),
+                                question.getContent(), question.getSolved().isIdentifier(),
+                                member.getProfileImg(), question.getCreatedAt())).toList())
                 .build();
     }
 }
