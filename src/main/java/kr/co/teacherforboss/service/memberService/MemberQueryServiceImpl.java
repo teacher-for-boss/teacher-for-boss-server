@@ -5,6 +5,7 @@ import kr.co.teacherforboss.apiPayload.exception.handler.MemberHandler;
 import kr.co.teacherforboss.converter.MemberConverter;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.TeacherInfo;
+import kr.co.teacherforboss.domain.enums.Role;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.MemberRepository;
 import kr.co.teacherforboss.repository.TeacherInfoRepository;
@@ -32,9 +33,9 @@ public class MemberQueryServiceImpl implements MemberQueryService{
 
     @Override
     @Transactional
-    public MemberResponseDTO.GetTeacherProfileDTO getTeacherProfile() {
+    public MemberResponseDTO.GetTeacherProfileDTO getTeacherProfile(Long memberId) {
         Member member = authCommandService.getMember();
-        TeacherInfo teacherInfo = teacherInfoRepository.findByMemberIdAndStatus(member.getId(), Status.ACTIVE)
+        TeacherInfo teacherInfo = teacherInfoRepository.findByMemberIdAndStatus(memberId == null ? member.getId() : memberId, Status.ACTIVE)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.TEACHER_INFO_NOT_FOUND));
 
         boolean isMine = member.equals(teacherInfo.getMember());

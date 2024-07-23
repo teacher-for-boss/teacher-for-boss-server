@@ -6,5 +6,5 @@ import kr.co.teacherforboss.web.dto.MemberResponseDTO;
 
 public interface MemberQueryService {
     Member getMemberProfile();
-    MemberResponseDTO.GetTeacherProfileDTO getTeacherProfile();
+    MemberResponseDTO.GetTeacherProfileDTO getTeacherProfile(Long memberId);
 }
