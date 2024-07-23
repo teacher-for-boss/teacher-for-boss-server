@@ -1,29 +1,25 @@
 package kr.co.teacherforboss.service.s3Service;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
-import kr.co.teacherforboss.config.S3Config;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.Headers;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
-
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+import kr.co.teacherforboss.config.S3Config;
 import kr.co.teacherforboss.web.dto.S3ResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class S3QueryServiceImpl implements S3QueryService{
+public class S3QueryServiceImpl implements S3QueryService {
 
 	private final AmazonS3 amazonS3;
 
@@ -53,10 +49,7 @@ public class S3QueryServiceImpl implements S3QueryService{
 				.withMethod(HttpMethod.PUT)
 				.withExpiration(getPresignedUrlExpiration());
 
-		generatePresignedUrlRequest.addRequestParameter(
-				Headers.S3_CANNED_ACL,
-				CannedAccessControlList.PublicRead.toString()
-		);
+		generatePresignedUrlRequest.addRequestParameter(Headers.S3_CANNED_ACL, CannedAccessControlList.PublicRead.toString());
 
 		return generatePresignedUrlRequest;
 	}

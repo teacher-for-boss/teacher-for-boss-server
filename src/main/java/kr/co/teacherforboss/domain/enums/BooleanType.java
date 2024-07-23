@@ -10,4 +10,8 @@ public enum BooleanType {
     F(false);
 
     private final boolean identifier;
+
+    public static BooleanType of(boolean identifier) {
+        return identifier ? T : F;
+    }
 }
