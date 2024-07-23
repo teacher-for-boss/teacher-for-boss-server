@@ -27,13 +27,23 @@ public class MemberQueryServiceImpl implements MemberQueryService{
 
     @Override
     @Transactional
+    public Member getDetailMember(){
+        Member member = authCommandService.getMember();
+        return memberRepository.findByIdAndStatus(member.getId(), Status.ACTIVE)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    }
+
+    @Override
+    @Transactional
     public MemberResponseDTO.GetMemberProfileDTO getMemberProfile(){
         Member member = authCommandService.getMember();
         memberRepository.findByIdAndStatus(member.getId(), Status.ACTIVE)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         TeacherInfo teacherInfo = teacherInfoRepository.findByMemberIdAndStatus(member.getId(), Status.ACTIVE)
                 .orElse(null);
-        Integer answerCount = answerRepository.countAllByMemberIdAndSelectedAndStatus(member.getId(), BooleanType.T, Status.ACTIVE);
+        Integer answerCount = null;
+        if (teacherInfo != null)
+            answerCount = answerRepository.countAllByMemberIdAndSelectedAndStatus(member.getId(), BooleanType.T, Status.ACTIVE);
         return MemberConverter.toGetMemberProfileDTO(member, teacherInfo, answerCount);
     }
 }
