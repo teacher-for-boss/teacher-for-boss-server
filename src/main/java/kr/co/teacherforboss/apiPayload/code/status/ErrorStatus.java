@@ -132,9 +132,7 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_HOT_TEACHER_DATA(NOT_FOUND, "HOME4041", "인기 티쳐 정보를 찾을 수 없습니다."),
 
     // Payment
-    TEACHER_POINT_LIMIT_UNDER(BAD_REQUEST, "PAYMENT4001", "보유한 티포 포인트가 550TP 미만입니다."),
-    TEACHER_POINT_LIMIT_OVER(BAD_REQUEST, "PAYMENT4002", "보유한 티포 포인트보다 초과한 값을 입력했습니다."),
-    TEACHER_POINT_INVALID_UNIT_DIVISION(BAD_REQUEST, "PAYMENT4003", "티포 환전은 100TP 단위로 가능합니다."),
+    TEACHER_POINT_LIMIT_OVER(BAD_REQUEST, "PAYMENT4001", "보유한 티포 포인트보다 초과한 값을 입력했습니다."),
 
     // For test
     TEMP_EXCEPTION(BAD_REQUEST, "TEMP4001", "이거는 테스트");
