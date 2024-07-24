@@ -24,7 +24,7 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDTO.GetMemberProfileDTO.TeacherInfo toTeacherInfo(TeacherInfo teacherInfo, int answerCount) {
+    public static MemberResponseDTO.GetMemberProfileDTO.TeacherInfo toTeacherInfo(TeacherInfo teacherInfo, Integer answerCount) {
         if (teacherInfo == null) return null;
         int leftAnswerCount = 0;
         if (!teacherInfo.getLevel().equals(Level.LEVEL5)) leftAnswerCount = teacherInfo.getLevel().getLast() - answerCount;
