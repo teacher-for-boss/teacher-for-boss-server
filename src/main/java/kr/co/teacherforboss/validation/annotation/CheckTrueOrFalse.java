@@ -18,5 +18,4 @@ public @interface CheckTrueOrFalse {
     String message() default "T 또는 F 값을 입력해주세요.";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
-    int question() default 0;
 }
