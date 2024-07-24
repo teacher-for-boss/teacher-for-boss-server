@@ -33,13 +33,11 @@ public class ExchangeMail extends Mail {
     }
 
     private String getCharge(int appliedTP) {
-        int exchangedMoney = appliedTP * 100;
-        int finalMoney = (int) (exchangedMoney * 0.9);
-        return String.valueOf(exchangedMoney - finalMoney);
+        return String.valueOf(appliedTP * 100 * 0.1);
     }
 
     private String getFinalMoney(int appliedTP) {
-         return String.valueOf(appliedTP * 100);
+         return String.valueOf(appliedTP * 100 * 0.9);
     }
 
     private String getAccountNumber(TeacherInfo teacherInfo) {
