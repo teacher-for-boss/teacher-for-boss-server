@@ -11,21 +11,23 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.util.List;
+import lombok.extern.jackson.Jacksonized;
 
 public class PaymentRequestDTO {
 
     @Getter
     @Builder
     public static class EditTeacherAccountDTO {
-
         String bank;
         String accountHolder;
         String accountNumber;
     }
 
     @Getter
+    @Jacksonized
     @Builder
     public static class ExchangeTeacherPointDTO {
+        @NotNull
         int points;
     }
 }
