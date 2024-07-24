@@ -25,4 +25,13 @@ public class PaymentResponseDTO {
     public static class EditTeacherAccountDTO {
         LocalDateTime updatedAt;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ExchangeTeacherPointsDTO {
+        Long exchangeId;
+        LocalDateTime createdAt;
+    }
 }

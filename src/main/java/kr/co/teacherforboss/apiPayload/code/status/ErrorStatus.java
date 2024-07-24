@@ -131,6 +131,9 @@ public enum ErrorStatus implements BaseErrorCode {
     // Home
     INVALID_HOT_TEACHER_DATA(NOT_FOUND, "HOME4041", "인기 티쳐 정보를 찾을 수 없습니다."),
 
+    // Payment
+    TEACHER_POINT_LIMIT_OVER(BAD_REQUEST, "PAYMENT4001", "보유한 티포 포인트보다 초과한 값을 입력했습니다."),
+
     // For test
     TEMP_EXCEPTION(BAD_REQUEST, "TEMP4001", "이거는 테스트");
 

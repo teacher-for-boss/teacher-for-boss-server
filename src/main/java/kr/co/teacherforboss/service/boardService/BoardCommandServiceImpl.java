@@ -366,7 +366,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
         question.selectAnswer(answer);
         teacherSelectInfo.increaseSelectCount();
-        teacherSelectInfo.addPoint(Question.POINT);
+        teacherSelectInfo.addPoints(Question.POINT);
 
         return answer;
     }
