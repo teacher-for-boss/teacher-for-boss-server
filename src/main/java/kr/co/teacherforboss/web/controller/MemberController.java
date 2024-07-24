@@ -32,7 +32,7 @@ public class MemberController {
     private final MemberCommandService memberCommandService;
     private final AuthCommandService authCommandService;
 
-    @GetMapping("/profile")
+    @GetMapping("/profiles")
     public ApiResponse<MemberResponseDTO.GetMemberProfileDTO> getMemberProfile() {
         return ApiResponse.onSuccess(memberQueryService.getMemberProfile());
     }
