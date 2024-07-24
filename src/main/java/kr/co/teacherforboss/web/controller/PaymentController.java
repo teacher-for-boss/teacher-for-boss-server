@@ -40,7 +40,7 @@ public class PaymentController {
         return ApiResponse.onSuccess(PaymentConverter.toEditTeacherAccountDTO(teacherInfo));
     }
     @PostMapping("/exchanges")
-    public ApiResponse<PaymentResponseDTO.ExchangeTeacherPointDTO> exchangeTeacherPoint(@RequestBody PaymentRequestDTO.ExchangeTeacherPointDTO request) {
+    public ApiResponse<PaymentResponseDTO.ExchangeTeacherPointDTO> exchangeTeacherPoint(@RequestBody @Valid PaymentRequestDTO.ExchangeTeacherPointDTO request) {
         Exchange exchange = paymentCommandService.exchangeTeacherPoint(request);
         return ApiResponse.onSuccess(PaymentConverter.toExchangeTeacherPoints(exchange));
     }
