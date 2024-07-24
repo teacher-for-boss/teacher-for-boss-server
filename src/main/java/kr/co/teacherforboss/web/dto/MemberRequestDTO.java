@@ -10,7 +10,6 @@ import java.util.List;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import kr.co.teacherforboss.validation.annotation.CheckSurvey;
-import kr.co.teacherforboss.validation.annotation.CheckTrueOrFalse;
 import lombok.Builder;
 import lombok.Getter;
 
