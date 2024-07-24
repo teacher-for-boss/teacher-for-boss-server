@@ -483,6 +483,7 @@ public class BoardConverter {
     public static BoardResponseDTO.GetQuestionsDTO.QuestionInfo toGetQuestionInfo(Question question, Answer selectedAnswer, boolean liked, boolean bookmarked, Integer answerCount) {
         return new BoardResponseDTO.GetQuestionsDTO.QuestionInfo(
                 question.getId(),
+                question.getCategory().getName(),
                 question.getTitle(),
                 question.getContent(),
                 question.getSolved().isIdentifier(),

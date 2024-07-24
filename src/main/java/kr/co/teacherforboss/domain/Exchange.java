@@ -29,10 +29,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Exchange extends BaseEntity {
 
-    @NotNull
-    @Column
-    @ColumnDefault("0")
-    private Integer points;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "memberId")
+    private Member member;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -40,15 +39,13 @@ public class Exchange extends BaseEntity {
     private ExchangeType exchangeType;
 
     @NotNull
+    @Column
+    @ColumnDefault("0")
+    private Integer points;
+
+    @NotNull
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'F'")
     private BooleanType isComplete;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "memberId")
-    private Member member;
-
-    public void updateExchangeStatus() {
-        this.isComplete = BooleanType.T;
-    }
 }

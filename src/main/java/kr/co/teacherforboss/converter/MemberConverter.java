@@ -3,19 +3,34 @@ package kr.co.teacherforboss.converter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.MemberSurvey;
 import kr.co.teacherforboss.domain.TeacherInfo;
+import kr.co.teacherforboss.domain.enums.Level;
 import kr.co.teacherforboss.domain.enums.Survey;
 import kr.co.teacherforboss.web.dto.HomeResponseDTO;
 import kr.co.teacherforboss.web.dto.MemberRequestDTO;
 import kr.co.teacherforboss.web.dto.MemberResponseDTO;
 
 public class MemberConverter {
-    public static MemberResponseDTO.GetMemberProfileDTO toGetMemberProfileDTO(Member member) {
+    public static MemberResponseDTO.GetMemberProfileDTO toGetMemberProfileDTO(Member member, TeacherInfo teacherInfo, Integer answerCount) {
         return MemberResponseDTO.GetMemberProfileDTO.builder()
-                .name(member.getName())
+                .nickname(member.getNickname())
                 .profileImg(member.getProfileImg())
+                .role(member.getRole().toString())
+                .teacherInfo(toTeacherInfo(teacherInfo, answerCount))
+                .build();
+    }
+
+    public static MemberResponseDTO.GetMemberProfileDTO.TeacherInfo toTeacherInfo(TeacherInfo teacherInfo, Integer answerCount) {
+        if (teacherInfo == null) return null;
+        int leftAnswerCount = 0;
+        if (!teacherInfo.getLevel().equals(Level.LEVEL5)) leftAnswerCount = teacherInfo.getLevel().getLast() - answerCount;
+        return MemberResponseDTO.GetMemberProfileDTO.TeacherInfo.builder()
+                .level(teacherInfo.getLevel().getLevel())
+                .leftAnswerCount(leftAnswerCount)
                 .build();
     }
 
@@ -59,6 +74,21 @@ public class MemberConverter {
                 .loginType(member.getLoginType().name())
                 .email(member.getEmail())
                 .phone(member.getPhone())
+                .build();
+    }
+
+    public static MemberResponseDTO.GetTeacherProfileDetailDTO toGetTeacherProfileDetailDTO(Member member, TeacherInfo teacherInfo, boolean isMine) {
+        return MemberResponseDTO.GetTeacherProfileDetailDTO.builder()
+                .nickname(member.getNickname())
+                .profileImg(member.getProfileImg())
+                .introduction(teacherInfo.getIntroduction())
+                .phone(member.getPhone())
+                .email(member.getEmail())
+                .field(teacherInfo.getField())
+                .career(teacherInfo.getCareer())
+                .keywords(Arrays.stream(teacherInfo.getKeywords().split(";")).collect(Collectors.toList()))
+                .level(teacherInfo.getLevel().getLevel())
+                .isMine(isMine)
                 .build();
     }
 }

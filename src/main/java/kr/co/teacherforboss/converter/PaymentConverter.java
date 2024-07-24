@@ -27,17 +27,17 @@ public class PaymentConverter {
                 .build();
     }
 
-    public static Exchange toExchange(int points, Member member) {
+    public static Exchange toExchange(Member member, int points) {
         return Exchange.builder()
-                .points(points)
                 .member(member)
                 .exchangeType(ExchangeType.EX)
+                .points(points)
                 .isComplete(BooleanType.F)
                 .build();
     }
 
-    public static PaymentResponseDTO.ExchangeTeacherPointDTO toExchangeTeacherPoint(Exchange exchange) {
-        return PaymentResponseDTO.ExchangeTeacherPointDTO.builder()
+    public static PaymentResponseDTO.ExchangeTeacherPointsDTO toExchangeTeacherPoints(Exchange exchange) {
+        return PaymentResponseDTO.ExchangeTeacherPointsDTO.builder()
                 .exchangeId(exchange.getId())
                 .createdAt(exchange.getCreatedAt())
                 .build();
