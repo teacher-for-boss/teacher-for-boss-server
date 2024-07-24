@@ -123,4 +123,13 @@ public class AuthResponseDTO {
         Long memberId;
         LocalDateTime inactiveDate;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RecoverDTO {
+        Long memberId;
+        LocalDateTime activeDate;
+    }
 }

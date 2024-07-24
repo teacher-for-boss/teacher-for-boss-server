@@ -305,6 +305,7 @@ public class BoardResponseDTO {
         @AllArgsConstructor
         public static class QuestionInfo {
             Long questionId;
+            String category;
             String title;
             String content;
             Boolean solved;

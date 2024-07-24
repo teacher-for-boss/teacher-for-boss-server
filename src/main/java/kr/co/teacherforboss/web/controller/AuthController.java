@@ -135,4 +135,10 @@ public class AuthController {
         Member member = authCommandService.withdraw();
         return ApiResponse.onSuccess(AuthConverter.toWithdrawResultDTO(member));
     }
+
+    @PatchMapping("/recover/for-test")
+    public ApiResponse<AuthResponseDTO.RecoverDTO> recover(@RequestHeader("email") String email) {
+        Member member = authCommandService.recover(email);
+        return ApiResponse.onSuccess(AuthConverter.toRecoverDTO(member));
+    }
 }
