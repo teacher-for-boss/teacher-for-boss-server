@@ -46,7 +46,7 @@ public class PaymentController {
     }
 
     @PatchMapping("/exchanges/{exchangeId}/complete")
-    public ApiResponse<PaymentResponseDTO.CompleteExchangeProcessDTO> completeExchangeProcess(@PathVariable("exchangeId") Long exchangeId) {
+    public ApiResponse<PaymentResponseDTO.CompleteExchangeProcessDTO> completeExchangeTeacherPoints(@PathVariable("exchangeId") Long exchangeId) {
         Exchange exchange = paymentCommandService.completeExchangeProcess(exchangeId);
         return ApiResponse.onSuccess(PaymentConverter.toCompleteExchangeProcess(exchange));
     }
