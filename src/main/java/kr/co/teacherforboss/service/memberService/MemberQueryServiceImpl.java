@@ -33,7 +33,9 @@ public class MemberQueryServiceImpl implements MemberQueryService{
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         TeacherInfo teacherInfo = teacherInfoRepository.findByMemberIdAndStatus(member.getId(), Status.ACTIVE)
                 .orElse(null);
-        Integer answerCount = answerRepository.countAllByMemberIdAndSelectedAndStatus(member.getId(), BooleanType.T, Status.ACTIVE);
+        Integer answerCount = null;
+        if (teacherInfo != null)
+            answerCount = answerRepository.countAllByMemberIdAndSelectedAndStatus(member.getId(), BooleanType.T, Status.ACTIVE);
         return MemberConverter.toGetMemberProfileDTO(member, teacherInfo, answerCount);
     }
 }
