@@ -30,7 +30,6 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
     private final TeacherInfoRepository teacherInfoRepository;
     private final TeacherSelectInfoRepository teacherSelectInfoRepository;
     private final ExchangeRepository exchangeRepository;
-    private static final int EXCHANGE_UNDER_LIMIT = 550;
 
     @Override
     @Transactional
