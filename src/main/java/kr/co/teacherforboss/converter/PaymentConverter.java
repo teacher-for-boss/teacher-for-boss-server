@@ -29,7 +29,7 @@ public class PaymentConverter {
                 .build();
     }
 
-    public static PaymentResponseDTO.ExchangeTeacherPointDTO toExchangeTeacherPoint(Exchange exchange) {
+    public static PaymentResponseDTO.ExchangeTeacherPointDTO toExchangeTeacherPoints(Exchange exchange) {
         return PaymentResponseDTO.ExchangeTeacherPointDTO.builder()
                 .exchangeId(exchange.getId())
                 .createdAt(exchange.getCreatedAt())
