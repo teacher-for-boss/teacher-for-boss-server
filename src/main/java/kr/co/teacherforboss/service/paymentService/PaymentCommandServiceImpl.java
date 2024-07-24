@@ -47,7 +47,7 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
 
     @Override
     @Transactional
-    public Exchange exchangeTeacherPoint(PaymentRequestDTO.ExchangeTeacherPointDTO request){
+    public Exchange exchangeTeacherPoints(PaymentRequestDTO.ExchangeTeacherPointsDTO request){
         Member member = authCommandService.getMember();
         if (member.getRole() != Role.TEACHER) throw new MemberHandler(ErrorStatus.MEMBER_ROLE_NOT_TEACHER);
         TeacherInfo teacherInfo = teacherInfoRepository.findByMemberIdAndStatus(member.getId(), Status.ACTIVE)

@@ -35,7 +35,7 @@ public class PaymentRequestDTO {
     @Getter
     @Jacksonized
     @Builder
-    public static class ExchangeTeacherPointDTO {
+    public static class ExchangeTeacherPointsDTO {
 
         @NotNull(message = "포인트를 입력해주세요.")
         @Min(value = 550, message = "550TP 이상부터 교환 가능합니다.")

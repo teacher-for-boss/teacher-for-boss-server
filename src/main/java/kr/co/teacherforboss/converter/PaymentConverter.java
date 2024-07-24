@@ -33,8 +33,8 @@ public class PaymentConverter {
                 .build();
     }
 
-    public static PaymentResponseDTO.ExchangeTeacherPointDTO toExchangeTeacherPoints(Exchange exchange) {
-        return PaymentResponseDTO.ExchangeTeacherPointDTO.builder()
+    public static PaymentResponseDTO.ExchangeTeacherPointsDTO toExchangeTeacherPoints(Exchange exchange) {
+        return PaymentResponseDTO.ExchangeTeacherPointsDTO.builder()
                 .exchangeId(exchange.getId())
                 .createdAt(exchange.getCreatedAt())
                 .build();
