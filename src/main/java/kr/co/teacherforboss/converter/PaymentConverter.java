@@ -39,4 +39,11 @@ public class PaymentConverter {
                 .createdAt(exchange.getCreatedAt())
                 .build();
     }
+
+    public static PaymentResponseDTO.CompleteExchangeProcessDTO toCompleteExchangeProcess(Exchange exchange) {
+        return PaymentResponseDTO.CompleteExchangeProcessDTO.builder()
+                .isComplete(exchange.getIsComplete().isIdentifier())
+                .updatedAt(exchange.getUpdatedAt())
+                .build();
+    }
 }
