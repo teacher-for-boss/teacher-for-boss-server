@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.web.controller;
 
+import jakarta.validation.Valid;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.converter.PaymentConverter;
 import kr.co.teacherforboss.domain.Exchange;
@@ -34,7 +35,7 @@ public class PaymentController {
     }
 
     @PatchMapping("/accounts")
-    public ApiResponse<PaymentResponseDTO.EditTeacherAccountDTO> editTeacherAccount(@RequestBody PaymentRequestDTO.EditTeacherAccountDTO request) {
+    public ApiResponse<PaymentResponseDTO.EditTeacherAccountDTO> editTeacherAccount(@RequestBody @Valid PaymentRequestDTO.EditTeacherAccountDTO request) {
         TeacherInfo teacherInfo = paymentCommandService.editTeacherAccount(request);
         return ApiResponse.onSuccess(PaymentConverter.toEditTeacherAccountDTO(teacherInfo));
     }
