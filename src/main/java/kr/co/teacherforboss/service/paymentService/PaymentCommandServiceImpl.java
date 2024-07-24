@@ -30,6 +30,7 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
     private final TeacherInfoRepository teacherInfoRepository;
     private final TeacherSelectInfoRepository teacherSelectInfoRepository;
     private final ExchangeRepository exchangeRepository;
+    private final int EXCHANGE_UNDER_LIMIT = 550;
 
     @Override
     @Transactional
@@ -56,7 +57,7 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
         TeacherSelectInfo teacherSelectInfo = teacherSelectInfoRepository.findByMemberIdAndStatus(member.getId(), Status.ACTIVE)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.TEACHER_SELECT_INFO_NOT_FOUND));
 
-        if (teacherSelectInfo.getPoints() < 550) throw new PaymentHandler(ErrorStatus.TEACHER_POINT_LIMIT_UNDER);
+        if (teacherSelectInfo.getPoints() < EXCHANGE_UNDER_LIMIT) throw new PaymentHandler(ErrorStatus.TEACHER_POINT_LIMIT_UNDER);
         if (request.getPoints() > teacherSelectInfo.getPoints()) throw new PaymentHandler(ErrorStatus.TEACHER_POINT_LIMIT_OVER);
         if (request.getPoints() % 100 != 0) throw new PaymentHandler(ErrorStatus.TEACHER_POINT_INVALID_UNIT_DIVISION);
 
