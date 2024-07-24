@@ -30,7 +30,7 @@ public class PaymentResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ExchangeTeacherPointDTO {
+    public static class ExchangeTeacherPointsDTO {
         Long exchangeId;
         LocalDateTime createdAt;
     }

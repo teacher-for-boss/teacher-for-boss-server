@@ -106,11 +106,8 @@ public class TeacherInfo extends BaseEntity {
     }
 
     public void editTeacherAccount(String bank, String accountNumber, String accountHolder) {
-        if (accountNumber != null)
-            this.accountNumber = AES256Util.encrypt(accountNumber);
-        if (bank != null)
-            this.bank = bank;
-        if (accountHolder != null)
-            this.accountHolder = accountHolder;
+        this.accountNumber = AES256Util.encrypt(accountNumber);
+        this.bank = bank;
+        this.accountHolder = accountHolder;
     }
 }

@@ -2,8 +2,10 @@ package kr.co.teacherforboss.converter;
 
 
 import kr.co.teacherforboss.domain.Exchange;
+import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.TeacherInfo;
 import kr.co.teacherforboss.domain.enums.BooleanType;
+import kr.co.teacherforboss.domain.enums.ExchangeType;
 import kr.co.teacherforboss.util.AES256Util;
 import kr.co.teacherforboss.web.dto.PaymentResponseDTO;
 
@@ -22,15 +24,17 @@ public class PaymentConverter {
                 .build();
     }
 
-    public static Exchange toExchange(int points) {
+    public static Exchange toExchange(Member member, int points) {
         return Exchange.builder()
+                .member(member)
+                .exchangeType(ExchangeType.EX)
                 .points(points)
                 .isComplete(BooleanType.F)
                 .build();
     }
 
-    public static PaymentResponseDTO.ExchangeTeacherPointDTO toExchangeTeacherPoint(Exchange exchange) {
-        return PaymentResponseDTO.ExchangeTeacherPointDTO.builder()
+    public static PaymentResponseDTO.ExchangeTeacherPointsDTO toExchangeTeacherPoints(Exchange exchange) {
+        return PaymentResponseDTO.ExchangeTeacherPointsDTO.builder()
                 .exchangeId(exchange.getId())
                 .createdAt(exchange.getCreatedAt())
                 .build();
