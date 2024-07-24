@@ -14,8 +14,17 @@ public class MemberResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class GetMemberProfileDTO {
-        String name;
+        String nickname;
         String profileImg;
+        String role;
+        TeacherInfo teacherInfo;
+
+        @Getter
+        @Builder
+        public static class TeacherInfo {
+            String level;
+            int leftAnswerCount;
+        }
     }
 
     @Getter

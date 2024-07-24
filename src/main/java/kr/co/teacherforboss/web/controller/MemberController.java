@@ -3,6 +3,7 @@ package kr.co.teacherforboss.web.controller;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.converter.MemberConverter;
 import kr.co.teacherforboss.domain.Member;
+import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.service.memberService.MemberQueryService;
 import kr.co.teacherforboss.web.dto.MemberResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -29,11 +30,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class MemberController {
     private final MemberQueryService memberQueryService;
     private final MemberCommandService memberCommandService;
+    private final AuthCommandService authCommandService;
 
     @GetMapping("/profile")
     public ApiResponse<MemberResponseDTO.GetMemberProfileDTO> getMemberProfile() {
-        Member member = memberQueryService.getMemberProfile();
-        return ApiResponse.onSuccess(MemberConverter.toGetMemberProfileDTO(member));
+        return ApiResponse.onSuccess(memberQueryService.getMemberProfile());
     }
 
     @GetMapping("/profiles/teacher/detail")
@@ -61,7 +62,7 @@ public class MemberController {
 
     @GetMapping("/accounts")
     public ApiResponse<MemberResponseDTO.GetMemberAccountInfoDTO> getAccountInfo() {
-        Member member = memberQueryService.getMemberProfile();
+        Member member = authCommandService.getMember();
         return ApiResponse.onSuccess(MemberConverter.toGetMemberAccountInfoDTO(member));
     }
 }
