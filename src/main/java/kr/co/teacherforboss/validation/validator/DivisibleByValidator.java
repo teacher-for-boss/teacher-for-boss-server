@@ -9,10 +9,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class DivisibleByValidator implements ConstraintValidator<DivisibleBy, Double> {
+public class DivisibleByValidator implements ConstraintValidator<DivisibleBy, Integer> {
 
     private String message;
-    private Double divisor;
+    private double divisor;
 
     @Override
     public void initialize(DivisibleBy constraintAnnotation) {
@@ -22,7 +22,7 @@ public class DivisibleByValidator implements ConstraintValidator<DivisibleBy, Do
     }
 
     @Override
-    public boolean isValid(Double value, ConstraintValidatorContext context) {
+    public boolean isValid(Integer value, ConstraintValidatorContext context) {
         boolean isValid = value != null && value % divisor == 0;
 
         if (!isValid) {
