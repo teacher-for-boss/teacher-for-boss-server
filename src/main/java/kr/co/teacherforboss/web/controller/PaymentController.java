@@ -14,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,12 +34,12 @@ public class PaymentController {
     }
 
     @PatchMapping("/accounts")
-    public ApiResponse<PaymentResponseDTO.EditTeacherAccountDTO> editTeacherAccount(PaymentRequestDTO.EditTeacherAccountDTO request) {
+    public ApiResponse<PaymentResponseDTO.EditTeacherAccountDTO> editTeacherAccount(@RequestBody PaymentRequestDTO.EditTeacherAccountDTO request) {
         TeacherInfo teacherInfo = paymentCommandService.editTeacherAccount(request);
         return ApiResponse.onSuccess(PaymentConverter.toEditTeacherAccountDTO(teacherInfo));
     }
     @PostMapping("/exchanges")
-    public ApiResponse<PaymentResponseDTO.ExchangeTeacherPointDTO> exchangeTeacherPoint(PaymentRequestDTO.ExchangeTeacherPointDTO request) {
+    public ApiResponse<PaymentResponseDTO.ExchangeTeacherPointDTO> exchangeTeacherPoint(@RequestBody PaymentRequestDTO.ExchangeTeacherPointDTO request) {
         Exchange exchange = paymentCommandService.exchangeTeacherPoint(request);
         return ApiResponse.onSuccess(PaymentConverter.toExchangeTeacherPoints(exchange));
     }
