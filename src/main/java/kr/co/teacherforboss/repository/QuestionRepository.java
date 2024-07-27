@@ -78,7 +78,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 		WHERE member_id = :memberId AND status = 'ACTIVE'
 		ORDER BY created_at DESC
 	""", nativeQuery = true)
-    Slice<Question> findMyQuestionsSliceByIdAndMemberIdOrderByCreatedAtDesc(Long memberId, PageRequest pageRequest);
+    Slice<Question> findMyQuestionsSliceByMemberIdOrderByCreatedAtDesc(Long memberId, PageRequest pageRequest);
 	@Query(value = """
 		SELECT * FROM question
 		WHERE member_id = :memberId AND status = 'ACTIVE'

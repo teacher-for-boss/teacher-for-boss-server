@@ -34,6 +34,7 @@ public class MypageQueryServiceImpl implements MypageQueryService {
     private final PostBookmarkRepository postBookmarkRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public MypageResponseDTO.GetQuestionInfosDTO getMyQuestions(Long lastQuestionId, int size) {
         Member member = authCommandService.getMember();
         if (!member.getRole().equals(Role.BOSS)) throw new MemberHandler(ErrorStatus.MEMBER_ROLE_INVALID);
@@ -41,7 +42,7 @@ public class MypageQueryServiceImpl implements MypageQueryService {
         PageRequest pageRequest = PageRequest.of(0, size);
 
         Slice<Question> questionsPage = lastQuestionId == 0
-                ? questionRepository.findMyQuestionsSliceByIdAndMemberIdOrderByCreatedAtDesc(member.getId(), pageRequest)
+                ? questionRepository.findMyQuestionsSliceByMemberIdOrderByCreatedAtDesc(member.getId(), pageRequest)
                 : questionRepository.findMyQuestionsSliceByIdAndMemberIdLessThanOrderByCreatedAtDesc(lastQuestionId, member.getId(), pageRequest);
 
         return BoardConverter.toGetQuestionInfosDTO(questionsPage, member);
