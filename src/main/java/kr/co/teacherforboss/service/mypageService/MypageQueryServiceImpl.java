@@ -42,7 +42,7 @@ public class MypageQueryServiceImpl implements MypageQueryService {
         PageRequest pageRequest = PageRequest.of(0, size);
 
         Slice<Question> questionsPage = lastQuestionId == 0
-                ? questionRepository.findMyQuestionsSliceByIdAndMemberIdOrderByCreatedAtDesc(member.getId(), pageRequest)
+                ? questionRepository.findMyQuestionsSliceByMemberIdOrderByCreatedAtDesc(member.getId(), pageRequest)
                 : questionRepository.findMyQuestionsSliceByIdAndMemberIdLessThanOrderByCreatedAtDesc(lastQuestionId, member.getId(), pageRequest);
 
         return BoardConverter.toGetQuestionInfosDTO(questionsPage, member);
