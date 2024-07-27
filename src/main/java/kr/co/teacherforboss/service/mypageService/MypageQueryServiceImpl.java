@@ -1,28 +1,14 @@
 package kr.co.teacherforboss.service.mypageService;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.MemberHandler;
 import kr.co.teacherforboss.converter.BoardConverter;
-import kr.co.teacherforboss.domain.Answer;
-import kr.co.teacherforboss.domain.Member;
-import kr.co.teacherforboss.domain.Post;
-import kr.co.teacherforboss.domain.PostBookmark;
-import kr.co.teacherforboss.domain.PostLike;
-import kr.co.teacherforboss.domain.Question;
-import kr.co.teacherforboss.domain.QuestionBookmark;
-import kr.co.teacherforboss.domain.QuestionLike;
-import kr.co.teacherforboss.domain.enums.BooleanType;
+import kr.co.teacherforboss.domain.*;
 import kr.co.teacherforboss.domain.enums.Role;
 import kr.co.teacherforboss.domain.enums.Status;
-import kr.co.teacherforboss.repository.AnswerRepository;
 import kr.co.teacherforboss.repository.PostBookmarkRepository;
 import kr.co.teacherforboss.repository.PostLikeRepository;
 import kr.co.teacherforboss.repository.PostRepository;
-import kr.co.teacherforboss.repository.QuestionBookmarkRepository;
-import kr.co.teacherforboss.repository.QuestionLikeRepository;
 import kr.co.teacherforboss.repository.QuestionRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
@@ -33,6 +19,10 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class MypageQueryServiceImpl implements MypageQueryService {
@@ -42,40 +32,24 @@ public class MypageQueryServiceImpl implements MypageQueryService {
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
     private final PostBookmarkRepository postBookmarkRepository;
-    private final QuestionLikeRepository questionLikeRepository;
-    private final QuestionBookmarkRepository questionBookmarkRepository;
-    private final AnswerRepository answerRepository;
 
     @Override
-    public BoardResponseDTO.GetQuestionsDTO getMyQuestions(Long lastQuestionId, int size) {
+    public MypageResponseDTO.GetQuestionInfosDTO getMyQuestions(Long lastQuestionId, int size) {
         Member member = authCommandService.getMember();
+        if (!member.getRole().equals(Role.BOSS)) throw new MemberHandler(ErrorStatus.MEMBER_ROLE_INVALID);
+
         PageRequest pageRequest = PageRequest.of(0, size);
 
-        Slice<Question> questionsPage;
+        Slice<Question> questionsPage = lastQuestionId == 0
+                ? questionRepository.findMyQuestionsSliceByIdAndMemberIdOrderByCreatedAtDesc(member.getId(), pageRequest)
+                : questionRepository.findMyQuestionsSliceByIdAndMemberIdLessThanOrderByCreatedAtDesc(lastQuestionId, member.getId(), pageRequest);
 
-        if (lastQuestionId == 0) {
-            questionsPage = questionRepository.findSliceByStatusAndMemberIdOrderByCreatedAtDesc(Status.ACTIVE, member.getId(), pageRequest);
-        } else {
-            questionsPage = questionRepository.findSliceByMemberIdAndIdLessThanOrderByCreatedAtDesc(lastQuestionId, member.getId(), pageRequest);
-        }
-
-        List<QuestionLike> questionLikes = questionLikeRepository.findByQuestionInAndMemberIdAndStatus(questionsPage.getContent(), member.getId(), Status.ACTIVE);
-        List<QuestionBookmark> questionBookmarks = questionBookmarkRepository.findByQuestionInAndMemberIdAndStatus(questionsPage.getContent(), member.getId(), Status.ACTIVE);
-        List<Answer> selectedAnswers = answerRepository.findByQuestionInAndSelected(questionsPage.getContent(), BooleanType.T);
-
-        Map<Long, QuestionLike> questionLikeMap = questionLikes.stream()
-                .collect(Collectors.toMap(like -> like.getQuestion().getId(), like -> like));
-        Map<Long, QuestionBookmark> questionBookmarkMap = questionBookmarks.stream()
-                .collect(Collectors.toMap(bookmark -> bookmark.getQuestion().getId(), bookmark -> bookmark));
-        Map<Long, Answer> selectedAnswerMap = selectedAnswers.stream()
-                .collect(Collectors.toMap(answer -> answer.getQuestion().getId(), answer -> answer));
-
-        return BoardConverter.toGetQuestionsDTO(questionsPage, questionLikeMap, questionBookmarkMap, selectedAnswerMap);
+        return BoardConverter.toGetQuestionInfosDTO(questionsPage, member);
     }
 
     @Override
     @Transactional
-    public MypageResponseDTO.GetAnsweredQuestionsDTO getAnsweredQuestions(Long lastQuestionId, int size) {
+    public MypageResponseDTO.GetQuestionInfosDTO getAnsweredQuestions(Long lastQuestionId, int size) {
         Member member = authCommandService.getMember();
         PageRequest pageRequest = PageRequest.of(0, size);
 
@@ -84,7 +58,7 @@ public class MypageQueryServiceImpl implements MypageQueryService {
         Slice<Question> questions = lastQuestionId == 0
                 ? questionRepository.findAnsweredQuestionsSliceByMemberIdOrderByCreatedAtDesc(member.getId(), pageRequest)
                 : questionRepository.findAnsweredQuestionsSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(member.getId(), lastQuestionId, pageRequest);
-        return BoardConverter.toGetAnsweredQuestionsDTO(questions, member);
+        return BoardConverter.toGetQuestionInfosDTO(questions, member);
     }
 
     @Override

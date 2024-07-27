@@ -39,13 +39,13 @@ public class MypageResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class GetAnsweredQuestionsDTO {
+    public static class GetQuestionInfosDTO {
         boolean hasNext;
-        List<AnsweredQuestion> answeredQuestionList;
+        List<QuestionInfo> questionList;
 
         @Getter
         @AllArgsConstructor
-        public static class AnsweredQuestion {
+        public static class QuestionInfo {
             Long questionId;
             String category;
             String title;
