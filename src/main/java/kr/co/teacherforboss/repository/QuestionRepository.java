@@ -85,7 +85,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 			AND created_at < (SELECT created_at FROM question WHERE id = :questionId)
 		ORDER BY created_at DESC
 	""", nativeQuery = true)
-	Slice<Question> findMyQuestionsSliceByIdAndMemberIdLessThanOrderByCreatedAtDesc(@Param(value = "questionId") Long questionId, Long memberId, PageRequest pageRequest);
+	Slice<Question> findMyQuestionsSliceByIdAndMemberIdLessThanOrderByCreatedAtDesc(Long questionId, Long memberId, PageRequest pageRequest);
 
 	@Query(value = """
 		SELECT q.* FROM question q
