@@ -105,4 +105,19 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         ORDER BY created_at DESC
     """, nativeQuery = true)
     Slice<Post> findMyPostsSliceByMemberIdAndIdLessThanOrderByCreatedAtDesc(Long memberId, Long postId, PageRequest pageRequest);
+    @Query(value = """
+        SELECT * FROM post
+        WHERE id IN (SELECT pb.post_id FROM post_bookmark pb WHERE pb.member_id = :memberId AND pb.bookmarked = 'T')
+            AND status = 'ACTIVE'
+        ORDER BY created_at DESC
+    """, nativeQuery = true)
+    Slice<Post> findBookmarkedPostsSliceByMemberIdOrderByCreatedAtDesc(Long memberId, PageRequest pageRequest);
+    @Query(value = """
+        SELECT * FROM post
+        WHERE id IN (SELECT pb.post_id FROM post_bookmark pb WHERE pb.member_id = :memberId AND pb.bookmarked = 'T')
+        AND status = 'ACTIVE'
+            AND created_at < (SELECT created_at FROM post WHERE id = :postId)
+        ORDER BY created_at DESC
+    """, nativeQuery = true)
+    Slice<Post> findBookmarkedPostsSliceByMemberIdAndIdLessThanOrderByCreatedAtDesc(Long memberId, Long postId, PageRequest pageRequest);
 }
