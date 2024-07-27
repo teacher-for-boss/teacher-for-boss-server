@@ -538,4 +538,31 @@ public class BoardConverter {
                         .toList())
                 .build();
     }
+
+    public static MypageResponseDTO.GetPostInfosDTO toGetPostInfosDTO(Slice<Post> posts, Map<Long, Boolean> postLikeMap, Map<Long, Boolean> postBookmarkMap) {
+
+        List<MypageResponseDTO.GetPostInfosDTO.PostInfo> postInfos = new ArrayList<>();
+
+        posts.getContent().forEach(post -> {
+            boolean liked = postLikeMap.get(post.getId()) != null && postLikeMap.get(post.getId());
+            boolean bookmarked = postBookmarkMap.get(post.getId()) != null && postBookmarkMap.get(post.getId());
+            Integer commentCount = post.getComments().size(); // TODO: query 나가는거 왜이러는지 찾아보기
+            postInfos.add(new MypageResponseDTO.GetPostInfosDTO.PostInfo(
+                    post.getId(),
+                    post.getTitle(),
+                    post.getContent(),
+                    post.getBookmarkCount(),
+                    commentCount,
+                    post.getLikeCount(),
+                    liked,
+                    bookmarked,
+                    post.getCreatedAt()
+            ));
+        });
+
+        return MypageResponseDTO.GetPostInfosDTO.builder()
+                .hasNext(posts.hasNext())
+                .postList(postInfos)
+                .build();
+    }
 }

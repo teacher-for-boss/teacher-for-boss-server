@@ -34,6 +34,7 @@ public class MypageQueryServiceImpl implements MypageQueryService {
     private final PostBookmarkRepository postBookmarkRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public MypageResponseDTO.GetQuestionInfosDTO getMyQuestions(Long lastQuestionId, int size) {
         Member member = authCommandService.getMember();
         if (!member.getRole().equals(Role.BOSS)) throw new MemberHandler(ErrorStatus.MEMBER_ROLE_INVALID);
@@ -84,5 +85,28 @@ public class MypageQueryServiceImpl implements MypageQueryService {
         // TODO : 좋아요 수, 북마크 수, 조회수 동시성 제어
 
         return BoardConverter.toGetPostsDTO(posts, postLikeMap, postBookmarkMap);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public MypageResponseDTO.GetPostInfosDTO getMyPosts(Long lastPostId, int size) {
+        Member member = authCommandService.getMember();
+        PageRequest pageRequest = PageRequest.of(0, size);
+
+        Slice<Post> postsPage =  lastPostId == 0
+                ? postRepository.findMyPostsSliceByMemberIdOrderByCreatedAtDesc(member.getId(), pageRequest)
+                : postRepository.findMyPostsSliceByMemberIdAndIdLessThanOrderByCreatedAtDesc(member.getId(), lastPostId, pageRequest);
+
+        List<PostLike> postLikes = postLikeRepository.findByPostInAndMemberIdAndStatus(postsPage.getContent(),
+                member.getId(), Status.ACTIVE);
+        List<PostBookmark> postBookmarks = postBookmarkRepository.findByPostInAndMemberIdAndStatus(postsPage.getContent(),
+                member.getId(), Status.ACTIVE);
+
+        Map<Long, Boolean> postLikeMap = postLikes.stream()
+                .collect(Collectors.toMap(like -> like.getPost().getId(), like -> like.getLiked().isIdentifier()));
+        Map<Long, Boolean> postBookmarkMap = postBookmarks.stream()
+                .collect(Collectors.toMap(bookmark -> bookmark.getPost().getId(), bookmark -> bookmark.getBookmarked().isIdentifier()));
+
+        return BoardConverter.toGetPostInfosDTO(postsPage, postLikeMap, postBookmarkMap);
     }
 }

@@ -10,31 +10,6 @@ import java.util.List;
 
 public class MypageResponseDTO {
 
-    @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Builder
-    public static class GetMyQuestionsDTO {
-        boolean hasNext;
-        List<MypageResponseDTO.GetMyQuestionsDTO.QuestionInfo> questionList;
-
-        @Getter
-        @AllArgsConstructor
-        public static class QuestionInfo {
-            Long questionId;
-            String title;
-            String content;
-            Boolean solved;
-            String selectedTeacher;
-            Integer bookmarkCount;
-            Integer answerCount;
-            Integer likeCount;
-            Boolean liked;
-            Boolean bookmarked;
-            LocalDateTime createdAt;
-        }
-    }
-    
     @Builder
     @Getter
     @NoArgsConstructor
@@ -52,6 +27,29 @@ public class MypageResponseDTO {
             String content;
             boolean solved;
             String selectedTeacher;
+            LocalDateTime createdAt;
+        }
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetPostInfosDTO {
+        boolean hasNext;
+        List<PostInfo> postList;
+
+        @Getter
+        @AllArgsConstructor
+        public static class PostInfo {
+            Long postId;
+            String title;
+            String content;
+            int bookmarkCount;
+            int commentCount;
+            int likeCount;
+            boolean liked;
+            boolean bookmarked;
             LocalDateTime createdAt;
         }
     }

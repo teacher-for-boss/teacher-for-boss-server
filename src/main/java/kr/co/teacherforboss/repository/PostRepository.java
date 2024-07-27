@@ -1,6 +1,5 @@
 package kr.co.teacherforboss.repository;
 
-import java.util.List;
 import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.enums.Status;
 import org.springframework.data.domain.PageRequest;
@@ -10,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -92,4 +92,17 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             LIMIT 5
     """, nativeQuery = true)
     List<Post> findHotPosts(); //TODO: 최근 일주일
+    @Query(value = """
+        SELECT * FROM post
+        WHERE member_id = :memberId AND status = 'ACTIVE'
+        ORDER BY created_at DESC
+    """, nativeQuery = true)
+    Slice<Post> findMyPostsSliceByMemberIdOrderByCreatedAtDesc(Long memberId, PageRequest pageRequest);
+    @Query(value = """
+        SELECT * FROM post
+        WHERE member_id = :memberId AND status = 'ACTIVE'
+            AND created_at < (SELECT created_at FROM post WHERE id = :postId)
+        ORDER BY created_at DESC
+    """, nativeQuery = true)
+    Slice<Post> findMyPostsSliceByMemberIdAndIdLessThanOrderByCreatedAtDesc(Long memberId, Long postId, PageRequest pageRequest);
 }

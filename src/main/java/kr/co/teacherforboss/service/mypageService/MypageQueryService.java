@@ -7,4 +7,5 @@ public interface MypageQueryService {
     MypageResponseDTO.GetQuestionInfosDTO getMyQuestions(Long lastQuestionId, int size);
     MypageResponseDTO.GetQuestionInfosDTO getAnsweredQuestions(Long lastQuestionId, int size);
     BoardResponseDTO.GetPostsDTO getCommentedPosts(Long lastPostId, int size);
+    MypageResponseDTO.GetPostInfosDTO getMyPosts(Long lastPostId, int size);
 }
