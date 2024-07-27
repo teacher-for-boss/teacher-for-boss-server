@@ -39,17 +39,17 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Slice<Post> findSliceByIdLessThanOrderByViewCountDesc(@Param(value = "postId") Long postId, PageRequest pageRequest);
 
     @Query(value = """
-            SELECT * FROM post 
-            WHERE created_at < (SELECT created_at FROM post WHERE id = :postId) 
+            SELECT * FROM post
+            WHERE created_at < (SELECT created_at FROM post WHERE id = :postId)
                 AND status = 'ACTIVE'
             ORDER BY created_at DESC
     """, nativeQuery = true)
     Slice<Post> findSliceByIdLessThanOrderByCreatedAtDesc(Long postId, PageRequest pageRequest);
     Slice<Post> findSliceByTitleContainingOrContentContainingAndStatusOrderByCreatedAtDesc(String titleKeyword, String contentKeyword, Status status, PageRequest pageRequest);
     @Query(value = """
-            SELECT * FROM post 
+            SELECT * FROM post
             WHERE (title LIKE CONCAT('%', :keyword, '%') OR content LIKE CONCAT('%', :keyword, '%'))
-                AND created_at < (SELECT created_at FROM post WHERE id = :postId) 
+                AND created_at < (SELECT created_at FROM post WHERE id = :postId)
                 AND status = 'ACTIVE'
             ORDER BY created_at DESC
     """, nativeQuery = true)
@@ -77,12 +77,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Slice<Post> findCommentedPostsSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(Long memberId, Long lastPostId, PageRequest pageRequest);
 
     @Query(value = """
-		SELECT * FROM post p
+        SELECT * FROM post p
         WHERE p.id IN (
             SELECT comment.post_id FROM comment WHERE member_id = :memberId
-    	    ) AND status = 'ACTIVE'
-		ORDER BY (SELECT MAX(c.created_at) FROM comment c WHERE c.post_id = p.id AND c.member_id = :memberId) DESC
-	""", nativeQuery = true)
+            ) AND status = 'ACTIVE'
+        ORDER BY (SELECT MAX(c.created_at) FROM comment c WHERE c.post_id = p.id AND c.member_id = :memberId) DESC
+    """, nativeQuery = true)
     Slice<Post> findCommentedPostsSliceByMemberIdOrderByCreatedAtDesc(Long memberId, PageRequest pageRequest);
 
     @Query(value = """
