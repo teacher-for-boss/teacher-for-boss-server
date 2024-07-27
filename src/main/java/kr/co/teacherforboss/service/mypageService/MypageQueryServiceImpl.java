@@ -4,12 +4,10 @@ import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.MemberHandler;
 import kr.co.teacherforboss.converter.BoardConverter;
 import kr.co.teacherforboss.domain.*;
+import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.Role;
 import kr.co.teacherforboss.domain.enums.Status;
-import kr.co.teacherforboss.repository.PostBookmarkRepository;
-import kr.co.teacherforboss.repository.PostLikeRepository;
-import kr.co.teacherforboss.repository.PostRepository;
-import kr.co.teacherforboss.repository.QuestionRepository;
+import kr.co.teacherforboss.repository.*;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import kr.co.teacherforboss.web.dto.MypageResponseDTO;
@@ -32,6 +30,7 @@ public class MypageQueryServiceImpl implements MypageQueryService {
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
     private final PostBookmarkRepository postBookmarkRepository;
+    private final AnswerRepository answerRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -108,5 +107,21 @@ public class MypageQueryServiceImpl implements MypageQueryService {
                 .collect(Collectors.toMap(bookmark -> bookmark.getPost().getId(), bookmark -> bookmark.getBookmarked().isIdentifier()));
 
         return BoardConverter.toGetPostInfosDTO(postsPage, postLikeMap, postBookmarkMap);
+    }
+
+    @Override
+    public MypageResponseDTO.GetQuestionInfosDTO getBookmarkedQuestions(Long lastQuestionId, int size) {
+        Member member = authCommandService.getMember();
+        PageRequest pageRequest = PageRequest.of(0, size);
+
+        Slice<Question> questionsPage = lastQuestionId == 0
+                ? questionRepository.findBookmarkedQuestionsSliceByMemberIdOrderByCreatedAtDesc(member.getId(), pageRequest)
+                : questionRepository.findBookmarkedQuestionsSliceByIdAndMemberIdLessThanOrderByCreatedAtDesc(lastQuestionId, member.getId(), pageRequest);
+
+        List<Answer> selectedAnswers = answerRepository.findByQuestionInAndSelected(questionsPage.getContent(), BooleanType.T);
+        Map<Long, Answer> selectedAnswerMap = selectedAnswers.stream()
+                .collect(Collectors.toMap(answer -> answer.getQuestion().getId(), answer -> answer));
+
+        return BoardConverter.toGetQuestionInfosDTO(questionsPage, member, selectedAnswerMap);
     }
 }

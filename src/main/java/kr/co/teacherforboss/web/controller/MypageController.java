@@ -45,4 +45,10 @@ public class MypageController {
                                                                      @RequestParam(defaultValue = "10") int size) {
         return ApiResponse.onSuccess(mypageQueryService.getMyPosts(lastPostId, size));
     }
+
+    @GetMapping("/board/bookmarked-questions")
+    public ApiResponse<MypageResponseDTO.GetQuestionInfosDTO> getBookmarkedQuestions(@RequestParam(defaultValue = "0") Long lastQuestionId,
+                                                                                     @RequestParam(defaultValue = "10") int size) {
+        return ApiResponse.onSuccess(mypageQueryService.getBookmarkedQuestions(lastQuestionId, size));
+    }
 }
