@@ -54,7 +54,7 @@ public class PaymentController {
         return ApiResponse.onSuccess(PaymentConverter.toCompleteExchangeProcess(exchange));
     }
 
-    @GetMapping("/exchanges")
+    @GetMapping("/points")
     public ApiResponse<PaymentResponseDTO.GetTeacherPointsDTO> getTeacherPoints() {
         TeacherSelectInfo teacherSelectInfo = paymentQueryService.getTeacherPoints();
         return ApiResponse.onSuccess(PaymentConverter.toGetTeacherPointsDTO(teacherSelectInfo));
