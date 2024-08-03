@@ -5,6 +5,7 @@ import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.converter.PaymentConverter;
 import kr.co.teacherforboss.domain.Exchange;
 import kr.co.teacherforboss.domain.TeacherInfo;
+import kr.co.teacherforboss.domain.TeacherSelectInfo;
 import kr.co.teacherforboss.service.paymentService.PaymentCommandService;
 import kr.co.teacherforboss.service.paymentService.PaymentQueryService;
 import kr.co.teacherforboss.web.dto.PaymentRequestDTO;
@@ -58,5 +59,11 @@ public class PaymentController {
     public ApiResponse<PaymentResponseDTO.GetExchangeHistoryDTO> getExchangeHistory(@RequestParam(defaultValue = "0") Long lastExchangeId,
                                                                                     @RequestParam(defaultValue = "10") int size) {
         return ApiResponse.onSuccess(paymentQueryService.getExchangeHistory(lastExchangeId, size));
+    }
+
+    @GetMapping("/points")
+    public ApiResponse<PaymentResponseDTO.GetTeacherPointsDTO> getTeacherPoints() {
+        TeacherSelectInfo teacherSelectInfo = paymentQueryService.getTeacherPoints();
+        return ApiResponse.onSuccess(PaymentConverter.toGetTeacherPointsDTO(teacherSelectInfo));
     }
 }

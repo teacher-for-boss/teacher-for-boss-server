@@ -63,4 +63,12 @@ public class PaymentResponseDTO {
             LocalDateTime time;
         }
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetTeacherPointsDTO {
+        int points;
+    }
 }
