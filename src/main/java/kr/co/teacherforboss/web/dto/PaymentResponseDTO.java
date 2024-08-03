@@ -43,4 +43,12 @@ public class PaymentResponseDTO {
         boolean isComplete;
         LocalDateTime updatedAt;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetTeacherPointsDTO {
+        int points;
+    }
 }

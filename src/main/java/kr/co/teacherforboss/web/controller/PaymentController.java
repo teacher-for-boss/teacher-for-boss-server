@@ -5,6 +5,7 @@ import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.converter.PaymentConverter;
 import kr.co.teacherforboss.domain.Exchange;
 import kr.co.teacherforboss.domain.TeacherInfo;
+import kr.co.teacherforboss.domain.TeacherSelectInfo;
 import kr.co.teacherforboss.service.paymentService.PaymentCommandService;
 import kr.co.teacherforboss.service.paymentService.PaymentQueryService;
 import kr.co.teacherforboss.web.dto.PaymentRequestDTO;
@@ -51,5 +52,11 @@ public class PaymentController {
     public ApiResponse<PaymentResponseDTO.CompleteExchangeProcessDTO> completeExchangeTeacherPoints(@PathVariable("exchangeId") Long exchangeId) {
         Exchange exchange = paymentCommandService.completeExchangeProcess(exchangeId);
         return ApiResponse.onSuccess(PaymentConverter.toCompleteExchangeProcess(exchange));
+    }
+
+    @GetMapping("/points")
+    public ApiResponse<PaymentResponseDTO.GetTeacherPointsDTO> getTeacherPoints() {
+        TeacherSelectInfo teacherSelectInfo = paymentQueryService.getTeacherPoints();
+        return ApiResponse.onSuccess(PaymentConverter.toGetTeacherPointsDTO(teacherSelectInfo));
     }
 }
