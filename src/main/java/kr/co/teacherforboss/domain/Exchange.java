@@ -17,10 +17,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -29,10 +25,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Exchange extends BaseEntity {
 
-    @NotNull
-    @Column
-    @ColumnDefault("0")
-    private Integer points;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "memberId")
+    private Member member;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -40,15 +35,16 @@ public class Exchange extends BaseEntity {
     private ExchangeType exchangeType;
 
     @NotNull
+    @Column
+    @ColumnDefault("0")
+    private Integer points;
+
+    @NotNull
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'F'")
     private BooleanType isComplete;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "memberId")
-    private Member member;
-
-    public void updateExchangeStatus() {
+    public void completeExchangeStatus() {
         this.isComplete = BooleanType.T;
     }
 }

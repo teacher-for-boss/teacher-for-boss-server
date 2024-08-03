@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.web.controller;
 
+import jakarta.validation.Valid;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.converter.PaymentConverter;
 import kr.co.teacherforboss.domain.Exchange;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,19 +37,19 @@ public class PaymentController {
     }
 
     @PatchMapping("/accounts")
-    public ApiResponse<PaymentResponseDTO.EditTeacherAccountDTO> editTeacherAccount(PaymentRequestDTO.EditTeacherAccountDTO request) {
+    public ApiResponse<PaymentResponseDTO.EditTeacherAccountDTO> editTeacherAccount(@RequestBody @Valid PaymentRequestDTO.EditTeacherAccountDTO request) {
         TeacherInfo teacherInfo = paymentCommandService.editTeacherAccount(request);
         return ApiResponse.onSuccess(PaymentConverter.toEditTeacherAccountDTO(teacherInfo));
     }
 
     @PostMapping("/exchanges")
-    public ApiResponse<PaymentResponseDTO.ExchangeTeacherPointDTO> exchangeTeacherPoint(PaymentRequestDTO.ExchangeTeacherPointDTO request) {
-        Exchange exchange = paymentCommandService.exchangeTeacherPoint(request);
-        return ApiResponse.onSuccess(PaymentConverter.toExchangeTeacherPoint(exchange));
+    public ApiResponse<PaymentResponseDTO.ExchangeTeacherPointsDTO> exchangeTeacherPoints(@RequestBody @Valid PaymentRequestDTO.ExchangeTeacherPointsDTO request) {
+        Exchange exchange = paymentCommandService.exchangeTeacherPoints(request);
+        return ApiResponse.onSuccess(PaymentConverter.toExchangeTeacherPoints(exchange));
     }
 
     @PatchMapping("/exchanges/{exchangeId}/complete")
-    public ApiResponse<PaymentResponseDTO.CompleteExchangeProcessDTO> completeExchangeProcess(@PathVariable("exchangeId") Long exchangeId) {
+    public ApiResponse<PaymentResponseDTO.CompleteExchangeProcessDTO> completeExchangeTeacherPoints(@PathVariable("exchangeId") Long exchangeId) {
         Exchange exchange = paymentCommandService.completeExchangeProcess(exchangeId);
         return ApiResponse.onSuccess(PaymentConverter.toCompleteExchangeProcess(exchange));
     }
