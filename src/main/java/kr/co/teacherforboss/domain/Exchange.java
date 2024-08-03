@@ -44,7 +44,7 @@ public class Exchange extends BaseEntity {
     @ColumnDefault("'F'")
     private BooleanType isComplete;
 
-    public void completeExchangeStatus() {
+    public void complete() {
         this.isComplete = BooleanType.T;
     }
 }
