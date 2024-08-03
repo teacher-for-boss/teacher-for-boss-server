@@ -74,6 +74,6 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
                 .orElseThrow(() -> new PaymentHandler(ErrorStatus.EXCHANGE_NOT_FOUND));
         if (exchange.getIsComplete().isIdentifier()) throw new PaymentHandler(ErrorStatus.EXCHANGE_PROCESS_ALREADY_COMPLETE);
         exchange.complete();
-        return exchangeRepository.save(exchange);
+        return exchange;
     }
 }
