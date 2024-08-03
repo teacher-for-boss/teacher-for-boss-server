@@ -4,6 +4,7 @@ package kr.co.teacherforboss.converter;
 import kr.co.teacherforboss.domain.Exchange;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.TeacherInfo;
+import kr.co.teacherforboss.domain.TeacherSelectInfo;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.ExchangeType;
 import kr.co.teacherforboss.util.AES256Util;
@@ -44,6 +45,12 @@ public class PaymentConverter {
         return PaymentResponseDTO.CompleteExchangeProcessDTO.builder()
                 .isComplete(exchange.getIsComplete().isIdentifier())
                 .updatedAt(exchange.getUpdatedAt())
+                .build();
+    }
+
+    public static PaymentResponseDTO.GetTeacherPointsDTO toGetTeacherPointsDTO(TeacherSelectInfo teacherSelectInfo) {
+        return PaymentResponseDTO.GetTeacherPointsDTO.builder()
+                .points(teacherSelectInfo.getPoints())
                 .build();
     }
 }
