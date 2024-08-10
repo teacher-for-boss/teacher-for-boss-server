@@ -3,7 +3,11 @@ package kr.co.teacherforboss.service.mypageService;
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.MemberHandler;
 import kr.co.teacherforboss.converter.BoardConverter;
-import kr.co.teacherforboss.domain.*;
+import kr.co.teacherforboss.domain.Member;
+import kr.co.teacherforboss.domain.Post;
+import kr.co.teacherforboss.domain.PostBookmark;
+import kr.co.teacherforboss.domain.PostLike;
+import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.enums.Role;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.PostBookmarkRepository;
@@ -91,6 +95,8 @@ public class MypageQueryServiceImpl implements MypageQueryService {
     @Transactional(readOnly = true)
     public MypageResponseDTO.GetPostInfosDTO getMyPosts(Long lastPostId, int size) {
         Member member = authCommandService.getMember();
+        if (!member.getRole().equals(Role.BOSS)) throw new MemberHandler(ErrorStatus.MEMBER_ROLE_INVALID);
+
         PageRequest pageRequest = PageRequest.of(0, size);
 
         Slice<Post> postsPage =  lastPostId == 0
