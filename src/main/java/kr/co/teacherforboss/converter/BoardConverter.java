@@ -559,7 +559,7 @@ public class BoardConverter {
                 .build();
     }
 
-    public static MypageResponseDTO.GetQuestionInfosDTO toGetQuestionInfosDTO(Slice<Question> questions, Member member, Map<Long, Answer> selectedAnswerMap) {
+    public static MypageResponseDTO.GetQuestionInfosDTO toGetQuestionInfosDTO(Slice<Question> questions, Map<Long, Answer> selectedAnswerMap) {
         return MypageResponseDTO.GetQuestionInfosDTO.builder()
                 .hasNext(questions.hasNext())
                 .questionList(questions.stream().map(question -> {
