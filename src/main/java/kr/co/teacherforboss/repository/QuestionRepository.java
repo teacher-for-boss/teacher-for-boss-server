@@ -110,7 +110,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
 	@Query(value = """
 		SELECT * FROM question q
-	     WHERE q.id IN (
+	    WHERE q.id IN (
 	        SELECT answer.question_id FROM answer WHERE member_id = :memberId
 		    ) AND status = 'ACTIVE'
 		ORDER BY (SELECT MAX(a.created_at) FROM answer a WHERE a.question_id = q.id AND a.member_id = :memberId) DESC
