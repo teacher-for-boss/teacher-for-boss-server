@@ -5,6 +5,7 @@ import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.converter.PaymentConverter;
 import kr.co.teacherforboss.domain.Exchange;
 import kr.co.teacherforboss.domain.TeacherInfo;
+import kr.co.teacherforboss.domain.TeacherSelectInfo;
 import kr.co.teacherforboss.service.paymentService.PaymentCommandService;
 import kr.co.teacherforboss.service.paymentService.PaymentQueryService;
 import kr.co.teacherforboss.web.dto.PaymentRequestDTO;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -51,5 +53,17 @@ public class PaymentController {
     public ApiResponse<PaymentResponseDTO.CompleteExchangeProcessDTO> completeExchangeTeacherPoints(@PathVariable("exchangeId") Long exchangeId) {
         Exchange exchange = paymentCommandService.completeExchangeProcess(exchangeId);
         return ApiResponse.onSuccess(PaymentConverter.toCompleteExchangeProcess(exchange));
+    }
+
+    @GetMapping("/payments/exchanges/history")
+    public ApiResponse<PaymentResponseDTO.GetExchangeHistoryDTO> getExchangeHistory(@RequestParam(defaultValue = "0") Long lastExchangeId,
+                                                                                    @RequestParam(defaultValue = "10") int size) {
+        return ApiResponse.onSuccess(paymentQueryService.getExchangeHistory(lastExchangeId, size));
+    }
+
+    @GetMapping("/points")
+    public ApiResponse<PaymentResponseDTO.GetTeacherPointsDTO> getTeacherPoints() {
+        TeacherSelectInfo teacherSelectInfo = paymentQueryService.getTeacherPoints();
+        return ApiResponse.onSuccess(PaymentConverter.toGetTeacherPointsDTO(teacherSelectInfo));
     }
 }

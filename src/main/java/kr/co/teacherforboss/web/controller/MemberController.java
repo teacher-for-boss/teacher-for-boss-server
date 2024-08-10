@@ -49,13 +49,13 @@ public class MemberController {
     }
 
     @PatchMapping("/profiles/boss")
-    public ApiResponse<MemberResponseDTO.EditMemberProfileDTO> editBossProfile(MemberRequestDTO.EditBossProfileDTO request) {
+    public ApiResponse<MemberResponseDTO.EditMemberProfileDTO> editBossProfile(@RequestBody @Valid MemberRequestDTO.EditBossProfileDTO request) {
         Member member = memberCommandService.editBossProfile(request);
         return ApiResponse.onSuccess(MemberConverter.toEditMemberProfileDTO(member));
     }
 
     @PatchMapping("/profiles/teacher")
-    public ApiResponse<MemberResponseDTO.EditMemberProfileDTO> editTeacherProfile(MemberRequestDTO.EditTeacherProfileDTO request) {
+    public ApiResponse<MemberResponseDTO.EditMemberProfileDTO> editTeacherProfile(@RequestBody @Valid MemberRequestDTO.EditTeacherProfileDTO request) {
         Member member = memberCommandService.editTeacherProfile(request);
         return ApiResponse.onSuccess(MemberConverter.toEditMemberProfileDTO(member));
     }
