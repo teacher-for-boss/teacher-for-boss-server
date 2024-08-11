@@ -79,11 +79,13 @@ public class MemberConverter {
 
     public static MemberResponseDTO.GetTeacherProfileDetailDTO toGetTeacherProfileDetailDTO(Member member, TeacherInfo teacherInfo, boolean isMine) {
         return MemberResponseDTO.GetTeacherProfileDetailDTO.builder()
-                .nickname(member.getNickname())
-                .profileImg(member.getProfileImg())
+                .nickname(teacherInfo.getMember().getNickname())
+                .profileImg(teacherInfo.getMember().getProfileImg())
                 .introduction(teacherInfo.getIntroduction())
-                .phone(member.getPhone())
-                .email(member.getEmail())
+                .phone(teacherInfo.getPhoneOpen().isIdentifier() || isMine ? teacherInfo.getPhone() : null)
+                .phoneOpen(teacherInfo.getPhoneOpen().isIdentifier())
+                .email(teacherInfo.getEmailOpen().isIdentifier() || isMine ? teacherInfo.getEmail() : null)
+                .emailOpen(teacherInfo.getEmailOpen().isIdentifier())
                 .field(teacherInfo.getField())
                 .career(teacherInfo.getCareer())
                 .keywords(Arrays.stream(teacherInfo.getKeywords().split(";")).collect(Collectors.toList()))

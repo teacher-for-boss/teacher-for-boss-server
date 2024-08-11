@@ -75,7 +75,9 @@ public class MemberResponseDTO {
         String profileImg;
         String introduction;
         String phone;
+        boolean phoneOpen;
         String email;
+        boolean emailOpen;
         String field;
         Integer career;
         List<String> keywords;
