@@ -1,14 +1,11 @@
 package kr.co.teacherforboss.web.controller;
 
 import kr.co.teacherforboss.apiPayload.ApiResponse;
-import kr.co.teacherforboss.converter.BoardConverter;
-import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.service.mypageService.MypageQueryService;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import kr.co.teacherforboss.web.dto.MypageResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Slice;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,9 +22,15 @@ public class MypageController {
 
     private final MypageQueryService mypageQueryService;
 
+    @GetMapping("/board/my-questions")
+    public ApiResponse<MypageResponseDTO.GetQuestionInfosDTO> getMyQuestions(@RequestParam(defaultValue = "0") Long lastQuestionId,
+                                                                             @RequestParam(defaultValue = "10") int size) {
+        return ApiResponse.onSuccess(mypageQueryService.getMyQuestions(lastQuestionId, size));
+    }
+
     @GetMapping("/board/answered-questions")
-    public ApiResponse<MypageResponseDTO.GetAnsweredQuestionsDTO> getAnsweredQuestions(@RequestParam(defaultValue = "0") Long lastQuestionId,
-                                                                                       @RequestParam(defaultValue = "10") int size) {
+    public ApiResponse<MypageResponseDTO.GetQuestionInfosDTO> getAnsweredQuestions(@RequestParam(defaultValue = "0") Long lastQuestionId,
+                                                                                   @RequestParam(defaultValue = "10") int size) {
         return ApiResponse.onSuccess(mypageQueryService.getAnsweredQuestions(lastQuestionId, size));
     }
 

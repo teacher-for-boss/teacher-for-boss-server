@@ -1,8 +1,7 @@
 package kr.co.teacherforboss.repository;
 
-import java.util.List;
-import java.util.Optional;
-
+import kr.co.teacherforboss.domain.Question;
+import kr.co.teacherforboss.domain.enums.Status;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,8 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import kr.co.teacherforboss.domain.Question;
-import kr.co.teacherforboss.domain.enums.Status;
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, Long> {
@@ -68,12 +67,20 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 	Slice<Question> findSliceByIdLessThanOrderByCreatedAtDesc(@Param(value = "categoryId") Long categoryId, @Param(value = "questionId") Long questionId, PageRequest pageRequest);
 	Slice<Question> findSliceByTitleContainingOrContentContainingAndStatusOrderByCreatedAtDesc(String titleKeyword, String contentKeyword, Status status, PageRequest pageRequest);
 	@Query(value = """
-			SELECT * FROM question
-			WHERE (title LIKE CONCAT('%', :keyword, '%') OR content LIKE CONCAT('%', :keyword, '%')) AND status = 'ACTIVE'
-				AND created_at < (SELECT created_at FROM question WHERE id = :questionId)
-			ORDER BY created_at DESC
+		SELECT * FROM question
+		WHERE (title LIKE CONCAT('%', :keyword, '%') OR content LIKE CONCAT('%', :keyword, '%')) AND status = 'ACTIVE'
+			AND created_at < (SELECT created_at FROM question WHERE id = :questionId)
+		ORDER BY created_at DESC
 	""", nativeQuery = true)
 	Slice<Question> findSliceByIdLessThanTitleContainingOrderByCreatedAtDesc(String keyword, Long questionId, PageRequest pageRequest);
+	Slice<Question> findSliceByMemberIdOrderByCreatedAtDesc(Long memberId, PageRequest pageRequest);
+	@Query(value = """
+		SELECT * FROM question
+		WHERE member_id = :memberId AND status = 'ACTIVE'
+			AND created_at < (SELECT created_at FROM question WHERE id = :questionId)
+		ORDER BY created_at DESC
+	""", nativeQuery = true)
+	Slice<Question> findSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(Long questionId, Long memberId, PageRequest pageRequest);
 
 	@Query(value = """
 		SELECT q.* FROM question q
@@ -98,18 +105,17 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
 	@Query(value = """
 		SELECT * FROM question q
-        WHERE q.id IN (
-            SELECT answer.question_id FROM answer WHERE member_id = :memberId
-    	    ) AND status = 'ACTIVE'
+	     WHERE q.id IN (
+	        SELECT answer.question_id FROM answer WHERE member_id = :memberId
+		    ) AND status = 'ACTIVE'
 		ORDER BY (SELECT MAX(a.created_at) FROM answer a WHERE a.question_id = q.id AND a.member_id = :memberId) DESC
 	""", nativeQuery = true)
 	Slice<Question> findAnsweredQuestionsSliceByMemberIdOrderByCreatedAtDesc(Long memberId, PageRequest pageRequest);
 
 	@Query(value = """
-   		SELECT * FROM question
-   		WHERE status = 'ACTIVE'
-   		ORDER BY view_count DESC, created_at DESC
-   		LIMIT 5
+		SELECT * FROM question
+		WHERE status = 'ACTIVE'
+		ORDER BY view_count DESC, created_at DESC LIMIT 5
 	""", nativeQuery = true)
 	List<Question> findHotQuestions(); // TODO: 최근 일주일
 }
