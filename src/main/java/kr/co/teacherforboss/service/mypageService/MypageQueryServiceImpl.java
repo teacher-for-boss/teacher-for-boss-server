@@ -108,7 +108,7 @@ public class MypageQueryServiceImpl implements MypageQueryService {
 
         Slice<Post> postsPage =  lastPostId == 0
                 ? postRepository.findSliceByMemberIdAndStatusOrderByCreatedAtDesc(member.getId(), Status.ACTIVE, pageRequest)
-                : postRepository.findSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(member.getId(), lastPostId, pageRequest);
+                : postRepository.findSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(lastPostId, member.getId(), pageRequest);
 
         List<PostLike> postLikes = postLikeRepository.findByPostInAndMemberIdAndStatus(postsPage.getContent(),
                 member.getId(), Status.ACTIVE);
