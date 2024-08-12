@@ -1,7 +1,22 @@
 package kr.co.teacherforboss.converter;
 
 import kr.co.teacherforboss.config.S3Config;
-import kr.co.teacherforboss.domain.*;
+import kr.co.teacherforboss.domain.Answer;
+import kr.co.teacherforboss.domain.AnswerLike;
+import kr.co.teacherforboss.domain.Category;
+import kr.co.teacherforboss.domain.Comment;
+import kr.co.teacherforboss.domain.CommentLike;
+import kr.co.teacherforboss.domain.Hashtag;
+import kr.co.teacherforboss.domain.Member;
+import kr.co.teacherforboss.domain.Post;
+import kr.co.teacherforboss.domain.PostBookmark;
+import kr.co.teacherforboss.domain.PostHashtag;
+import kr.co.teacherforboss.domain.PostLike;
+import kr.co.teacherforboss.domain.Question;
+import kr.co.teacherforboss.domain.QuestionBookmark;
+import kr.co.teacherforboss.domain.QuestionHashtag;
+import kr.co.teacherforboss.domain.QuestionLike;
+import kr.co.teacherforboss.domain.TeacherInfo;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.ImageOrigin;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
@@ -10,7 +25,12 @@ import kr.co.teacherforboss.web.dto.HomeResponseDTO;
 import kr.co.teacherforboss.web.dto.MypageResponseDTO;
 import org.springframework.data.domain.Slice;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 public class BoardConverter {
 
@@ -539,6 +559,24 @@ public class BoardConverter {
                 .build();
     }
 
+    public static MypageResponseDTO.GetQuestionInfosDTO toGetQuestionInfosDTO(Slice<Question> questions, Map<Long, Answer> selectedAnswerMap) {
+        return MypageResponseDTO.GetQuestionInfosDTO.builder()
+                .hasNext(questions.hasNext())
+                .questionList(questions.stream().map(question -> {
+                            Answer selectedAnswer = selectedAnswerMap.getOrDefault(question.getId(), null);
+                            return new MypageResponseDTO.GetQuestionInfosDTO.QuestionInfo(
+                                    question.getId(),
+                                    question.getCategory().getName(),
+                                    question.getTitle(),
+                                    question.getContent(),
+                                    question.getSolved().isIdentifier(),
+                                    (selectedAnswer == null) ? null : selectedAnswer.getMember().getProfileImg(),
+                                    question.getCreatedAt());
+                        })
+                        .toList())
+                .build();
+    }
+
     public static MypageResponseDTO.GetPostInfosDTO toGetPostInfosDTO(Slice<Post> posts, Map<Long, Boolean> postLikeMap, Map<Long, Boolean> postBookmarkMap) {
 
         List<MypageResponseDTO.GetPostInfosDTO.PostInfo> postInfos = new ArrayList<>();
@@ -563,24 +601,6 @@ public class BoardConverter {
         return MypageResponseDTO.GetPostInfosDTO.builder()
                 .hasNext(posts.hasNext())
                 .postList(postInfos)
-                .build();
-    }
-
-    public static MypageResponseDTO.GetQuestionInfosDTO toGetQuestionInfosDTO(Slice<Question> questions, Member member, Map<Long, Answer> selectedAnswerMap) {
-        return MypageResponseDTO.GetQuestionInfosDTO.builder()
-                .hasNext(questions.hasNext())
-                .questionList(questions.stream().map(question -> {
-                    Answer selectedAnswer = selectedAnswerMap.getOrDefault(question.getId(), null);
-                            return new MypageResponseDTO.GetQuestionInfosDTO.QuestionInfo(
-                                    question.getId(),
-                                    question.getCategory().getName(),
-                                    question.getTitle(),
-                                    question.getContent(),
-                                    question.getSolved().isIdentifier(),
-                                    (selectedAnswer == null) ? null : selectedAnswer.getMember().getProfileImg(),
-                                    question.getCreatedAt());
-                })
-                        .toList())
                 .build();
     }
 }
