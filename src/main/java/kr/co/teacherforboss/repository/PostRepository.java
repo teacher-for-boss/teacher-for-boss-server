@@ -114,5 +114,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             AND created_at < (SELECT created_at FROM post WHERE id = :postId)
         ORDER BY created_at DESC
     """, nativeQuery = true)
-    Slice<Post> findBookmarkedPostsSliceByMemberIdAndIdLessThanOrderByCreatedAtDesc(Long memberId, Long postId, PageRequest pageRequest);
+    Slice<Post> findBookmarkedPostsSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(Long postId, Long memberId, PageRequest pageRequest);
 }
