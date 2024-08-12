@@ -3,11 +3,20 @@ package kr.co.teacherforboss.service.mypageService;
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.MemberHandler;
 import kr.co.teacherforboss.converter.BoardConverter;
-import kr.co.teacherforboss.domain.*;
+import kr.co.teacherforboss.domain.Answer;
+import kr.co.teacherforboss.domain.Member;
+import kr.co.teacherforboss.domain.Post;
+import kr.co.teacherforboss.domain.PostBookmark;
+import kr.co.teacherforboss.domain.PostLike;
+import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.Role;
 import kr.co.teacherforboss.domain.enums.Status;
-import kr.co.teacherforboss.repository.*;
+import kr.co.teacherforboss.repository.AnswerRepository;
+import kr.co.teacherforboss.repository.PostBookmarkRepository;
+import kr.co.teacherforboss.repository.PostLikeRepository;
+import kr.co.teacherforboss.repository.PostRepository;
+import kr.co.teacherforboss.repository.QuestionRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import kr.co.teacherforboss.web.dto.MypageResponseDTO;
@@ -41,10 +50,14 @@ public class MypageQueryServiceImpl implements MypageQueryService {
         PageRequest pageRequest = PageRequest.of(0, size);
 
         Slice<Question> questionsPage = lastQuestionId == 0
-                ? questionRepository.findMyQuestionsSliceByMemberIdOrderByCreatedAtDesc(member.getId(), pageRequest)
-                : questionRepository.findMyQuestionsSliceByIdAndMemberIdLessThanOrderByCreatedAtDesc(lastQuestionId, member.getId(), pageRequest);
+                ? questionRepository.findSliceByMemberIdOrderByCreatedAtDesc(member.getId(), pageRequest)
+                : questionRepository.findSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(lastQuestionId, member.getId(), pageRequest);
 
-        return BoardConverter.toGetQuestionInfosDTO(questionsPage, member);
+        List<Answer> selectedAnswers = answerRepository.findByQuestionInAndSelected(questionsPage.getContent(), BooleanType.T);
+        Map<Long, Answer> selectedAnswerMap = selectedAnswers.stream()
+                .collect(Collectors.toMap(answer -> answer.getQuestion().getId(), answer -> answer));
+
+        return BoardConverter.toGetQuestionInfosDTO(questionsPage, selectedAnswerMap);
     }
 
     @Override
