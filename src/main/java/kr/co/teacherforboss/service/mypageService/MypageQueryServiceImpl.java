@@ -139,4 +139,26 @@ public class MypageQueryServiceImpl implements MypageQueryService {
 
         return BoardConverter.toGetQuestionInfosDTO(questionsPage, selectedAnswerMap);
     }
+
+    @Override
+    public MypageResponseDTO.GetPostInfosDTO getBookmarkedPosts(Long lastPostId, int size) {
+        Member member = authCommandService.getMember();
+        PageRequest pageRequest = PageRequest.of(0, size);
+
+        Slice<Post> postsPage =  lastPostId == 0
+                ? postRepository.findBookmarkedPostsSliceByMemberIdOrderByCreatedAtDesc(member.getId(), pageRequest)
+                : postRepository.findBookmarkedPostsSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(lastPostId, member.getId(), pageRequest);
+
+        List<PostLike> postLikes = postLikeRepository.findByPostInAndMemberIdAndStatus(postsPage.getContent(),
+                member.getId(), Status.ACTIVE);
+        List<PostBookmark> postBookmarks = postBookmarkRepository.findByPostInAndMemberIdAndStatus(postsPage.getContent(),
+                member.getId(), Status.ACTIVE);
+
+        Map<Long, Boolean> postLikeMap = postLikes.stream()
+                .collect(Collectors.toMap(like -> like.getPost().getId(), like -> like.getLiked().isIdentifier()));
+        Map<Long, Boolean> postBookmarkMap = postBookmarks.stream()
+                .collect(Collectors.toMap(bookmark -> bookmark.getPost().getId(), bookmark -> bookmark.getBookmarked().isIdentifier()));
+
+        return BoardConverter.toGetPostInfosDTO(postsPage, postLikeMap, postBookmarkMap);
+    }
 }
