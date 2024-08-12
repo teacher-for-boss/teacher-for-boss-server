@@ -603,22 +603,4 @@ public class BoardConverter {
                 .postList(postInfos)
                 .build();
     }
-
-    public static MypageResponseDTO.GetQuestionInfosDTO toGetQuestionInfosDTO(Slice<Question> questions, Member member, Map<Long, Answer> selectedAnswerMap) {
-        return MypageResponseDTO.GetQuestionInfosDTO.builder()
-                .hasNext(questions.hasNext())
-                .questionList(questions.stream().map(question -> {
-                    Answer selectedAnswer = selectedAnswerMap.getOrDefault(question.getId(), null);
-                            return new MypageResponseDTO.GetQuestionInfosDTO.QuestionInfo(
-                                    question.getId(),
-                                    question.getCategory().getName(),
-                                    question.getTitle(),
-                                    question.getContent(),
-                                    question.getSolved().isIdentifier(),
-                                    (selectedAnswer == null) ? null : selectedAnswer.getMember().getProfileImg(),
-                                    question.getCreatedAt());
-                })
-                        .toList())
-                .build();
-    }
 }
