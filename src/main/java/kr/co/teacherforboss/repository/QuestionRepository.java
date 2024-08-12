@@ -118,4 +118,19 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 		ORDER BY view_count DESC, created_at DESC LIMIT 5
 	""", nativeQuery = true)
 	List<Question> findHotQuestions(); // TODO: 최근 일주일
+	@Query(value = """
+		SELECT * FROM question
+		WHERE id IN (SELECT qb.question_id FROM question_bookmark qb WHERE qb.member_id = :memberId AND qb.bookmarked = 'T')
+			AND status = 'ACTIVE'
+		ORDER BY created_at DESC
+	""", nativeQuery = true)
+	Slice<Question> findBookmarkedQuestionsSliceByMemberIdOrderByCreatedAtDesc(Long memberId, PageRequest pageRequest);
+	@Query(value = """
+		SELECT * FROM question
+		WHERE id IN (SELECT qb.question_id FROM question_bookmark qb WHERE qb.member_id = :memberId AND qb.bookmarked = 'T')
+			AND status = 'ACTIVE'
+			AND created_at < (SELECT created_at FROM question WHERE id = :questionId)
+		ORDER BY created_at DESC
+	""", nativeQuery = true)
+	Slice<Question> findBookmarkedQuestionsSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(Long questionId, Long memberId, PageRequest pageRequest);
 }
