@@ -30,4 +30,27 @@ public class MypageResponseDTO {
             LocalDateTime createdAt;
         }
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetPostInfosDTO {
+        boolean hasNext;
+        List<PostInfo> postList;
+
+        @Getter
+        @AllArgsConstructor
+        public static class PostInfo {
+            Long postId;
+            String title;
+            String content;
+            int bookmarkCount;
+            int commentCount;
+            int likeCount;
+            boolean liked;
+            boolean bookmarked;
+            LocalDateTime createdAt;
+        }
+    }
 }

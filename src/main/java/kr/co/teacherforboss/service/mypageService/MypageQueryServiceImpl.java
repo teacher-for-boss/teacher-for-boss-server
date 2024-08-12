@@ -50,7 +50,7 @@ public class MypageQueryServiceImpl implements MypageQueryService {
         PageRequest pageRequest = PageRequest.of(0, size);
 
         Slice<Question> questionsPage = lastQuestionId == 0
-                ? questionRepository.findSliceByMemberIdOrderByCreatedAtDesc(member.getId(), pageRequest)
+                ? questionRepository.findSliceByMemberIdAndStatusOrderByCreatedAtDesc(member.getId(), Status.ACTIVE, pageRequest)
                 : questionRepository.findSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(lastQuestionId, member.getId(), pageRequest);
 
         List<Answer> selectedAnswers = answerRepository.findByQuestionInAndSelected(questionsPage.getContent(), BooleanType.T);
@@ -97,5 +97,29 @@ public class MypageQueryServiceImpl implements MypageQueryService {
         // TODO : 좋아요 수, 북마크 수, 조회수 동시성 제어
 
         return BoardConverter.toGetPostsDTO(posts, postLikeMap, postBookmarkMap);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public MypageResponseDTO.GetPostInfosDTO getMyPosts(Long lastPostId, int size) {
+        Member member = authCommandService.getMember();
+
+        PageRequest pageRequest = PageRequest.of(0, size);
+
+        Slice<Post> postsPage =  lastPostId == 0
+                ? postRepository.findSliceByMemberIdAndStatusOrderByCreatedAtDesc(member.getId(), Status.ACTIVE, pageRequest)
+                : postRepository.findSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(lastPostId, member.getId(), pageRequest);
+
+        List<PostLike> postLikes = postLikeRepository.findByPostInAndMemberIdAndStatus(postsPage.getContent(),
+                member.getId(), Status.ACTIVE);
+        List<PostBookmark> postBookmarks = postBookmarkRepository.findByPostInAndMemberIdAndStatus(postsPage.getContent(),
+                member.getId(), Status.ACTIVE);
+
+        Map<Long, Boolean> postLikeMap = postLikes.stream()
+                .collect(Collectors.toMap(like -> like.getPost().getId(), like -> like.getLiked().isIdentifier()));
+        Map<Long, Boolean> postBookmarkMap = postBookmarks.stream()
+                .collect(Collectors.toMap(bookmark -> bookmark.getPost().getId(), bookmark -> bookmark.getBookmarked().isIdentifier()));
+
+        return BoardConverter.toGetPostInfosDTO(postsPage, postLikeMap, postBookmarkMap);
     }
 }

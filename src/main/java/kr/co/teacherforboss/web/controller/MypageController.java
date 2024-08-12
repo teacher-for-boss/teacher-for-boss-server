@@ -39,4 +39,10 @@ public class MypageController {
                                                                       @RequestParam(defaultValue = "10") int size) {
         return ApiResponse.onSuccess(mypageQueryService.getCommentedPosts(lastPostId, size));
     }
+
+    @GetMapping("/board/my-posts")
+    public ApiResponse<MypageResponseDTO.GetPostInfosDTO> getMyPosts(@RequestParam(defaultValue = "0") Long lastPostId,
+                                                                     @RequestParam(defaultValue = "10") int size) {
+        return ApiResponse.onSuccess(mypageQueryService.getMyPosts(lastPostId, size));
+    }
 }
