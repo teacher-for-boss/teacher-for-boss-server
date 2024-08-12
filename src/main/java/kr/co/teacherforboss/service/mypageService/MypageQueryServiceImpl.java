@@ -132,7 +132,7 @@ public class MypageQueryServiceImpl implements MypageQueryService {
 
         Slice<Question> questionsPage = lastQuestionId == 0
                 ? questionRepository.findBookmarkedQuestionsSliceByMemberIdOrderByCreatedAtDesc(member.getId(), pageRequest)
-                : questionRepository.findBookmarkedQuestionsSliceByIdAndMemberIdLessThanOrderByCreatedAtDesc(lastQuestionId, member.getId(), pageRequest);
+                : questionRepository.findBookmarkedQuestionsSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(lastQuestionId, member.getId(), pageRequest);
 
         List<Answer> selectedAnswers = answerRepository.findByQuestionInAndSelected(questionsPage.getContent(), BooleanType.T);
         Map<Long, Answer> selectedAnswerMap = selectedAnswers.stream()

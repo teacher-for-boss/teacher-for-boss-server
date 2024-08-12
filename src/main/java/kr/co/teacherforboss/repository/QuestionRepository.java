@@ -132,5 +132,5 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 			AND created_at < (SELECT created_at FROM question WHERE id = :questionId)
 		ORDER BY created_at DESC
 	""", nativeQuery = true)
-	Slice<Question> findBookmarkedQuestionsSliceByIdAndMemberIdLessThanOrderByCreatedAtDesc(Long questionId, Long memberId, PageRequest pageRequest);
+	Slice<Question> findBookmarkedQuestionsSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(Long questionId, Long memberId, PageRequest pageRequest);
 }
