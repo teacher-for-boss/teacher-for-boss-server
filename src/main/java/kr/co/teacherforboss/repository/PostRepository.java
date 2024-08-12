@@ -92,17 +92,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         LIMIT 5
     """, nativeQuery = true)
     List<Post> findHotPosts(); //TODO: 최근 일주일
-    @Query(value = """
-        SELECT * FROM post
-        WHERE member_id = :memberId AND status = 'ACTIVE'
-        ORDER BY created_at DESC
-    """, nativeQuery = true)
-    Slice<Post> findMyPostsSliceByMemberIdOrderByCreatedAtDesc(Long memberId, PageRequest pageRequest);
+    Slice<Post> findSliceByMemberIdAndStatusOrderByCreatedAtDesc(Long memberId, Status status, PageRequest pageRequest);
     @Query(value = """
         SELECT * FROM post
         WHERE member_id = :memberId AND status = 'ACTIVE'
             AND created_at < (SELECT created_at FROM post WHERE id = :postId)
         ORDER BY created_at DESC
     """, nativeQuery = true)
-    Slice<Post> findMyPostsSliceByMemberIdAndIdLessThanOrderByCreatedAtDesc(Long memberId, Long postId, PageRequest pageRequest);
+    Slice<Post> findSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(Long memberId, Long postId, PageRequest pageRequest);
 }

@@ -50,7 +50,7 @@ public class MypageQueryServiceImpl implements MypageQueryService {
         PageRequest pageRequest = PageRequest.of(0, size);
 
         Slice<Question> questionsPage = lastQuestionId == 0
-                ? questionRepository.findSliceByMemberIdOrderByCreatedAtDesc(member.getId(), pageRequest)
+                ? questionRepository.findSliceByMemberIdAndStatusOrderByCreatedAtDesc(member.getId(), Status.ACTIVE, pageRequest)
                 : questionRepository.findSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(lastQuestionId, member.getId(), pageRequest);
 
         List<Answer> selectedAnswers = answerRepository.findByQuestionInAndSelected(questionsPage.getContent(), BooleanType.T);
@@ -103,13 +103,12 @@ public class MypageQueryServiceImpl implements MypageQueryService {
     @Transactional(readOnly = true)
     public MypageResponseDTO.GetPostInfosDTO getMyPosts(Long lastPostId, int size) {
         Member member = authCommandService.getMember();
-        if (!member.getRole().equals(Role.BOSS)) throw new MemberHandler(ErrorStatus.MEMBER_ROLE_INVALID);
 
         PageRequest pageRequest = PageRequest.of(0, size);
 
         Slice<Post> postsPage =  lastPostId == 0
-                ? postRepository.findMyPostsSliceByMemberIdOrderByCreatedAtDesc(member.getId(), pageRequest)
-                : postRepository.findMyPostsSliceByMemberIdAndIdLessThanOrderByCreatedAtDesc(member.getId(), lastPostId, pageRequest);
+                ? postRepository.findSliceByMemberIdAndStatusOrderByCreatedAtDesc(member.getId(), Status.ACTIVE, pageRequest)
+                : postRepository.findSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(member.getId(), lastPostId, pageRequest);
 
         List<PostLike> postLikes = postLikeRepository.findByPostInAndMemberIdAndStatus(postsPage.getContent(),
                 member.getId(), Status.ACTIVE);
