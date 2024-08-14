@@ -53,4 +53,15 @@ public class MypageResponseDTO {
             LocalDateTime createdAt;
         }
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetChipInfoDTO {
+        int commentCount;
+        int bookmarkCount;
+        int point;
+        int questionTicketCount;
+    }
 }

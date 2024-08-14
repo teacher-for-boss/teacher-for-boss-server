@@ -13,10 +13,13 @@ import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.Role;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.AnswerRepository;
+import kr.co.teacherforboss.repository.CommentRepository;
 import kr.co.teacherforboss.repository.PostBookmarkRepository;
 import kr.co.teacherforboss.repository.PostLikeRepository;
 import kr.co.teacherforboss.repository.PostRepository;
+import kr.co.teacherforboss.repository.QuestionBookmarkRepository;
 import kr.co.teacherforboss.repository.QuestionRepository;
+import kr.co.teacherforboss.repository.TeacherSelectInfoRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import kr.co.teacherforboss.web.dto.MypageResponseDTO;
@@ -40,6 +43,9 @@ public class MypageQueryServiceImpl implements MypageQueryService {
     private final PostLikeRepository postLikeRepository;
     private final PostBookmarkRepository postBookmarkRepository;
     private final AnswerRepository answerRepository;
+    private final TeacherSelectInfoRepository teacherSelectInfoRepository;
+    private final CommentRepository commentRepository;
+    private final QuestionBookmarkRepository questionBookmarkRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -124,6 +130,7 @@ public class MypageQueryServiceImpl implements MypageQueryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public MypageResponseDTO.GetQuestionInfosDTO getBookmarkedQuestions(Long lastQuestionId, int size) {
         Member member = authCommandService.getMember();
 
@@ -141,6 +148,7 @@ public class MypageQueryServiceImpl implements MypageQueryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public MypageResponseDTO.GetPostInfosDTO getBookmarkedPosts(Long lastPostId, int size) {
         Member member = authCommandService.getMember();
         PageRequest pageRequest = PageRequest.of(0, size);
@@ -160,5 +168,36 @@ public class MypageQueryServiceImpl implements MypageQueryService {
                 .collect(Collectors.toMap(bookmark -> bookmark.getPost().getId(), bookmark -> bookmark.getBookmarked().isIdentifier()));
 
         return BoardConverter.toGetPostInfosDTO(postsPage, postLikeMap, postBookmarkMap);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public MypageResponseDTO.GetChipInfoDTO getChipInfo() {
+        Member member = authCommandService.getMember();
+        int commentCount;   // TODO : 보스는 댓글 수가 맞는데, 티쳐는 답변 수?
+        int bookmarkCount;
+        int point;
+        int questionTicketCount;
+
+        switch (member.getRole()) {
+            case BOSS -> {
+                commentCount = commentRepository.countByMemberIdAndStatus(member.getId(), Status.ACTIVE);
+                bookmarkCount = postBookmarkRepository.countByMemberIdAndBookmarkedAndStatus(member.getId(), BooleanType.T, Status.ACTIVE);
+                // TODO : 보스 질문권 조회
+//                questionTicketCount =
+            }
+            case TEACHER -> {
+                bookmarkCount = questionBookmarkRepository.countByMemberIdAndBookmarkedAndStatus(member.getId(), BooleanType.T, Status.ACTIVE);
+                point = teacherSelectInfoRepository.findPointsByMemberId(member.getId())
+                        .orElseGet(() -> {
+                            // TODO : TeacherSelectInfo가 없다면 여기서 새로 생성시키는 것도 고려해볼만 함
+//                            teacherSelectInfoRepository.save(new TeacherSelectInfo(member));
+                            return 0;
+                        });
+            }
+            default -> throw new MemberHandler(ErrorStatus.MEMBER_ROLE_EMPTY);
+        }
+
+        return new MypageResponseDTO.GetChipInfoDTO();
     }
 }
