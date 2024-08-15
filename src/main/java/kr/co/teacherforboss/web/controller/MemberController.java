@@ -1,26 +1,25 @@
 package kr.co.teacherforboss.web.controller;
 
+import jakarta.validation.Valid;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.converter.MemberConverter;
 import kr.co.teacherforboss.domain.Member;
+import kr.co.teacherforboss.domain.MemberSurvey;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
+import kr.co.teacherforboss.service.memberService.MemberCommandService;
 import kr.co.teacherforboss.service.memberService.MemberQueryService;
+import kr.co.teacherforboss.web.dto.MemberRequestDTO;
 import kr.co.teacherforboss.web.dto.MemberResponseDTO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import jakarta.validation.Valid;
-import kr.co.teacherforboss.domain.MemberSurvey;
-import kr.co.teacherforboss.service.memberService.MemberCommandService;
-import kr.co.teacherforboss.web.dto.MemberRequestDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @Validated
@@ -37,14 +36,14 @@ public class MemberController {
         return ApiResponse.onSuccess(memberQueryService.getMemberProfile());
     }
 
-    @GetMapping("/profiles/teacher/detail")
-    public ApiResponse<MemberResponseDTO.GetTeacherProfileDetailDTO> getTeacherProfileDetail(@RequestParam(value = "memberId", required = false) Long memberId) {
+    @GetMapping("/profiles/teacher/{memberId}")
+    public ApiResponse<MemberResponseDTO.GetTeacherProfileDetailDTO> getTeacherProfileDetail(@PathVariable("memberId") Long memberId) {
         return ApiResponse.onSuccess(memberQueryService.getTeacherProfileDetail(memberId));
     }
 
-    @GetMapping("/profiles/detail")
-    public ApiResponse<MemberResponseDTO.GetTeacherProfileDTO> getMemberProfileDetail() {
-        return ApiResponse.onSuccess(memberQueryService.getTeacherProfile());
+    @GetMapping("/profiles/teacher/{memberId}/recent-answers")
+    public ApiResponse<MemberResponseDTO.GetRecentAnswersDTO> getRecentAnswers(@PathVariable("memberId") Long memberId) {
+        return ApiResponse.onSuccess(memberQueryService.getRecentAnswers(memberId));
     }
 
     @PostMapping("/survey")
@@ -69,10 +68,5 @@ public class MemberController {
     public ApiResponse<MemberResponseDTO.GetMemberAccountInfoDTO> getAccountInfo() {
         Member member = authCommandService.getMember();
         return ApiResponse.onSuccess(MemberConverter.toGetMemberAccountInfoDTO(member));
-    }
-
-    @GetMapping("/profiles/teacher/detail/recentAnswers")
-    public ApiResponse<MemberResponseDTO.GetRecentAnswersDTO> getRecentAnswers() {
-        return ApiResponse.onSuccess(memberQueryService.getRecentAnswers());
     }
 }

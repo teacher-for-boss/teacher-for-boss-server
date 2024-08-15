@@ -3,8 +3,6 @@ package kr.co.teacherforboss.converter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
 import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.MemberSurvey;
@@ -78,7 +76,7 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDTO.GetTeacherProfileDetailDTO toGetTeacherProfileDetailDTO(Member member, TeacherInfo teacherInfo, boolean isMine) {
+    public static MemberResponseDTO.GetTeacherProfileDetailDTO toGetTeacherProfileDetailDTO(TeacherInfo teacherInfo, boolean isMine) {
         return MemberResponseDTO.GetTeacherProfileDetailDTO.builder()
                 .nickname(teacherInfo.getMember().getNickname())
                 .profileImg(teacherInfo.getMember().getProfileImg())
@@ -89,7 +87,7 @@ public class MemberConverter {
                 .emailOpen(teacherInfo.getEmailOpen().isIdentifier())
                 .field(teacherInfo.getField())
                 .career(teacherInfo.getCareer())
-                .keywords(Arrays.stream(teacherInfo.getKeywords().split(";")).collect(Collectors.toList()))
+                .keywords(Arrays.stream(teacherInfo.getKeywords().split(";")).toList())
                 .level(teacherInfo.getLevel().getLevel())
                 .isMine(isMine)
                 .build();
