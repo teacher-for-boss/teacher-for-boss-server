@@ -1,10 +1,5 @@
 package kr.co.teacherforboss.converter;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import kr.co.teacherforboss.config.S3Config;
 import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.AnswerLike;
@@ -29,6 +24,13 @@ import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import kr.co.teacherforboss.web.dto.HomeResponseDTO;
 import kr.co.teacherforboss.web.dto.MypageResponseDTO;
 import org.springframework.data.domain.Slice;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 public class BoardConverter {
 
@@ -483,6 +485,7 @@ public class BoardConverter {
     public static BoardResponseDTO.GetQuestionsDTO.QuestionInfo toGetQuestionInfo(Question question, Answer selectedAnswer, boolean liked, boolean bookmarked, Integer answerCount) {
         return new BoardResponseDTO.GetQuestionsDTO.QuestionInfo(
                 question.getId(),
+                question.getCategory().getName(),
                 question.getTitle(),
                 question.getContent(),
                 question.getSolved().isIdentifier(),
@@ -540,14 +543,64 @@ public class BoardConverter {
                 .build();
     }
 
-    public static MypageResponseDTO.GetAnsweredQuestionsDTO toGetAnsweredQuestionsDTO(Slice<Question> questions, Member member) {
-        return MypageResponseDTO.GetAnsweredQuestionsDTO.builder()
+    public static MypageResponseDTO.GetQuestionInfosDTO toGetQuestionInfosDTO(Slice<Question> questions, Member member) {
+        return MypageResponseDTO.GetQuestionInfosDTO.builder()
                 .hasNext(questions.hasNext())
-                .answeredQuestionList(questions.stream().map(question ->
-                        new MypageResponseDTO.GetAnsweredQuestionsDTO.AnsweredQuestion(
-                                question.getId(), question.getCategory().getName(), question.getTitle(),
-                                question.getContent(), question.getSolved().isIdentifier(),
-                                member.getProfileImg(), question.getCreatedAt())).toList())
+                .questionList(questions.stream().map(question ->
+                        new MypageResponseDTO.GetQuestionInfosDTO.QuestionInfo(
+                                question.getId(),
+                                question.getCategory().getName(),
+                                question.getTitle(),
+                                question.getContent(),
+                                question.getSolved().isIdentifier(),
+                                member.getProfileImg(),
+                                question.getCreatedAt()))
+                        .toList())
+                .build();
+    }
+
+    public static MypageResponseDTO.GetQuestionInfosDTO toGetQuestionInfosDTO(Slice<Question> questions, Map<Long, Answer> selectedAnswerMap) {
+        return MypageResponseDTO.GetQuestionInfosDTO.builder()
+                .hasNext(questions.hasNext())
+                .questionList(questions.stream().map(question -> {
+                            Answer selectedAnswer = selectedAnswerMap.getOrDefault(question.getId(), null);
+                            return new MypageResponseDTO.GetQuestionInfosDTO.QuestionInfo(
+                                    question.getId(),
+                                    question.getCategory().getName(),
+                                    question.getTitle(),
+                                    question.getContent(),
+                                    question.getSolved().isIdentifier(),
+                                    (selectedAnswer == null) ? null : selectedAnswer.getMember().getProfileImg(),
+                                    question.getCreatedAt());
+                        })
+                        .toList())
+                .build();
+    }
+
+    public static MypageResponseDTO.GetPostInfosDTO toGetPostInfosDTO(Slice<Post> posts, Map<Long, Boolean> postLikeMap, Map<Long, Boolean> postBookmarkMap) {
+
+        List<MypageResponseDTO.GetPostInfosDTO.PostInfo> postInfos = new ArrayList<>();
+
+        posts.getContent().forEach(post -> {
+            boolean liked = postLikeMap.get(post.getId()) != null && postLikeMap.get(post.getId());
+            boolean bookmarked = postBookmarkMap.get(post.getId()) != null && postBookmarkMap.get(post.getId());
+            Integer commentCount = post.getComments().size(); // TODO: query 나가는거 왜이러는지 찾아보기
+            postInfos.add(new MypageResponseDTO.GetPostInfosDTO.PostInfo(
+                    post.getId(),
+                    post.getTitle(),
+                    post.getContent(),
+                    post.getBookmarkCount(),
+                    commentCount,
+                    post.getLikeCount(),
+                    liked,
+                    bookmarked,
+                    post.getCreatedAt()
+            ));
+        });
+
+        return MypageResponseDTO.GetPostInfosDTO.builder()
+                .hasNext(posts.hasNext())
+                .postList(postInfos)
                 .build();
     }
 }

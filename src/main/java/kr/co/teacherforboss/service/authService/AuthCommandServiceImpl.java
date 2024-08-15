@@ -180,7 +180,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         EmailAuth emailAuth = emailAuthRepository.findById(request.getEmailAuthId())
                 .orElseThrow(() -> new AuthHandler(ErrorStatus._DATA_NOT_FOUND));
 
-        if(!emailAuthRepository.existsByIdAndPurposeAndIsChecked(request.getEmailAuthId(), Purpose.of(3), "T"))
+        if(!emailAuthRepository.existsByIdAndPurposeAndIsChecked(request.getEmailAuthId(), Purpose.FIND_PW, BooleanType.T))
             throw new AuthHandler(ErrorStatus.PHONE_NOT_CHECKED);
 
         return memberRepository.findByEmailAndStatus(emailAuth.getEmail(), Status.ACTIVE)
@@ -219,7 +219,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         PhoneAuth phoneAuth = phoneAuthRepository.findById(request.getPhoneAuthId())
                 .orElseThrow(() -> new AuthHandler(ErrorStatus._DATA_NOT_FOUND));
 
-        if(!phoneAuthRepository.existsByIdAndPurposeAndIsChecked(request.getPhoneAuthId(), Purpose.of(2), BooleanType.T))
+        if(!phoneAuthRepository.existsByIdAndPurposeAndIsChecked(request.getPhoneAuthId(), Purpose.FIND_EMAIL, BooleanType.T))
             throw new AuthHandler(ErrorStatus.PHONE_NOT_CHECKED);
 
         return memberRepository.findByPhoneAndStatus(phoneAuth.getPhone(), Status.ACTIVE)

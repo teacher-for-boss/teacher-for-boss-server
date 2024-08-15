@@ -1,0 +1,52 @@
+<!-- 인증 메일 -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+</head>
+<body
+        style="
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f9f9f9;
+    "
+>
+<div
+        style="
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        padding: 20px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+      "
+>
+    <h1 style="text-align: center; margin-bottom: 50px">
+        <img
+                src="https://teacherforboss-bucket.s3.ap-northeast-2.amazonaws.com/common/teacherforboss-logo-text.png"
+                alt="logo"
+                style="width: 146px; height: 123px"
+        />
+    </h1>
+    <h1 style="text-align: center; margin: 20px 0; margin-bottom: 50px">
+        &nbsp;티쳐 포 보스 <br> 환전 신청 내역입니다.
+    </h1>
+    <p style="text-align: center; margin: 10px 0; margin-bottom: 50px">
+        &nbsp;본 메일은 <strong th:text="${email}">email </strong> 계정의 환전 신청 내역입니다. <br/>
+        아래 내용을 확인 후 환전 처리 및 티포 환전 완료 신청을 해주시기 바랍니다.
+    </p>
+    <p style="text-align: left; margin: 10px 0; margin-left: 50px; margin-bottom: 50px">
+        - 신청 전 보유하던 티포 : <strong th:text="${ownedTP}">ownedTP </strong> <br/>
+        - 환전 신청 티포 :<strong th:text="${appliedTP}">appliedTP </strong> <br/>
+        - 환전 완료 후 잔여 티포 : <strong th:text="${remainingTP}">remainingTP </strong> <br/>
+        - 수수료 10%(원) : <strong th:text="${charge}">charge </strong> <br/>
+        - 수수료 10%를 제외한 환전 실수령액(원) : <strong th:text="${finalMoney}">finalMoney </strong> <br/>
+        - 계좌번호 : <strong th:text="${accountNumber}">accountNumber </strong> <br/>
+        - 은행 : <strong th:text="${bank}">bank </strong> <br/>
+        - 예금주명 : <strong th:text="${accountHolder}">accountHolder </strong> <br/>
+    </p>
+    <p style="margin: 0">&nbsp;</p>
+</div>
+</body>
+</html>

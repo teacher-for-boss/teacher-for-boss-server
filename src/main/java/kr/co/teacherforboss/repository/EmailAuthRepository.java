@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
 public interface EmailAuthRepository extends JpaRepository<EmailAuth, Long> {
     boolean existsByIdAndEmailAndPurposeAndIsChecked(Long emailAuthId, String email, Purpose purpose, BooleanType isChecked);
 
-    boolean existsByIdAndPurposeAndIsChecked(Long emailAuthId, Purpose purpose, String isChecked);
+    boolean existsByIdAndPurposeAndIsChecked(Long emailAuthId, Purpose purpose, BooleanType isChecked);
 }

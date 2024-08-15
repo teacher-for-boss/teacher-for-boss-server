@@ -68,6 +68,8 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_PHONE_EMPTY(BAD_REQUEST, "MEMBER40022", "전화번호를 입력해주세요."),
     MEMBER_PROFILE_IMG_EMPTY(BAD_REQUEST, "MEMBER40023", "프로필 이미지를 선택해주세요."),
     MEMBER_ROLE_NOT_TEACHER(BAD_REQUEST, "MEMBER40024", "티쳐가 아닙니다."),
+    MEMBER_ACCOUNT_INFO_EMPTY(BAD_REQUEST, "MEMBER40025", "계좌 정보를 입력해주세요."),
+    MEMBER_ROLE_NOT_ADMIN(BAD_REQUEST, "MEMBER40026", "관리자가 아닙니다."),
 
     MEMBER_NOT_FOUND(NOT_FOUND, "MEMBER4041", "사용자가 없습니다."),
     TEACHER_INFO_NOT_FOUND(NOT_FOUND, "MEMBER4042", "사용자에 해당되는 티쳐 정보가 없습니다."),
@@ -129,6 +131,12 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // Home
     INVALID_HOT_TEACHER_DATA(NOT_FOUND, "HOME4041", "인기 티쳐 정보를 찾을 수 없습니다."),
+
+    // Payment
+    TEACHER_POINT_LIMIT_OVER(BAD_REQUEST, "PAYMENT4001", "보유한 티포 포인트보다 초과한 값을 입력했습니다."),
+    EXCHANGE_PROCESS_ALREADY_COMPLETE(BAD_REQUEST, "PAYMENT4002", "이미 환전된 내역입니다."),
+
+    EXCHANGE_NOT_FOUND(NOT_FOUND, "PAYMENT4041", "환전 내역을 찾을 수 없습니다."),
 
     // For test
     TEMP_EXCEPTION(BAD_REQUEST, "TEMP4001", "이거는 테스트");

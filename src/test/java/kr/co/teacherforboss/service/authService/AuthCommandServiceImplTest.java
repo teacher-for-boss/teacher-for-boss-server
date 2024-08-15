@@ -267,7 +267,7 @@ public class AuthCommandServiceImplTest {
 
         doReturn(Optional.of(emailAuth)).when(emailAuthRepository).findById(anyLong());
         doReturn(true).when(emailAuthRepository)
-                .existsByIdAndPurposeAndIsChecked(anyLong(), any(Purpose.class), anyString());
+                .existsByIdAndPurposeAndIsChecked(anyLong(), any(Purpose.class), any(BooleanType.class));
         doReturn(Optional.of(member)).when(memberRepository).findByEmailAndStatus(any(String.class), any(Status.class));
 
         // when

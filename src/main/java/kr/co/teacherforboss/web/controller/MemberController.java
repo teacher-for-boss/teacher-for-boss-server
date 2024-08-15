@@ -3,12 +3,14 @@ package kr.co.teacherforboss.web.controller;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.converter.MemberConverter;
 import kr.co.teacherforboss.domain.Member;
+import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.service.memberService.MemberQueryService;
 import kr.co.teacherforboss.web.dto.MemberResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
@@ -28,11 +30,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class MemberController {
     private final MemberQueryService memberQueryService;
     private final MemberCommandService memberCommandService;
+    private final AuthCommandService authCommandService;
 
-    @GetMapping("/profile")
+    @GetMapping("/profiles")
     public ApiResponse<MemberResponseDTO.GetMemberProfileDTO> getMemberProfile() {
-        Member member = memberQueryService.getMemberProfile();
-        return ApiResponse.onSuccess(MemberConverter.toGetMemberProfileDTO(member));
+        return ApiResponse.onSuccess(memberQueryService.getMemberProfile());
+    }
+
+    @GetMapping("/profiles/teacher/detail")
+    public ApiResponse<MemberResponseDTO.GetTeacherProfileDetailDTO> getTeacherProfileDetail(@RequestParam(value = "memberId", required = false) Long memberId) {
+        return ApiResponse.onSuccess(memberQueryService.getTeacherProfileDetail(memberId));
     }
 
     @GetMapping("/profiles/detail")
@@ -47,20 +54,20 @@ public class MemberController {
     }
 
     @PatchMapping("/profiles/boss")
-    public ApiResponse<MemberResponseDTO.EditMemberProfileDTO> editBossProfile(MemberRequestDTO.EditBossProfileDTO request) {
+    public ApiResponse<MemberResponseDTO.EditMemberProfileDTO> editBossProfile(@RequestBody @Valid MemberRequestDTO.EditBossProfileDTO request) {
         Member member = memberCommandService.editBossProfile(request);
         return ApiResponse.onSuccess(MemberConverter.toEditMemberProfileDTO(member));
     }
 
     @PatchMapping("/profiles/teacher")
-    public ApiResponse<MemberResponseDTO.EditMemberProfileDTO> editTeacherProfile(MemberRequestDTO.EditTeacherProfileDTO request) {
+    public ApiResponse<MemberResponseDTO.EditMemberProfileDTO> editTeacherProfile(@RequestBody @Valid MemberRequestDTO.EditTeacherProfileDTO request) {
         Member member = memberCommandService.editTeacherProfile(request);
         return ApiResponse.onSuccess(MemberConverter.toEditMemberProfileDTO(member));
     }
 
     @GetMapping("/accounts")
     public ApiResponse<MemberResponseDTO.GetMemberAccountInfoDTO> getAccountInfo() {
-        Member member = memberQueryService.getMemberProfile();
+        Member member = authCommandService.getMember();
         return ApiResponse.onSuccess(MemberConverter.toGetMemberAccountInfoDTO(member));
     }
 
