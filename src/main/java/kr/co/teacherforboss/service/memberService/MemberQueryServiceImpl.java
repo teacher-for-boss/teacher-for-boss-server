@@ -45,10 +45,11 @@ public class MemberQueryServiceImpl implements MemberQueryService{
     @Override
     @Transactional
     public MemberResponseDTO.GetTeacherProfileDetailDTO getTeacherProfileDetail(Long memberId) {
+        Member member = authCommandService.getMember();
         TeacherInfo teacherInfo = teacherInfoRepository.findByMemberIdAndStatus(memberId, Status.ACTIVE)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.TEACHER_INFO_NOT_FOUND));
 
-        boolean isMine = memberId.equals(teacherInfo.getMember().getId());
+        boolean isMine = member.equals(teacherInfo.getMember());
         return MemberConverter.toGetTeacherProfileDetailDTO(teacherInfo, isMine);
     }
     
