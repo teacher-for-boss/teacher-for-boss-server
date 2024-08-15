@@ -84,4 +84,22 @@ public class MemberResponseDTO {
         String level;
         boolean isMine;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetRecentAnswersDTO {
+        List<RecentAnswerInfo> recentAnswerList;
+
+        @Getter
+        @AllArgsConstructor
+        public static class RecentAnswerInfo {
+            Long questionId;
+            String questionTitle;
+            String answer;
+            int answerLikeCount;
+            LocalDateTime answeredAt;
+        }
+    }
 }
