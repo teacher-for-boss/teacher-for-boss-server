@@ -14,6 +14,7 @@ public class MemberResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class GetMemberProfileDTO {
+        Long memberId;
         String nickname;
         String profileImg;
         String role;
