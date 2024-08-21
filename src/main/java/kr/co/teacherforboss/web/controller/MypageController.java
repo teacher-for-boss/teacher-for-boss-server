@@ -57,4 +57,9 @@ public class MypageController {
                                                                              @RequestParam(defaultValue = "10") int size) {
         return ApiResponse.onSuccess(mypageQueryService.getBookmarkedPosts(lastPostId, size));
     }
+
+    @GetMapping("/board/info")
+    public ApiResponse<MypageResponseDTO.GetChipInfoDTO> getChipInfo() {
+        return ApiResponse.onSuccess(mypageQueryService.getChipInfo());
+    }
 }

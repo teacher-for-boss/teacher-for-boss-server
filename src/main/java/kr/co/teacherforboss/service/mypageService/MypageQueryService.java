@@ -10,4 +10,5 @@ public interface MypageQueryService {
     MypageResponseDTO.GetPostInfosDTO getMyPosts(Long lastPostId, int size);
     MypageResponseDTO.GetQuestionInfosDTO getBookmarkedQuestions(Long lastQuestionId, int size);
     MypageResponseDTO.GetPostInfosDTO getBookmarkedPosts(Long lastPostId, int size);
+    MypageResponseDTO.GetChipInfoDTO getChipInfo();
 }

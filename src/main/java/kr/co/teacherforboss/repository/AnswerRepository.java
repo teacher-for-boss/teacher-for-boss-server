@@ -23,6 +23,7 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
 	List<Answer> findTop20ByMemberIdAndStatusOrderByCreatedAtDesc(Long memberId, Status status);
 	List<Answer> findByQuestionInAndSelected(List<Question> content, BooleanType booleanType);
 	Integer countAllByMemberIdAndSelectedAndStatus(Long memberId, BooleanType booleanType, Status status);
+	long countByMemberIdAndStatus(Long memberId, Status status);
 	@Modifying(clearAutomatically = true, flushAutomatically = true)
 	@Query(value = """
 		UPDATE answer a
