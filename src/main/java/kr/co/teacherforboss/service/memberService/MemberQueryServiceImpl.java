@@ -1,8 +1,10 @@
 package kr.co.teacherforboss.service.memberService;
 
+import java.util.List;
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.MemberHandler;
 import kr.co.teacherforboss.converter.MemberConverter;
+import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.TeacherInfo;
 import kr.co.teacherforboss.domain.enums.BooleanType;
@@ -44,11 +46,22 @@ public class MemberQueryServiceImpl implements MemberQueryService{
     @Transactional
     public MemberResponseDTO.GetTeacherProfileDetailDTO getTeacherProfileDetail(Long memberId) {
         Member member = authCommandService.getMember();
-        TeacherInfo teacherInfo = teacherInfoRepository.findByMemberIdAndStatus(memberId == null ? member.getId() : memberId, Status.ACTIVE)
+        TeacherInfo teacherInfo = teacherInfoRepository.findByMemberIdAndStatus(memberId, Status.ACTIVE)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.TEACHER_INFO_NOT_FOUND));
 
         boolean isMine = member.equals(teacherInfo.getMember());
+        return MemberConverter.toGetTeacherProfileDetailDTO(teacherInfo, isMine);
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public MemberResponseDTO.GetRecentAnswersDTO getRecentAnswers(Long memberId) {
+        Member member = memberRepository.findByIdAndStatus(memberId, Status.ACTIVE)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        if (member.getRole() != Role.TEACHER) throw new MemberHandler(ErrorStatus.MEMBER_ROLE_NOT_TEACHER);
 
-        return MemberConverter.toGetTeacherProfileDetailDTO(member, teacherInfo, isMine);
+        // TODO: answerRepository 접근은 BoardService쪽으로 빼기
+        List<Answer> answers = answerRepository.findTop20ByMemberIdAndStatusOrderByCreatedAtDesc(member.getId(), Status.ACTIVE);
+        return MemberConverter.toGetRecentAnswersDTO(answers);
     }
 }

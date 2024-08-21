@@ -14,6 +14,7 @@ public class MemberResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class GetMemberProfileDTO {
+        Long memberId;
         String nickname;
         String profileImg;
         String role;
@@ -83,5 +84,23 @@ public class MemberResponseDTO {
         List<String> keywords;
         String level;
         boolean isMine;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetRecentAnswersDTO {
+        List<RecentAnswerInfo> recentAnswerList;
+
+        @Getter
+        @AllArgsConstructor
+        public static class RecentAnswerInfo {
+            Long questionId;
+            String questionTitle;
+            String answer;
+            int answerLikeCount;
+            LocalDateTime answeredAt;
+        }
     }
 }
