@@ -1,5 +1,8 @@
 package kr.co.teacherforboss.service.mypageService;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.MemberHandler;
 import kr.co.teacherforboss.converter.BoardConverter;
@@ -9,16 +12,17 @@ import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.PostBookmark;
 import kr.co.teacherforboss.domain.PostLike;
 import kr.co.teacherforboss.domain.Question;
+import kr.co.teacherforboss.domain.QuestionTicket;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.Role;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.AnswerRepository;
-import kr.co.teacherforboss.repository.CommentRepository;
 import kr.co.teacherforboss.repository.PostBookmarkRepository;
 import kr.co.teacherforboss.repository.PostLikeRepository;
 import kr.co.teacherforboss.repository.PostRepository;
 import kr.co.teacherforboss.repository.QuestionBookmarkRepository;
 import kr.co.teacherforboss.repository.QuestionRepository;
+import kr.co.teacherforboss.repository.QuestionTicketRepository;
 import kr.co.teacherforboss.repository.TeacherSelectInfoRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
@@ -28,10 +32,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,7 +44,7 @@ public class MypageQueryServiceImpl implements MypageQueryService {
     private final PostBookmarkRepository postBookmarkRepository;
     private final AnswerRepository answerRepository;
     private final TeacherSelectInfoRepository teacherSelectInfoRepository;
-    private final CommentRepository commentRepository;
+    private final QuestionTicketRepository questionTicketRepository;
     private final QuestionBookmarkRepository questionBookmarkRepository;
 
     @Override
@@ -174,30 +174,26 @@ public class MypageQueryServiceImpl implements MypageQueryService {
     @Transactional(readOnly = true)
     public MypageResponseDTO.GetChipInfoDTO getChipInfo() {
         Member member = authCommandService.getMember();
-        int commentCount;   // TODO : 보스는 댓글 수가 맞는데, 티쳐는 답변 수?
-        int bookmarkCount;
-        int point;
-        int questionTicketCount;
+        if (member.getRole() == null) throw new MemberHandler(ErrorStatus.MEMBER_ROLE_EMPTY);
 
-        switch (member.getRole()) {
-            case BOSS -> {
-                commentCount = commentRepository.countByMemberIdAndStatus(member.getId(), Status.ACTIVE);
-                bookmarkCount = postBookmarkRepository.countByMemberIdAndBookmarkedAndStatus(member.getId(), BooleanType.T, Status.ACTIVE);
-                // TODO : 보스 질문권 조회
-//                questionTicketCount =
-            }
-            case TEACHER -> {
-                bookmarkCount = questionBookmarkRepository.countByMemberIdAndBookmarkedAndStatus(member.getId(), BooleanType.T, Status.ACTIVE);
-                point = teacherSelectInfoRepository.findPointsByMemberId(member.getId())
-                        .orElseGet(() -> {
-                            // TODO : TeacherSelectInfo가 없다면 여기서 새로 생성시키는 것도 고려해볼만 함
-//                            teacherSelectInfoRepository.save(new TeacherSelectInfo(member));
-                            return 0;
-                        });
-            }
-            default -> throw new MemberHandler(ErrorStatus.MEMBER_ROLE_EMPTY);
+        long answerCount = 0;
+        long questionCount = 0;
+        int points = 0;
+        int questionTicketCount = 0;
+        long bookmarkCount = postBookmarkRepository.countByMemberIdAndBookmarkedAndStatus(member.getId(), BooleanType.T, Status.ACTIVE)
+                + questionBookmarkRepository.countByMemberIdAndBookmarkedAndStatus(member.getId(), BooleanType.T, Status.ACTIVE);
+
+        if (member.getRole() == Role.BOSS) {
+            questionCount = questionRepository.countByMemberIdAndStatus(member.getId(), Status.ACTIVE);
+            questionTicketCount = questionTicketRepository.findTop1ByMemberIdOrderByCreatedAtDesc(member.getId())
+                    .orElse(new QuestionTicket()).getQuestionTicketCount();
+        }
+        if (member.getRole() == Role.TEACHER) {
+            answerCount = answerRepository.countByMemberIdAndStatus(member.getId(), Status.ACTIVE);
+            points = teacherSelectInfoRepository.findByMemberIdAndStatus(member.getId(), Status.ACTIVE)
+                    .orElseThrow(() -> new MemberHandler(ErrorStatus.TEACHER_SELECT_INFO_NOT_FOUND)).getPoints();
         }
 
-        return new MypageResponseDTO.GetChipInfoDTO();
+        return BoardConverter.toGetChipInfoDTO(member, answerCount, questionCount, bookmarkCount, points, questionTicketCount);
     }
 }

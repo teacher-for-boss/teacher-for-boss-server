@@ -21,5 +21,4 @@ public interface TeacherSelectInfoRepository extends JpaRepository<TeacherSelect
             LIMIT 5;
     """, nativeQuery = true)
     List<TeacherSelectInfo> findHotTeachers(); //TODO: 일주일 안에서 계산
-    Optional<Integer> findPointsByMemberId(Long id);
 }

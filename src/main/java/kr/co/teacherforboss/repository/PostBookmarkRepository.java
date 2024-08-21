@@ -25,5 +25,5 @@ public interface PostBookmarkRepository extends JpaRepository<PostBookmark, Long
     """, nativeQuery = true)
     void softDeletePostBookmarksByPostId(@Param(value = "postId") Long postId);
 
-    int countByMemberIdAndBookmarkedAndStatus(Long id, BooleanType t, Status status);
+    long countByMemberIdAndBookmarkedAndStatus(Long memberId, BooleanType bookmarked, Status status);
 }

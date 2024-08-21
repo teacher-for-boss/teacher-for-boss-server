@@ -603,4 +603,15 @@ public class BoardConverter {
                 .postList(postInfos)
                 .build();
     }
+
+    public static MypageResponseDTO.GetChipInfoDTO toGetChipInfoDTO(Member member, long answerCount, long questionCount, long bookmarkCount, int points, int questionTicketCount) {
+        return MypageResponseDTO.GetChipInfoDTO.builder()
+                .memberRole(member.getRole())
+                .answerCount(answerCount)
+                .questionCount(questionCount)
+                .bookmarkCount(bookmarkCount)
+                .points(points)
+                .questionTicketCount(questionTicketCount)
+                .build();
+    }
 }

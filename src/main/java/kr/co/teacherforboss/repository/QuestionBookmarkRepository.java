@@ -14,5 +14,5 @@ import java.util.Optional;
 public interface QuestionBookmarkRepository extends JpaRepository<QuestionBookmark, Long> {
 	Optional<QuestionBookmark> findByQuestionIdAndMemberIdAndStatus(Long questionId, Long memberId, Status status);
 	List<QuestionBookmark> findByQuestionInAndMemberIdAndStatus(List<Question> questions, Long memberId, Status status);
-    int countByMemberIdAndBookmarkedAndStatus(Long id, BooleanType booleanType, Status status);
+    long countByMemberIdAndBookmarkedAndStatus(Long memberId, BooleanType bookmarked, Status status);
 }

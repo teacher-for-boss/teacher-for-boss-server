@@ -1,12 +1,12 @@
 package kr.co.teacherforboss.web.dto;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import kr.co.teacherforboss.domain.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 public class MypageResponseDTO {
 
@@ -59,9 +59,11 @@ public class MypageResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class GetChipInfoDTO {
-        int commentCount;
-        int bookmarkCount;
-        int point;
+        Role memberRole;
+        long answerCount;
+        long questionCount;
+        long bookmarkCount;
+        int points;
         int questionTicketCount;
     }
 }

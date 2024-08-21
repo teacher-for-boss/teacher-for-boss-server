@@ -21,6 +21,7 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
 	Optional<Answer> findByIdAndMemberIdAndStatus(Long answerId, Long memberId, Status status);
 	Optional<Answer> findByIdAndQuestionIdAndMemberIdAndStatus(Long answerId, Long questionId, Long memberId, Status status);
 	Optional<Answer> findByIdAndQuestionIdAndStatus(Long answerId, Long questionId, Status status);
+	long countByMemberIdAndStatus(Long memberId, Status status);
 	@Modifying(clearAutomatically = true, flushAutomatically = true)
 	@Query(value = """
 		UPDATE answer a
