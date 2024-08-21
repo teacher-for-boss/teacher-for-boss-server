@@ -174,7 +174,6 @@ public class MypageQueryServiceImpl implements MypageQueryService {
     @Transactional(readOnly = true)
     public MypageResponseDTO.GetChipInfoDTO getChipInfo() {
         Member member = authCommandService.getMember();
-        if (member.getRole() == null) throw new MemberHandler(ErrorStatus.MEMBER_ROLE_EMPTY);
 
         long answerCount = 0;
         long questionCount = 0;
