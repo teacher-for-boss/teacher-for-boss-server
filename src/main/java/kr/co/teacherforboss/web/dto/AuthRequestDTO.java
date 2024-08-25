@@ -141,7 +141,7 @@ public class AuthRequestDTO {
         @CheckPurpose
         int purpose;
 
-        @Pattern(regexp = "^[a-zA-Z0-9]{11}$", message = "앱 해시는 11자리의 영문, 숫자로 이루어져 있어야 합니다.")
+        @Size(min = 11, max = 11, message = "앱 해시는 11자리 문자열만 가능합니다.")
         String appHash;
     }
 
