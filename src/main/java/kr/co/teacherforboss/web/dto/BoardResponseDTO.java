@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.annotation.Nullable;
+import kr.co.teacherforboss.domain.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -141,6 +142,7 @@ public class BoardResponseDTO {
         Long memberId;
         String name;
         String profileImg;
+        Role role;
         String level;
     }
 

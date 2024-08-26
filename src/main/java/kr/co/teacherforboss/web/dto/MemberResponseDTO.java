@@ -83,7 +83,7 @@ public class MemberResponseDTO {
         Integer career;
         List<String> keywords;
         String level;
-        boolean isMine;
+        Boolean isMine;
     }
 
     @Getter

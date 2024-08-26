@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import kr.co.teacherforboss.domain.enums.Role;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -71,7 +72,7 @@ public class BoardQueryServiceImpl implements BoardQueryService {
 
         boolean liked = false;
         boolean bookmarked = false;
-        List<String> hashtagList = null;
+        List<String> hashtagList = null; // TODO: 여기 뭐임
         boolean isMine = member.equals(post.getMember());
 
         PostLike postLike = postLikeRepository.findByPostIdAndMemberIdAndStatus(post.getId(), member.getId(), Status.ACTIVE).orElse(null);
@@ -84,8 +85,11 @@ public class BoardQueryServiceImpl implements BoardQueryService {
             bookmarked = postBookmark.getBookmarked().isIdentifier();
         }
 
+        TeacherInfo teacherInfo = (member.getRole().equals(Role.TEACHER)) ? teacherInfoRepository.findByMemberIdAndStatus(member.getId(), Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.TEACHER_INFO_NOT_FOUND)) : null;
+
         postRepository.save(post);
-        return BoardConverter.toGetPostDTO(post, liked, bookmarked, isMine);
+        return BoardConverter.toGetPostDTO(post, teacherInfo, liked, bookmarked, isMine);
     }
 
     @Override

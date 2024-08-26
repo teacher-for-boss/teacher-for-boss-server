@@ -41,14 +41,15 @@ public class BoardConverter {
                 .build();
     }
 
-    public static BoardResponseDTO.GetPostDTO toGetPostDTO(Post post, boolean liked, boolean bookmarked, boolean isMine) {
+    public static BoardResponseDTO.GetPostDTO toGetPostDTO(Post post, TeacherInfo teacherInfo,
+                                                           boolean liked, boolean bookmarked, boolean isMine) {
         return BoardResponseDTO.GetPostDTO.builder()
                 .title(post.getTitle())
                 .content(post.getContent())
                 .imageUrlList(toImageUrlList(ImageOrigin.POST.getValue(), post.getImageUuid(), post.getImageIndex()))
                 .hashtagList(toPostHashtags(post))
                 .likeCount(post.getLikeCount())
-                .memberInfo(toMemberInfo(post.getMember()))
+                .memberInfo(toMemberInfo(post.getMember(), teacherInfo))
                 .bookmarkCount(post.getBookmarkCount())
                 .createdAt(post.getCreatedAt())
                 .liked(liked)
@@ -77,6 +78,7 @@ public class BoardConverter {
                 .memberId(member.getId())
                 .name(member.getName())
                 .profileImg(member.getProfileImg())
+                .role(member.getRole())
                 .level((teacherInfo == null) ? null : teacherInfo.getLevel().getLevel())
                 .build();
     }
