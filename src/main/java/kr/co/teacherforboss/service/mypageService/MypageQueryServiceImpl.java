@@ -59,7 +59,7 @@ public class MypageQueryServiceImpl implements MypageQueryService {
                 ? questionRepository.findSliceByMemberIdAndStatusOrderByCreatedAtDesc(member.getId(), Status.ACTIVE, pageRequest)
                 : questionRepository.findSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(lastQuestionId, member.getId(), pageRequest);
 
-        List<Answer> selectedAnswers = answerRepository.findByQuestionInAndSelected(questionsPage.getContent(), BooleanType.T);
+        List<Answer> selectedAnswers = answerRepository.findByQuestionInAndSelectedAtIsNotNull(questionsPage.getContent());
         Map<Long, Answer> selectedAnswerMap = selectedAnswers.stream()
                 .collect(Collectors.toMap(answer -> answer.getQuestion().getId(), answer -> answer));
 
@@ -140,7 +140,7 @@ public class MypageQueryServiceImpl implements MypageQueryService {
                 ? questionRepository.findBookmarkedQuestionsSliceByMemberIdOrderByCreatedAtDesc(member.getId(), pageRequest)
                 : questionRepository.findBookmarkedQuestionsSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(lastQuestionId, member.getId(), pageRequest);
 
-        List<Answer> selectedAnswers = answerRepository.findByQuestionInAndSelected(questionsPage.getContent(), BooleanType.T);
+        List<Answer> selectedAnswers = answerRepository.findByQuestionInAndSelectedAtIsNotNull(questionsPage.getContent());
         Map<Long, Answer> selectedAnswerMap = selectedAnswers.stream()
                 .collect(Collectors.toMap(answer -> answer.getQuestion().getId(), answer -> answer));
 

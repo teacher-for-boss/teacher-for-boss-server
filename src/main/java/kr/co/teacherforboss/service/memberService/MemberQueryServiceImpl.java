@@ -38,7 +38,7 @@ public class MemberQueryServiceImpl implements MemberQueryService{
                 .orElse(null);
         Integer answerCount = null;
         if (teacherInfo != null)
-            answerCount = answerRepository.countAllByMemberIdAndSelectedAndStatus(member.getId(), BooleanType.T, Status.ACTIVE);
+            answerCount = answerRepository.countAllByMemberIdAndSelectedAtIsNotNullAndStatus(member.getId(), Status.ACTIVE);
         return MemberConverter.toGetMemberProfileDTO(member, teacherInfo, answerCount);
     }
      
