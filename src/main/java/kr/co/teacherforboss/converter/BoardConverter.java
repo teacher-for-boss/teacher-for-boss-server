@@ -19,6 +19,7 @@ import kr.co.teacherforboss.domain.QuestionLike;
 import kr.co.teacherforboss.domain.TeacherInfo;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.ImageOrigin;
+import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import kr.co.teacherforboss.web.dto.HomeResponseDTO;
@@ -66,20 +67,25 @@ public class BoardConverter {
     }
 
     public static BoardResponseDTO.MemberInfo toMemberInfo(Member member) {
+        boolean isActive = member.getStatus() == Status.ACTIVE;
+
         return BoardResponseDTO.MemberInfo.builder()
-                .memberId(member.getId())
-                .name(member.getName())
-                .profileImg(member.getProfileImg())
+                .memberId(isActive ? member.getId() : 0)
+                .name(isActive ? member.getName() : "알 수 없음")
+                .profileImg(isActive ? member.getProfileImg() : null)
                 .build();
     }
 
     public static BoardResponseDTO.MemberInfo toMemberInfo(Member member, TeacherInfo teacherInfo) {
+        boolean isActive = member.getStatus() == Status.ACTIVE;
+        TeacherInfo validTeacherInfo = isActive ? teacherInfo : null;
+
         return BoardResponseDTO.MemberInfo.builder()
-                .memberId(member.getId())
-                .name(member.getName())
-                .profileImg(member.getProfileImg())
-                .role(member.getRole())
-                .level((teacherInfo == null) ? null : teacherInfo.getLevel().getLevel())
+                .memberId(isActive ? member.getId() : 0)
+                .name(isActive ? member.getName() : "알 수 없음")
+                .profileImg(isActive ? member.getProfileImg() : null)
+                .role(isActive ? member.getRole() : null)
+                .level((validTeacherInfo != null) ? validTeacherInfo.getLevel().getLevel() : null)
                 .build();
     }
 
@@ -484,13 +490,15 @@ public class BoardConverter {
     }
 
     public static BoardResponseDTO.GetQuestionsDTO.QuestionInfo toGetQuestionInfo(Question question, Answer selectedAnswer, boolean liked, boolean bookmarked, Integer answerCount) {
+        boolean isActive = selectedAnswer != null && selectedAnswer.getMember().getStatus() == Status.ACTIVE;
+
         return new BoardResponseDTO.GetQuestionsDTO.QuestionInfo(
                 question.getId(),
                 question.getCategory().getName(),
                 question.getTitle(),
                 question.getContent(),
                 question.getSolved().isIdentifier(),
-                (selectedAnswer == null) ? null : selectedAnswer.getMember().getProfileImg(),
+                isActive ? selectedAnswer.getMember().getProfileImg() : null,
                 question.getBookmarkCount(),
                 answerCount,
                 question.getLikeCount(),
