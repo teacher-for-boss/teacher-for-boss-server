@@ -491,8 +491,7 @@ public class BoardConverter {
     }
 
     public static BoardResponseDTO.GetQuestionsDTO.QuestionInfo toGetQuestionInfo(Question question, Answer selectedAnswer, boolean liked, boolean bookmarked, Integer answerCount) {
-        boolean isAnswerNull = selectedAnswer == null;
-        boolean isActive = !isAnswerNull && selectedAnswer.getMember().getStatus() == Status.ACTIVE;
+        boolean isActive = selectedAnswer != null && selectedAnswer.getMember().getStatus() == Status.ACTIVE;
 
         return new BoardResponseDTO.GetQuestionsDTO.QuestionInfo(
                 question.getId(),
