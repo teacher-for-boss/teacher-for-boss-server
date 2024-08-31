@@ -21,8 +21,8 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
 	Optional<Answer> findByIdAndQuestionIdAndMemberIdAndStatus(Long answerId, Long questionId, Long memberId, Status status);
 	Optional<Answer> findByIdAndQuestionIdAndStatus(Long answerId, Long questionId, Status status);
 	List<Answer> findTop20ByMemberIdAndStatusOrderByCreatedAtDesc(Long memberId, Status status);
-	List<Answer> findByQuestionInAndSelected(List<Question> content, BooleanType booleanType);
-	Integer countAllByMemberIdAndSelectedAndStatus(Long memberId, BooleanType booleanType, Status status);
+	List<Answer> findByQuestionInAndSelectedAtIsNotNull(List<Question> content);
+	Integer countAllByMemberIdAndSelectedAtIsNotNullAndStatus(Long memberId, Status status);
 	long countByMemberIdAndStatus(Long memberId, Status status);
 	@Modifying(clearAutomatically = true, flushAutomatically = true)
 	@Query(value = """

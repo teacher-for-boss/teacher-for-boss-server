@@ -62,14 +62,14 @@ class MemberQueryServiceImplTest {
                 .thenReturn(Optional.of(member));
         when(teacherInfoRepository.findByMemberIdAndStatus(any(), any()))
                 .thenReturn(Optional.ofNullable(teacherInfo));
-        when(answerRepository.countAllByMemberIdAndSelectedAndStatus(any(), any(), any()))
+        when(answerRepository.countAllByMemberIdAndSelectedAtIsNotNullAndStatus(any(), any()))
                 .thenReturn(100);
 
         // when
         MemberResponseDTO.GetMemberProfileDTO result = memberQueryService.getMemberProfile();
 
         // then
-        assertThat(result.getName()).isEqualTo(member.getName());
+        assertThat(result.getNickname()).isEqualTo(member.getNickname());
         verify(memberRepository, times(1)).findByIdAndStatus(any(), any());
     }
 

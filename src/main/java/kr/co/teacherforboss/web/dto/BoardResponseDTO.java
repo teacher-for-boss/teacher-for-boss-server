@@ -101,7 +101,7 @@ public class BoardResponseDTO {
             int dislikeCount;
             boolean liked;
             boolean disliked;
-            boolean selected;
+            LocalDateTime selectedAt;
             LocalDateTime createdAt;
             MemberInfo memberInfo;
             List<String> imageUrlList;

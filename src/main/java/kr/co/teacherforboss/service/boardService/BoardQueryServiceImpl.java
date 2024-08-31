@@ -245,7 +245,7 @@ public class BoardQueryServiceImpl implements BoardQueryService {
 
         List<QuestionLike> questionLikes = questionLikeRepository.findByQuestionInAndMemberIdAndStatus(questionsPage.getContent(), member.getId(), Status.ACTIVE);
         List<QuestionBookmark> questionBookmarks = questionBookmarkRepository.findByQuestionInAndMemberIdAndStatus(questionsPage.getContent(), member.getId(), Status.ACTIVE);
-        List<Answer> selectedAnswers = answerRepository.findByQuestionInAndSelected(questionsPage.getContent(), BooleanType.T);
+        List<Answer> selectedAnswers = answerRepository.findByQuestionInAndSelectedAtIsNotNull(questionsPage.getContent());
 
         Map<Long, QuestionLike> questionLikeMap = questionLikes.stream()
                 .collect(Collectors.toMap(like -> like.getQuestion().getId(), like -> like));
@@ -298,7 +298,7 @@ public class BoardQueryServiceImpl implements BoardQueryService {
 
         List<QuestionLike> questionLikes = questionLikeRepository.findByQuestionInAndMemberIdAndStatus(questionsPage.getContent(), member.getId(), Status.ACTIVE);
         List<QuestionBookmark> questionBookmarks = questionBookmarkRepository.findByQuestionInAndMemberIdAndStatus(questionsPage.getContent(), member.getId(), Status.ACTIVE);
-        List<Answer> selectedAnswers = answerRepository.findByQuestionInAndSelected(questionsPage.getContent(), BooleanType.T);
+        List<Answer> selectedAnswers = answerRepository.findByQuestionInAndSelectedAtIsNotNull(questionsPage.getContent());
 
         Map<Long, QuestionLike> questionLikeMap = questionLikes.stream()
                 .collect(Collectors.toMap(like -> like.getQuestion().getId(), like -> like));
