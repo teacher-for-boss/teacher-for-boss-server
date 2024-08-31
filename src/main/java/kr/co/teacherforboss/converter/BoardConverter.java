@@ -1,6 +1,6 @@
 package kr.co.teacherforboss.converter;
 
-import kr.co.teacherforboss.config.S3Config;
+import kr.co.teacherforboss.config.AwsS3Config;
 import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.AnswerLike;
 import kr.co.teacherforboss.domain.Category;
@@ -124,7 +124,7 @@ public class BoardConverter {
         // TODO: CloudFront 붙이기 !
         List<String> imageUrlList = new ArrayList<>();
         for (String index : imageIndexs) {
-            imageUrlList.add(String.format("https://%s.s3.%s.amazonaws.com/%s/%s_%s", S3Config.BUCKET_NAME, S3Config.REGION, origin, imageUuid, index));
+            imageUrlList.add(String.format("https://%s.s3.%s.amazonaws.com/%s/%s_%s", AwsS3Config.BUCKET_NAME, AwsS3Config.REGION, origin, imageUuid, index));
         }
         return imageUrlList;
     }
