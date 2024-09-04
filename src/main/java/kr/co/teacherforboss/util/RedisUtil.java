@@ -2,8 +2,11 @@ package kr.co.teacherforboss.util;
 
 import java.time.Duration;
 import java.util.Collections;
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Component;
@@ -39,6 +42,35 @@ public class RedisUtil {
 
 	public boolean existsData(String key) {
 		return redisTemplate.hasKey(key);
+	}
+
+	public void addPostId(String key, String value) {
+		ValueOperations<String,String> valueOperations = redisTemplate.opsForValue();
+		valueOperations.append(key, value);
+	}
+
+	public void addViewCountInRedis(Long postId) {
+		String key = postId +"post";
+		ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+		SetOperations<String, String> setOperations = redisTemplate.opsForSet();
+		if (getData(key) == null) {
+			valueOperations.set(key, "0");
+			setOperations.add("keyList", key.replace("post",""));
+		}
+		if (Boolean.FALSE.equals(setOperations.isMember("keyList", getData(key)))) {
+			setOperations.add("keyList", key.replace("post",""));
+		}
+		valueOperations.increment(key);
+	}
+
+	public List<String> deleteViewCountInRedis() {
+		SetOperations<String, String> setOperations = redisTemplate.opsForSet();
+        return setOperations.pop("keyList", setOperations.size("keyList"));
+	}
+
+	public String getAndDeleteData(String key) {
+		ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+		return valueOperations.getAndDelete(key+"post");
 	}
 
 	public void updateData(String key, String value) {
