@@ -1,13 +1,16 @@
 package kr.co.teacherforboss.service.boardService;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import kr.co.teacherforboss.domain.enums.Role;
+import kr.co.teacherforboss.util.RedisUtil;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,6 +53,7 @@ import lombok.RequiredArgsConstructor;
 public class BoardQueryServiceImpl implements BoardQueryService {
 
     private final AuthCommandService authCommandService;
+    private final RedisUtil redisUtil;
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
     private final PostBookmarkRepository postBookmarkRepository;
@@ -63,12 +67,12 @@ public class BoardQueryServiceImpl implements BoardQueryService {
     private final CommentLikeRepository commentLikeRepository;
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public BoardResponseDTO.GetPostDTO getPost(Long postId) {
         Member member = authCommandService.getMember();
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
-                .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND))
-                .increaseViewCount();
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
+        insertPostView(post, member);
 
         boolean liked = false;
         boolean bookmarked = false;
@@ -90,6 +94,45 @@ public class BoardQueryServiceImpl implements BoardQueryService {
 
         postRepository.save(post);
         return BoardConverter.toGetPostDTO(post, teacherInfo, liked, bookmarked, isMine);
+    }
+
+    @Transactional
+    public void insertPostView(Post post, Member member) {
+        String viewCount = redisUtil.getData(String.valueOf(member.getId()));
+        if (viewCount == null) {
+            redisUtil.setDataExpire(String.valueOf(member.getId()), post.getId() + "_", 5 * 60 * 1000);
+            redisUtil.addPostId(String.valueOf(member.getId()), post.getId() + "_");
+            redisUtil.addViewCountInRedis(post.getId());
+        } else {
+            String[] strArray = viewCount.split("_");
+            List<String> redisBoardList = Arrays.asList(strArray);
+
+            boolean isview = false;
+            if (!redisBoardList.isEmpty()) {
+                for (String redisPostId : redisBoardList) {
+                    if (String.valueOf(post.getId()).equals(redisPostId)) {
+                        isview = true;
+                        break;
+                    }
+                }
+                if (!isview) {
+                    String alreadyView = post.getId() + "_";
+                    redisUtil.addPostId(String.valueOf(member.getId()), alreadyView);
+                    redisUtil.addViewCountInRedis(post.getId());
+                }
+            }
+        }
+    }
+
+    @Scheduled(cron = "0 * * * * *",zone = "Asia/Seoul")
+    @Transactional
+    public void combineViewCount() {
+        List<String> viewCountList = redisUtil.deleteViewCountInRedis();
+        for (String key : viewCountList) {
+            Post post = postRepository.findByIdAndStatus(Long.valueOf(key), Status.ACTIVE)
+                    .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
+            post.increaseViewCount(Math.toIntExact(Long.valueOf(redisUtil.getAndDeleteData(key))));
+        }
     }
 
     @Override
