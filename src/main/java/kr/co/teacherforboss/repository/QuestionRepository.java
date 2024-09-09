@@ -48,8 +48,8 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 	Slice<Question> findSliceByIdLessThanOrderByViewCountDesc(@Param(value = "categoryId") Long categoryId, @Param(value = "questionId") Long questionId, PageRequest pageRequest);
 	@Query(value = """
         SELECT * FROM question
-        WHERE LPAD(id, 10, '0') <
-            (SELECT LPAD(q.id, 10, '0')
+        WHERE id <
+            (SELECT q.id
                 FROM question q
                 WHERE q.id = :questionId)
             AND status = 'ACTIVE'
