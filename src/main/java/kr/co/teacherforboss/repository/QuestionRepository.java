@@ -26,21 +26,23 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 	Slice<Question> findSliceByCategoryIdAndStatusOrderByCreatedAtDesc(Long categoryId, Status status, PageRequest pageRequest);
 	@Query(value = """
         SELECT * FROM question
-        WHERE CONCAT(LPAD(like_count, 10, '0'), LPAD(id, 10, '0')) <
+        WHERE category_id = :categoryId AND
+        	CONCAT(LPAD(like_count, 10, '0'), LPAD(id, 10, '0')) <
             (SELECT CONCAT(LPAD(q.like_count, 10, '0'), LPAD(q.id, 10, '0'))
                 FROM question q
                 WHERE q.id = :questionId)
-            AND category_id = :categoryId AND status = 'ACTIVE'
+            AND status = 'ACTIVE'
         ORDER BY like_count DESC, id DESC;
     """, nativeQuery = true)
 	Slice<Question> findSliceByIdLessThanOrderByLikeCountDesc(@Param(value = "categoryId") Long categoryId, @Param(value = "questionId") Long questionId, PageRequest pageRequest);
 	@Query(value = """
         SELECT * FROM question
-        WHERE CONCAT(LPAD(view_count, 10, '0'), LPAD(id, 10, '0')) <
+        WHERE category_id = :categoryId AND 
+        	CONCAT(LPAD(view_count, 10, '0'), LPAD(id, 10, '0')) <
             (SELECT CONCAT(LPAD(q.view_count, 10, '0'), LPAD(q.id, 10, '0'))
                 FROM question q
                 WHERE q.id = :questionId)
-            AND category_id = :categoryId AND status = 'ACTIVE'
+            AND status = 'ACTIVE'
         ORDER BY view_count DESC, id DESC;
     """, nativeQuery = true)
 	Slice<Question> findSliceByIdLessThanOrderByViewCountDesc(@Param(value = "categoryId") Long categoryId, @Param(value = "questionId") Long questionId, PageRequest pageRequest);
@@ -76,11 +78,12 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 	Slice<Question> findSliceByIdLessThanOrderByViewCountDesc(@Param(value = "questionId") Long questionId, PageRequest pageRequest);
 	@Query(value = """
         SELECT * FROM question
-        WHERE id <
+        WHERE category_id = :categoryId AND 
+        	id <
             (SELECT id
                 FROM question q
                 WHERE q.id = :questionId)
-            AND category_id = :categoryId AND status = 'ACTIVE'
+            AND status = 'ACTIVE'
         ORDER BY id DESC;
     """, nativeQuery = true)
 	Slice<Question> findSliceByIdLessThanOrderByCreatedAtDesc(@Param(value = "categoryId") Long categoryId, @Param(value = "questionId") Long questionId, PageRequest pageRequest);
