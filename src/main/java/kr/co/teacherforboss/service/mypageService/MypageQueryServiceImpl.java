@@ -51,7 +51,6 @@ public class MypageQueryServiceImpl implements MypageQueryService {
     @Transactional(readOnly = true)
     public MypageResponseDTO.GetQuestionInfosDTO getMyQuestions(Long lastQuestionId, int size) {
         Member member = authCommandService.getMember();
-        if (!member.getRole().equals(Role.BOSS)) throw new MemberHandler(ErrorStatus.MEMBER_ROLE_INVALID);
 
         PageRequest pageRequest = PageRequest.of(0, size);
 

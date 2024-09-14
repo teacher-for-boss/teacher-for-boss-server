@@ -12,6 +12,7 @@ import kr.co.teacherforboss.web.dto.PaymentRequestDTO;
 import kr.co.teacherforboss.web.dto.PaymentResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -37,18 +38,21 @@ public class PaymentController {
         return ApiResponse.onSuccess(PaymentConverter.toGetTeacherAccountDTO(teacherInfo));
     }
 
+    @PreAuthorize("hasRole('ROLE_TEACHER')")
     @PatchMapping("/accounts")
     public ApiResponse<PaymentResponseDTO.EditTeacherAccountDTO> editTeacherAccount(@RequestBody @Valid PaymentRequestDTO.EditTeacherAccountDTO request) {
         TeacherInfo teacherInfo = paymentCommandService.editTeacherAccount(request);
         return ApiResponse.onSuccess(PaymentConverter.toEditTeacherAccountDTO(teacherInfo));
     }
 
+    @PreAuthorize("hasRole('ROLE_TEACHER')")
     @PostMapping("/exchanges")
     public ApiResponse<PaymentResponseDTO.ExchangeTeacherPointsDTO> exchangeTeacherPoints(@RequestBody @Valid PaymentRequestDTO.ExchangeTeacherPointsDTO request) {
         Exchange exchange = paymentCommandService.exchangeTeacherPoints(request);
         return ApiResponse.onSuccess(PaymentConverter.toExchangeTeacherPoints(exchange));
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PatchMapping("/exchanges/{exchangeId}/complete")
     public ApiResponse<PaymentResponseDTO.CompleteExchangeProcessDTO> completeExchangeTeacherPoints(@PathVariable("exchangeId") Long exchangeId) {
         Exchange exchange = paymentCommandService.completeExchangeProcess(exchangeId);
@@ -61,6 +65,7 @@ public class PaymentController {
         return ApiResponse.onSuccess(paymentQueryService.getExchangeHistory(lastExchangeId, size));
     }
 
+    @PreAuthorize("hasRole('ROLE_TEACHER')")
     @GetMapping("/points")
     public ApiResponse<PaymentResponseDTO.GetTeacherPointsDTO> getTeacherPoints() {
         TeacherSelectInfo teacherSelectInfo = paymentQueryService.getTeacherPoints();

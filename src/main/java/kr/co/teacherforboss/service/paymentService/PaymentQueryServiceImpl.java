@@ -54,7 +54,6 @@ public class PaymentQueryServiceImpl implements PaymentQueryService {
     @Transactional
     public TeacherSelectInfo getTeacherPoints(){
         Member member = authCommandService.getMember();
-        if (member.getRole() != Role.TEACHER) throw new MemberHandler(ErrorStatus.MEMBER_ROLE_NOT_TEACHER);
         return teacherSelectInfoRepository.findByMemberIdAndStatus(member.getId(), Status.ACTIVE)
                 .orElseThrow(() -> new PaymentHandler(ErrorStatus.TEACHER_SELECT_INFO_NOT_FOUND));
     }

@@ -8,7 +8,6 @@ import java.util.Set;
 import kr.co.teacherforboss.domain.Comment;
 import kr.co.teacherforboss.domain.CommentLike;
 import kr.co.teacherforboss.domain.TeacherSelectInfo;
-import kr.co.teacherforboss.domain.enums.Role;
 import kr.co.teacherforboss.repository.CommentLikeRepository;
 import kr.co.teacherforboss.repository.CommentRepository;
 import kr.co.teacherforboss.repository.QuestionLikeRepository;
@@ -133,7 +132,6 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     @Transactional
     public Question saveQuestion(BoardRequestDTO.SaveQuestionDTO request) {
         Member member = authCommandService.getMember();
-        if (member.getRole() != Role.BOSS) throw new BoardHandler(ErrorStatus.MEMBER_ROLE_NOT_BOSS);
         Category category = categoryRepository.findByIdAndStatus(request.getCategoryId(), Status.ACTIVE);
         Question question = BoardConverter.toQuestion(request, member, category);
 
@@ -234,7 +232,6 @@ public class BoardCommandServiceImpl implements BoardCommandService {
     @Transactional
     public Answer saveAnswer(long questionId, BoardRequestDTO.SaveAnswerDTO request) {
         Member member = authCommandService.getMember();
-        if (member.getRole() != Role.TEACHER) throw new BoardHandler(ErrorStatus.MEMBER_ROLE_NOT_TEACHER);
         Question question = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
 
