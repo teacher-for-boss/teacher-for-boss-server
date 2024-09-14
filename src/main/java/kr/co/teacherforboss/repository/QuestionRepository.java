@@ -25,62 +25,86 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 	Slice<Question> findSliceByCategoryIdAndStatusOrderByViewCountDescCreatedAtDesc(Long categoryId, Status status, PageRequest pageRequest);
 	Slice<Question> findSliceByCategoryIdAndStatusOrderByCreatedAtDesc(Long categoryId, Status status, PageRequest pageRequest);
 	@Query(value = """
-		SELECT * FROM question
-		WHERE category_id = :categoryId AND status = 'ACTIVE'
-			AND (like_count <= (SELECT like_count FROM question WHERE id = :questionId) AND id != :questionId)
-		ORDER BY like_count DESC, created_at DESC
-	""", nativeQuery = true)
+    	SELECT * FROM question
+    	WHERE category_id = :categoryId AND
+    		CONCAT(LPAD(like_count, 10, '0'), LPAD(id, 10, '0')) <
+    		(SELECT CONCAT(LPAD(q.like_count, 10, '0'), LPAD(q.id, 10, '0'))
+    			FROM question q
+    			WHERE q.id = :questionId)
+    		AND status = 'ACTIVE'
+    	ORDER BY like_count DESC, id DESC;
+    """, nativeQuery = true)
 	Slice<Question> findSliceByIdLessThanOrderByLikeCountDesc(@Param(value = "categoryId") Long categoryId, @Param(value = "questionId") Long questionId, PageRequest pageRequest);
 	@Query(value = """
-		SELECT * FROM question
-		WHERE category_id = :categoryId AND status = 'ACTIVE'
-			AND (view_count <= (SELECT view_count FROM question WHERE id = :questionId) AND id != :questionId)
-		ORDER BY view_count DESC, created_at DESC
-	""", nativeQuery = true)
+        SELECT * FROM question
+        WHERE category_id = :categoryId AND 
+        	CONCAT(LPAD(view_count, 10, '0'), LPAD(id, 10, '0')) <
+        	(SELECT CONCAT(LPAD(q.view_count, 10, '0'), LPAD(q.id, 10, '0'))
+        		FROM question q
+        		WHERE q.id = :questionId)
+        	AND status = 'ACTIVE'
+        ORDER BY view_count DESC, id DESC;
+    """, nativeQuery = true)
 	Slice<Question> findSliceByIdLessThanOrderByViewCountDesc(@Param(value = "categoryId") Long categoryId, @Param(value = "questionId") Long questionId, PageRequest pageRequest);
 	@Query(value = """
-		SELECT * FROM question
-		WHERE status = 'ACTIVE'
-			AND created_at < (SELECT created_at FROM question WHERE id = :questionId)
-		ORDER BY created_at DESC
-	""", nativeQuery = true)
+        SELECT * FROM question
+        WHERE id <
+        	(SELECT q.id
+        		FROM question q
+        		WHERE q.id = :questionId)
+        	AND status = 'ACTIVE'
+        ORDER BY id DESC;
+    """, nativeQuery = true)
 	Slice<Question> findSliceByIdLessThanOrderByCreatedAtDesc(@Param(value = "questionId") Long questionId, PageRequest pageRequest);
 	@Query(value = """
-		SELECT * FROM question
-		WHERE status = 'ACTIVE'
-			AND (like_count <= (SELECT like_count FROM question WHERE id = :questionId) AND id != :questionId)
-		ORDER BY like_count DESC, created_at DESC
-	""", nativeQuery = true)
+    	SELECT * FROM question
+    	WHERE CONCAT(LPAD(like_count, 10, '0'), LPAD(id, 10, '0')) <
+    		(SELECT CONCAT(LPAD(q.like_count, 10, '0'), LPAD(q.id, 10, '0'))
+    			FROM question q
+    			WHERE q.id = :questionId)
+    		AND status = 'ACTIVE'
+    	ORDER BY like_count DESC, id DESC;
+    """, nativeQuery = true)
 	Slice<Question> findSliceByIdLessThanOrderByLikeCountDesc(@Param(value = "questionId") Long questionId, PageRequest pageRequest);
 	@Query(value = """
-		SELECT * FROM question
-		WHERE status = 'ACTIVE'
-			AND (view_count <= (SELECT view_count FROM question WHERE id = :questionId) AND id != :questionId)
-		ORDER BY view_count DESC, created_at DESC
-	""", nativeQuery = true)
+    	SELECT * FROM question
+    	WHERE CONCAT(LPAD(view_count, 10, '0'), LPAD(id, 10, '0')) <
+    		(SELECT CONCAT(LPAD(q.view_count, 10, '0'), LPAD(q.id, 10, '0'))
+    			FROM question q
+    			WHERE q.id = :questionId)
+    		AND status = 'ACTIVE'
+    	ORDER BY view_count DESC, id DESC;
+    """, nativeQuery = true)
 	Slice<Question> findSliceByIdLessThanOrderByViewCountDesc(@Param(value = "questionId") Long questionId, PageRequest pageRequest);
 	@Query(value = """
-		SELECT * FROM question
-		WHERE category_id = :categoryId AND status = 'ACTIVE'
-			AND created_at < (SELECT created_at FROM question WHERE id = :questionId)
-		ORDER BY created_at DESC
-	""", nativeQuery = true)
+        SELECT * FROM question
+        WHERE category_id = :categoryId AND 
+        	id <
+        	(SELECT id
+        		FROM question q
+        		WHERE q.id = :questionId)
+        	AND status = 'ACTIVE'
+        ORDER BY id DESC;
+    """, nativeQuery = true)
 	Slice<Question> findSliceByIdLessThanOrderByCreatedAtDesc(@Param(value = "categoryId") Long categoryId, @Param(value = "questionId") Long questionId, PageRequest pageRequest);
 	Slice<Question> findSliceByTitleContainingOrContentContainingAndStatusOrderByCreatedAtDesc(String titleKeyword, String contentKeyword, Status status, PageRequest pageRequest);
 	@Query(value = """
-		SELECT * FROM question
-		WHERE (title LIKE CONCAT('%', :keyword, '%') OR content LIKE CONCAT('%', :keyword, '%')) AND status = 'ACTIVE'
-			AND created_at < (SELECT created_at FROM question WHERE id = :questionId)
-		ORDER BY created_at DESC
-	""", nativeQuery = true)
+  		SELECT * FROM question
+  		WHERE (title LIKE CONCAT('%', :keyword, '%') OR content LIKE CONCAT('%', :keyword, '%')) AND status = 'ACTIVE'
+  			AND created_at < (SELECT created_at FROM question WHERE id = :questionId)
+  		ORDER BY created_at DESC
+  	""", nativeQuery = true)
 	Slice<Question> findSliceByIdLessThanTitleContainingOrderByCreatedAtDesc(String keyword, Long questionId, PageRequest pageRequest);
 	Slice<Question> findSliceByMemberIdAndStatusOrderByCreatedAtDesc(Long memberId, Status status, PageRequest pageRequest);
 	@Query(value = """
-		SELECT * FROM question
-		WHERE member_id = :memberId AND status = 'ACTIVE'
-			AND created_at < (SELECT created_at FROM question WHERE id = :questionId)
-		ORDER BY created_at DESC
-	""", nativeQuery = true)
+    	SELECT * FROM question
+    	WHERE LPAD(id, 10, '0') <
+    		(SELECT LPAD(q.id, 10, '0')
+    			FROM question q
+    			WHERE q.id = :questionId)
+    		AND member_id = :memberId AND status = 'ACTIVE'
+    	ORDER BY id DESC;
+    """, nativeQuery = true)
 	Slice<Question> findSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(Long questionId, Long memberId, PageRequest pageRequest);
 
 	@Query(value = """
@@ -105,33 +129,36 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 	Slice<Question> findAnsweredQuestionsSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(Long memberId, Long lastQuestionId, PageRequest pageRequest);
 
 	@Query(value = """
-		SELECT * FROM question q
-	    WHERE q.id IN (
-	        SELECT answer.question_id FROM answer WHERE member_id = :memberId
-		    ) AND status = 'ACTIVE'
-		ORDER BY (SELECT MAX(a.created_at) FROM answer a WHERE a.question_id = q.id AND a.member_id = :memberId) DESC
-	""", nativeQuery = true)
+    	SELECT * FROM question q
+    	WHERE q.id IN (
+    		SELECT answer.question_id FROM answer WHERE member_id = :memberId
+    		) AND status = 'ACTIVE'
+    	ORDER BY (SELECT MAX(a.created_at) FROM answer a WHERE a.question_id = q.id AND a.member_id = :memberId) DESC
+    """, nativeQuery = true)
 	Slice<Question> findAnsweredQuestionsSliceByMemberIdOrderByCreatedAtDesc(Long memberId, PageRequest pageRequest);
 
 	@Query(value = """
-		SELECT * FROM question
-		WHERE status = 'ACTIVE'
-		ORDER BY view_count DESC, created_at DESC LIMIT 5
-	""", nativeQuery = true)
+  		SELECT * FROM question
+  		WHERE status = 'ACTIVE'
+  		ORDER BY view_count DESC, created_at DESC LIMIT 5
+  	""", nativeQuery = true)
 	List<Question> findHotQuestions(); // TODO: 최근 일주일
 	@Query(value = """
-		SELECT * FROM question
-		WHERE id IN (SELECT qb.question_id FROM question_bookmark qb WHERE qb.member_id = :memberId AND qb.bookmarked = 'T')
-			AND status = 'ACTIVE'
-		ORDER BY created_at DESC
-	""", nativeQuery = true)
+  		SELECT * FROM question
+  		WHERE id IN (SELECT qb.question_id FROM question_bookmark qb WHERE qb.member_id = :memberId AND qb.bookmarked = 'T')
+  			AND status = 'ACTIVE'
+  		ORDER BY created_at DESC
+  	""", nativeQuery = true)
 	Slice<Question> findBookmarkedQuestionsSliceByMemberIdOrderByCreatedAtDesc(Long memberId, PageRequest pageRequest);
 	@Query(value = """
-		SELECT * FROM question
-		WHERE id IN (SELECT qb.question_id FROM question_bookmark qb WHERE qb.member_id = :memberId AND qb.bookmarked = 'T')
-			AND status = 'ACTIVE'
-			AND created_at < (SELECT created_at FROM question WHERE id = :questionId)
-		ORDER BY created_at DESC
-	""", nativeQuery = true)
+  		SELECT * FROM question
+  		WHERE id IN (SELECT qb.question_id FROM question_bookmark qb WHERE qb.member_id = :memberId AND qb.bookmarked = 'T')
+  			AND status = 'ACTIVE'
+  			AND id <
+  			(SELECT id
+  				FROM question q
+  				WHERE q.id = :questionId)
+  		ORDER BY id DESC
+  	""", nativeQuery = true)
 	Slice<Question> findBookmarkedQuestionsSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(Long questionId, Long memberId, PageRequest pageRequest);
 }

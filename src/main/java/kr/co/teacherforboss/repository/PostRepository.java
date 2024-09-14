@@ -22,27 +22,32 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Slice<Post> findSliceByStatusOrderByCreatedAtDesc(Status status, PageRequest pageRequest);
     @Query(value = """
         SELECT * FROM post
-        WHERE ((like_count < (SELECT like_count FROM post WHERE id = :postId)
-            OR (like_count = (SELECT like_count FROM post WHERE id = :postId) AND id != :postId)))
+        WHERE CONCAT(LPAD(like_count, 10, '0'), LPAD(id, 10, '0')) <
+            (SELECT CONCAT(LPAD(p.like_count, 10, '0'), LPAD(p.id, 10, '0'))
+                FROM post p
+                WHERE p.id = :postId)
             AND status = 'ACTIVE'
-        ORDER BY like_count DESC, created_at DESC;
+        ORDER BY like_count DESC, id DESC;
     """, nativeQuery = true)
     Slice<Post> findSliceByIdLessThanOrderByLikeCountDesc(@Param(value = "postId") Long postId, PageRequest pageRequest);
-
     @Query(value = """
         SELECT * FROM post
-        WHERE ((view_count < (SELECT view_count FROM post WHERE id = :postId)
-            OR (view_count = (SELECT view_count FROM post WHERE id = :postId) AND id != :postId)))
+        WHERE CONCAT(LPAD(view_count, 10, '0'), LPAD(id, 10, '0')) <
+            (SELECT CONCAT(LPAD(p.view_count, 10, '0'), LPAD(p.id, 10, '0'))
+                FROM post p
+                WHERE p.id = :postId)
             AND status = 'ACTIVE'
-        ORDER BY view_count DESC, created_at DESC;
+        ORDER BY view_count DESC, id DESC;
     """, nativeQuery = true)
     Slice<Post> findSliceByIdLessThanOrderByViewCountDesc(@Param(value = "postId") Long postId, PageRequest pageRequest);
-
     @Query(value = """
         SELECT * FROM post
-        WHERE created_at < (SELECT created_at FROM post WHERE id = :postId)
+        WHERE id <
+            (SELECT id
+                FROM post p
+                WHERE p.id = :postId)
             AND status = 'ACTIVE'
-        ORDER BY created_at DESC
+        ORDER BY id DESC;
     """, nativeQuery = true)
     Slice<Post> findSliceByIdLessThanOrderByCreatedAtDesc(Long postId, PageRequest pageRequest);
     Slice<Post> findSliceByTitleContainingOrContentContainingAndStatusOrderByCreatedAtDesc(String titleKeyword, String contentKeyword, Status status, PageRequest pageRequest);
@@ -56,24 +61,24 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Slice<Post> findSliceByIdLessThanAndKeywordOrderByCreatedAtDesc(String keyword, Long postId, PageRequest pageRequest);
 
     @Query(value = """
-		SELECT p.* FROM post p
-		WHERE p.id IN (
-			SELECT c.post_id FROM comment c
-			WHERE c.member_id = :memberId
-		) AND p.status = 'ACTIVE'
-		AND (
-			SELECT MAX(c.created_at) FROM comment c
-			WHERE c.post_id = p.id
-			AND c.member_id = :memberId
-		) < (
-			SELECT MAX(c.created_at) FROM comment c
-			WHERE c.post_id = :lastPostId
-			AND c.member_id = :memberId
-		)
-		ORDER BY ( SELECT MAX(c.created_at) FROM comment c
-			WHERE c.post_id = p.id AND c.member_id = :memberId
-		) DESC
-	""", nativeQuery = true)
+        SELECT p.* FROM post p
+        WHERE p.id IN (
+            SELECT c.post_id FROM comment c
+            WHERE c.member_id = :memberId
+        ) AND p.status = 'ACTIVE'
+        AND (
+            SELECT MAX(c.created_at) FROM comment c
+            WHERE c.post_id = p.id
+            AND c.member_id = :memberId
+        ) < (
+            SELECT MAX(c.created_at) FROM comment c
+            WHERE c.post_id = :lastPostId
+            AND c.member_id = :memberId
+        )
+        ORDER BY ( SELECT MAX(c.created_at) FROM comment c
+        WHERE c.post_id = p.id AND c.member_id = :memberId
+        ) DESC
+    """, nativeQuery = true)
     Slice<Post> findCommentedPostsSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(Long memberId, Long lastPostId, PageRequest pageRequest);
 
     @Query(value = """
@@ -96,8 +101,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query(value = """
         SELECT * FROM post
         WHERE member_id = :memberId AND status = 'ACTIVE'
-            AND created_at < (SELECT created_at FROM post WHERE id = :postId)
-        ORDER BY created_at DESC
+            AND id <
+            (SELECT id
+                FROM post p
+                WHERE p.id = :postId)
+        ORDER BY id DESC
     """, nativeQuery = true)
     Slice<Post> findSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(Long postId, Long memberId, PageRequest pageRequest);
     @Query(value = """
@@ -111,8 +119,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         SELECT * FROM post
         WHERE id IN (SELECT pb.post_id FROM post_bookmark pb WHERE pb.member_id = :memberId AND pb.bookmarked = 'T')
         AND status = 'ACTIVE'
-            AND created_at < (SELECT created_at FROM post WHERE id = :postId)
-        ORDER BY created_at DESC
+        AND id <
+            (SELECT id
+                FROM post p
+                WHERE p.id = :postId)
+        ORDER BY id DESC
     """, nativeQuery = true)
     Slice<Post> findBookmarkedPostsSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(Long postId, Long memberId, PageRequest pageRequest);
 }
