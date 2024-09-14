@@ -56,7 +56,6 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
 
         if (request.getPoints() > teacherSelectInfo.getPoints()) throw new PaymentHandler(ErrorStatus.TEACHER_POINT_LIMIT_OVER);
 
-        // TODO: 메일 보내는거 비동기로 처리
         ExchangeMail exchangeMail = new ExchangeMail(teacherSelectInfo.getPoints(), request.getPoints(), teacherInfo);
         mailCommandService.sendMail(member.getEmail(), exchangeMail);
 

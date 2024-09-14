@@ -10,7 +10,6 @@ public class ExchangeMail extends Mail {
         super.values.put("ownedTP", getOwnedTP(ownedTP));
         super.values.put("appliedTP", getAppliedTP(appliedTP));
         super.values.put("remainingTP", getRemainingTP(ownedTP, appliedTP));
-        super.values.put("charge", getCharge(appliedTP));
         super.values.put("finalMoney", getFinalMoney(appliedTP));
         super.values.put("accountNumber", getAccountNumber(teacherInfo));
         super.values.put("bank", getBank(teacherInfo));
@@ -32,12 +31,8 @@ public class ExchangeMail extends Mail {
         return String.valueOf(ownedTP - appliedTP);
     }
 
-    private String getCharge(int appliedTP) {
-        return String.valueOf(appliedTP * 100 * 0.1);
-    }
-
     private String getFinalMoney(int appliedTP) {
-         return String.valueOf(appliedTP * 100 * 0.9);
+         return String.valueOf(appliedTP * 1000);
     }
 
     private String getAccountNumber(TeacherInfo teacherInfo) {
