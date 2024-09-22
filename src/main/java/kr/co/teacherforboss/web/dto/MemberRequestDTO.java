@@ -61,7 +61,6 @@ public class MemberRequestDTO {
         boolean phoneOpen;
 
         @Email(message = "이메일 형식이 아닙니다.")
-        @NotNull(message = "이메일이 없습니다.")
         String email;
 
         boolean emailOpen;

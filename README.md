@@ -62,16 +62,3 @@
 
 
 <br>
-
-
-### 👥 티쳐 포 보스 (Teaher for boss) Back-End Team
-<table>
-  <tbody>
-    <tr>
-      <td align="center"><a href="https://github.com/Lightieey"><img src="https://avatars.githubusercontent.com/u/79203421?v=4" width="100px;" alt=""/><br /><sub><b>김민지</b></sub></a></td>
-      <td align="center"><a href="https://github.com/codusl100"><img src="https://avatars.githubusercontent.com/u/77263479?v=4" width="100px;" alt=""/><br /><sub><b>백채연</b></sub></a></td>
-      <td align="center"><a href="https://github.com/EunseJang"><img src="https://avatars.githubusercontent.com/u/113760409?v=4" width="100px;" alt=""/><br /><sub><b>장은세</b></sub></a></td>
-      <td align="center"><a href="https://github.com/smg1024"><img src="https://avatars.githubusercontent.com/u/87608318?v=4" width="100px;" alt=""/><br /><sub><b>김상민</b></sub></a></td>
-    </tr>
-  </tbody>
-</table>

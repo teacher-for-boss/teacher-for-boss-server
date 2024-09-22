@@ -345,7 +345,7 @@ public class BoardConverter {
         answerLikes.forEach(answerLike -> answerLiked.put(answerLike.getAnswer().getId(), answerLike.getLiked()));
 
         HashMap<Long, TeacherInfo> teacherInfoMap = new HashMap<>();
-        teacherInfos.forEach(teacherInfo -> teacherInfoMap.put(teacherInfo.getId(), teacherInfo));
+        teacherInfos.forEach(teacherInfo -> teacherInfoMap.put(teacherInfo.getMember().getId(), teacherInfo));
 
         List<BoardResponseDTO.GetAnswersDTO.AnswerInfo> answerInfos = answers.stream()
                 .map(answer -> BoardResponseDTO.GetAnswersDTO.AnswerInfo.builder()
