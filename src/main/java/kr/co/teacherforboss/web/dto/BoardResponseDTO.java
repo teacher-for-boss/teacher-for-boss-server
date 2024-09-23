@@ -175,7 +175,6 @@ public class BoardResponseDTO {
     @AllArgsConstructor
     public static class TogglePostBookmarkDTO {
         Boolean bookmark;
-        LocalDateTime updatedAt;
     }
 
     @Getter
@@ -184,7 +183,6 @@ public class BoardResponseDTO {
     @AllArgsConstructor
     public static class TogglePostLikeDTO {
         Boolean like;
-        LocalDateTime updatedAt;
     }
 
     @Getter
@@ -212,7 +210,6 @@ public class BoardResponseDTO {
     public static class ToggleQuestionLikeDTO {
         Long questionId;
         boolean liked;
-        LocalDateTime updatedAt;
     }
 
     @Getter
@@ -255,7 +252,6 @@ public class BoardResponseDTO {
     public static class ToggleQuestionBookmarkDTO {
         Long questionId;
         boolean bookmarked;
-        LocalDateTime updatedAt;
     }
 
     @Getter
