@@ -204,7 +204,6 @@ public class BoardConverter {
         return PostBookmark.builder()
                 .member(member)
                 .post(post)
-                .status(Status.ACTIVE)
                 .build();
     }
 
@@ -219,7 +218,6 @@ public class BoardConverter {
         return PostLike.builder()
                 .member(member)
                 .post(post)
-                .status(Status.ACTIVE)
                 .build();
     }
 
@@ -227,7 +225,6 @@ public class BoardConverter {
         return QuestionLike.builder()
                 .member(member)
                 .question(question)
-                .status(Status.ACTIVE)
                 .build();
     }
 
@@ -305,7 +302,6 @@ public class BoardConverter {
         return QuestionBookmark.builder()
                 .question(questionToBookmark)
                 .member(member)
-                .status(Status.ACTIVE)
                 .build();
     }
 

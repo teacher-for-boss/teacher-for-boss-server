@@ -53,5 +53,6 @@ public class QuestionBookmark {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Getter
+    @Builder.Default
     private Status status = Status.ACTIVE;
 }
