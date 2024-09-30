@@ -12,6 +12,7 @@ import kr.co.teacherforboss.web.dto.MemberRequestDTO;
 import kr.co.teacherforboss.web.dto.MemberResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -41,6 +42,7 @@ public class MemberController {
         return ApiResponse.onSuccess(memberQueryService.getTeacherProfileDetail(memberId));
     }
 
+    @PreAuthorize("hasRole('ROLE_TEACHER')")
     @GetMapping("/profiles/teacher/{memberId}/recent-answers")
     public ApiResponse<MemberResponseDTO.GetRecentAnswersDTO> getRecentAnswers(@PathVariable("memberId") Long memberId) {
         return ApiResponse.onSuccess(memberQueryService.getRecentAnswers(memberId));
@@ -52,12 +54,14 @@ public class MemberController {
         return ApiResponse.onSuccess(MemberConverter.toSurveyResultDTO(memberSurvey));
     }
 
+    @PreAuthorize("hasRole('ROLE_BOSS')")
     @PatchMapping("/profiles/boss")
     public ApiResponse<MemberResponseDTO.EditMemberProfileDTO> editBossProfile(@RequestBody @Valid MemberRequestDTO.EditBossProfileDTO request) {
         Member member = memberCommandService.editBossProfile(request);
         return ApiResponse.onSuccess(MemberConverter.toEditMemberProfileDTO(member));
     }
 
+    @PreAuthorize("hasRole('ROLE_TEACHER')")
     @PatchMapping("/profiles/teacher")
     public ApiResponse<MemberResponseDTO.EditMemberProfileDTO> editTeacherProfile(@RequestBody @Valid MemberRequestDTO.EditTeacherProfileDTO request) {
         Member member = memberCommandService.editTeacherProfile(request);

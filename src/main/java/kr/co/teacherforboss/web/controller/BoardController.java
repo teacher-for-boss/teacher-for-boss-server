@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.web.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -68,6 +69,7 @@ public class BoardController {
         return ApiResponse.onSuccess(BoardConverter.toEditPostDTO(post));
     }
 
+    @PreAuthorize("hasRole('ROLE_BOSS')")
     @PostMapping("/teacher/questions")
     public ApiResponse<BoardResponseDTO.SaveQuestionDTO> saveQuestion(@RequestBody @Valid BoardRequestDTO.SaveQuestionDTO request) {
         Question question = boardCommandService.saveQuestion(request);
@@ -98,6 +100,7 @@ public class BoardController {
         return ApiResponse.onSuccess(BoardConverter.toEditQuestionDTO(question));
     }
 
+    @PreAuthorize("hasRole('ROLE_TEACHER')")
     @PostMapping("/teacher/questions/{questionId}/answers")
     public ApiResponse<BoardResponseDTO.SaveAnswerDTO> saveAnswer(@PathVariable("questionId") Long questionId,
                                                                   @RequestBody @Valid BoardRequestDTO.SaveAnswerDTO request) {
