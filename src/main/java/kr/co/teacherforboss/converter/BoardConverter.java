@@ -71,7 +71,7 @@ public class BoardConverter {
 
         return BoardResponseDTO.MemberInfo.builder()
                 .memberId(isActive ? member.getId() : 0)
-                .name(isActive ? member.getName() : "알 수 없음")
+                .name(isActive ? member.getNickname() : "알 수 없음")
                 .profileImg(isActive ? member.getProfileImg() : null)
                 .build();
     }
@@ -82,7 +82,7 @@ public class BoardConverter {
 
         return BoardResponseDTO.MemberInfo.builder()
                 .memberId(isActive ? member.getId() : 0)
-                .name(isActive ? member.getName() : "알 수 없음")
+                .name(isActive ? member.getNickname() : "알 수 없음")
                 .profileImg(isActive ? member.getProfileImg() : null)
                 .role(isActive ? member.getRole() : null)
                 .level((validTeacherInfo != null) ? validTeacherInfo.getLevel().getLevel() : null)

@@ -6,6 +6,7 @@ import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import kr.co.teacherforboss.web.dto.MypageResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ public class MypageController {
 
     private final MypageQueryService mypageQueryService;
 
+    @PreAuthorize("hasRole('ROLE_BOSS')")
     @GetMapping("/board/my-questions")
     public ApiResponse<MypageResponseDTO.GetQuestionInfosDTO> getMyQuestions(@RequestParam(defaultValue = "0") Long lastQuestionId,
                                                                              @RequestParam(defaultValue = "10") int size) {
