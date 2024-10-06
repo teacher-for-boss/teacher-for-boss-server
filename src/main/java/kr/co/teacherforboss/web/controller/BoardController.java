@@ -78,14 +78,12 @@ public class BoardController {
 
     @PostMapping("/boss/posts/{postId}/bookmark")
     public ApiResponse<BoardResponseDTO.TogglePostBookmarkDTO> togglePostBookmark(@PathVariable("postId") Long postId){
-        PostBookmark bookmark = boardCommandService.togglePostBookmark(postId);
-        return ApiResponse.onSuccess(BoardConverter.toTogglePostBookmarkDTO(bookmark));
+        return ApiResponse.onSuccess(boardCommandService.togglePostBookmark(postId));
     }
 
     @PostMapping("/boss/posts/{postId}/likes")
     public ApiResponse<BoardResponseDTO.TogglePostLikeDTO> togglePostLike(@PathVariable("postId") Long postId){
-        PostLike like = boardCommandService.togglePostLike(postId);
-        return ApiResponse.onSuccess(BoardConverter.toTogglePostLikeDTO(like));
+        return ApiResponse.onSuccess(boardCommandService.togglePostLike(postId));
     }
 
     @DeleteMapping("/boss/posts/{postId}")
@@ -116,8 +114,7 @@ public class BoardController {
 
     @PostMapping("/teacher/questions/{questionId}/likes")
     public ApiResponse<BoardResponseDTO.ToggleQuestionLikeDTO> toggleQuestionLike(@PathVariable("questionId") Long questionId) {
-        QuestionLike questionLike = boardCommandService.toggleQuestionLike(questionId);
-        return ApiResponse.onSuccess(BoardConverter.toToggleQuestionLikeDTO(questionLike));
+        return ApiResponse.onSuccess(boardCommandService.toggleQuestionLike(questionId));
     }
 
     @PatchMapping("/teacher/questions/{questionId}/answers/{answerId}")
@@ -137,8 +134,7 @@ public class BoardController {
 
     @PostMapping("/teacher/questions/{questionId}/bookmark")
     public ApiResponse<BoardResponseDTO.ToggleQuestionBookmarkDTO> toggleQuestionBookmark(@PathVariable("questionId") Long questionId) {
-        QuestionBookmark questionBookmark = boardCommandService.toggleQuestionBookmark(questionId);
-        return ApiResponse.onSuccess(BoardConverter.toToggleQuestionBookmarkDTO(questionBookmark));
+        return ApiResponse.onSuccess(boardCommandService.toggleQuestionBookmark(questionId));
     }
 
     @GetMapping("/teacher/questions/{questionId}")

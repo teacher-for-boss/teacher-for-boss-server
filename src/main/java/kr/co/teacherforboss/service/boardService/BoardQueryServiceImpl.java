@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.Role;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
@@ -27,7 +28,6 @@ import kr.co.teacherforboss.domain.QuestionBookmark;
 import kr.co.teacherforboss.domain.QuestionLike;
 import kr.co.teacherforboss.domain.TeacherInfo;
 import kr.co.teacherforboss.domain.common.BaseEntity;
-import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.QuestionCategory;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.AnswerLikeRepository;
@@ -76,14 +76,10 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         boolean isMine = member.equals(post.getMember());
 
         PostLike postLike = postLikeRepository.findByPostIdAndMemberIdAndStatus(post.getId(), member.getId(), Status.ACTIVE).orElse(null);
-        if (postLike != null) {
-            liked = postLike.getLiked().isIdentifier();
-        }
+        if (postLike != null) liked = BooleanType.T.isIdentifier();
 
         PostBookmark postBookmark = postBookmarkRepository.findByPostIdAndMemberIdAndStatus(post.getId(), member.getId(), Status.ACTIVE).orElse(null);
-        if (postBookmark != null) {
-            bookmarked = postBookmark.getBookmarked().isIdentifier();
-        }
+        if (postBookmark != null) bookmarked = BooleanType.T.isIdentifier();
 
         TeacherInfo teacherInfo = (member.getRole().equals(Role.TEACHER)) ? teacherInfoRepository.findByMemberIdAndStatus(member.getId(), Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.TEACHER_INFO_NOT_FOUND)) : null;
@@ -120,9 +116,9 @@ public class BoardQueryServiceImpl implements BoardQueryService {
                 member.getId(), Status.ACTIVE);
 
         Map<Long, Boolean> postLikeMap = postLikes.stream()
-                .collect(Collectors.toMap(like -> like.getPost().getId(), like -> like.getLiked().isIdentifier()));
+                .collect(Collectors.toMap(like -> like.getPost().getId(), like -> BooleanType.T.isIdentifier()));
         Map<Long, Boolean> postBookmarkMap = postBookmarks.stream()
-                .collect(Collectors.toMap(bookmark -> bookmark.getPost().getId(), bookmark -> bookmark.getBookmarked().isIdentifier()));
+                .collect(Collectors.toMap(bookmark -> bookmark.getPost().getId(), bookmark -> BooleanType.T.isIdentifier()));
 
         // TODO : 좋아요 수, 북마크 수, 조회수 동시성 제어
 
@@ -275,9 +271,9 @@ public class BoardQueryServiceImpl implements BoardQueryService {
                 member.getId(), Status.ACTIVE);
 
         Map<Long, Boolean> postLikeMap = postLikes.stream()
-                .collect(Collectors.toMap(like -> like.getPost().getId(), like -> like.getLiked().isIdentifier()));
+                .collect(Collectors.toMap(like -> like.getPost().getId(), like -> BooleanType.T.isIdentifier()));
         Map<Long, Boolean> postBookmarkMap = postBookmarks.stream()
-                .collect(Collectors.toMap(bookmark -> bookmark.getPost().getId(), bookmark -> bookmark.getBookmarked().isIdentifier()));
+                .collect(Collectors.toMap(bookmark -> bookmark.getPost().getId(), bookmark -> BooleanType.T.isIdentifier()));
 
         // TODO : 좋아요 수, 북마크 수, 조회수 동시성 제어
 

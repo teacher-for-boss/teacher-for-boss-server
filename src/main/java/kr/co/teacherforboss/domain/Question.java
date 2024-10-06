@@ -111,8 +111,8 @@ public class Question extends BaseEntity {
         return this.getCreatedAt().plusDays(7).isBefore(now());
     }
 
-    public Question updateLikeCount(boolean isLike) {
-        if (isLike) {
+    public Question updateLikeCount(QuestionLike like) {
+        if (like != null) {
             this.likeCount += 1;
         } else {
             this.likeCount -= 1;
@@ -120,8 +120,8 @@ public class Question extends BaseEntity {
         return this;
     }
 
-    public Question updateBookmarkCount(boolean isBookmark) {
-        if (isBookmark) {
+    public Question updateBookmarkCount(QuestionBookmark bookmark) {
+        if (bookmark != null) {
             this.bookmarkCount += 1;
         } else {
             this.bookmarkCount -= 1;

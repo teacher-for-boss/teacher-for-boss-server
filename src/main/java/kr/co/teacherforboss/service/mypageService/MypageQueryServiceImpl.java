@@ -95,9 +95,9 @@ public class MypageQueryServiceImpl implements MypageQueryService {
                 member.getId(), Status.ACTIVE);
 
         Map<Long, Boolean> postLikeMap = postLikes.stream()
-                .collect(Collectors.toMap(like -> like.getPost().getId(), like -> like.getLiked().isIdentifier()));
+                .collect(Collectors.toMap(like -> like.getPost().getId(), like -> BooleanType.T.isIdentifier()));
         Map<Long, Boolean> postBookmarkMap = postBookmarks.stream()
-                .collect(Collectors.toMap(bookmark -> bookmark.getPost().getId(), bookmark -> bookmark.getBookmarked().isIdentifier()));
+                .collect(Collectors.toMap(bookmark -> bookmark.getPost().getId(), bookmark -> BooleanType.T.isIdentifier()));
 
         // TODO : 좋아요 수, 북마크 수, 조회수 동시성 제어
 
@@ -121,9 +121,9 @@ public class MypageQueryServiceImpl implements MypageQueryService {
                 member.getId(), Status.ACTIVE);
 
         Map<Long, Boolean> postLikeMap = postLikes.stream()
-                .collect(Collectors.toMap(like -> like.getPost().getId(), like -> like.getLiked().isIdentifier()));
+                .collect(Collectors.toMap(like -> like.getPost().getId(), like -> BooleanType.T.isIdentifier()));
         Map<Long, Boolean> postBookmarkMap = postBookmarks.stream()
-                .collect(Collectors.toMap(bookmark -> bookmark.getPost().getId(), bookmark -> bookmark.getBookmarked().isIdentifier()));
+                .collect(Collectors.toMap(bookmark -> bookmark.getPost().getId(), bookmark -> BooleanType.T.isIdentifier()));
 
         return BoardConverter.toGetPostInfosDTO(postsPage, postLikeMap, postBookmarkMap);
     }
@@ -162,9 +162,9 @@ public class MypageQueryServiceImpl implements MypageQueryService {
                 member.getId(), Status.ACTIVE);
 
         Map<Long, Boolean> postLikeMap = postLikes.stream()
-                .collect(Collectors.toMap(like -> like.getPost().getId(), like -> like.getLiked().isIdentifier()));
+                .collect(Collectors.toMap(like -> like.getPost().getId(), like -> BooleanType.T.isIdentifier()));
         Map<Long, Boolean> postBookmarkMap = postBookmarks.stream()
-                .collect(Collectors.toMap(bookmark -> bookmark.getPost().getId(), bookmark -> bookmark.getBookmarked().isIdentifier()));
+                .collect(Collectors.toMap(bookmark -> bookmark.getPost().getId(), bookmark -> BooleanType.T.isIdentifier()));
 
         return BoardConverter.toGetPostInfosDTO(postsPage, postLikeMap, postBookmarkMap);
     }
@@ -178,8 +178,8 @@ public class MypageQueryServiceImpl implements MypageQueryService {
         long questionCount = 0;
         int points = 0;
         int questionTicketCount = 0;
-        long bookmarkCount = postBookmarkRepository.countByMemberIdAndBookmarkedAndStatus(member.getId(), BooleanType.T, Status.ACTIVE)
-                + questionBookmarkRepository.countByMemberIdAndBookmarkedAndStatus(member.getId(), BooleanType.T, Status.ACTIVE);
+        long bookmarkCount = postBookmarkRepository.countByMemberIdAndStatus(member.getId(), Status.ACTIVE)
+                + questionBookmarkRepository.countByMemberIdAndStatus(member.getId(), Status.ACTIVE);
 
         if (member.getRole() == Role.BOSS) {
             questionCount = questionRepository.countByMemberIdAndStatus(member.getId(), Status.ACTIVE);

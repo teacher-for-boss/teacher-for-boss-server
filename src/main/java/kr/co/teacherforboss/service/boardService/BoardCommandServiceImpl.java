@@ -14,6 +14,7 @@ import kr.co.teacherforboss.repository.QuestionLikeRepository;
 import kr.co.teacherforboss.domain.AnswerLike;
 import kr.co.teacherforboss.repository.AnswerLikeRepository;
 import kr.co.teacherforboss.repository.TeacherSelectInfoRepository;
+import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -156,29 +157,46 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
     @Override
     @Transactional
-    public PostBookmark togglePostBookmark(Long postId) {
+    public BoardResponseDTO.TogglePostBookmarkDTO togglePostBookmark(Long postId) {
         Member member = authCommandService.getMember();
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
-        PostBookmark postBookmark = postBookmarkRepository.findByPostIdAndMemberIdAndStatus(post.getId(), member.getId(), Status.ACTIVE)
-                .orElse(BoardConverter.toSavePostBookmark(post, member));
 
-        postBookmark.toggleBookmarked();
-        post.updateBookmarkCount(postBookmark.getBookmarked().isIdentifier());
-        return postBookmarkRepository.save(postBookmark);
+        PostBookmark postBookmark = postBookmarkRepository.findByPostIdAndMemberIdAndStatus(post.getId(), member.getId(), Status.ACTIVE)
+                .orElse(null);
+
+        if (postBookmark != null) {
+            postBookmarkRepository.delete(postBookmark);
+            postBookmark = null;
+        } else {
+            postBookmark = BoardConverter.toPostBookmark(post, member);
+            postBookmarkRepository.save(postBookmark);
+        }
+
+        post.updateBookmarkCount(postBookmark);
+        return BoardConverter.toTogglePostBookmarkDTO(postBookmark);
     }
 
     @Override
     @Transactional
-    public PostLike togglePostLike(Long postId) {
+    public BoardResponseDTO.TogglePostLikeDTO togglePostLike(Long postId) {
         Member member = authCommandService.getMember();
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
+
         PostLike postLike = postLikeRepository.findByPostIdAndMemberIdAndStatus(post.getId(), member.getId(), Status.ACTIVE)
-                        .orElse(BoardConverter.toPostLike(post, member));
-        postLike.toggleLiked();
-        post.updateLikeCount(postLike.getLiked().isIdentifier());
-        return postLikeRepository.save(postLike);
+                .orElse(null);
+
+        if (postLike != null) {
+            postLikeRepository.delete(postLike);
+            postLike = null;
+        } else {
+            postLike = BoardConverter.toPostLike(post, member);
+            postLikeRepository.save(postLike);
+        }
+
+        post.updateLikeCount(postLike);
+        return BoardConverter.toTogglePostLikeDTO(postLike);
     }
 
     @Override
@@ -267,16 +285,24 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
     @Override
     @Transactional
-    public QuestionLike toggleQuestionLike(Long questionId) {
+    public BoardResponseDTO.ToggleQuestionLikeDTO toggleQuestionLike(Long questionId) {
         Member member = authCommandService.getMember();
         Question question = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
-        QuestionLike questionLike = questionLikeRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE)
-                .orElse(BoardConverter.toQuestionLike(question, member));
 
-        questionLike.toggleLiked();
-        question.updateLikeCount(questionLike.getLiked().isIdentifier());
-        return questionLikeRepository.save(questionLike);
+        QuestionLike questionLike = questionLikeRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE)
+                .orElse(null);
+
+        if (questionLike != null) {
+            questionLikeRepository.delete(questionLike);
+            questionLike = null;
+        } else {
+            questionLike = BoardConverter.toQuestionLike(question, member);
+            questionLikeRepository.save(questionLike);
+        }
+
+        question.updateLikeCount(questionLike);
+        return BoardConverter.toToggleQuestionLikeDTO(questionLike);
     }
 
     @Override
@@ -292,16 +318,24 @@ public class BoardCommandServiceImpl implements BoardCommandService {
 
     @Override
     @Transactional
-    public QuestionBookmark toggleQuestionBookmark(Long questionId) {
+    public BoardResponseDTO.ToggleQuestionBookmarkDTO toggleQuestionBookmark(Long questionId) {
         Member member = authCommandService.getMember();
         Question question = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND));
-        QuestionBookmark questionBookmark = questionBookmarkRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE)
-                .orElse(BoardConverter.toQuestionBookmark(question, member));
 
-        questionBookmark.toggleLiked();
-        question.updateBookmarkCount(questionBookmark.getBookmarked().isIdentifier());
-        return questionBookmarkRepository.save(questionBookmark);
+        QuestionBookmark questionBookmark = questionBookmarkRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE)
+                .orElse(null);
+
+        if (questionBookmark != null) {
+            questionBookmarkRepository.delete(questionBookmark);
+            questionBookmark = null;
+        } else {
+            questionBookmark = BoardConverter.toQuestionBookmark(question, member);
+            questionBookmarkRepository.save(questionBookmark);
+        }
+
+        question.updateBookmarkCount(questionBookmark);
+        return BoardConverter.toToggleQuestionBookmarkDTO(questionBookmark);
     }
 
     @Override

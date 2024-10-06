@@ -200,24 +200,22 @@ public class BoardConverter {
                 .build();
     }
 
-    public static PostBookmark toSavePostBookmark(Post post, Member member) {
+    public static PostBookmark toPostBookmark(Post post, Member member) {
         return PostBookmark.builder()
-                .bookmarked(BooleanType.F)
                 .member(member)
                 .post(post)
                 .build();
     }
 
     public static BoardResponseDTO.TogglePostBookmarkDTO toTogglePostBookmarkDTO(PostBookmark bookmark) {
+        boolean bookmarkStatus = (bookmark != null ? BooleanType.T : BooleanType.F).isIdentifier();
         return BoardResponseDTO.TogglePostBookmarkDTO.builder()
-                .bookmark(bookmark.getBookmarked().isIdentifier())
-                .updatedAt(bookmark.getUpdatedAt())
+                .bookmark(bookmarkStatus)
                 .build();
     }
 
     public static PostLike toPostLike(Post post, Member member) {
         return PostLike.builder()
-                .liked(BooleanType.F)
                 .member(member)
                 .post(post)
                 .build();
@@ -225,16 +223,15 @@ public class BoardConverter {
 
     public static QuestionLike toQuestionLike(Question question, Member member) {
         return QuestionLike.builder()
-                .liked(BooleanType.F)
                 .member(member)
                 .question(question)
                 .build();
     }
 
     public static BoardResponseDTO.TogglePostLikeDTO toTogglePostLikeDTO(PostLike like) {
+        boolean likeStatus = (like != null ? BooleanType.T : BooleanType.F).isIdentifier();
         return BoardResponseDTO.TogglePostLikeDTO.builder()
-                .like(like.getLiked().isIdentifier())
-                .updatedAt(like.getUpdatedAt())
+                .like(likeStatus)
                 .build();
     }
 
@@ -285,11 +282,12 @@ public class BoardConverter {
                 .build();
     }
 
-    public static BoardResponseDTO.ToggleQuestionLikeDTO toToggleQuestionLikeDTO(QuestionLike questionLike) {
+    public static BoardResponseDTO.ToggleQuestionLikeDTO toToggleQuestionLikeDTO(QuestionLike like) {
+        long questionId = like != null ? like.getQuestion().getId() : 0;
+        boolean likeStatus = (like != null ? BooleanType.T : BooleanType.F).isIdentifier();
         return BoardResponseDTO.ToggleQuestionLikeDTO.builder()
-                .questionId(questionLike.getQuestion().getId())
-                .liked(questionLike.getLiked().isIdentifier())
-                .updatedAt(questionLike.getUpdatedAt())
+                .questionId(questionId)
+                .liked(likeStatus)
                 .build();
     }
 
@@ -304,19 +302,21 @@ public class BoardConverter {
         return QuestionBookmark.builder()
                 .question(questionToBookmark)
                 .member(member)
-                .bookmarked(BooleanType.F)
                 .build();
     }
 
-    public static BoardResponseDTO.ToggleQuestionBookmarkDTO toToggleQuestionBookmarkDTO(QuestionBookmark questionBookmark) {
+    public static BoardResponseDTO.ToggleQuestionBookmarkDTO toToggleQuestionBookmarkDTO(QuestionBookmark bookmark) {
+        long questionId = bookmark != null ? bookmark.getQuestion().getId() : 0;
+        boolean bookmarkStatus = (bookmark != null ? BooleanType.T : BooleanType.F).isIdentifier();
         return BoardResponseDTO.ToggleQuestionBookmarkDTO.builder()
-                .questionId(questionBookmark.getQuestion().getId())
-                .bookmarked(questionBookmark.getBookmarked().isIdentifier())
-                .updatedAt(questionBookmark.getUpdatedAt())
+                .questionId(questionId)
+                .bookmarked(bookmarkStatus)
                 .build();
     }
 
     public static BoardResponseDTO.GetQuestionDTO toGetQuestionDTO(Question question, QuestionLike liked, QuestionBookmark bookmarked, boolean isMine) {
+        boolean likeStatus = (liked != null ? BooleanType.T : BooleanType.F).isIdentifier();
+        boolean bookmarkStatus = (bookmarked != null ? BooleanType.T : BooleanType.F).isIdentifier();
         return BoardResponseDTO.GetQuestionDTO.builder()
                 .title(question.getTitle())
                 .content(question.getContent())
@@ -324,8 +324,8 @@ public class BoardConverter {
                 .imageUrlList(toImageUrlList(ImageOrigin.QUESTION.getValue(), question.getImageUuid(), question.getImageIndex()))
                 .hashtagList(toQuestionHashtags(question))
                 .memberInfo(toMemberInfo(question.getMember()))
-                .liked(liked != null && liked.getLiked().isIdentifier())
-                .bookmarked(bookmarked != null && bookmarked.getBookmarked().isIdentifier())
+                .liked(likeStatus)
+                .bookmarked(bookmarkStatus)
                 .likeCount(question.getLikeCount())
                 .bookmarkCount(question.getBookmarkCount())
                 .createdAt(question.getCreatedAt())
@@ -516,8 +516,8 @@ public class BoardConverter {
             Answer selectedAnswer = selectedAnswerMap.getOrDefault(question.getId(), null);
             QuestionLike questionLike = questionLikeMap.get(question.getId());
             QuestionBookmark questionBookmark = questionBookmarkMap.get(question.getId());
-            boolean liked = questionLike != null && questionLike.getLiked().isIdentifier();
-            boolean bookmarked = questionBookmark != null && questionBookmark.getBookmarked().isIdentifier();
+            boolean liked = (questionLike != null ? BooleanType.T : BooleanType.F).isIdentifier();
+            boolean bookmarked = (questionBookmark != null ? BooleanType.T : BooleanType.F).isIdentifier();
             Integer answerCount = question.getAnswerList().size();
             questionInfos.add(BoardConverter.toGetQuestionInfo(question, selectedAnswer, liked, bookmarked, answerCount));
         });

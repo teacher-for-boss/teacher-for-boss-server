@@ -86,8 +86,8 @@ public class Post extends BaseEntity {
         return this;
     }
 
-    public Post updateLikeCount(boolean isLike) {
-        if (isLike) {
+    public Post updateLikeCount(PostLike postLike) {
+        if (postLike != null) {
             this.likeCount += 1;
         } else {
             this.likeCount -= 1;
@@ -95,8 +95,8 @@ public class Post extends BaseEntity {
         return this;
     }
 
-    public Post updateBookmarkCount(boolean isBookmark) {
-        if (isBookmark) {
+    public Post updateBookmarkCount(PostBookmark bookmark) {
+        if (bookmark != null) {
             this.bookmarkCount += 1;
         } else {
             this.bookmarkCount -= 1;
