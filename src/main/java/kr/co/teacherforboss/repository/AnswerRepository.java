@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.Question;
-import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.Status;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -41,4 +40,5 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
 	Slice<Answer> findSliceByIdLessThanAndQuestionIdAndStatusOrderByCreatedAtDesc(@Param(value = "lastAnswerId") Long lastAnswerId,
 																				  @Param(value = "questionId") Long questionId,
 																				  Pageable pageable);
+	Optional<Answer> findTopByQuestionIdAndSelectedAtIsNullAndStatusOrderByLikeCountDescDislikeCountAscCreatedAtAsc(Long questionId, Status status);
 }

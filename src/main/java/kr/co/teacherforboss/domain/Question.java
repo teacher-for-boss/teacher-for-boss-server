@@ -34,7 +34,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Question extends BaseEntity {
 
-    public final static int POINT = 100;
+    public final static int POINT = 1;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoryId")
