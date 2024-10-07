@@ -94,7 +94,10 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         AgreementTerm newAgreement = AuthConverter.toAgreementTerm(request, newMember);
 
         newMember.setProfile(request.getNickname(), request.getProfileImg());
-        if (Role.of(request.getRole()).equals(Role.TEACHER)) saveTeacherInfo(request);
+        if (Role.of(request.getRole()).equals(Role.TEACHER)) {
+            saveTeacherInfo(request, newMember);
+            saveTeacherSelectInfo(newMember);
+        }
 
         agreementTermRepository.save(newAgreement);
         return memberRepository.save(newMember);
@@ -188,6 +191,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     }
 
     @Override
+    @Transactional
     public Member login(AuthRequestDTO.LoginDTO request) {
         Member member = memberRepository.findByEmailAndLoginTypeAndStatus(request.getEmail(), LoginType.GENERAL, Status.ACTIVE)
                 .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
@@ -269,8 +273,8 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
         newMember.setProfile(request.getNickname(), request.getProfileImg());
         if (Role.of(request.getRole()).equals(Role.TEACHER)) {
-            saveTeacherInfo(request);
-            saveTeacherSelectInfo();
+            saveTeacherInfo(request, newMember);
+            saveTeacherSelectInfo(newMember);
         }
 
         return memberRepository.save(newMember);
@@ -295,7 +299,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         return businessAuthRepository.save(businessAuth);
     }
 
-    private void saveTeacherInfo(AuthRequestDTO.JoinCommonDTO request) {
+    private void saveTeacherInfo(AuthRequestDTO.JoinCommonDTO request, Member member) {
         if (!businessAuthRepository.existsByBusinessNumber(request.getBusinessNumber()))
             throw new AuthHandler(ErrorStatus.BUSINESS_NUMBER_NOT_CHECKED);
         if (request.getBusinessNumber() == null)
@@ -319,12 +323,16 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         if (request.getKeywords().isEmpty())
             throw new AuthHandler(ErrorStatus.MEMBER_KEYWORDS_EMPTY);
 
-        TeacherInfo newTeacher = AuthConverter.toTeacher(request);
+        TeacherInfo newTeacher = AuthConverter.toTeacher(request, member);
         teacherInfoRepository.save(newTeacher);
     }
 
-    private void saveTeacherSelectInfo() {
-        TeacherSelectInfo teacherSelectInfo = TeacherSelectInfo.builder().build();
+    private void saveTeacherSelectInfo(Member member) {
+        TeacherSelectInfo teacherSelectInfo = TeacherSelectInfo.builder()
+                .member(member)
+                .points(0)
+                .selectCount(0)
+                .build();
         teacherSelectInfoRepository.save(teacherSelectInfo);
     }
 
