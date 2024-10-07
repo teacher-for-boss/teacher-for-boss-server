@@ -161,4 +161,11 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
   		ORDER BY id DESC
   	""", nativeQuery = true)
 	Slice<Question> findBookmarkedQuestionsSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(Long questionId, Long memberId, PageRequest pageRequest);
+	@Query(value = """
+			SELECT * FROM question
+			WHERE DATE_ADD(created_at, INTERVAL 7 DAY) <= NOW()
+			AND solved = 'F'
+			AND status = 'ACTIVE';
+			""", nativeQuery = true)
+	List<Question> findByExpiredDate();
 }
