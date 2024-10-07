@@ -4,6 +4,7 @@ import kr.co.teacherforboss.domain.BusinessAuth;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.EmailAuth;
 import kr.co.teacherforboss.domain.PhoneAuth;
+import kr.co.teacherforboss.domain.TeacherSelectInfo;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.TeacherInfo;
 import kr.co.teacherforboss.domain.enums.Gender;
@@ -42,7 +43,7 @@ public class AuthConverter {
                 .build();
     }
 
-    public static TeacherInfo toTeacher(AuthRequestDTO.JoinCommonDTO request){
+    public static TeacherInfo toTeacherInfo(AuthRequestDTO.JoinCommonDTO request){
         String keywords = String.join(";", request.getKeywords());
         return TeacherInfo.builder()
                 .businessNumber(request.getBusinessNumber())
@@ -56,6 +57,14 @@ public class AuthConverter {
                 .bank(request.getBank())
                 .accountNumber(AES256Util.encrypt(request.getAccountNumber()))
                 .accountHolder(request.getAccountHolder())
+                .build();
+    }
+
+    public static TeacherSelectInfo toTeacherSelectInfo(Member member){
+        return TeacherSelectInfo.builder()
+                .member(member)
+                .points(TeacherSelectInfo.POINT)
+                .selectCount(TeacherSelectInfo.COUNT)
                 .build();
     }
 

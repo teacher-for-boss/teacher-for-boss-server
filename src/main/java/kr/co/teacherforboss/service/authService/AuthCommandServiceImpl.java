@@ -94,7 +94,10 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         AgreementTerm newAgreement = AuthConverter.toAgreementTerm(request, newMember);
 
         newMember.setProfile(request.getNickname(), request.getProfileImg());
-        if (Role.of(request.getRole()).equals(Role.TEACHER)) saveTeacherInfo(request);
+        if (Role.of(request.getRole()).equals(Role.TEACHER)) {
+            saveTeacherInfo(request);
+            saveTeacherSelectInfo(newMember);
+        }
 
         agreementTermRepository.save(newAgreement);
         return memberRepository.save(newMember);
@@ -319,8 +322,13 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         if (request.getKeywords().isEmpty())
             throw new AuthHandler(ErrorStatus.MEMBER_KEYWORDS_EMPTY);
 
-        TeacherInfo newTeacher = AuthConverter.toTeacher(request);
+        TeacherInfo newTeacher = AuthConverter.toTeacherInfo(request);
         teacherInfoRepository.save(newTeacher);
+    }
+
+    private void saveTeacherSelectInfo(Member member) {
+        TeacherSelectInfo newTeacher = AuthConverter.toTeacherSelectInfo(member);
+        teacherSelectInfoRepository.save(newTeacher);
     }
 
     private void saveTeacherSelectInfo() {
