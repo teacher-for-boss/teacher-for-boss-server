@@ -4,13 +4,15 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kr.co.teacherforboss.converter.StringConverter;
+import kr.co.teacherforboss.domain.converter.StringConverter;
 import kr.co.teacherforboss.domain.common.BaseEntity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -25,6 +27,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Table(indexes = @Index(name = "answer_selected_at_idx", columnList = "selected_at"))
 public class Answer extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -37,7 +40,7 @@ public class Answer extends BaseEntity {
 
     @NotNull
     @Column(length = 5000)
-    String content;
+    private String content;
 
     @Column
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
