@@ -35,8 +35,11 @@ public enum ErrorStatus implements BaseErrorCode {
     TOO_MANY_MAIL_REQUEST(BAD_REQUEST, "MAIL4004","메일 인증 요청은 하루에 5회까지 가능합니다."),
 
 
-    // Sms
+    // SMS
     SMS_SEND_FAIL(INTERNAL_SERVER_ERROR, "SMS5001", "sms 전송에 실패했습니다."),
+
+    // SNS
+    SNS_JSON_PARSE_FAIL(INTERNAL_SERVER_ERROR, "SNS5001", "SNS JSON 파싱에 실패했습니다."),
 
     // AES256 encrypt
     ENCRYPT_FAIL(INTERNAL_SERVER_ERROR, "ENCRYPT5001", "암호화에 실패하였습니다."),
@@ -103,6 +106,7 @@ public enum ErrorStatus implements BaseErrorCode {
     ACCESS_DENIED(FORBIDDEN, "AUTH4031", "접근 권한이 없습니다."),
 
     JWT_REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, "AUTH4041", "존재하지 않는 RefreshToken 입니다. 다시 로그인 해주세요."),
+    LOGIN_INFO_NOT_FOUND(NOT_FOUND, "AUTH4042", "로그인 정보를 찾지 못했습니다."),
 
 
     // Exam

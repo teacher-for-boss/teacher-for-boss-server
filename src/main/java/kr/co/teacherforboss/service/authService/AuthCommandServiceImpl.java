@@ -21,6 +21,7 @@ import kr.co.teacherforboss.domain.AgreementTerm;
 import kr.co.teacherforboss.domain.enums.Role;
 import kr.co.teacherforboss.repository.AgreementTermRepository;
 import kr.co.teacherforboss.repository.BusinessAuthRepository;
+import kr.co.teacherforboss.repository.DeviceTokenRepository;
 import kr.co.teacherforboss.repository.TeacherSelectInfoRepository;
 import kr.co.teacherforboss.util.BusinessUtil;
 import kr.co.teacherforboss.repository.TeacherInfoRepository;
@@ -58,6 +59,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private final BusinessAuthRepository businessAuthRepository;
     private final TeacherInfoRepository teacherInfoRepository;
     private final TeacherSelectInfoRepository teacherSelectInfoRepository;
+    private final DeviceTokenRepository deviceTokenRepository;
     private final MailCommandService mailCommandService;
     private final PasswordEncoder passwordEncoder;
     private final TokenManager tokenManager;
@@ -204,17 +206,14 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     }
 
     @Override
-    public AuthResponseDTO.LogoutResultDTO logout(String accessToken, String email) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    @Transactional
+    public Member logout(String accessToken, String fcmToken) {
+        Member member = getMember();
 
-        if (authentication == null || email.isEmpty()) {
-            throw new AuthHandler(ErrorStatus.INVALID_JWT_TOKEN);
-        }
+        tokenManager.deleteRefreshToken(member.getEmail());
+        tokenManager.addBlackListAccessToken(accessToken, member.getEmail());
 
-        tokenManager.deleteRefreshToken(email);
-        tokenManager.addBlackListAccessToken(accessToken, email);
-
-        return AuthConverter.toLogoutResultDTO(email, accessToken);
+        return member;
     }
 
     @Override
@@ -235,6 +234,12 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     public Member getMember() {
         return memberRepository.findByEmail(SecurityUtil.getCurrentUserEmail())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Member> getMembers(List<Long> memberIds) {
+        return memberRepository.findAllById(memberIds);
     }
 
     @Override

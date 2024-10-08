@@ -35,6 +35,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
 
+        // TODO: 로그아웃된 사람이면 다른 response 던지기
+        // TODO: 로그아웃을 꼭 LOGOUT: TOKEN 이렇게 저장해야 하나? 그냥 redis에서 삭제하면 안돼?
+
         filterChain.doFilter(request, response);
     }
 }
