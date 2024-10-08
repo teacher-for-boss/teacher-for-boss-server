@@ -12,11 +12,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Notification Controller", description = "Notification API 입니다.")
 @RestController
-@RequestMapping("/api/v1/notification")
+@RequestMapping("/api/v1/notifications")
 @RequiredArgsConstructor
 public class NotificationController {
 
@@ -34,5 +35,14 @@ public class NotificationController {
     ) {
         return ApiResponse.onSuccess(notificationCommandService.updateSettings(request));
     }
+
+    @GetMapping
+    public ApiResponse<NotificationResponseDTO.GetNotificationsDTO> getNotifications(
+            @RequestParam(defaultValue = "0") Long lastNotificationId,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ApiResponse.onSuccess(notificationQueryService.getNotifications(lastNotificationId, size));
+    }
+
 
 }
