@@ -1,8 +1,10 @@
 package kr.co.teacherforboss.service.notificationService;
 
+import java.util.List;
 import kr.co.teacherforboss.converter.NotificationConverter;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.NotificationSetting;
+import kr.co.teacherforboss.repository.NotificationRepository;
 import kr.co.teacherforboss.repository.NotificationSettingRepository;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.web.dto.NotificationRequestDTO;
@@ -17,6 +19,7 @@ public class NotificationCommandServiceImpl implements NotificationCommandServic
 
     private final AuthCommandService authCommandService;
     private final NotificationSettingRepository notificationSettingRepository;
+    private final NotificationRepository notificationRepository;
 
     @Override
     @Transactional
@@ -26,5 +29,11 @@ public class NotificationCommandServiceImpl implements NotificationCommandServic
                 .orElseGet(() -> notificationSettingRepository.save(NotificationSetting.of(member)));
 
         return NotificationConverter.toSettingsDTO(notificationSetting.updateSettings(request));
+    }
+
+    @Override
+    @Transactional
+    public void readNotifications(List<Long> notificationIds) {
+        notificationRepository.readAllByIds(notificationIds);
     }
 }

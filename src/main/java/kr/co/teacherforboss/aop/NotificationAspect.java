@@ -26,11 +26,13 @@ import kr.co.teacherforboss.repository.MemberRepository;
 import kr.co.teacherforboss.repository.NotificationRepository;
 import kr.co.teacherforboss.repository.PostRepository;
 import kr.co.teacherforboss.repository.QuestionRepository;
+import kr.co.teacherforboss.service.notificationService.NotificationCommandService;
 import kr.co.teacherforboss.service.snsService.SnsService;
 import kr.co.teacherforboss.web.dto.HomeResponseDTO.GetHotPostsDTO;
 import kr.co.teacherforboss.web.dto.HomeResponseDTO.GetHotPostsDTO.HotPostInfo;
 import kr.co.teacherforboss.web.dto.HomeResponseDTO.GetHotQuestionsDTO;
 import kr.co.teacherforboss.web.dto.HomeResponseDTO.GetHotQuestionsDTO.HotQuestionInfo;
+import kr.co.teacherforboss.web.dto.NotificationResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.After;
@@ -51,6 +53,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class NotificationAspect {
 
     private final SnsService snsService;
+    private final NotificationCommandService notificationCommandService;
     private final NotificationRepository notificationRepository;
     private final MemberRepository memberRepository;
     private final QuestionRepository questionRepository;
@@ -410,6 +413,13 @@ public class NotificationAspect {
         );
 
         snsService.publishMessage(List.of(notification));
+    }
+
+    /* 알림 읽음 처리 */
+    @AfterReturning(value = "execution(* kr.co.teacherforboss.service.notificationService.NotificationQueryService.getNotifications(..))", returning = "notificationsDTO")
+    public void readNotification(NotificationResponseDTO.GetNotificationsDTO notificationsDTO) {
+        notificationCommandService.readNotifications(notificationsDTO.getNotificationList()
+                .stream().map(NotificationResponseDTO.GetNotificationsDTO.NotificationInfo::getNotificationId).toList());
     }
 
 }
