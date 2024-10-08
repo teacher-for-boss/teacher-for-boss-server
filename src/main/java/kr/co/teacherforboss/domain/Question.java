@@ -128,5 +128,9 @@ public class Question extends BaseEntity {
         }
         return this;
     }
+
+    public LocalDate getClosedDate() {
+        return this.getCreatedAt().plusDays(7).toLocalDate();
+    }
 }
 
