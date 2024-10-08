@@ -19,7 +19,7 @@ import java.util.List;
 
 public class AuthRequestDTO {
     @Getter
-    public static abstract class JoinCommonDTO{
+    public static abstract class JoinCommonDTO {
         Integer role;
 
         @Email(message = "이메일 형식이 아닙니다.")
@@ -65,11 +65,23 @@ public class AuthRequestDTO {
         String accountNumber;
 
         String accountHolder;
+
+        DeviceInfoDTO deviceInfo;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class DeviceInfoDTO {
+        @NotNull
+        String fcmToken;
+
+        String platform;
     }
 
     @Getter
     @Builder
-    public static class JoinDTO extends JoinCommonDTO{
+    public static class JoinDTO extends JoinCommonDTO {
         @NotNull
         Long emailAuthId;
 
@@ -198,7 +210,7 @@ public class AuthRequestDTO {
 
     @Getter
     @Builder
-    public static class SocialLoginDTO extends JoinCommonDTO{
+    public static class SocialLoginDTO extends JoinCommonDTO {
 
     }
 

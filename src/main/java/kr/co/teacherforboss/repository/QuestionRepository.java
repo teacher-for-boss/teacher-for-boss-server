@@ -161,4 +161,25 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
   		ORDER BY id DESC
   	""", nativeQuery = true)
 	Slice<Question> findBookmarkedQuestionsSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(Long questionId, Long memberId, PageRequest pageRequest);
+
+	@Query(value = """
+		SELECT * 
+		FROM question
+		inner join answer on question.id = answer.question_id
+		WHERE question.created_at = :date
+			AND question.solved = 'F'
+			AND question.status = 'ACTIVE'
+	""", nativeQuery = true)
+	Slice<Question> findQuestionsLastDaySelectByDate(LocalDateTime date, PageRequest pageRequest);
+
+	@Query(value = """
+		SELECT q.* 
+		FROM question q
+		LEFT JOIN answer a ON q.id = a.question_id
+		WHERE DATE(q.created_at) = :date
+			AND (a.id IS NULL OR a.status = 'DELETED')
+			AND q.status = 'ACTIVE'
+		GROUP BY q.id
+	""", nativeQuery = true)
+	Slice<Question> findQuestionsForAutoDeleteAlertByDate(LocalDateTime date, PageRequest pageRequest);
 }
