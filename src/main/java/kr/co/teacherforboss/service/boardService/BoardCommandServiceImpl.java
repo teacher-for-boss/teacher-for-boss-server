@@ -317,7 +317,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
             if (parentComment == null) throw new BoardHandler(ErrorStatus.COMMENT_NOT_FOUND);
         }
 
-        Comment comment = BoardConverter.toCommentDTO(request, member, post, parentComment);
+        Comment comment = BoardConverter.toComment(request, member, post, parentComment);
         return commentRepository.save(comment);
     }
 

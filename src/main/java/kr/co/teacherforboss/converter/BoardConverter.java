@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.converter;
 
+import java.util.UUID;
 import kr.co.teacherforboss.config.AwsS3Config;
 import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.AnswerLike;
@@ -104,7 +105,7 @@ public class BoardConverter {
 
     public static String extractImageUuid(List<String> imageUrls) {
         return (imageUrls == null || imageUrls.isEmpty())
-                ? null
+                ? UUID.randomUUID().toString()
                 : imageUrls.get(0).substring(imageUrls.get(0).lastIndexOf("/") + 1, imageUrls.get(0).indexOf("_"));
     }
 
@@ -478,7 +479,7 @@ public class BoardConverter {
                 .build();
     }
 
-    public static Comment toCommentDTO(BoardRequestDTO.SaveCommentDTO request, Member member, Post post, Comment comment) {
+    public static Comment toComment(BoardRequestDTO.SaveCommentDTO request, Member member, Post post, Comment comment) {
         return Comment.builder()
                 .post(post)
                 .member(member)
