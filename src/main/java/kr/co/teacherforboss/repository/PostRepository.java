@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.repository;
 
+import java.time.LocalDateTime;
 import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.enums.Status;
 import org.springframework.data.domain.PageRequest;
@@ -90,13 +91,16 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     """, nativeQuery = true)
     Slice<Post> findCommentedPostsSliceByMemberIdOrderByCreatedAtDesc(Long memberId, PageRequest pageRequest);
 
+    //TODO: (다음 릴리즈) 게시글 작성일자 상관없이 최근 일주일 조회수 높은 순
     @Query(value = """
         SELECT * FROM post
-        WHERE like_count >= 5 AND status = 'ACTIVE'
+        WHERE like_count >= 5
+            AND created_at BETWEEN :startReqDate AND :endReqDate
+            AND status = 'ACTIVE'
         ORDER BY view_count DESC, created_at DESC
         LIMIT 5
     """, nativeQuery = true)
-    List<Post> findHotPosts(); //TODO: 최근 일주일
+    List<Post> findHotPosts(LocalDateTime startReqDate, LocalDateTime endReqDate);
     Slice<Post> findSliceByMemberIdAndStatusOrderByCreatedAtDesc(Long memberId, Status status, PageRequest pageRequest);
     @Query(value = """
         SELECT * FROM post

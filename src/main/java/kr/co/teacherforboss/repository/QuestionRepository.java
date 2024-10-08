@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.repository;
 
+import java.time.LocalDateTime;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.enums.Status;
 import org.springframework.data.domain.PageRequest;
@@ -137,12 +138,16 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     """, nativeQuery = true)
 	Slice<Question> findAnsweredQuestionsSliceByMemberIdOrderByCreatedAtDesc(Long memberId, PageRequest pageRequest);
 
+	// TODO: (다음 릴리즈) 작성일자 상관없이 최근 일주일 조회수 높은순
 	@Query(value = """
-  		SELECT * FROM question
-  		WHERE status = 'ACTIVE'
-  		ORDER BY view_count DESC, created_at DESC LIMIT 5
-  	""", nativeQuery = true)
-	List<Question> findHotQuestions(); // TODO: 최근 일주일
+		SELECT * 
+		FROM question
+		WHERE created_at BETWEEN :startReqDate AND :endReqDate
+			AND status = 'ACTIVE'
+		ORDER BY view_count DESC, created_at DESC 
+		LIMIT 5
+	""", nativeQuery = true)
+	List<Question> findHotQuestions(LocalDateTime startReqDate, LocalDateTime endReqDate);
 	@Query(value = """
   		SELECT * FROM question
   		WHERE id IN (SELECT qb.question_id FROM question_bookmark qb WHERE qb.member_id = :memberId AND qb.bookmarked = 'T')
@@ -161,4 +166,25 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
   		ORDER BY id DESC
   	""", nativeQuery = true)
 	Slice<Question> findBookmarkedQuestionsSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(Long questionId, Long memberId, PageRequest pageRequest);
+
+	@Query(value = """
+		SELECT * 
+		FROM question
+		inner join answer on question.id = answer.question_id
+		WHERE question.created_at = :date
+			AND question.solved = 'F'
+			AND question.status = 'ACTIVE'
+	""", nativeQuery = true)
+	Slice<Question> findQuestionsLastDaySelectByDate(LocalDateTime date, PageRequest pageRequest);
+
+	@Query(value = """
+		SELECT q.* 
+		FROM question q
+		LEFT JOIN answer a ON q.id = a.question_id
+		WHERE DATE(q.created_at) = :date
+			AND (a.id IS NULL OR a.status = 'DELETED')
+			AND q.status = 'ACTIVE'
+		GROUP BY q.id
+	""", nativeQuery = true)
+	Slice<Question> findQuestionsForAutoDeleteAlertByDate(LocalDateTime date, PageRequest pageRequest);
 }

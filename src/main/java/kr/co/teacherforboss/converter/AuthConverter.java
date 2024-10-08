@@ -42,9 +42,10 @@ public class AuthConverter {
                 .build();
     }
 
-    public static TeacherInfo toTeacher(AuthRequestDTO.JoinCommonDTO request){
+    public static TeacherInfo toTeacher(AuthRequestDTO.JoinCommonDTO request, Member member){
         String keywords = String.join(";", request.getKeywords());
         return TeacherInfo.builder()
+                .member(member)
                 .businessNumber(request.getBusinessNumber())
                 .representative(request.getRepresentative())
                 .openDate(request.getOpenDate())

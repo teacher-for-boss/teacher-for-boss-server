@@ -21,6 +21,7 @@ import kr.co.teacherforboss.domain.AgreementTerm;
 import kr.co.teacherforboss.domain.enums.Role;
 import kr.co.teacherforboss.repository.AgreementTermRepository;
 import kr.co.teacherforboss.repository.BusinessAuthRepository;
+import kr.co.teacherforboss.repository.DeviceTokenRepository;
 import kr.co.teacherforboss.repository.TeacherSelectInfoRepository;
 import kr.co.teacherforboss.util.BusinessUtil;
 import kr.co.teacherforboss.repository.TeacherInfoRepository;
@@ -58,6 +59,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private final BusinessAuthRepository businessAuthRepository;
     private final TeacherInfoRepository teacherInfoRepository;
     private final TeacherSelectInfoRepository teacherSelectInfoRepository;
+    private final DeviceTokenRepository deviceTokenRepository;
     private final MailCommandService mailCommandService;
     private final PasswordEncoder passwordEncoder;
     private final TokenManager tokenManager;
@@ -94,7 +96,10 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         AgreementTerm newAgreement = AuthConverter.toAgreementTerm(request, newMember);
 
         newMember.setProfile(request.getNickname(), request.getProfileImg());
-        if (Role.of(request.getRole()).equals(Role.TEACHER)) saveTeacherInfo(request);
+        if (Role.of(request.getRole()).equals(Role.TEACHER)) {
+            saveTeacherInfo(request, newMember);
+            saveTeacherSelectInfo(newMember);
+        }
 
         agreementTermRepository.save(newAgreement);
         return memberRepository.save(newMember);
@@ -188,6 +193,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     }
 
     @Override
+    @Transactional
     public Member login(AuthRequestDTO.LoginDTO request) {
         Member member = memberRepository.findByEmailAndLoginTypeAndStatus(request.getEmail(), LoginType.GENERAL, Status.ACTIVE)
                 .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
@@ -200,17 +206,14 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     }
 
     @Override
-    public AuthResponseDTO.LogoutResultDTO logout(String accessToken, String email) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    @Transactional
+    public Member logout(String accessToken, String fcmToken) {
+        Member member = getMember();
 
-        if (authentication == null || email.isEmpty()) {
-            throw new AuthHandler(ErrorStatus.INVALID_JWT_TOKEN);
-        }
+        tokenManager.deleteRefreshToken(member.getEmail());
+        tokenManager.addBlackListAccessToken(accessToken, member.getEmail());
 
-        tokenManager.deleteRefreshToken(email);
-        tokenManager.addBlackListAccessToken(accessToken, email);
-
-        return AuthConverter.toLogoutResultDTO(email, accessToken);
+        return member;
     }
 
     @Override
@@ -231,6 +234,12 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     public Member getMember() {
         return memberRepository.findByEmail(SecurityUtil.getCurrentUserEmail())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Member> getMembers(List<Long> memberIds) {
+        return memberRepository.findAllById(memberIds);
     }
 
     @Override
@@ -269,8 +278,8 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
         newMember.setProfile(request.getNickname(), request.getProfileImg());
         if (Role.of(request.getRole()).equals(Role.TEACHER)) {
-            saveTeacherInfo(request);
-            saveTeacherSelectInfo();
+            saveTeacherInfo(request, newMember);
+            saveTeacherSelectInfo(newMember);
         }
 
         return memberRepository.save(newMember);
@@ -295,9 +304,9 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         return businessAuthRepository.save(businessAuth);
     }
 
-    private void saveTeacherInfo(AuthRequestDTO.JoinCommonDTO request) {
-//        if (!businessAuthRepository.existsByBusinessNumber(request.getBusinessNumber()))
-//            throw new AuthHandler(ErrorStatus.BUSINESS_NUMBER_NOT_CHECKED);
+    private void saveTeacherInfo(AuthRequestDTO.JoinCommonDTO request, Member member) {
+//         if (!businessAuthRepository.existsByBusinessNumber(request.getBusinessNumber()))
+//             throw new AuthHandler(ErrorStatus.BUSINESS_NUMBER_NOT_CHECKED);
         if (request.getBusinessNumber() == null)
             throw new AuthHandler(ErrorStatus.MEMBER_BUSINESS_NUMBER_EMPTY);
         if (request.getRepresentative() == null)
@@ -319,12 +328,16 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         if (request.getKeywords().isEmpty())
             throw new AuthHandler(ErrorStatus.MEMBER_KEYWORDS_EMPTY);
 
-        TeacherInfo newTeacher = AuthConverter.toTeacher(request);
+        TeacherInfo newTeacher = AuthConverter.toTeacher(request, member);
         teacherInfoRepository.save(newTeacher);
     }
 
-    private void saveTeacherSelectInfo() {
-        TeacherSelectInfo teacherSelectInfo = TeacherSelectInfo.builder().build();
+    private void saveTeacherSelectInfo(Member member) {
+        TeacherSelectInfo teacherSelectInfo = TeacherSelectInfo.builder()
+                .member(member)
+                .points(0)
+                .selectCount(0)
+                .build();
         teacherSelectInfoRepository.save(teacherSelectInfo);
     }
 

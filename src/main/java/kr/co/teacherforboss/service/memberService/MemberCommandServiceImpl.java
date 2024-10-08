@@ -7,7 +7,6 @@ import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.MemberSurvey;
 import kr.co.teacherforboss.domain.TeacherInfo;
 import kr.co.teacherforboss.domain.enums.BooleanType;
-import kr.co.teacherforboss.domain.enums.Role;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.MemberRepository;
 import kr.co.teacherforboss.repository.MemberSurveyRepository;
@@ -43,7 +42,6 @@ public class MemberCommandServiceImpl implements MemberCommandService{
     @Transactional
     public Member editBossProfile(MemberRequestDTO.EditBossProfileDTO request) {
         Member member = authCommandService.getMember();
-        if (!member.getRole().equals(Role.BOSS)) throw new MemberHandler(ErrorStatus.MEMBER_ROLE_INVALID);
         member.setProfile(request.getNickname(), request.getProfileImg());
         return memberRepository.save(member);
     }
@@ -52,7 +50,6 @@ public class MemberCommandServiceImpl implements MemberCommandService{
     @Transactional
     public Member editTeacherProfile(MemberRequestDTO.EditTeacherProfileDTO request) {
         Member member = authCommandService.getMember();
-        if (!member.getRole().equals(Role.TEACHER)) throw new MemberHandler(ErrorStatus.MEMBER_ROLE_INVALID);
         TeacherInfo teacherInfo = teacherInfoRepository.findByMemberIdAndStatus(member.getId(), Status.ACTIVE)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.TEACHER_INFO_NOT_FOUND));
 

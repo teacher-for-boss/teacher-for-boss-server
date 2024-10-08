@@ -8,7 +8,6 @@ import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.TeacherInfo;
 import kr.co.teacherforboss.domain.enums.BooleanType;
-import kr.co.teacherforboss.domain.enums.Role;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.AnswerRepository;
 import kr.co.teacherforboss.repository.MemberRepository;
@@ -58,7 +57,6 @@ public class MemberQueryServiceImpl implements MemberQueryService{
     public MemberResponseDTO.GetRecentAnswersDTO getRecentAnswers(Long memberId) {
         Member member = memberRepository.findByIdAndStatus(memberId, Status.ACTIVE)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        if (member.getRole() != Role.TEACHER) throw new MemberHandler(ErrorStatus.MEMBER_ROLE_NOT_TEACHER);
 
         // TODO: answerRepository 접근은 BoardService쪽으로 빼기
         List<Answer> answers = answerRepository.findTop20ByMemberIdAndStatusOrderByCreatedAtDesc(member.getId(), Status.ACTIVE);

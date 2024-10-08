@@ -1,4 +1,4 @@
-package kr.co.teacherforboss.converter;
+package kr.co.teacherforboss.domain.converter;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;

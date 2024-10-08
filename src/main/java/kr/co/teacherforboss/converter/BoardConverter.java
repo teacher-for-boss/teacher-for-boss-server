@@ -1,6 +1,7 @@
 package kr.co.teacherforboss.converter;
 
-import kr.co.teacherforboss.config.S3Config;
+import java.util.UUID;
+import kr.co.teacherforboss.config.AwsS3Config;
 import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.AnswerLike;
 import kr.co.teacherforboss.domain.Category;
@@ -71,7 +72,7 @@ public class BoardConverter {
 
         return BoardResponseDTO.MemberInfo.builder()
                 .memberId(isActive ? member.getId() : 0)
-                .name(isActive ? member.getName() : "알 수 없음")
+                .name(isActive ? member.getNickname() : "알 수 없음")
                 .profileImg(isActive ? member.getProfileImg() : null)
                 .build();
     }
@@ -82,7 +83,7 @@ public class BoardConverter {
 
         return BoardResponseDTO.MemberInfo.builder()
                 .memberId(isActive ? member.getId() : 0)
-                .name(isActive ? member.getName() : "알 수 없음")
+                .name(isActive ? member.getNickname() : "알 수 없음")
                 .profileImg(isActive ? member.getProfileImg() : null)
                 .role(isActive ? member.getRole() : null)
                 .level((validTeacherInfo != null) ? validTeacherInfo.getLevel().getLevel() : null)
@@ -104,7 +105,7 @@ public class BoardConverter {
 
     public static String extractImageUuid(List<String> imageUrls) {
         return (imageUrls == null || imageUrls.isEmpty())
-                ? null
+                ? UUID.randomUUID().toString()
                 : imageUrls.get(0).substring(imageUrls.get(0).lastIndexOf("/") + 1, imageUrls.get(0).indexOf("_"));
     }
 
@@ -124,7 +125,7 @@ public class BoardConverter {
         // TODO: CloudFront 붙이기 !
         List<String> imageUrlList = new ArrayList<>();
         for (String index : imageIndexs) {
-            imageUrlList.add(String.format("https://%s.s3.%s.amazonaws.com/%s/%s_%s", S3Config.BUCKET_NAME, S3Config.REGION, origin, imageUuid, index));
+            imageUrlList.add(String.format("https://%s.s3.%s.amazonaws.com/%s/%s_%s", AwsS3Config.BUCKET_NAME, AwsS3Config.REGION, origin, imageUuid, index));
         }
         return imageUrlList;
     }
@@ -478,7 +479,7 @@ public class BoardConverter {
                 .build();
     }
 
-    public static Comment toCommentDTO(BoardRequestDTO.SaveCommentDTO request, Member member, Post post, Comment comment) {
+    public static Comment toComment(BoardRequestDTO.SaveCommentDTO request, Member member, Post post, Comment comment) {
         return Comment.builder()
                 .post(post)
                 .member(member)
