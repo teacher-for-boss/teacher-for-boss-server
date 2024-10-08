@@ -305,8 +305,8 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     }
 
     private void saveTeacherInfo(AuthRequestDTO.JoinCommonDTO request, Member member) {
-        if (!businessAuthRepository.existsByBusinessNumber(request.getBusinessNumber()))
-            throw new AuthHandler(ErrorStatus.BUSINESS_NUMBER_NOT_CHECKED);
+//         if (!businessAuthRepository.existsByBusinessNumber(request.getBusinessNumber()))
+//             throw new AuthHandler(ErrorStatus.BUSINESS_NUMBER_NOT_CHECKED);
         if (request.getBusinessNumber() == null)
             throw new AuthHandler(ErrorStatus.MEMBER_BUSINESS_NUMBER_EMPTY);
         if (request.getRepresentative() == null)
