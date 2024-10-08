@@ -191,6 +191,8 @@ public class AuthRequestDTO {
 
         @NotBlank
         String password;
+
+        DeviceInfoDTO deviceInfo;
     }
 
     @Getter

@@ -30,5 +30,16 @@ public class DeviceToken extends BaseEntity {
     private String endpointArn;
 
     @Column
+    private String subscriptionArn;
+
+    @Column
     private String platform;
+
+    public void updateEndpointArn(String endpointArn) {
+        this.endpointArn = endpointArn;
+    }
+
+    public void updateSubscriptionArn(String subscriptionArn) {
+        this.subscriptionArn = subscriptionArn;
+    }
 }
