@@ -2,6 +2,7 @@ package kr.co.teacherforboss.web.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+import kr.co.teacherforboss.aop.AwsSnsAspect;
 import kr.co.teacherforboss.aop.NotificationAspect;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.domain.Member;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class SnsController {
 
+    private final AwsSnsAspect awsSnsAspect;
     private final NotificationAspect notificationAspect;
     private final SnsService snsService;
     private final AuthCommandService authCommandService;
@@ -38,6 +40,13 @@ public class SnsController {
     public ApiResponse<String> delete(@RequestParam("fcmToken") String fcmToken) {
         Member member = authCommandService.getMember();
         snsService.deleteEndpoint(member, fcmToken);
+        return ApiResponse.onSuccess("success");
+    }
+
+    @DeleteMapping("/endpoints/all")
+    public ApiResponse<String> deleteAll() {
+        Member member = authCommandService.getMember();
+        awsSnsAspect.deregisterAll(null, member);
         return ApiResponse.onSuccess("success");
     }
 

@@ -7,6 +7,7 @@ import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
 import kr.co.teacherforboss.domain.DeviceToken;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.Notification;
+import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.domain.vo.notificationVO.NotificationMessage;
 import kr.co.teacherforboss.repository.DeviceTokenRepository;
 import kr.co.teacherforboss.repository.NotificationRepository;
@@ -38,25 +39,38 @@ public class SnsServiceImpl implements SnsService {
 
     private final DeviceTokenRepository deviceTokenRepository;
 
+    @Transactional
     public void createEndpoint(Member member, AuthRequestDTO.DeviceInfoDTO deviceInfoDTO) {
         System.out.println("Creating platform endpoint with token " + member.getEmail() + " :: " + deviceInfoDTO.getFcmToken());
         try {
+
+            DeviceToken deviceToken = deviceTokenRepository.findByMemberIdAndFcmToken(member.getId(), deviceInfoDTO.getFcmToken())
+                    .orElseGet(() -> {
+                        DeviceToken newDeviceToken = deviceTokenRepository.save(
+                                DeviceToken.builder()
+                                        .member(member)
+                                        .fcmToken(deviceInfoDTO.getFcmToken())
+                                        .platform(deviceInfoDTO.getPlatform())
+                                        .build());
+                        newDeviceToken.softDelete();
+                        return newDeviceToken;
+                    });
+
+            if (deviceToken.getStatus().equals(Status.ACTIVE)) return;
+
             CreatePlatformEndpointResponse response = snsClient.createPlatformEndpoint(r -> r
                     .platformApplicationArn(snsPlatformApplicationARN)
                     .token(deviceInfoDTO.getFcmToken()));
 
-            snsClient.subscribe(r -> r
+            String subscriptionArn = snsClient.subscribe(r -> r
                     .topicArn(snsTopicARNForAll)
                     .protocol("application")
-                    .endpoint(response.endpointArn()));
+                    .endpoint(response.endpointArn()))
+                    .subscriptionArn();
 
-            deviceTokenRepository.save(
-                    DeviceToken.builder()
-                            .member(member)
-                            .fcmToken(deviceInfoDTO.getFcmToken())
-                            .endpointArn(response.endpointArn())
-                            .platform(deviceInfoDTO.getPlatform())
-                            .build());
+            deviceToken.revertSoftDelete();
+            deviceToken.updateEndpointArn(response.endpointArn());
+            deviceToken.updateSubscriptionArn(subscriptionArn);
 
             System.out.println("The ARN of the endpoint is " + response.endpointArn());
         } catch (SnsException e) {
@@ -64,12 +78,17 @@ public class SnsServiceImpl implements SnsService {
         }
     }
 
+    @Transactional
     public void deleteEndpoint(Member member) {
         System.out.println("Deleting platform endpoint of " + member.getEmail());
         try {
             List<DeviceToken> deviceTokens = deviceTokenRepository.findAllByMemberId(member.getId());
 
             for (DeviceToken deviceToken : deviceTokens) {
+
+                snsClient.unsubscribe(r -> r
+                        .subscriptionArn(deviceToken.getSubscriptionArn()));
+
                 snsClient.deleteEndpoint(r -> r
                         .endpointArn(deviceToken.getEndpointArn()));
                 deviceToken.softDelete();
@@ -79,11 +98,15 @@ public class SnsServiceImpl implements SnsService {
         }
     }
 
+    @Transactional
     public void deleteEndpoint(Member member, String fcmToken) {
         System.out.println("Deleting platform endpoint of " + member.getEmail() + " :: " + fcmToken);
         try {
             DeviceToken deviceToken = deviceTokenRepository.findByMemberIdAndFcmToken(member.getId(), fcmToken)
                     .orElseThrow(() -> new AuthHandler(ErrorStatus.LOGIN_INFO_NOT_FOUND));
+
+            snsClient.unsubscribe(r -> r
+                    .subscriptionArn(deviceToken.getSubscriptionArn()));
 
             snsClient.deleteEndpoint(r -> r
                     .endpointArn(deviceToken.getEndpointArn()));

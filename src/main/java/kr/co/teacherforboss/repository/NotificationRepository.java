@@ -7,6 +7,7 @@ import kr.co.teacherforboss.domain.enums.NotificationType;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
@@ -21,4 +22,12 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
     Slice<Notification> findByMemberIdOrderByCreatedAtDesc(Long memberId, Pageable pageable);
     Slice<Notification> findByMemberIdAndIdLessThanOrderByCreatedAtDesc(Long memberId, Long lastNotificationId, Pageable pageable);
+
+    @Modifying
+    @Query(value = """
+            UPDATE notification
+            SET is_read = 'T'
+            WHERE id IN :notificationIds
+            """, nativeQuery = true)
+    void readAllByIds(List<Long> notificationIds);
 }
