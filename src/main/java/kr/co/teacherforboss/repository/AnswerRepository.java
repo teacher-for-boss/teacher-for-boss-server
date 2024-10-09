@@ -55,4 +55,6 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
 			)
 	""", nativeQuery = true)
 	Slice<Answer> findFirstAnswersOfNotSolvedQuestion(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
+
+	int countByQuestionIdAndStatus(Long questionId, Status status);
 }

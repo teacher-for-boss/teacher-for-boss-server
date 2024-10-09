@@ -72,7 +72,6 @@ public class BoardQueryServiceImpl implements BoardQueryService {
 
         boolean liked = false;
         boolean bookmarked = false;
-        List<String> hashtagList = null; // TODO: 여기 뭐임
         boolean isMine = member.equals(post.getMember());
 
         PostLike postLike = postLikeRepository.findByPostIdAndMemberIdAndStatus(post.getId(), member.getId(), Status.ACTIVE).orElse(null);
@@ -88,8 +87,9 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         TeacherInfo teacherInfo = (member.getRole().equals(Role.TEACHER)) ? teacherInfoRepository.findByMemberIdAndStatus(member.getId(), Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.TEACHER_INFO_NOT_FOUND)) : null;
 
+        int commentCount = commentRepository.countByPostIdAndStatus(post.getId(), Status.ACTIVE);
         postRepository.save(post);
-        return BoardConverter.toGetPostDTO(post, teacherInfo, liked, bookmarked, isMine);
+        return BoardConverter.toGetPostDTO(post, teacherInfo, liked, bookmarked, isMine, commentCount);
     }
 
     @Override
@@ -140,8 +140,9 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         boolean isMine = member.equals(question.getMember());
         QuestionLike questionLike = questionLikeRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE).orElse(null);
         QuestionBookmark questionBookmark = questionBookmarkRepository.findByQuestionIdAndMemberIdAndStatus(question.getId(), member.getId(), Status.ACTIVE).orElse(null);
+        int answerCount = answerRepository.countByQuestionIdAndStatus(question.getId(), Status.ACTIVE);
 
-        return BoardConverter.toGetQuestionDTO(question, questionLike, questionBookmark, isMine);
+        return BoardConverter.toGetQuestionDTO(question, questionLike, questionBookmark, isMine, answerCount);
     }
 
     @Override

@@ -34,6 +34,7 @@ public class BoardResponseDTO {
         boolean bookmarked;
         Integer likeCount;
         Integer bookmarkCount;
+        Integer commentCount;
         LocalDateTime createdAt;
         Boolean isMine;
     }
@@ -273,6 +274,7 @@ public class BoardResponseDTO {
         boolean bookmarked;
         Integer likeCount;
         Integer bookmarkCount;
+        Integer answerCount;
         LocalDateTime createdAt;
         Boolean isMine;
     }
