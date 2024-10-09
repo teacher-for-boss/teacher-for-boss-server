@@ -82,7 +82,7 @@ public class SnsServiceImpl implements SnsService {
     public void deleteEndpoint(Member member) {
         System.out.println("Deleting platform endpoint of " + member.getEmail());
         try {
-            List<DeviceToken> deviceTokens = deviceTokenRepository.findAllByMemberId(member.getId());
+            List<DeviceToken> deviceTokens = deviceTokenRepository.findAllByMemberIdAndStatus(member.getId(), Status.ACTIVE);
 
             for (DeviceToken deviceToken : deviceTokens) {
 
@@ -132,8 +132,8 @@ public class SnsServiceImpl implements SnsService {
     public void publishMessage(String message, List<Member> targetMembers) {
         System.out.println("Publishing message to " + targetMembers.toString());
         try {
-            List<DeviceToken> deviceTokens = deviceTokenRepository.findAllByMemberIdIn(
-                    targetMembers.stream().map(Member::getId).toList());
+            List<DeviceToken> deviceTokens = deviceTokenRepository.findAllByMemberIdInAndStatus(
+                    targetMembers.stream().map(Member::getId).toList(), Status.ACTIVE);
             if (deviceTokens.isEmpty()) return;
 
             List<String> subscriptionArns = deviceTokens.stream()
@@ -163,7 +163,8 @@ public class SnsServiceImpl implements SnsService {
         notifications.forEach(notification -> {
             System.out.println("Publishing message to " + notification.getMember().getEmail());
             try {
-                List<DeviceToken> deviceTokens = deviceTokenRepository.findAllByMemberId(notification.getMember().getId());
+                List<DeviceToken> deviceTokens = deviceTokenRepository.findAllByMemberIdAndStatus(
+                        notification.getMember().getId(), Status.ACTIVE);
                 if (deviceTokens.isEmpty()) return;
 
                 List<String> subscriptionArns = deviceTokens.stream()

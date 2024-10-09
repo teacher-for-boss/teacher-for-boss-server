@@ -58,7 +58,7 @@ public class HomeQueryServiceImpl implements HomeQueryService {
         List<Long> hotTeacherIds = hotTeachers.stream().map(Member::getId).toList();
         List<TeacherInfo> hotTeacherInfos = teacherInfoRepository.findAllByMemberIdInAndStatus(hotTeacherIds, Status.ACTIVE);
 
-        if (hotTeachers.size() != hotTeacherIds.size() || hotTeacherInfos.size() != hotTeacherIds.size()) {
+        if (hotTeacherInfos.size() != hotTeacherIds.size()) {
             throw new HomeHandler(ErrorStatus.INVALID_HOT_TEACHER_DATA);
         }
 
