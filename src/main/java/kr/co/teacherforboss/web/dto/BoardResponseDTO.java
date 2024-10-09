@@ -131,6 +131,7 @@ public class BoardResponseDTO {
             LocalDateTime createdAt;
             MemberInfo memberInfo;
             Boolean isMine;
+            boolean isDeleted;
             List<CommentInfo> children;
         }
     }

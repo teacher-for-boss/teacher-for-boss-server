@@ -405,6 +405,9 @@ public class BoardConverter {
             }
         });
 
+        totalComments.removeIf(comment -> comment.isDeleted() && comment.getChildren().isEmpty());
+
+
         return BoardResponseDTO.GetCommentsDTO.builder()
                 .hasNext(parentComments.hasNext())
                 .commentList(totalComments)
@@ -418,17 +421,19 @@ public class BoardConverter {
 
         TeacherInfo teacherInfo = teacherInfoMap.get(comment.getMember().getId());
         BoardResponseDTO.MemberInfo memberInfo = BoardConverter.toMemberInfo(comment.getMember(), teacherInfo);
+        boolean isDeleted = comment.getStatus() == Status.INACTIVE;
 
         return BoardResponseDTO.GetCommentsDTO.CommentInfo.builder()
                 .commentId(comment.getId())
-                .content(comment.getContent())
-                .likeCount(comment.getLikeCount())
-                .dislikeCount(comment.getDislikeCount())
+                .content(!isDeleted ? comment.getContent() : "삭제된 댓글입니다.")
+                .likeCount(!isDeleted ? comment.getLikeCount() : 0)
+                .dislikeCount(!isDeleted ? comment.getDislikeCount() : 0)
                 .liked(commentLikedMap.get(comment.getId()) == BooleanType.T)
                 .disliked(commentLikedMap.get(comment.getId()) == BooleanType.F)
                 .createdAt(comment.getCreatedAt())
-                .memberInfo(memberInfo)
+                .memberInfo(!isDeleted ? memberInfo : null)
                 .isMine(comment.getMember().equals(member))
+                .isDeleted(isDeleted)
                 .children(new ArrayList<>())
                 .build();
     }

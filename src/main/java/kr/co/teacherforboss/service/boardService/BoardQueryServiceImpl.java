@@ -186,7 +186,7 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         Slice<Comment> parentComments;
 
         if (lastCommentId == 0) {
-            parentComments = commentRepository.findSliceByPostIdAndParentIdIsNullAndStatusOrderByCreatedAtDesc(postId, pageRequest, Status.ACTIVE);
+            parentComments = commentRepository.findSliceByPostIdAndParentIdIsNullOrderByCreatedAtDesc(postId, pageRequest);
         } else {
             parentComments = commentRepository.findSliceByIdLessThanAndPostIdAndParentIdIsNullOrderByCreatedAtDesc(postId, lastCommentId, pageRequest);
         }
