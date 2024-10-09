@@ -104,9 +104,10 @@ public class BoardConverter {
                 .build();
     }
 
+    // TODO: 게시글 상세조회 시 imageUuid 던져주고, 글 수정할 때 presignedUrl 요청에 해당 uuid값 보내기
     public static String extractImageUuid(List<String> imageUrls) {
         return (imageUrls == null || imageUrls.isEmpty())
-                ? UUID.randomUUID().toString()
+                ? null  // UUID.randomUUID().toString()
                 : imageUrls.get(0).substring(imageUrls.get(0).lastIndexOf("/") + 1, imageUrls.get(0).indexOf("_"));
     }
 

@@ -100,7 +100,10 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         Post post = postRepository.findByIdAndMemberIdAndStatus(postId, member.getId(), Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND));
 
-        post.editPost(request.getTitle(), request.getContent(), BoardConverter.extractImageIndexs(request.getImageUrlList()));
+        post.editPost(request.getTitle(),
+                request.getContent(),
+                BoardConverter.extractImageIndexs(request.getImageUrlList()),
+                BoardConverter.extractImageUuid(request.getImageUrlList()));
         editPostHashtags(post, request.getHashtagList());
         return post;
     }
@@ -206,7 +209,11 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         Category category = categoryRepository.findByIdAndStatus(request.getCategoryId(), Status.ACTIVE);
         Question editedQuestion = questionRepository.findByIdAndMemberIdAndStatus(questionId, member.getId(), Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND))
-                .editQuestion(category, request.getTitle(), request.getContent(), BoardConverter.extractImageIndexs(request.getImageUrlList()));
+                .editQuestion(category,
+                        request.getTitle(),
+                        request.getContent(),
+                        BoardConverter.extractImageIndexs(request.getImageUrlList()),
+                        BoardConverter.extractImageUuid(request.getImageUrlList()));
 
         editedQuestion.getHashtagList().forEach(BaseEntity::softDelete);
         List<QuestionHashtag> editedQuestionHashtags = new ArrayList<>();
@@ -249,7 +256,9 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         Answer answer = answerRepository.findByIdAndMemberIdAndStatus(answerId, member.getId(), Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.ANSWER_NOT_FOUND));
 
-        return answer.editAnswer(request.getContent(), BoardConverter.extractImageIndexs(request.getImageUrlList()));
+        return answer.editAnswer(request.getContent(),
+                BoardConverter.extractImageIndexs(request.getImageUrlList()),
+                BoardConverter.extractImageUuid(request.getImageUrlList()));
     }
 
     @Override

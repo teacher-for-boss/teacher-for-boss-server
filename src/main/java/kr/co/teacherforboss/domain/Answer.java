@@ -63,9 +63,10 @@ public class Answer extends BaseEntity {
     @Convert(converter = StringConverter.class)
     private List<String> imageIndex;
 
-    public Answer editAnswer(String content, List<String> imageIndex) {
+    public Answer editAnswer(String content, List<String> imageIndex, String imageUuid) {
         this.content = content;
         this.imageIndex = imageIndex;
+        this.imageUuid = imageUuid; // TODO: imageUuid 업데이트 안하도록 수정
         return this;
     }
 

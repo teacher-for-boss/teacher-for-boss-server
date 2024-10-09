@@ -93,11 +93,12 @@ public class Question extends BaseEntity {
     @Builder.Default
     private List<Answer> answerList = new ArrayList<>();
 
-    public Question editQuestion(Category category, String title, String content, List<String> imageIndex) {
+    public Question editQuestion(Category category, String title, String content, List<String> imageIndex, String imageUuid) {
         this.category = category;
         this.title = title;
         this.content = content;
         this.imageIndex = imageIndex;
+        this.imageUuid = imageUuid; // TODO: imageUuid 업데이트 안하도록 수정
         return this;
     }
 

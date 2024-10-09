@@ -74,10 +74,11 @@ public class Post extends BaseEntity {
     @Builder.Default
     private List<Comment> comments = new ArrayList<>();
 
-    public void editPost(String title, String content, List<String> imageIndex) {
+    public void editPost(String title, String content, List<String> imageIndex, String imageUuid) {
         this.title = title;
         this.content = content;
         this.imageIndex = imageIndex;
+        this.imageUuid = imageUuid; // TODO: imageUuid 업데이트 안하도록 수정
     }
 
     public void addHashtag(PostHashtag postHashtag) {
