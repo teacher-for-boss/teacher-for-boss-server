@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.web.dto;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import kr.co.teacherforboss.validation.annotation.CheckPurpose;
@@ -65,15 +66,13 @@ public class AuthRequestDTO {
         String accountNumber;
 
         String accountHolder;
-
-        DeviceInfoDTO deviceInfo;
     }
 
     @Getter
     @AllArgsConstructor
     @Builder
     public static class DeviceInfoDTO {
-        @NotNull
+//        @NotNull
         String fcmToken;
 
         String platform;
@@ -212,8 +211,10 @@ public class AuthRequestDTO {
 
     @Getter
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class SocialLoginDTO extends JoinCommonDTO {
-
+        DeviceInfoDTO deviceInfo;
     }
 
     @Getter

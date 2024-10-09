@@ -17,8 +17,7 @@ public class AwsSnsAspect {
 
     private final SnsService snsService;
 
-    @AfterReturning(pointcut = "execution(* kr.co.teacherforboss.service.authService.AuthCommandService.joinMember(..)) || " +
-            "execution(* kr.co.teacherforboss.service.authService.AuthCommandService.socialLogin(..)) || " +
+    @AfterReturning(pointcut = "execution(* kr.co.teacherforboss.service.authService.AuthCommandService.socialLogin(..)) || " +
             "execution(* kr.co.teacherforboss.service.authService.AuthCommandService.login(..))",
             returning = "member")
     public void registerAndSave(JoinPoint joinPoint, Member member) {
@@ -27,7 +26,9 @@ public class AwsSnsAspect {
         Object arg = joinPoint.getArgs()[0];
         DeviceInfoDTO deviceInfo = arg instanceof AuthRequestDTO.LoginDTO
                 ? ((AuthRequestDTO.LoginDTO) arg).getDeviceInfo()
-                : ((AuthRequestDTO.JoinCommonDTO) arg).getDeviceInfo();
+                : ((AuthRequestDTO.SocialLoginDTO) arg).getDeviceInfo();
+
+        if (deviceInfo == null) return;
 
          snsService.createEndpoint(member, deviceInfo);
     }
@@ -36,6 +37,9 @@ public class AwsSnsAspect {
     public void deregister(JoinPoint joinPoint, Member member) {
         System.out.println("Method Name: " + joinPoint.getSignature().getName());
         String fcmToken = ((String)joinPoint.getArgs()[1]);
+
+        if (fcmToken == null) return;
+
         snsService.deleteEndpoint(member, fcmToken);
     }
 
