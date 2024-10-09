@@ -41,7 +41,7 @@ public class NotificationSetting {
 
     public NotificationSetting updateSettings(NotificationRequestDTO.SettingsDTO request) {
         this.service = BooleanType.of(request.isServiceNotification());
-        this.marketing = BooleanType.of(request.isMarketingNotification());
+        this.marketing = BooleanType.of(request.getMarketingNotification().isPush());
         return this;
     }
 }

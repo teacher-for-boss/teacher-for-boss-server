@@ -156,9 +156,9 @@ public class AuthConverter {
     public static AgreementTerm toAgreementTerm(AuthRequestDTO.JoinDTO request, Member member) {
         return AgreementTerm.builder()
                 .member(member)
-                .agreementSms(request.getAgreementSms())
-                .agreementEmail(request.getAgreementEmail())
-                .agreementLocation(request.getAgreementLocation())
+                .agreementSms(BooleanType.valueOf(request.getAgreementSms()))
+                .agreementEmail(BooleanType.valueOf(request.getAgreementEmail()))
+                .agreementLocation(BooleanType.valueOf(request.getAgreementLocation()))
                 .build();
     }
 

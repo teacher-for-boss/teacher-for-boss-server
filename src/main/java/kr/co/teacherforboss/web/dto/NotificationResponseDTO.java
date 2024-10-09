@@ -11,7 +11,16 @@ public class NotificationResponseDTO {
     @Builder
     public static class SettingsDTO {
         boolean serviceNotification;
-        boolean marketingNotification;
+        MarketingNotificationDTO marketingNotification;
+
+        @Getter
+        @Builder
+        @AllArgsConstructor
+        public static class MarketingNotificationDTO {
+            boolean push;
+            boolean email;
+            boolean sms;
+        }
     }
 
     @Getter

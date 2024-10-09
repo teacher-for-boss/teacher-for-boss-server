@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.converter;
 
+import kr.co.teacherforboss.domain.AgreementTerm;
 import kr.co.teacherforboss.domain.Notification;
 import kr.co.teacherforboss.domain.NotificationSetting;
 import kr.co.teacherforboss.web.dto.NotificationResponseDTO;
@@ -7,10 +8,15 @@ import org.springframework.data.domain.Slice;
 
 public class NotificationConverter {
 
-    public static NotificationResponseDTO.SettingsDTO toSettingsDTO(NotificationSetting notificationSetting) {
+    public static NotificationResponseDTO.SettingsDTO toSettingsDTO(NotificationSetting notificationSetting,
+                                                                    AgreementTerm agreementTerm) {
         return NotificationResponseDTO.SettingsDTO.builder()
                 .serviceNotification(notificationSetting.getService().isIdentifier())
-                .marketingNotification(notificationSetting.getMarketing().isIdentifier())
+                .marketingNotification(NotificationResponseDTO.SettingsDTO.MarketingNotificationDTO.builder()
+                        .push(notificationSetting.getMarketing().isIdentifier())
+                        .email(agreementTerm.getAgreementEmail().isIdentifier())
+                        .sms(agreementTerm.getAgreementSms().isIdentifier())
+                        .build())
                 .build();
     }
 
