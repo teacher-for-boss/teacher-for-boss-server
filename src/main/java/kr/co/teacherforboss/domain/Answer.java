@@ -30,7 +30,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Table(indexes = @Index(name = "answer_selected_at_idx", columnList = "selected_at"))
 public class Answer extends BaseEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "questionId")
     private Question question;
 

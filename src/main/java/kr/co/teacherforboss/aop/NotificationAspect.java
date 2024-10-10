@@ -100,7 +100,7 @@ public class NotificationAspect {
         do {
             answers = answerRepository.findFirstAnswersOfNotSolvedQuestion(nowDate.minusDays(7), nowDate, PageRequest.of(page++, batchSize));
 
-            List<Notification> alreadySentNotifications = notificationRepository.findAllByTypeAndBetweenDate(NotificationType.QUESTION_WAITING_ANSWER, nowDate.minusDays(7), nowDate);
+            List<Notification> alreadySentNotifications = notificationRepository.findAllByTypeAndBetweenDate(NotificationType.QUESTION_WAITING_ANSWER.name(), nowDate.minusDays(7), nowDate);
             Map<Long, Integer> notificationSentDayInfo = alreadySentNotifications.stream()
                     .collect(Collectors.toMap(
                             notification -> {

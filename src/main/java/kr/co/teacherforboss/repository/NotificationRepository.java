@@ -19,7 +19,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
             WHERE type = :type
                 AND created_at BETWEEN :startDate AND :endDate
             """, nativeQuery = true)
-    List<Notification> findAllByTypeAndBetweenDate(NotificationType type, LocalDateTime startDate, LocalDateTime endDate);
+    List<Notification> findAllByTypeAndBetweenDate(String type, LocalDateTime startDate, LocalDateTime endDate);
 
     Slice<Notification> findByMemberIdOrderByIdDesc(Long memberId, Pageable pageable);
     Slice<Notification> findByMemberIdAndIdLessThanOrderByIdDesc(Long memberId, Long lastNotificationId, Pageable pageable);
