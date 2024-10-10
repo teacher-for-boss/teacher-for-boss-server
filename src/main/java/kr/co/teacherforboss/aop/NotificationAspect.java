@@ -216,7 +216,7 @@ public class NotificationAspect {
                         .member(target)
                         .type(NotificationType.QUESTION_ANSWER_SELECTED)
                         .title(NotificationType.QUESTION_ANSWER_SELECTED.getTitle(answer.getQuestion().getTitle()))
-                        .content(NotificationType.QUESTION_ANSWER_SELECTED.getContent(answer.getQuestion().getMember().getNickname()))
+                        .content(NotificationType.QUESTION_ANSWER_SELECTED.getContent(answer.getMember().getNickname()))
                         .data(new QuestionData(answer.getQuestion().getId()))
                         .build()
         );
