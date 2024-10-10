@@ -30,7 +30,7 @@ import org.hibernate.annotations.SQLRestriction;
 @Table(indexes = @Index(name = "post_created_at_idx", columnList = "created_at"))
 public class Post extends BaseEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "memberId")
     private Member member;
 

@@ -161,7 +161,7 @@ public class SnsServiceImpl implements SnsService {
     @Async("asyncTaskExecutor")
     public void publishMessage(List<Notification> notifications) {
         notifications.forEach(notification -> {
-            System.out.println("Publishing message to " + notification.getMember().getEmail());
+            System.out.println(notification.getType().name() + " :: Publishing message to " + notification.getMember().getEmail());
             try {
                 List<DeviceToken> deviceTokens = deviceTokenRepository.findAllByMemberIdAndStatus(
                         notification.getMember().getId(), Status.ACTIVE);

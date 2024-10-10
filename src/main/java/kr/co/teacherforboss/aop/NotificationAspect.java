@@ -80,7 +80,6 @@ public class NotificationAspect {
 
     /* QUESTION_WAITING_ANSWER */
     // 배치 전송
-    @Transactional
     @Scheduled(cron = "0 0 9 * * ?")    // 매일 오전 9시
     public void sendWaitingAnswerNotification() {
         log.info("===== Send Waiting Answer Notification =====");
@@ -135,7 +134,6 @@ public class NotificationAspect {
 
     /* QUESTION_LAST_DAY_SELECT_ANSWER */
     // 배치 전송
-    @Transactional
     @Scheduled(cron = "0 0 9 * * ?")    // 매일 오전 9시
     public void sendLastDaySelectAnswerNotification() {
         log.info("===== Send Last Day Select Answer Notification =====");
@@ -172,7 +170,6 @@ public class NotificationAspect {
 
     /* QUESTION_AUTO_DELETE_ALERT */
     // 배치 전송
-    @Transactional
     @Scheduled(cron = "0 0 9 * * ?")    // 매일 오전 9시
     public void sendAutoDeleteAlertNotification() {
         log.info("===== Send Auto Delete Alert Notification =====");
@@ -209,7 +206,6 @@ public class NotificationAspect {
     /* QUESTION_AUTO_DELETE */
 
     /* QUESTION_ANSWER_SELECTED */
-    @Transactional
     @AfterReturning(pointcut = "execution(* kr.co.teacherforboss.service.boardService.BoardCommandService.selectAnswer(..))", returning = "answer")
     public void sendAnswerSelectedNotification(Answer answer) {
         log.info("===== Send Answer Selected Notification =====");
@@ -229,7 +225,6 @@ public class NotificationAspect {
     }
 
     /* QUESTION_ANSWER_LIKED */
-    @Transactional
     @AfterReturning(pointcut = "execution(* kr.co.teacherforboss.service.boardService.BoardCommandService.toggleAnswerLike(..))", returning = "answerLike")
     public void sendAnswerLikedNotification(AnswerLike answerLike) {
         if (!answerLike.getLiked().isIdentifier()) return;
@@ -252,7 +247,6 @@ public class NotificationAspect {
     }
 
     /* QUESTION_HOT */
-    @Transactional
     @AfterReturning(pointcut = "execution(* kr.co.teacherforboss.scheduler.HomeScheduler.updateHotQuestions())", returning = "hotQuestionsDTO")
     public void sendHotQuestionNotification(GetHotQuestionsDTO hotQuestionsDTO) {
         log.info("===== Send Hot Question Notification =====");
@@ -275,7 +269,6 @@ public class NotificationAspect {
     }
 
     /* POST_NEW_COMMENT, POST_COMMENT_NEW_REPLY */
-    @Transactional
     @AfterReturning(pointcut = "execution(* kr.co.teacherforboss.service.boardService.BoardCommandService.saveComment(..))", returning = "comment")
     public void sendNewCommentNotification(Comment comment) {
         log.info("===== Send New Comment Notification =====");
@@ -313,7 +306,6 @@ public class NotificationAspect {
 
     /* POST_VIEW_INCREASED */
     // TODO: 채연언니 PR 합치고 pointcut 다시 보기
-    @Transactional
     @AfterReturning(pointcut = "execution(* kr.co.teacherforboss.domain.Post.increaseViewCount(..))", returning = "post")
     public void sendViewIncreasedNotification(Post post) {
         if (post.getViewCount() % 50 == 0) {
@@ -335,7 +327,6 @@ public class NotificationAspect {
     }
 
     /* POST_HOT */
-    @Transactional
     @AfterReturning(pointcut = "execution(* kr.co.teacherforboss.scheduler.HomeScheduler.updateHotPosts())", returning = "hotPostsDTO")
     public void sendHotPostNotification(GetHotPostsDTO hotPostsDTO) {
         log.info("===== Send Hot Post Notification =====");
@@ -394,7 +385,6 @@ public class NotificationAspect {
     }
 
     /* EXCHANGE_COMPLETE */
-    @Transactional
     @AfterReturning(pointcut = "execution(* kr.co.teacherforboss.service.paymentService.PaymentCommandService.completeExchangeProcess())", returning = "exchange")
     public void sendExchangeCompleteNotification(Exchange exchange) {
         if (exchange.getExchangeType() != ExchangeType.EX) return;

@@ -44,7 +44,7 @@ public class Question extends BaseEntity {
     @JoinColumn(name = "categoryId")
     private Category category;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "memberId")
     private Member member;
 
