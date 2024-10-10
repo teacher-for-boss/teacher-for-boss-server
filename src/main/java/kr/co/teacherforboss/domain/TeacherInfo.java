@@ -82,14 +82,16 @@ public class TeacherInfo extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'F'")
-    private BooleanType emailOpen;
+    @Builder.Default
+    private BooleanType emailOpen = BooleanType.F;
 
     @Column(length = 50)
     private String phone;
 
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'F'")
-    private BooleanType phoneOpen;
+    @Builder.Default
+    private BooleanType phoneOpen = BooleanType.F;
 
     public void editTeacherInfo(String field, Integer career, String introduction, List<String> keywordsList, String email,
                                 BooleanType emailOpen, String phone, BooleanType phoneOpen) {

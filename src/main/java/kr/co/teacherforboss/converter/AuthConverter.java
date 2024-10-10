@@ -57,6 +57,8 @@ public class AuthConverter {
                 .bank(request.getBank())
                 .accountNumber(AES256Util.encrypt(request.getAccountNumber()))
                 .accountHolder(request.getAccountHolder())
+                .emailOpen(BooleanType.F)
+                .phoneOpen(BooleanType.F)
                 .build();
     }
 
