@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.web.dto;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import kr.co.teacherforboss.validation.annotation.CheckPurpose;
@@ -19,7 +20,7 @@ import java.util.List;
 
 public class AuthRequestDTO {
     @Getter
-    public static abstract class JoinCommonDTO{
+    public static abstract class JoinCommonDTO {
         Integer role;
 
         @Email(message = "이메일 형식이 아닙니다.")
@@ -68,8 +69,18 @@ public class AuthRequestDTO {
     }
 
     @Getter
+    @AllArgsConstructor
     @Builder
-    public static class JoinDTO extends JoinCommonDTO{
+    public static class DeviceInfoDTO {
+//        @NotNull
+        String fcmToken;
+
+        String platform;
+    }
+
+    @Getter
+    @Builder
+    public static class JoinDTO extends JoinCommonDTO {
         @NotNull
         Long emailAuthId;
 
@@ -179,6 +190,8 @@ public class AuthRequestDTO {
 
         @NotBlank
         String password;
+
+        DeviceInfoDTO deviceInfo;
     }
 
     @Getter
@@ -198,8 +211,10 @@ public class AuthRequestDTO {
 
     @Getter
     @Builder
-    public static class SocialLoginDTO extends JoinCommonDTO{
-
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SocialLoginDTO extends JoinCommonDTO {
+        DeviceInfoDTO deviceInfo;
     }
 
     @Getter

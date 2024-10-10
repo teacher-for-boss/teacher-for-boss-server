@@ -25,7 +25,7 @@ import org.hibernate.annotations.ColumnDefault;
 @AllArgsConstructor
 public class Exchange extends BaseEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "memberId")
     private Member member;
 

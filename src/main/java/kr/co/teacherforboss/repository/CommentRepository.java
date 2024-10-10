@@ -26,13 +26,14 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     Optional<Comment> findByIdAndPostIdAndStatus(Long commentId, Long postId, Status status);
 
     Slice<Comment> findSliceByPostIdAndParentIdIsNullAndStatusOrderByCreatedAtDesc(Long postId, Pageable pageable, Status status);
+    Slice<Comment> findSliceByPostIdAndParentIdIsNullOrderByCreatedAtDesc(Long postId, Pageable pageable);
 
     @Query(value = """
         SELECT * FROM comment
         WHERE post_id = :postId
           AND parent_id IS NULL
           AND created_at < (SELECT created_at FROM comment WHERE id = :lastCommentId)
-          AND status = 'ACTIVE'
+//          AND status = 'ACTIVE'
         ORDER BY created_at DESC
     """, nativeQuery = true)
     Slice<Comment> findSliceByIdLessThanAndPostIdAndParentIdIsNullOrderByCreatedAtDesc(
@@ -51,4 +52,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
                                                         @Param("parentIds") List<Long> parentIds);
 
     Optional<Comment> findByIdAndPostIdAndMemberIdAndStatus(Long commentId, Long postId, Long memberId, Status status);
+
+    int countByPostIdAndStatus(Long postId, Status status);
 }

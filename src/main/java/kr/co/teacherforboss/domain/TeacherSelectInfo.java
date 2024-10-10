@@ -23,7 +23,6 @@ public class TeacherSelectInfo extends BaseEntity {
     public final static int POINT = 0;
     public final static int COUNT = 0;
 
-    @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memberId")
     private Member member;

@@ -1,6 +1,7 @@
 package kr.co.teacherforboss.converter;
 
-import kr.co.teacherforboss.config.S3Config;
+import java.util.UUID;
+import kr.co.teacherforboss.config.AwsS3Config;
 import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.AnswerLike;
 import kr.co.teacherforboss.domain.Category;
@@ -43,7 +44,7 @@ public class BoardConverter {
     }
 
     public static BoardResponseDTO.GetPostDTO toGetPostDTO(Post post, TeacherInfo teacherInfo,
-                                                           boolean liked, boolean bookmarked, boolean isMine) {
+                                                           boolean liked, boolean bookmarked, boolean isMine, int commentCount) {
         return BoardResponseDTO.GetPostDTO.builder()
                 .title(post.getTitle())
                 .content(post.getContent())
@@ -56,6 +57,7 @@ public class BoardConverter {
                 .liked(liked)
                 .bookmarked(bookmarked)
                 .isMine(isMine)
+                .commentCount(commentCount)
                 .build();
     }
 
@@ -71,7 +73,7 @@ public class BoardConverter {
 
         return BoardResponseDTO.MemberInfo.builder()
                 .memberId(isActive ? member.getId() : 0)
-                .name(isActive ? member.getName() : "알 수 없음")
+                .name(isActive ? member.getNickname() : "알 수 없음")
                 .profileImg(isActive ? member.getProfileImg() : null)
                 .build();
     }
@@ -82,7 +84,7 @@ public class BoardConverter {
 
         return BoardResponseDTO.MemberInfo.builder()
                 .memberId(isActive ? member.getId() : 0)
-                .name(isActive ? member.getName() : "알 수 없음")
+                .name(isActive ? member.getNickname() : "알 수 없음")
                 .profileImg(isActive ? member.getProfileImg() : null)
                 .role(isActive ? member.getRole() : null)
                 .level((validTeacherInfo != null) ? validTeacherInfo.getLevel().getLevel() : null)
@@ -102,9 +104,10 @@ public class BoardConverter {
                 .build();
     }
 
+    // TODO: 게시글 상세조회 시 imageUuid 던져주고, 글 수정할 때 presignedUrl 요청에 해당 uuid값 보내기
     public static String extractImageUuid(List<String> imageUrls) {
         return (imageUrls == null || imageUrls.isEmpty())
-                ? null
+                ? null  // UUID.randomUUID().toString()
                 : imageUrls.get(0).substring(imageUrls.get(0).lastIndexOf("/") + 1, imageUrls.get(0).indexOf("_"));
     }
 
@@ -124,7 +127,7 @@ public class BoardConverter {
         // TODO: CloudFront 붙이기 !
         List<String> imageUrlList = new ArrayList<>();
         for (String index : imageIndexs) {
-            imageUrlList.add(String.format("https://%s.s3.%s.amazonaws.com/%s/%s_%s", S3Config.BUCKET_NAME, S3Config.REGION, origin, imageUuid, index));
+            imageUrlList.add(String.format("https://%s.s3.%s.amazonaws.com/%s/%s_%s", AwsS3Config.BUCKET_NAME, AwsS3Config.REGION, origin, imageUuid, index));
         }
         return imageUrlList;
     }
@@ -316,7 +319,8 @@ public class BoardConverter {
                 .build();
     }
 
-    public static BoardResponseDTO.GetQuestionDTO toGetQuestionDTO(Question question, QuestionLike liked, QuestionBookmark bookmarked, boolean isMine) {
+    public static BoardResponseDTO.GetQuestionDTO toGetQuestionDTO(Question question, QuestionLike liked,
+                                                                   QuestionBookmark bookmarked, boolean isMine, int answerCount) {
         return BoardResponseDTO.GetQuestionDTO.builder()
                 .title(question.getTitle())
                 .content(question.getContent())
@@ -330,6 +334,7 @@ public class BoardConverter {
                 .bookmarkCount(question.getBookmarkCount())
                 .createdAt(question.getCreatedAt())
                 .isMine(isMine)
+                .answerCount(answerCount)
                 .build();
     }
 
@@ -400,6 +405,9 @@ public class BoardConverter {
             }
         });
 
+        totalComments.removeIf(comment -> comment.isDeleted() && comment.getChildren().isEmpty());
+
+
         return BoardResponseDTO.GetCommentsDTO.builder()
                 .hasNext(parentComments.hasNext())
                 .commentList(totalComments)
@@ -413,17 +421,19 @@ public class BoardConverter {
 
         TeacherInfo teacherInfo = teacherInfoMap.get(comment.getMember().getId());
         BoardResponseDTO.MemberInfo memberInfo = BoardConverter.toMemberInfo(comment.getMember(), teacherInfo);
+        boolean isDeleted = comment.getStatus() == Status.INACTIVE;
 
         return BoardResponseDTO.GetCommentsDTO.CommentInfo.builder()
                 .commentId(comment.getId())
-                .content(comment.getContent())
-                .likeCount(comment.getLikeCount())
-                .dislikeCount(comment.getDislikeCount())
+                .content(!isDeleted ? comment.getContent() : "삭제된 댓글입니다.")
+                .likeCount(!isDeleted ? comment.getLikeCount() : 0)
+                .dislikeCount(!isDeleted ? comment.getDislikeCount() : 0)
                 .liked(commentLikedMap.get(comment.getId()) == BooleanType.T)
                 .disliked(commentLikedMap.get(comment.getId()) == BooleanType.F)
                 .createdAt(comment.getCreatedAt())
-                .memberInfo(memberInfo)
+                .memberInfo(!isDeleted ? memberInfo : null)
                 .isMine(comment.getMember().equals(member))
+                .isDeleted(isDeleted)
                 .children(new ArrayList<>())
                 .build();
     }
@@ -478,7 +488,7 @@ public class BoardConverter {
                 .build();
     }
 
-    public static Comment toCommentDTO(BoardRequestDTO.SaveCommentDTO request, Member member, Post post, Comment comment) {
+    public static Comment toComment(BoardRequestDTO.SaveCommentDTO request, Member member, Post post, Comment comment) {
         return Comment.builder()
                 .post(post)
                 .member(member)

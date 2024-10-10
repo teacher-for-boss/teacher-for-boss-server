@@ -4,12 +4,14 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
-import kr.co.teacherforboss.converter.StringConverter;
+import kr.co.teacherforboss.domain.converter.StringConverter;
 import java.util.List;
 import kr.co.teacherforboss.domain.common.BaseEntity;
 import lombok.AccessLevel;
@@ -25,9 +27,10 @@ import org.hibernate.annotations.SQLRestriction;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Table(indexes = @Index(name = "post_created_at_idx", columnList = "created_at"))
 public class Post extends BaseEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "memberId")
     private Member member;
 
@@ -71,10 +74,11 @@ public class Post extends BaseEntity {
     @Builder.Default
     private List<Comment> comments = new ArrayList<>();
 
-    public void editPost(String title, String content, List<String> imageIndex) {
+    public void editPost(String title, String content, List<String> imageIndex, String imageUuid) {
         this.title = title;
         this.content = content;
         this.imageIndex = imageIndex;
+        this.imageUuid = imageUuid; // TODO: imageUuid 업데이트 안하도록 수정
     }
 
     public void addHashtag(PostHashtag postHashtag) {

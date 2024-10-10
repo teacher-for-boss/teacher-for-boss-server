@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import kr.co.teacherforboss.config.S3Config;
+import kr.co.teacherforboss.config.AwsS3Config;
 import kr.co.teacherforboss.web.dto.S3ResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +33,7 @@ public class S3QueryServiceImpl implements S3QueryService {
 		for (int index = lastIndex + 1; index <= lastIndex + imageCount; index++) {
 			String fileName = String.format("%s/%s_%d", origin, imageUuid, index);
 
-			GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePresignedUrlRequest(S3Config.BUCKET_NAME, fileName);
+			GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePresignedUrlRequest(AwsS3Config.BUCKET_NAME, fileName);
 			URL url = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
 
 			presignedUrlList.add(url.toString());

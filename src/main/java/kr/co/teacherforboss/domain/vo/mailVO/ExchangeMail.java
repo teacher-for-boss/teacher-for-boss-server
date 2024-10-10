@@ -2,15 +2,19 @@ package kr.co.teacherforboss.domain.vo.mailVO;
 
 import kr.co.teacherforboss.domain.TeacherInfo;
 import kr.co.teacherforboss.util.AES256Util;
+import org.springframework.beans.factory.annotation.Value;
 
 public class ExchangeMail extends Mail {
+
+    @Value("${tp-unit}")
+    private int TP_UNIT;
+
     public ExchangeMail(int ownedTP, int appliedTP, TeacherInfo teacherInfo) {
         super("exchange", "[티쳐 포 보스] 환전 신청");
         super.values.put("email", getEmail(teacherInfo));
         super.values.put("ownedTP", getOwnedTP(ownedTP));
         super.values.put("appliedTP", getAppliedTP(appliedTP));
         super.values.put("remainingTP", getRemainingTP(ownedTP, appliedTP));
-        super.values.put("charge", getCharge(appliedTP));
         super.values.put("finalMoney", getFinalMoney(appliedTP));
         super.values.put("accountNumber", getAccountNumber(teacherInfo));
         super.values.put("bank", getBank(teacherInfo));
@@ -32,12 +36,8 @@ public class ExchangeMail extends Mail {
         return String.valueOf(ownedTP - appliedTP);
     }
 
-    private String getCharge(int appliedTP) {
-        return String.valueOf(appliedTP * 100 * 0.1);
-    }
-
     private String getFinalMoney(int appliedTP) {
-         return String.valueOf(appliedTP * 100 * 0.9);
+         return String.valueOf(appliedTP * TP_UNIT);
     }
 
     private String getAccountNumber(TeacherInfo teacherInfo) {

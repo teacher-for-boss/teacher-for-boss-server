@@ -4,9 +4,11 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.AuthHandler;
-import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.enums.Role;
 import kr.co.teacherforboss.repository.MemberRepository;
 import kr.co.teacherforboss.web.dto.AuthResponseDTO;
@@ -19,10 +21,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @Slf4j
 @Component

@@ -38,8 +38,7 @@ public class PaymentRequestDTO {
     public static class ExchangeTeacherPointsDTO {
 
         @NotNull(message = "포인트를 입력해주세요.")
-        @Min(value = 550, message = "550TP 이상부터 교환 가능합니다.")
-        @DivisibleBy(divisor = 100, message = "100TP 단위로 교환 가능합니다.")
+        @Min(value = 10, message = "10TP 이상부터 교환 가능합니다.")
         Integer points;
     }
 }

@@ -4,13 +4,15 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kr.co.teacherforboss.converter.StringConverter;
+import kr.co.teacherforboss.domain.converter.StringConverter;
 import kr.co.teacherforboss.domain.common.BaseEntity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -27,19 +29,20 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Table(indexes = @Index(name = "answer_selected_at_idx", columnList = "selected_at"))
 public class Answer extends BaseEntity {
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @ManyToOne(fetch = FetchType.LAZY)
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "questionId")
     private Question question;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "memberId")
     private Member member;
 
     @NotNull
     @Column(length = 5000)
-    String content;
+    private String content;
 
     @Column
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -62,9 +65,10 @@ public class Answer extends BaseEntity {
     @Convert(converter = StringConverter.class)
     private List<String> imageIndex;
 
-    public Answer editAnswer(String content, List<String> imageIndex) {
+    public Answer editAnswer(String content, List<String> imageIndex, String imageUuid) {
         this.content = content;
         this.imageIndex = imageIndex;
+        this.imageUuid = imageUuid; // TODO: imageUuid 업데이트 안하도록 수정
         return this;
     }
 

@@ -43,9 +43,10 @@ public class AuthConverter {
                 .build();
     }
 
-    public static TeacherInfo toTeacherInfo(AuthRequestDTO.JoinCommonDTO request){
+    public static TeacherInfo toTeacher(AuthRequestDTO.JoinCommonDTO request, Member member){
         String keywords = String.join(";", request.getKeywords());
         return TeacherInfo.builder()
+                .member(member)
                 .businessNumber(request.getBusinessNumber())
                 .representative(request.getRepresentative())
                 .openDate(request.getOpenDate())
@@ -164,9 +165,9 @@ public class AuthConverter {
     public static AgreementTerm toAgreementTerm(AuthRequestDTO.JoinDTO request, Member member) {
         return AgreementTerm.builder()
                 .member(member)
-                .agreementSms(request.getAgreementSms())
-                .agreementEmail(request.getAgreementEmail())
-                .agreementLocation(request.getAgreementLocation())
+                .agreementSms(BooleanType.valueOf(request.getAgreementSms()))
+                .agreementEmail(BooleanType.valueOf(request.getAgreementEmail()))
+                .agreementLocation(BooleanType.valueOf(request.getAgreementLocation()))
                 .build();
     }
 

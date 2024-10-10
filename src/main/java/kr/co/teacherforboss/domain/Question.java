@@ -2,6 +2,9 @@ package kr.co.teacherforboss.domain;
 
 import static java.time.LocalDateTime.now;
 
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +21,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
-import kr.co.teacherforboss.converter.StringConverter;
+import kr.co.teacherforboss.domain.converter.StringConverter;
 import kr.co.teacherforboss.domain.common.BaseEntity;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import lombok.AccessLevel;
@@ -32,6 +35,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Table(indexes = @Index(name = "question_created_at_idx", columnList = "created_at"))
 public class Question extends BaseEntity {
 
     public final static int POINT = 1;
@@ -40,7 +44,7 @@ public class Question extends BaseEntity {
     @JoinColumn(name = "categoryId")
     private Category category;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "memberId")
     private Member member;
 
@@ -89,11 +93,12 @@ public class Question extends BaseEntity {
     @Builder.Default
     private List<Answer> answerList = new ArrayList<>();
 
-    public Question editQuestion(Category category, String title, String content, List<String> imageIndex) {
+    public Question editQuestion(Category category, String title, String content, List<String> imageIndex, String imageUuid) {
         this.category = category;
         this.title = title;
         this.content = content;
         this.imageIndex = imageIndex;
+        this.imageUuid = imageUuid; // TODO: imageUuid 업데이트 안하도록 수정
         return this;
     }
 
@@ -127,6 +132,10 @@ public class Question extends BaseEntity {
             this.bookmarkCount -= 1;
         }
         return this;
+    }
+
+    public LocalDate getClosedDate() {
+        return this.getCreatedAt().plusDays(7).toLocalDate();
     }
 }
 
