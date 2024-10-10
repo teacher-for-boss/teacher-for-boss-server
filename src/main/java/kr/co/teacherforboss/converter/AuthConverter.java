@@ -61,14 +61,6 @@ public class AuthConverter {
                 .build();
     }
 
-    public static TeacherSelectInfo toTeacherSelectInfo(Member member){
-        return TeacherSelectInfo.builder()
-                .member(member)
-                .points(TeacherSelectInfo.POINT)
-                .selectCount(TeacherSelectInfo.COUNT)
-                .build();
-    }
-
     public static AuthResponseDTO.SendCodeMailResultDTO toSendCodeMailResultDTO(EmailAuth emailAuth) {
         return AuthResponseDTO.SendCodeMailResultDTO.builder()
                 .emailAuthId(emailAuth.getId())

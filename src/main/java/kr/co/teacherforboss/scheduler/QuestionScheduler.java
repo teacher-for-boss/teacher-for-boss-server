@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.scheduler;
 
+import java.time.LocalDate;
 import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
 import kr.co.teacherforboss.apiPayload.exception.handler.BoardHandler;
 import kr.co.teacherforboss.domain.Answer;
@@ -29,12 +30,13 @@ public class QuestionScheduler {
     @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void checkExpiredQuestions() {
-    System.out.println("현재 시각은 " + new Date());
-        List<Question> expiredQuestions = questionRepository.findByExpiredDate();
+        log.info("===== handle expired questions =====");
+        List<Question> expiredQuestions = questionRepository.findByExpiredDate(LocalDate.now());
 
         for (Question question : expiredQuestions) {
-            if (question.getAnswerList().isEmpty()) { // 답변 자동 삭제
-                questionRepository.delete(question);
+            if (question.getAnswerList().isEmpty()) { // 답변 자동 삭제 -> 해야할까 ? 티처 - 마이페이지에서 내가 답변한 글 조회 -> 눌렀을 때 삭제된 글입니다. 가 더 낫지 않나
+                System.out.println("Auto Delete Question : " + question.getId());
+                question.softDelete();
                 // TODO: 질문권 복구 및 질문글 삭제에 대한 푸시알림 추가
             } else { // 답변 채택
                 // TODO: 채택된 답변을 단 티쳐 status INACTIVE면 ? -> 연관관계 처리
@@ -47,6 +49,8 @@ public class QuestionScheduler {
                 TeacherSelectInfo teacherSelectInfo = teacherSelectInfoRepository.findByMemberIdAndStatus(bestAnswer.getMember().getId(), Status.ACTIVE)
                             .orElseThrow(() -> new BoardHandler(ErrorStatus.TEACHER_SELECT_INFO_NOT_FOUND));
                 teacherSelectInfo.increaseSelectCount();
+
+                System.out.println("Auto Solved Question : " + question.getId() + ", Selected Ansewr : " + bestAnswer.getId());
             }
         }
     }

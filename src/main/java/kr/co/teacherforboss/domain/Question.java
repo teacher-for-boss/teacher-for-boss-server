@@ -38,6 +38,7 @@ import lombok.NoArgsConstructor;
 @Table(indexes = @Index(name = "question_created_at_idx", columnList = "created_at"))
 public class Question extends BaseEntity {
 
+    // TODO: yml로 숨기든 question에 point column을 추가하든 하기
     public final static int POINT = 1;
 
     @ManyToOne(fetch = FetchType.LAZY)
