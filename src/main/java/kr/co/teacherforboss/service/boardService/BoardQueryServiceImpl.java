@@ -63,7 +63,7 @@ public class BoardQueryServiceImpl implements BoardQueryService {
     private final CommentLikeRepository commentLikeRepository;
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public BoardResponseDTO.GetPostDTO getPost(Long postId) {
         Member member = authCommandService.getMember();
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
@@ -130,7 +130,7 @@ public class BoardQueryServiceImpl implements BoardQueryService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public BoardResponseDTO.GetQuestionDTO getQuestion(Long questionId) {
         Member member = authCommandService.getMember();
         Question question = questionRepository.findByIdAndStatus(questionId, Status.ACTIVE)
