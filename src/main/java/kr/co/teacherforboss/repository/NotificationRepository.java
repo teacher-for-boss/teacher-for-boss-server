@@ -9,6 +9,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
@@ -20,10 +21,10 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
             """, nativeQuery = true)
     List<Notification> findAllByTypeAndBetweenDate(NotificationType type, LocalDateTime startDate, LocalDateTime endDate);
 
-    Slice<Notification> findByMemberIdOrderByCreatedAtDesc(Long memberId, Pageable pageable);
-    Slice<Notification> findByMemberIdAndIdLessThanOrderByCreatedAtDesc(Long memberId, Long lastNotificationId, Pageable pageable);
+    Slice<Notification> findByMemberIdOrderByIdDesc(Long memberId, Pageable pageable);
+    Slice<Notification> findByMemberIdAndIdLessThanOrderByIdDesc(Long memberId, Long lastNotificationId, Pageable pageable);
 
-    @Modifying
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query(value = """
             UPDATE notification
             SET is_read = 'T'

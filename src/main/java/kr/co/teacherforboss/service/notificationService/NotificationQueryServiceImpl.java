@@ -42,10 +42,10 @@ public class NotificationQueryServiceImpl implements NotificationQueryService {
         Slice<Notification> notifications;
 
         if (lastNotificationId == 0) {
-            notifications = notificationRepository.findByMemberIdOrderByCreatedAtDesc(member.getId(), PageRequest.of(0, size));
+            notifications = notificationRepository.findByMemberIdOrderByIdDesc(member.getId(), PageRequest.of(0, size));
         }
         else {
-            notifications = notificationRepository.findByMemberIdAndIdLessThanOrderByCreatedAtDesc(member.getId(), lastNotificationId, PageRequest.of(0, size));
+            notifications = notificationRepository.findByMemberIdAndIdLessThanOrderByIdDesc(member.getId(), lastNotificationId, PageRequest.of(0, size));
         }
 
         return NotificationConverter.toGetNotificationsDTO(notifications);
