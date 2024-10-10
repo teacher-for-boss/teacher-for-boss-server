@@ -30,6 +30,7 @@ import kr.co.teacherforboss.repository.PostRepository;
 import kr.co.teacherforboss.repository.QuestionRepository;
 import kr.co.teacherforboss.service.notificationService.NotificationCommandService;
 import kr.co.teacherforboss.service.snsService.SnsService;
+import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import kr.co.teacherforboss.web.dto.HomeResponseDTO.GetHotPostsDTO;
 import kr.co.teacherforboss.web.dto.HomeResponseDTO.GetHotPostsDTO.HotPostInfo;
 import kr.co.teacherforboss.web.dto.HomeResponseDTO.GetHotQuestionsDTO;
@@ -37,6 +38,7 @@ import kr.co.teacherforboss.web.dto.HomeResponseDTO.GetHotQuestionsDTO.HotQuesti
 import kr.co.teacherforboss.web.dto.NotificationResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -322,8 +324,12 @@ public class NotificationAspect {
 
     /* POST_VIEW_INCREASED */
     // TODO: 채연언니 PR 합치고 pointcut 다시 보기
-    @AfterReturning(pointcut = "execution(* kr.co.teacherforboss.domain.Post.increaseViewCount(..))", returning = "post")
-    public void sendViewIncreasedNotification(Post post) {
+    @AfterReturning(pointcut = "execution(* kr.co.teacherforboss.service.boardService.BoardQueryService.getPost(..))", returning = "getPostDTO")
+    public void sendViewIncreasedNotification(JoinPoint joinPoint, BoardResponseDTO.GetPostDTO getPostDTO) {
+        Long postId = (Long) joinPoint.getArgs()[0];
+        Post post = postRepository.findById(postId).orElse(null);
+        if (post == null) return;
+
         if (post.getViewCount() % 50 == 0) {
             log.info("===== Send View Increased Notification =====");
 
