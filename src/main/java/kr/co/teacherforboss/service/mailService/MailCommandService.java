@@ -4,5 +4,5 @@ import kr.co.teacherforboss.domain.vo.mailVO.Mail;
 
 public interface MailCommandService {
 
-    String sendMail(String to, Mail mail);
+    void sendMail(String to, Mail mail);
 }

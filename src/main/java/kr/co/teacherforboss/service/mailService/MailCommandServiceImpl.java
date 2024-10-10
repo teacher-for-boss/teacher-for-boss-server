@@ -13,6 +13,7 @@ import kr.co.teacherforboss.domain.vo.mailVO.Mail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
@@ -27,7 +28,8 @@ public class MailCommandServiceImpl implements MailCommandService {
     private Mail mail;
 
     @Override
-    public String sendMail(String to, Mail mail) {
+    @Async
+    public void sendMail(String to, Mail mail) {
         try {
             this.mail = mail;
             MimeMessage message = createMessage(to);
@@ -35,7 +37,6 @@ public class MailCommandServiceImpl implements MailCommandService {
         } catch (MailException | MessagingException | UnsupportedEncodingException es) {
             throw new MailHandler(ErrorStatus.MAIL_SEND_FAIL);
         }
-        return to;
     }
 
     private MimeMessage createMessage(String to) throws MessagingException, UnsupportedEncodingException {
