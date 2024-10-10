@@ -1,42 +1,22 @@
 package kr.co.teacherforboss.config;
 
-import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.AsyncConfigurer;
-import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import java.util.concurrent.Executor;
-
 @Configuration
-@EnableAsync
-public class AsyncConfig implements AsyncConfigurer {
+public class AsyncConfig {
 
-    @Value("${spring.async.corepoolsize}")
-    private int corepoolsize;
-
-    @Value("${spring.async.maxpoolsize}")
-    private int maxpoolsize;
-
-    @Value("${spring.async.queuecapacity}")
-    private int queuecapacity;
-
-    @Override
-    @Bean(name = "mailExecutor")
-    public Executor getAsyncExecutor() {
+    @Bean(name = "asyncTaskExecutor")
+    public TaskExecutor asyncTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(corepoolsize);
-        executor.setMaxPoolSize(maxpoolsize);
-        executor.setQueueCapacity(queuecapacity);
-        executor.setThreadNamePrefix("Async MailExecutor-");
+        executor.setCorePoolSize(10);  // 기본 스레드 수
+        executor.setMaxPoolSize(50);   // 최대 스레드 수
+        executor.setQueueCapacity(100);  // 큐의 크기
+        executor.setThreadNamePrefix("AsyncExecutor-");
         executor.initialize();
         return executor;
     }
-
-    @Override
-    public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-        return AsyncConfigurer.super.getAsyncUncaughtExceptionHandler();
-    }
 }
+

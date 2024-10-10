@@ -91,16 +91,16 @@ public class AuthController {
     @PostMapping("/login")
     public ApiResponse<AuthResponseDTO.TokenResponseDTO> login(@RequestBody @Valid AuthRequestDTO.LoginDTO request) {
         Member member = authCommandService.login(request);
-        AuthResponseDTO.TokenResponseDTO tokenResponseDTO = jwtTokenProvider.createTokenResponse(member.getEmail(), member.getName(), member.getRole());
-        return ApiResponse.onSuccess(tokenResponseDTO);
+        return ApiResponse.onSuccess(jwtTokenProvider.createTokenResponse(
+                member.getEmail(), member.getName(), member.getRole()));
     }
 
     @PostMapping("/logout")
     public ApiResponse<AuthResponseDTO.LogoutResultDTO> logout(@NotNull @RequestHeader("Authorization") String accessToken,
-                                                               @ExistPrincipalDetails @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        String token = jwtTokenProvider.resolveTokenFromRequest(accessToken);
-        AuthResponseDTO.LogoutResultDTO logoutResultDTO = authCommandService.logout(token, principalDetails.getEmail());
-        return ApiResponse.onSuccess(AuthConverter.toLogoutResultDTO(logoutResultDTO.getEmail(), token));
+                                                               @NotNull @RequestHeader("FCM-Token") String fcmToken) {
+        String jwtToken = jwtTokenProvider.resolveTokenFromRequest(accessToken);
+        Member member = authCommandService.logout(jwtToken, fcmToken);
+        return ApiResponse.onSuccess(AuthConverter.toLogoutResultDTO(member.getEmail(), jwtToken));
     }
 
     @PostMapping("/reissue")
@@ -120,8 +120,8 @@ public class AuthController {
     public ApiResponse<AuthResponseDTO.TokenResponseDTO> socialLogin(@RequestBody @Valid AuthRequestDTO.SocialLoginDTO request,
                                                                      @RequestParam(name = "socialType") @CheckSocialType int socialType) {
         Member member = authCommandService.socialLogin(request, socialType);
-        AuthResponseDTO.TokenResponseDTO tokenResponseDTO = jwtTokenProvider.createTokenResponse(member.getEmail(), member.getName(), member.getRole());
-        return ApiResponse.onSuccess(tokenResponseDTO);
+        return ApiResponse.onSuccess(jwtTokenProvider.createTokenResponse(
+                member.getEmail(), member.getName(), member.getRole()));
     }
 
     @PostMapping("/nickname/check")

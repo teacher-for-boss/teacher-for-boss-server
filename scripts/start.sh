@@ -16,7 +16,7 @@ cp $PROJECT_ROOT/build/libs/*.jar $PROJECT_ROOT
 # jar 파일 실행
 echo "$TIME_NOW > $JAR_FILE 파일 실행" >> $DEPLOY_LOG
 cd /home/ubuntu/app
-nohup java -jar teacherforboss-0.0.1-SNAPSHOT.jar > $APP_LOG 2> $ERROR_LOG &
+nohup java -jar teacherforboss-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev > $APP_LOG 2> $ERROR_LOG &
 
 CURRENT_PID=$(pgrep -f teacherforboss-0.0.1-SNAPSHOT.jar)
 echo "$TIME_NOW > 실행된 프로세스 아이디 $CURRENT_PID 입니다." >> $DEPLOY_LOG

@@ -11,7 +11,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 
 @Configuration
-public class S3Config {
+public class AwsS3Config {
 	@Value("${cloud.aws.credentials.access-key}")
 	private String accessKey;
 
@@ -24,12 +24,12 @@ public class S3Config {
 
 	@Value("${cloud.aws.region}")
 	public void setRegion(String region) {
-		S3Config.REGION = region;
+		AwsS3Config.REGION = region;
 	}
 
 	@Value("${cloud.aws.s3.bucket}")
 	public void setBucket(String bucket) {
-		S3Config.BUCKET_NAME = bucket;
+		AwsS3Config.BUCKET_NAME = bucket;
 	}
 
 	@Bean

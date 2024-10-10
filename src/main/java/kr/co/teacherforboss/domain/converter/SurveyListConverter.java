@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import kr.co.teacherforboss.domain.enums.Survey;
 
+// TODO: Generic으로 리팩토링
 public class SurveyListConverter implements AttributeConverter<List<Survey>, String> {
 
     private static final String DELIMITER = ";";

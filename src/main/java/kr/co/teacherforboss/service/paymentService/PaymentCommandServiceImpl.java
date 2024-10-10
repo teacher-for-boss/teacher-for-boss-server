@@ -8,7 +8,6 @@ import kr.co.teacherforboss.domain.Exchange;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.TeacherInfo;
 import kr.co.teacherforboss.domain.TeacherSelectInfo;
-import kr.co.teacherforboss.domain.enums.Role;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.domain.vo.mailVO.ExchangeMail;
 import kr.co.teacherforboss.repository.ExchangeRepository;
@@ -35,7 +34,6 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
     @Transactional
     public TeacherInfo editTeacherAccount(PaymentRequestDTO.EditTeacherAccountDTO request){
         Member member = authCommandService.getMember();
-        if (member.getRole() != Role.TEACHER) throw new MemberHandler(ErrorStatus.MEMBER_ROLE_NOT_TEACHER);
 
         TeacherInfo teacherInfo = teacherInfoRepository.findByMemberIdAndStatus(member.getId(), Status.ACTIVE)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.TEACHER_INFO_NOT_FOUND));
@@ -48,7 +46,6 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
     @Transactional
     public Exchange exchangeTeacherPoints(PaymentRequestDTO.ExchangeTeacherPointsDTO request){
         Member member = authCommandService.getMember();
-        if (member.getRole() != Role.TEACHER) throw new MemberHandler(ErrorStatus.MEMBER_ROLE_NOT_TEACHER);
         TeacherInfo teacherInfo = teacherInfoRepository.findByMemberIdAndStatus(member.getId(), Status.ACTIVE)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.TEACHER_INFO_NOT_FOUND));
         TeacherSelectInfo teacherSelectInfo = teacherSelectInfoRepository.findByMemberIdAndStatus(member.getId(), Status.ACTIVE)
@@ -68,7 +65,6 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
     @Transactional
     public Exchange completeExchangeProcess(Long exchangeId){
         Member member = authCommandService.getMember();
-        if (member.getRole() != Role.ADMIN) throw new MemberHandler(ErrorStatus.MEMBER_ROLE_NOT_ADMIN);
         Exchange exchange = exchangeRepository.findByIdAndStatus(exchangeId, Status.ACTIVE)
                 .orElseThrow(() -> new PaymentHandler(ErrorStatus.EXCHANGE_NOT_FOUND));
         if (exchange.getIsComplete().isIdentifier()) throw new PaymentHandler(ErrorStatus.EXCHANGE_PROCESS_ALREADY_COMPLETE);

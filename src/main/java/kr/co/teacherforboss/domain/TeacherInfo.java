@@ -29,7 +29,6 @@ import org.hibernate.annotations.ColumnDefault;
 @AllArgsConstructor
 public class TeacherInfo extends BaseEntity {
 
-    @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memberId")
     private Member member;

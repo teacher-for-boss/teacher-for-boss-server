@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import kr.co.teacherforboss.domain.Answer;
@@ -41,4 +42,19 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
 	Slice<Answer> findSliceByIdLessThanAndQuestionIdAndStatusOrderByCreatedAtDesc(@Param(value = "lastAnswerId") Long lastAnswerId,
 																				  @Param(value = "questionId") Long questionId,
 																				  Pageable pageable);
+	@Query(value = """
+		SELECT *
+		FROM answer
+		WHERE id IN (
+			SELECT MIN(id)
+			FROM answer
+			WHERE created_at BETWEEN :startDate AND :endDate
+				AND selected_at IS NULL
+				AND status = 'ACTIVE'
+			GROUP BY question_id
+			)
+	""", nativeQuery = true)
+	Slice<Answer> findFirstAnswersOfNotSolvedQuestion(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
+
+	int countByQuestionIdAndStatus(Long questionId, Status status);
 }
