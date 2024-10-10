@@ -385,7 +385,7 @@ public class NotificationAspect {
     }
 
     /* EXCHANGE_COMPLETE */
-    @AfterReturning(pointcut = "execution(* kr.co.teacherforboss.service.paymentService.PaymentCommandService.completeExchangeProcess())", returning = "exchange")
+    @AfterReturning(pointcut = "execution(* kr.co.teacherforboss.service.paymentService.PaymentCommandService.completeExchangeProcess(..))", returning = "exchange")
     public void sendExchangeCompleteNotification(Exchange exchange) {
         if (exchange.getExchangeType() != ExchangeType.EX) return;
 
