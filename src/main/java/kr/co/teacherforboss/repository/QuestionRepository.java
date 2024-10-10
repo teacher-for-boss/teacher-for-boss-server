@@ -168,12 +168,12 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 	Slice<Question> findBookmarkedQuestionsSliceByIdLessThanAndMemberIdOrderByCreatedAtDesc(Long questionId, Long memberId, PageRequest pageRequest);
 
 	@Query(value = """
-		SELECT * 
-		FROM question
-		inner join answer on question.id = answer.question_id
-		WHERE question.created_at = :date
-			AND question.solved = 'F'
-			AND question.status = 'ACTIVE'
+		SELECT DISTINCT q.* 
+		FROM question q
+		inner join answer a on q.id = a.question_id
+		WHERE DATE(q.created_at) = :date
+			AND q.solved = 'F'
+			AND q.status = 'ACTIVE'
 	""", nativeQuery = true)
 	Slice<Question> findQuestionsLastDaySelectByDate(LocalDateTime date, PageRequest pageRequest);
 
