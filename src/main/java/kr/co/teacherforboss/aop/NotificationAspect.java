@@ -13,6 +13,7 @@ import kr.co.teacherforboss.domain.Comment;
 import kr.co.teacherforboss.domain.Exchange;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.Notification;
+import kr.co.teacherforboss.domain.NotificationSetting;
 import kr.co.teacherforboss.domain.Post;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.enums.BooleanType;
@@ -24,6 +25,7 @@ import kr.co.teacherforboss.domain.vo.notificationVO.NotificationMessage;
 import kr.co.teacherforboss.repository.AnswerRepository;
 import kr.co.teacherforboss.repository.MemberRepository;
 import kr.co.teacherforboss.repository.NotificationRepository;
+import kr.co.teacherforboss.repository.NotificationSettingRepository;
 import kr.co.teacherforboss.repository.PostRepository;
 import kr.co.teacherforboss.repository.QuestionRepository;
 import kr.co.teacherforboss.service.notificationService.NotificationCommandService;
@@ -44,7 +46,6 @@ import org.springframework.data.domain.Slice;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Aspect
@@ -54,6 +55,7 @@ public class NotificationAspect {
 
     private final SnsService snsService;
     private final NotificationCommandService notificationCommandService;
+    private final NotificationSettingRepository notificationSettingRepository;
     private final NotificationRepository notificationRepository;
     private final MemberRepository memberRepository;
     private final QuestionRepository questionRepository;
@@ -66,6 +68,8 @@ public class NotificationAspect {
         log.info("===== Send New Answer Notification =====");
 
         Member target = answer.getQuestion().getMember();
+        if (!agreeNotification(target, NotificationType.QUESTION_NEW_ANSWER)) return;
+
         Notification notification = notificationRepository.save(
                 Notification.builder()
                         .member(target)
@@ -127,6 +131,7 @@ public class NotificationAspect {
                     )
                     .toList();
 
+            notifications = notifications.stream().filter(notification -> agreeNotification(notification.getMember(), notification.getType())).toList();
             notificationRepository.saveAll(notifications);
             snsService.publishMessage(notifications);
         } while (answers.hasNext());
@@ -161,6 +166,7 @@ public class NotificationAspect {
                     )
                     .toList();
 
+            notifications = notifications.stream().filter(notification -> agreeNotification(notification.getMember(), notification.getType())).toList();
             notificationRepository.saveAll(notifications);
             snsService.publishMessage(notifications);
         } while (questions.hasNext());
@@ -197,6 +203,7 @@ public class NotificationAspect {
                     )
                     .toList();
 
+            notifications = notifications.stream().filter(notification -> agreeNotification(notification.getMember(), notification.getType())).toList();
             notificationRepository.saveAll(notifications);
             snsService.publishMessage(notifications);
         } while (questions.hasNext());
@@ -211,6 +218,8 @@ public class NotificationAspect {
         log.info("===== Send Answer Selected Notification =====");
 
         Member target = answer.getMember();
+        if (!agreeNotification(target, NotificationType.QUESTION_ANSWER_SELECTED)) return;
+
         Notification notification = notificationRepository.save(
                 Notification.builder()
                         .member(target)
@@ -232,6 +241,8 @@ public class NotificationAspect {
         log.info("===== Send Answer Liked Notification =====");
 
         Member target = answerLike.getAnswer().getMember();
+        if (!agreeNotification(target, NotificationType.QUESTION_ANSWER_LIKED)) return;
+
         Answer answer = answerLike.getAnswer();
         Notification notification = notificationRepository.save(
                 Notification.builder()
@@ -264,6 +275,7 @@ public class NotificationAspect {
                 )
                 .toList();
 
+        notifications = notifications.stream().filter(notification -> agreeNotification(notification.getMember(), notification.getType())).toList();
         notificationRepository.saveAll(notifications);
         snsService.publishMessage(notifications);
     }
@@ -278,6 +290,8 @@ public class NotificationAspect {
 
         if (comment.getParent() != null) {
             target = comment.getParent().getMember();
+            if (!agreeNotification(target, NotificationType.POST_COMMENT_NEW_REPLY)) return;
+
             notification = notificationRepository.save(
                     Notification.builder()
                             .member(target)
@@ -290,6 +304,8 @@ public class NotificationAspect {
         }
         else {
             target = comment.getPost().getMember();
+            if (!agreeNotification(target, NotificationType.POST_NEW_COMMENT)) return;
+
             notification = notificationRepository.save(
                     Notification.builder()
                             .member(target)
@@ -312,6 +328,8 @@ public class NotificationAspect {
             log.info("===== Send View Increased Notification =====");
 
             Member target = post.getMember();
+            if (!agreeNotification(target, NotificationType.POST_VIEW_INCREASED)) return;
+
             Notification notification = notificationRepository.save(
                     Notification.builder()
                             .member(target)
@@ -344,6 +362,7 @@ public class NotificationAspect {
                 )
                 .toList();
 
+        notifications = notifications.stream().filter(notification -> agreeNotification(notification.getMember(), notification.getType())).toList();
         notificationRepository.saveAll(notifications);
         snsService.publishMessage(notifications);
     }
@@ -381,6 +400,8 @@ public class NotificationAspect {
             notificationRepository.saveAll(notifications);
         } while (members.hasNext());
 
+        // TODO: 전체 알림 수신 동의한 회원에게만 전송 (수신 동의한 사람들만 target에 등록)
+
         snsService.publishMessage(NotificationMessage.from(notifications.get(0)).getMessage());
     }
 
@@ -392,6 +413,8 @@ public class NotificationAspect {
         log.info("===== Send Exchange Complete Notification =====");
 
         Member target = exchange.getMember();
+        if (!agreeNotification(target, NotificationType.EXCHANGE_COMPLETE)) return;
+        
         Notification notification = notificationRepository.save(
                 Notification.builder()
                         .member(target)
@@ -412,4 +435,9 @@ public class NotificationAspect {
                 .stream().map(NotificationResponseDTO.GetNotificationsDTO.NotificationInfo::getNotificationId).toList());
     }
 
+    private boolean agreeNotification(Member target, NotificationType type) {
+        NotificationSetting notificationSetting = notificationSettingRepository.findByMemberId(target.getId()).orElse(null);
+        if (notificationSetting == null || notificationSetting.getService().equals(BooleanType.F)) return false;
+        return true;
+    }
 }
