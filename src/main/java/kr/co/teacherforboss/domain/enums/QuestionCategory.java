@@ -8,13 +8,13 @@ import lombok.RequiredArgsConstructor;
 public enum QuestionCategory {
 
 	ALL(0, "전체"),
-	MARKETING(1, "마케팅"),
-	HYGIENE(2, "위생"),
-	COMMERCIAL_RIGHTS(3, "상권"),
-	MANAGEMENT(4, "운영"),
-	HUMAN_RESOURCES(5, "직원관리"),
-	INTERIOR(6, "인테리어"),
-	POLICY(7, "정책")
+	TAX(1, "세무"),
+	LABOR(2, "노무"),
+	KNOW_HOW(3, "노하우"),
+	MARKETING(4, "마케팅"),
+	HYGIENE(5, "위생"),
+	COMMERCIAL_RIGHTS(6, "상권"),
+	INTERIOR(7, "인테리어")
 	;
 
 	private final int identifier;
