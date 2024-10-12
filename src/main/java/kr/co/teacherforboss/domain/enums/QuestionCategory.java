@@ -9,7 +9,7 @@ public enum QuestionCategory {
 
 	ALL(0, "전체"),
 	TAX(1, "세무"),
-	LABOR(2, "노무"),
+	EMPLOYEE_MANAGEMENT(2, "직원관리"),
 	KNOW_HOW(3, "노하우"),
 	MARKETING(4, "마케팅"),
 	HYGIENE(5, "위생"),
@@ -23,7 +23,7 @@ public enum QuestionCategory {
 	public static long getIdentifier(String name) {
 		switch (name) {
 			case "세무": return 1;
-			case "노무": return 2;
+			case "직원관리": return 2;
 			case "노하우": return 3;
 			case "마케팅": return 4;
 			case "위생": return 5;
