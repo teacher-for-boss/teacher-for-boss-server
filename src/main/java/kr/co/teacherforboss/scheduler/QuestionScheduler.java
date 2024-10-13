@@ -10,6 +10,7 @@ import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.repository.AnswerRepository;
 import kr.co.teacherforboss.repository.QuestionRepository;
 import kr.co.teacherforboss.repository.TeacherSelectInfoRepository;
+import kr.co.teacherforboss.service.boardService.BoardCommandService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -26,6 +27,7 @@ public class QuestionScheduler {
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
     private final TeacherSelectInfoRepository teacherSelectInfoRepository;
+    private final BoardCommandService boardCommandService;
 
     @Scheduled(cron = "0 0 0 * * *")
     @Transactional
@@ -36,22 +38,22 @@ public class QuestionScheduler {
         for (Question question : expiredQuestions) {
             if (question.getAnswerList().isEmpty()) { // 답변 자동 삭제 -> 해야할까 ? 티처 - 마이페이지에서 내가 답변한 글 조회 -> 눌렀을 때 삭제된 글입니다. 가 더 낫지 않나
                 System.out.println("Auto Delete Question : " + question.getId());
-                question.softDelete();
-                // TODO: 질문권 복구 및 질문글 삭제에 대한 푸시알림 추가
+                autoDeleteQuestion(question);
             } else { // 답변 채택
                 // TODO: 채택된 답변을 단 티쳐 status INACTIVE면 ? -> 연관관계 처리
-                Answer bestAnswer = answerRepository.findTopByQuestionIdAndSelectedAtIsNullAndStatusOrderByLikeCountDescDislikeCountAscCreatedAtAsc(question.getId(), Status.ACTIVE)
-                        .orElseThrow(() -> new BoardHandler(ErrorStatus.ANSWER_NOT_FOUND));
-                System.out.println(bestAnswer.getId());
-                System.out.println(bestAnswer.getQuestion().getId());
-
-                question.selectAnswer(bestAnswer);
-                TeacherSelectInfo teacherSelectInfo = teacherSelectInfoRepository.findByMemberIdAndStatus(bestAnswer.getMember().getId(), Status.ACTIVE)
-                            .orElseThrow(() -> new BoardHandler(ErrorStatus.TEACHER_SELECT_INFO_NOT_FOUND));
-                teacherSelectInfo.increaseSelectCount();
-
-                System.out.println("Auto Solved Question : " + question.getId() + ", Selected Ansewr : " + bestAnswer.getId());
+                System.out.println("Auto Solved Question : " + question.getId());
+                autoSelectAnswer(question);
             }
         }
+    }
+
+    public void autoDeleteQuestion(Question question) {
+        question.softDelete();
+    }
+
+    public void autoSelectAnswer(Question question) {
+        Answer bestAnswer = answerRepository.findTopByQuestionIdAndSelectedAtIsNullAndStatusOrderByLikeCountDescDislikeCountAscCreatedAtAsc(question.getId(), Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.ANSWER_NOT_FOUND));
+        boardCommandService.selectAnswer(question.getId(), bestAnswer.getId());
     }
 }

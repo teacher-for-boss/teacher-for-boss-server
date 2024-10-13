@@ -174,8 +174,6 @@ public class NotificationAspect {
         } while (questions.hasNext());
     }
 
-    /* QUESTION_ANSWER_SELECTED_AUTO */
-
     /* QUESTION_AUTO_DELETE_ALERT */
     // 배치 전송
     @Scheduled(cron = "0 0 9 * * ?")    // 매일 오전 9시
@@ -213,6 +211,24 @@ public class NotificationAspect {
 
 
     /* QUESTION_AUTO_DELETE */
+    @After(value = "execution(* kr.co.teacherforboss.scheduler.QuestionScheduler.autoDeleteQuestion(..)) && args(question)")
+    public void sendAutoDeleteQuestionNotification(Question question) {
+        log.info("===== Send Auto Delete Question Notification =====");
+
+        Member target = question.getMember();
+        if (!agreeNotification(target, NotificationType.QUESTION_AUTO_DELETE)) return;
+
+        Notification notification = notificationRepository.save(
+                Notification.builder()
+                        .member(target)
+                        .type(NotificationType.QUESTION_AUTO_DELETE)
+                        .title(NotificationType.QUESTION_AUTO_DELETE.getTitle(question.getTitle()))
+                        .content(NotificationType.QUESTION_AUTO_DELETE.getContent())
+                        .build()
+        );
+
+        snsService.publishMessage(List.of(notification));
+    }
 
     /* QUESTION_ANSWER_SELECTED */
     @AfterReturning(pointcut = "execution(* kr.co.teacherforboss.service.boardService.BoardCommandService.selectAnswer(..))", returning = "answer")
@@ -229,6 +245,27 @@ public class NotificationAspect {
                         .title(NotificationType.QUESTION_ANSWER_SELECTED.getTitle(answer.getQuestion().getTitle()))
                         .content(NotificationType.QUESTION_ANSWER_SELECTED.getContent(answer.getMember().getNickname()))
                         .data(new QuestionData(answer.getQuestion().getId()))
+                        .build()
+        );
+
+        snsService.publishMessage(List.of(notification));
+    }
+
+    /* QUESTION_ANSWER_SELECTED_AUTO */
+    @After(value = "execution(* kr.co.teacherforboss.scheduler.QuestionScheduler.autoSelectAnswer(..)) && args(question)")
+    public void sendAutoSelectAnswerNotification(Question question) {
+        log.info("===== Send Auto Select Answer Notification =====");
+
+        Member target = question.getMember();
+        if (!agreeNotification(target, NotificationType.QUESTION_ANSWER_SELECTED_AUTO)) return;
+
+        Notification notification = notificationRepository.save(
+                Notification.builder()
+                        .member(target)
+                        .type(NotificationType.QUESTION_ANSWER_SELECTED_AUTO)
+                        .title(NotificationType.QUESTION_ANSWER_SELECTED_AUTO.getTitle(question.getTitle()))
+                        .content(NotificationType.QUESTION_ANSWER_SELECTED_AUTO.getContent())
+                        .data(new QuestionData(question.getId()))
                         .build()
         );
 
