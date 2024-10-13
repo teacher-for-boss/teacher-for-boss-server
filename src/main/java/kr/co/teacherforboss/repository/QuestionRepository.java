@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.enums.Status;
@@ -187,4 +188,12 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 		GROUP BY q.id
 	""", nativeQuery = true)
 	Slice<Question> findQuestionsForAutoDeleteAlertByDate(LocalDateTime date, PageRequest pageRequest);
+    
+	@Query(value = """
+			SELECT * FROM question
+			WHERE DATE_ADD(created_at, INTERVAL 7 DAY) <= :nowDate
+			AND solved = 'F'
+			AND status = 'ACTIVE'
+			""", nativeQuery = true)
+	List<Question> findByExpiredDate(LocalDate nowDate);
 }

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.Question;
-import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.Status;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -57,4 +56,6 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
 	Slice<Answer> findFirstAnswersOfNotSolvedQuestion(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
 
 	int countByQuestionIdAndStatus(Long questionId, Status status);
+    
+	Optional<Answer> findTopByQuestionIdAndSelectedAtIsNullAndStatusOrderByLikeCountDescDislikeCountAscCreatedAtAsc(Long questionId, Status status);
 }

@@ -371,11 +371,11 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         Answer answer = answerRepository.findByIdAndQuestionIdAndStatus(answerId, questionId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.ANSWER_NOT_FOUND));
         TeacherSelectInfo teacherSelectInfo = teacherSelectInfoRepository.findByMemberIdAndStatus(answer.getMember().getId(), Status.ACTIVE)
-                .orElseThrow(() -> new BoardHandler(ErrorStatus.TEACHER_SELECT_INFO_NOT_FOUND));  // TODO: teacher 가입할 때 teacherSelectInfo 생성
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.TEACHER_SELECT_INFO_NOT_FOUND));
 
         question.selectAnswer(answer);
         teacherSelectInfo.increaseSelectCount();
-        teacherSelectInfo.addPoints(Question.POINT);
+//        teacherSelectInfo.addPoints(Question.POINT); TODO: 지금은 채택만 되고 TP 지급 안함
 
         return answer;
     }
