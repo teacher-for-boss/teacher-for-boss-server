@@ -1,5 +1,6 @@
 package kr.co.teacherforboss.config;
 
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +22,28 @@ public class AwsSnsConfig {
 
     @Value("${cloud.aws.region}")
     private String awsRegion;
+
+    @Value("${cloud.aws.sns.topic-arn-for-all}")
+    private String snsTopicARNForAll;
+    @Value("${cloud.aws.sns.topic-arn-for-general}")
+    private String snsTopicARNForGeneral;
+    @Value("${cloud.aws.sns.topic-arn-for-specific}")
+    private String snsTopicARNForSpecific;
+    @Value("${cloud.aws.sns.platform-application-arn}")
+    private String snsPlatformApplicationARN;
+
+    public static String SNS_TOPIC_ARN_FOR_ALL;
+    public static String SNS_TOPIC_ARN_FOR_GENERAL;
+    public static String SNS_TOPIC_ARN_FOR_SPECIFIC;
+    public static String SNS_PLATFORM_APPLICATION_ARN;
+
+    @PostConstruct
+    public void init() {
+        SNS_TOPIC_ARN_FOR_ALL = snsTopicARNForAll;
+        SNS_TOPIC_ARN_FOR_GENERAL = snsTopicARNForGeneral;
+        SNS_TOPIC_ARN_FOR_SPECIFIC = snsTopicARNForSpecific;
+        SNS_PLATFORM_APPLICATION_ARN = snsPlatformApplicationARN;
+    }
 
 
     @Bean

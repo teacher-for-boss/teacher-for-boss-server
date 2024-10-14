@@ -2,10 +2,14 @@ package kr.co.teacherforboss.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import kr.co.teacherforboss.domain.common.BaseEntity;
+import kr.co.teacherforboss.domain.enums.NotificationTopic;
+import kr.co.teacherforboss.web.dto.AuthRequestDTO.DeviceInfoDTO;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,6 +37,10 @@ public class DeviceToken extends BaseEntity {
     private String subscriptionArn;
 
     @Column
+    @Enumerated(EnumType.STRING)
+    private NotificationTopic topic;
+
+    @Column
     private String platform;
 
     public void updateEndpointArn(String endpointArn) {
@@ -41,5 +49,12 @@ public class DeviceToken extends BaseEntity {
 
     public void updateSubscriptionArn(String subscriptionArn) {
         this.subscriptionArn = subscriptionArn;
+    }
+
+    public static DeviceInfoDTO toDeviceInfoDTO(DeviceToken deviceToken) {
+        return DeviceInfoDTO.builder()
+                .fcmToken(deviceToken.getFcmToken())
+                .platform(deviceToken.getPlatform())
+                .build();
     }
 }

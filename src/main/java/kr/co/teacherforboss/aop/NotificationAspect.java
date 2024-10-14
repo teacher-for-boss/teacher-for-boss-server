@@ -301,6 +301,7 @@ public class NotificationAspect {
     public void sendHotQuestionNotification(GetHotQuestionsDTO hotQuestionsDTO) {
         log.info("===== Send Hot Question Notification =====");
 
+        // TODO: 연속 선정 시 중복 알림 방지
         List<Question> hotQuestions = questionRepository.findAllById(hotQuestionsDTO.getHotQuestionList().stream().map(HotQuestionInfo::getQuestionId).toList());
 
         List<Notification> notifications = hotQuestions.stream()
@@ -392,6 +393,8 @@ public class NotificationAspect {
     public void sendHotPostNotification(GetHotPostsDTO hotPostsDTO) {
         log.info("===== Send Hot Post Notification =====");
 
+        // TODO: 연속 선정 시 중복 알림 방지
+
         List<Post> hotPosts = postRepository.findAllById(hotPostsDTO.getHotPostList().stream().map(HotPostInfo::getPostId).toList());
 
         List<Notification> notifications = hotPosts.stream()
@@ -425,7 +428,7 @@ public class NotificationAspect {
         LocalDateTime now = LocalDateTime.now();
 
         do {
-            members = memberRepository.findAll(PageRequest.of(page++, batchSize));
+            members = memberRepository.findAllAgreeServiceNotification(PageRequest.of(page++, batchSize));
 
             notifications = members.stream()
                     .map(member -> Notification.builder()
@@ -443,9 +446,7 @@ public class NotificationAspect {
             notificationRepository.saveAll(notifications);
         } while (members.hasNext());
 
-        // TODO: 전체 알림 수신 동의한 회원에게만 전송 (수신 동의한 사람들만 target에 등록)
-
-        snsService.publishMessage(NotificationMessage.from(notifications.get(0)).getMessage());
+        snsService.publishMessage(notifications.get(0));
     }
 
     /* EXCHANGE_COMPLETE */

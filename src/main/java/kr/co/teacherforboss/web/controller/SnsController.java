@@ -5,7 +5,9 @@ import java.util.List;
 import kr.co.teacherforboss.aop.AwsSnsAspect;
 import kr.co.teacherforboss.aop.NotificationAspect;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
+import kr.co.teacherforboss.config.AwsSnsConfig;
 import kr.co.teacherforboss.domain.Member;
+import kr.co.teacherforboss.domain.enums.NotificationTopic;
 import kr.co.teacherforboss.domain.enums.NotificationType;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.service.snsService.SnsService;
@@ -32,14 +34,16 @@ public class SnsController {
     public ApiResponse<String> create(@RequestParam("fcmToken") String fcmToken,
                                       @RequestParam("platform") String platform) {
         Member member = authCommandService.getMember();
-        snsService.createEndpoint(member, new AuthRequestDTO.DeviceInfoDTO(fcmToken, platform));
+        snsService.createEndpoint(member, List.of(new AuthRequestDTO.DeviceInfoDTO(fcmToken, platform)), NotificationTopic.ALL);
+        snsService.createEndpoint(member, List.of(new AuthRequestDTO.DeviceInfoDTO(fcmToken, platform)), NotificationTopic.GENERAL);
         return ApiResponse.onSuccess("success");
     }
 
     @DeleteMapping("/endpoints")
     public ApiResponse<String> delete(@RequestParam("fcmToken") String fcmToken) {
         Member member = authCommandService.getMember();
-        snsService.deleteEndpoint(member, fcmToken);
+        snsService.deleteEndpoint(member, List.of(fcmToken), NotificationTopic.ALL);
+        snsService.deleteEndpoint(member, List.of(fcmToken), NotificationTopic.GENERAL);
         return ApiResponse.onSuccess("success");
     }
 
