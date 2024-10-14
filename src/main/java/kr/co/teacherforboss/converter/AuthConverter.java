@@ -47,7 +47,7 @@ public class AuthConverter {
         String keywords = String.join(";", request.getKeywords());
         return TeacherInfo.builder()
                 .member(member)
-                .businessNumber(request.getBusinessNumber())
+//                .businessNumber(request.getBusinessNumber())
                 .representative(request.getRepresentative())
                 .openDate(request.getOpenDate())
                 .field(request.getField())
