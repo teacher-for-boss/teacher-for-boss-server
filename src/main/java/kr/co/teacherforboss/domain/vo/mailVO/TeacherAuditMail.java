@@ -30,7 +30,9 @@ public class TeacherAuditMail extends Mail {
     }
     private String getOpenDate(TeacherInfo teacherInfo) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return teacherInfo.getOpenDate().format(formatter);
+        if (teacherInfo.getOpenDate() != null)
+            return teacherInfo.getOpenDate().format(formatter);
+        else return "";
     }
     private String getField(TeacherInfo teacherInfo) {
          return teacherInfo.getField();

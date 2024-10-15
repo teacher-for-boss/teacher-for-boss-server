@@ -37,11 +37,11 @@ public class TeacherInfo extends BaseEntity {
     @Column(length = 100)
     private String businessNumber;
 
-    @NotNull
+//    @NotNull
     @Column(length = 20)
     private String representative;
 
-    @NotNull
+//    @NotNull
     @Column
     private LocalDate openDate;
 
