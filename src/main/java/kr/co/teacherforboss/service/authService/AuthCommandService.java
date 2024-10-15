@@ -24,4 +24,5 @@ public interface AuthCommandService {
     BusinessAuth checkBusinessNumber(AuthRequestDTO.CheckBusinessNumberDTO request);
     Member withdraw();
     Member recover(String email);
+    Member completeTeacherSignup(AuthRequestDTO.CompleteTeacherSignupDTO request);
 }

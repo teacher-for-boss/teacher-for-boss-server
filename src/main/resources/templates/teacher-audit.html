@@ -1,0 +1,47 @@
+<!-- 인증 메일 -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+</head>
+<body
+        style="
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f9f9f9;
+    "
+>
+<div
+        style="
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        padding: 20px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+      "
+>
+    <h1 style="text-align: center; margin-bottom: 50px">
+        <img
+                src="https://teacherforboss-bucket.s3.ap-northeast-2.amazonaws.com/common/teacherforboss-logo-text.png"
+                alt="logo"
+                style="width: 146px; height: 123px"
+        />
+    </h1>
+    <h1 style="text-align: center; margin: 20px 0; margin-bottom: 50px">
+        &lt;티처 심사 요청&gt;
+    </h1>
+    <p style="text-align: left; margin: 10px 0; margin-left: 50px; margin-bottom: 50px">
+        핸드폰 번호 : <strong th:text="${phone}">phone </strong> <br/>
+        이메일 : <strong th:text="${email}">email </strong> <br/>
+        사업자 등록 번호 : <strong th:text="${businessNumber}">businessNumber </strong> <br/>
+        대표자명 : <strong th:text="${representative}">representative </strong> <br/>
+        개업연월일 : <strong th:text="${openDate}">openDate </strong> <br/>
+        분야 : <strong th:text="${field}">field </strong> <br/>
+        경력 : <strong th:text="${career}">career </strong> <br/>
+    </p>
+    <p style="margin: 0">&nbsp;</p>
+</div>
+</body>
+</html>

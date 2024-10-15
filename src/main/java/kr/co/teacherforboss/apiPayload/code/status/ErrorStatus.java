@@ -73,6 +73,8 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_ROLE_NOT_TEACHER(BAD_REQUEST, "MEMBER40024", "티쳐가 아닙니다."),
     MEMBER_ACCOUNT_INFO_EMPTY(BAD_REQUEST, "MEMBER40025", "계좌 정보를 입력해주세요."),
     MEMBER_ROLE_NOT_ADMIN(BAD_REQUEST, "MEMBER40026", "관리자가 아닙니다."),
+    MEMBER_NOT_UNDER_TEACHER_REVIEW(BAD_REQUEST, "MEMBER40027", "심사 진행 중인 티쳐가 아닙니다."),
+    MEMBER_ALREADY_REVIEWED(BAD_REQUEST, "MEMBER40028", "심사 완료된 티쳐는 가입할 수 없습니다."),
 
     MEMBER_NOT_FOUND(NOT_FOUND, "MEMBER4041", "사용자가 없습니다."),
     TEACHER_INFO_NOT_FOUND(NOT_FOUND, "MEMBER4042", "사용자에 해당되는 티쳐 정보가 없습니다."),

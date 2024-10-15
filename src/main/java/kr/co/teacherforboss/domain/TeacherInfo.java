@@ -33,7 +33,7 @@ public class TeacherInfo extends BaseEntity {
     @JoinColumn(name = "memberId")
     private Member member;
 
-    @NotNull
+//    @NotNull
     @Column(length = 100)
     private String businessNumber;
 
