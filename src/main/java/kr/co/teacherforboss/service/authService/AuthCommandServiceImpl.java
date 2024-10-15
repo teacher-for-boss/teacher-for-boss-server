@@ -310,10 +310,10 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 //             throw new AuthHandler(ErrorStatus.BUSINESS_NUMBER_NOT_CHECKED);
 //        if (request.getBusinessNumber() == null)
 //            throw new AuthHandler(ErrorStatus.MEMBER_BUSINESS_NUMBER_EMPTY);
-        if (request.getRepresentative() == null)
-            throw new AuthHandler(ErrorStatus.MEMBER_REPRESENTATIVE_EMPTY);
-        if (request.getOpenDate().toString().isBlank())
-            throw new AuthHandler(ErrorStatus.MEMBER_OPEN_DATE_EMPTY);
+//        if (request.getRepresentative() == null)
+//            throw new AuthHandler(ErrorStatus.MEMBER_REPRESENTATIVE_EMPTY);
+//        if (request.getOpenDate().toString().isBlank())
+//            throw new AuthHandler(ErrorStatus.MEMBER_OPEN_DATE_EMPTY);
         if (request.getBank() == null)
             throw new AuthHandler(ErrorStatus.MEMBER_BANK_EMPTY);
         if (request.getAccountNumber() == null)
