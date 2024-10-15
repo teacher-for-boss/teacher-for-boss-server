@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.config.jwt.JwtTokenProvider;
-import kr.co.teacherforboss.config.jwt.PrincipalDetails;
 import kr.co.teacherforboss.converter.AuthConverter;
 import kr.co.teacherforboss.domain.BusinessAuth;
 import kr.co.teacherforboss.domain.Member;
@@ -13,14 +12,12 @@ import kr.co.teacherforboss.domain.PhoneAuth;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.service.authService.AuthQueryService;
 import kr.co.teacherforboss.validation.annotation.CheckSocialType;
-import kr.co.teacherforboss.validation.annotation.ExistPrincipalDetails;
 import kr.co.teacherforboss.web.dto.AuthRequestDTO;
 import kr.co.teacherforboss.web.dto.AuthResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -140,5 +137,11 @@ public class AuthController {
     public ApiResponse<AuthResponseDTO.RecoverDTO> recover(@RequestHeader("email") String email) {
         Member member = authCommandService.recover(email);
         return ApiResponse.onSuccess(AuthConverter.toRecoverDTO(member));
+    }
+
+    @PatchMapping("/teacher/signup-complete")
+    public ApiResponse<AuthResponseDTO.CompleteTeacherSignupDTO> completeTeacherSignup(@RequestBody @Valid AuthRequestDTO.CompleteTeacherSignupDTO request) {
+        Member member = authCommandService.completeTeacherSignup(request);
+        return ApiResponse.onSuccess(AuthConverter.toCompleteTeacherSignupDTO(member));
     }
 }

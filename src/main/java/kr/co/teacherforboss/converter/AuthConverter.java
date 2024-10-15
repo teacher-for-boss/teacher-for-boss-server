@@ -184,4 +184,11 @@ public class AuthConverter {
                 .activeDate(LocalDateTime.now())
                 .build();
     }
+
+    public static AuthResponseDTO.CompleteTeacherSignupDTO toCompleteTeacherSignupDTO(Member member) {
+        return AuthResponseDTO.CompleteTeacherSignupDTO.builder()
+                .memberId(member.getId())
+                .role(member.getRole())
+                .build();
+    }
 }

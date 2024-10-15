@@ -241,4 +241,13 @@ public class AuthRequestDTO {
         @NotNull(message = "개업연월일이 없습니다.")
         LocalDate openDate;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CompleteTeacherSignupDTO {
+        @NotNull(message = "memberId 값이 없습니다.")
+        Long memberId;
+    }
 }
