@@ -4,7 +4,6 @@ import kr.co.teacherforboss.domain.BusinessAuth;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.EmailAuth;
 import kr.co.teacherforboss.domain.PhoneAuth;
-import kr.co.teacherforboss.domain.TeacherSelectInfo;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.TeacherInfo;
 import kr.co.teacherforboss.domain.enums.Gender;
@@ -30,12 +29,15 @@ public class AuthConverter {
 
     public static Member toMember(AuthRequestDTO.JoinDTO request){
         Gender gender = Gender.of(request.getGender());
+        Role role = Role.of(request.getRole());
+
+        if (role == Role.TEACHER) role = Role.TEACHER_RV;
 
         return Member.builder()
                 .name(request.getName())
                 .email(request.getEmail())
                 .loginType(LoginType.GENERAL)
-                .role(Role.TEACHER_RV)
+                .role(role)
                 .gender(gender)
                 .birthDate(request.getBirthDate())
                 .phone(request.getPhone())
@@ -141,11 +143,13 @@ public class AuthConverter {
   
     public static Member toSocialMember(AuthRequestDTO.SocialLoginDTO request, int socialType){
         Gender gender = Gender.of(request.getGender());
+        Role role = Role.of(request.getRole());
 
+        if (role == Role.TEACHER) role = Role.TEACHER_RV;
         return Member.builder()
                 .name(request.getName())
                 .email(request.getEmail())
-                .role(Role.TEACHER_RV)
+                .role(role)
                 .gender(gender)
                 .loginType(LoginType.of(socialType))
                 .birthDate(request.getBirthDate())
