@@ -17,6 +17,7 @@ import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.service.mailService.MailCommandService;
 import kr.co.teacherforboss.web.dto.PaymentRequestDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class PaymentCommandServiceImpl implements PaymentCommandService {
 
+    @Value("${spring.mail.username}")
+    private String ADMIN_MAIL;
     private final AuthCommandService authCommandService;
     private final MailCommandService mailCommandService;
     private final TeacherInfoRepository teacherInfoRepository;
@@ -54,7 +57,7 @@ public class PaymentCommandServiceImpl implements PaymentCommandService {
         if (request.getPoints() > teacherSelectInfo.getPoints()) throw new PaymentHandler(ErrorStatus.TEACHER_POINT_LIMIT_OVER);
 
         ExchangeMail exchangeMail = new ExchangeMail(teacherSelectInfo.getPoints(), request.getPoints(), teacherInfo);
-        mailCommandService.sendMail(member.getEmail(), exchangeMail);
+        mailCommandService.sendMail(ADMIN_MAIL, exchangeMail);
 
         Exchange exchange = PaymentConverter.toExchange(member, request.getPoints());
         teacherSelectInfo.decreasePoints(request.getPoints());
