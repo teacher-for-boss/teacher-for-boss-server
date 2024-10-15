@@ -4,7 +4,6 @@ import kr.co.teacherforboss.domain.BusinessAuth;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.EmailAuth;
 import kr.co.teacherforboss.domain.PhoneAuth;
-import kr.co.teacherforboss.domain.TeacherSelectInfo;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.TeacherInfo;
 import kr.co.teacherforboss.domain.enums.Gender;
@@ -31,6 +30,8 @@ public class AuthConverter {
     public static Member toMember(AuthRequestDTO.JoinDTO request){
         Gender gender = Gender.of(request.getGender());
         Role role = Role.of(request.getRole());
+
+        if (role == Role.TEACHER) role = Role.TEACHER_RV;
 
         return Member.builder()
                 .name(request.getName())
@@ -144,6 +145,7 @@ public class AuthConverter {
         Gender gender = Gender.of(request.getGender());
         Role role = Role.of(request.getRole());
 
+        if (role == Role.TEACHER) role = Role.TEACHER_RV;
         return Member.builder()
                 .name(request.getName())
                 .email(request.getEmail())
@@ -182,6 +184,13 @@ public class AuthConverter {
         return AuthResponseDTO.RecoverDTO.builder()
                 .memberId(member.getId())
                 .activeDate(LocalDateTime.now())
+                .build();
+    }
+
+    public static AuthResponseDTO.CompleteTeacherSignupDTO toCompleteTeacherSignupDTO(Member member) {
+        return AuthResponseDTO.CompleteTeacherSignupDTO.builder()
+                .memberId(member.getId())
+                .role(member.getRole())
                 .build();
     }
 }

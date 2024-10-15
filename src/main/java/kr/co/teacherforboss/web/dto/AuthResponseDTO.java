@@ -1,6 +1,8 @@
 package kr.co.teacherforboss.web.dto;
 
 import java.time.LocalDateTime;
+
+import kr.co.teacherforboss.domain.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -131,5 +133,14 @@ public class AuthResponseDTO {
     public static class RecoverDTO {
         Long memberId;
         LocalDateTime activeDate;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CompleteTeacherSignupDTO {
+        Long memberId;
+        Role role;
     }
 }
