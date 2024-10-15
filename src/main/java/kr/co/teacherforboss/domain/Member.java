@@ -94,8 +94,9 @@ public class Member extends BaseEntity {
         this.profileImg = profileImg;
     }
 
-    public void setRole(Role role) {
+    public Member setRole(Role role) {
         this.role = role;
+        return this;
     }
 
     @Override

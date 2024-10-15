@@ -95,9 +95,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
         newMember.setProfile(request.getNickname(), request.getProfileImg());
 
-        if (Role.of(request.getRole()).equals(Role.TEACHER))
-            throw new AuthHandler(ErrorStatus.MEMBER_ALREADY_REVIEWED);
-        if (Role.of(request.getRole()).equals(Role.TEACHER_RV)) {
+        if (Role.of(request.getRole()).equals(Role.TEACHER)) {
             TeacherInfo teacherInfo = saveTeacherInfo(request, newMember);
             saveTeacherSelectInfo(newMember);
             TeacherAuditMail teacherAuditMail = new TeacherAuditMail(newMember, teacherInfo);
@@ -279,9 +277,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         newMember.setPassword(passwordList);
 
         newMember.setProfile(request.getNickname(), request.getProfileImg());
-        if (Role.of(request.getRole()).equals(Role.TEACHER))
-            throw new AuthHandler(ErrorStatus.MEMBER_ALREADY_REVIEWED);
-        if (Role.of(request.getRole()).equals(Role.TEACHER_RV)) {
+        if (Role.of(request.getRole()).equals(Role.TEACHER)) {
             TeacherInfo teacherInfo = saveTeacherInfo(request, newMember);
             saveTeacherSelectInfo(newMember);
             TeacherAuditMail teacherAuditMail = new TeacherAuditMail(newMember, teacherInfo);
@@ -398,14 +394,10 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Transactional
     public Member completeTeacherSignup(AuthRequestDTO.CompleteTeacherSignupDTO request) {
         Member admin = getMember();
-        if (admin.getRole() != Role.ADMIN)
-            throw new AuthHandler(ErrorStatus.MEMBER_ROLE_NOT_ADMIN);
-
         Member member = memberRepository.findByIdAndStatus(request.getMemberId(), Status.ACTIVE)
                 .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
         if (member.getRole() != Role.TEACHER_RV)
             throw new AuthHandler(ErrorStatus.MEMBER_NOT_UNDER_TEACHER_REVIEW);
-        member.setRole(Role.TEACHER);
-        return memberRepository.save(member);
+        return member.setRole(Role.TEACHER);
     }
 }

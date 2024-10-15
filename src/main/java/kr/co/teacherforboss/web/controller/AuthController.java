@@ -16,6 +16,7 @@ import kr.co.teacherforboss.web.dto.AuthRequestDTO;
 import kr.co.teacherforboss.web.dto.AuthResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.validation.annotation.Validated;
@@ -139,7 +140,8 @@ public class AuthController {
         return ApiResponse.onSuccess(AuthConverter.toRecoverDTO(member));
     }
 
-    @PatchMapping("/teacher/signup-complete")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PatchMapping("/signup/approve")
     public ApiResponse<AuthResponseDTO.CompleteTeacherSignupDTO> completeTeacherSignup(@RequestBody @Valid AuthRequestDTO.CompleteTeacherSignupDTO request) {
         Member member = authCommandService.completeTeacherSignup(request);
         return ApiResponse.onSuccess(AuthConverter.toCompleteTeacherSignupDTO(member));

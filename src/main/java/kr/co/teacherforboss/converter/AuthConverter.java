@@ -30,13 +30,12 @@ public class AuthConverter {
 
     public static Member toMember(AuthRequestDTO.JoinDTO request){
         Gender gender = Gender.of(request.getGender());
-        Role role = Role.of(request.getRole());
 
         return Member.builder()
                 .name(request.getName())
                 .email(request.getEmail())
                 .loginType(LoginType.GENERAL)
-                .role(role)
+                .role(Role.TEACHER_RV)
                 .gender(gender)
                 .birthDate(request.getBirthDate())
                 .phone(request.getPhone())
@@ -142,12 +141,11 @@ public class AuthConverter {
   
     public static Member toSocialMember(AuthRequestDTO.SocialLoginDTO request, int socialType){
         Gender gender = Gender.of(request.getGender());
-        Role role = Role.of(request.getRole());
 
         return Member.builder()
                 .name(request.getName())
                 .email(request.getEmail())
-                .role(role)
+                .role(Role.TEACHER_RV)
                 .gender(gender)
                 .loginType(LoginType.of(socialType))
                 .birthDate(request.getBirthDate())
