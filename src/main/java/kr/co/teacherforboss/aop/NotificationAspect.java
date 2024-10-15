@@ -70,6 +70,7 @@ public class NotificationAspect {
         log.info("===== Send New Answer Notification =====");
 
         Member target = answer.getQuestion().getMember();
+        if (target.getId().equals(answer.getMember().getId())) return;
         if (!agreeNotification(target, NotificationType.QUESTION_NEW_ANSWER)) return;
 
         Notification notification = notificationRepository.save(
