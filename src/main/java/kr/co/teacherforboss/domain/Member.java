@@ -26,10 +26,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Table(uniqueConstraints = {
-        @UniqueConstraint(name= "member_email_uk", columnNames={ "email" }),
-        @UniqueConstraint(name= "member_phone_uk", columnNames={ "phone" })
-})
+//@Table(uniqueConstraints = {
+//        @UniqueConstraint(name= "member_email_uk", columnNames={ "email" }),
+//        @UniqueConstraint(name= "member_phone_uk", columnNames={ "phone" })
+//})
 public class Member extends BaseEntity {
 
     @NotNull
