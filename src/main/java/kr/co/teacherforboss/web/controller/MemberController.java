@@ -42,7 +42,6 @@ public class MemberController {
         return ApiResponse.onSuccess(memberQueryService.getTeacherProfileDetail(memberId));
     }
 
-    @PreAuthorize("hasRole('ROLE_TEACHER')")
     @GetMapping("/profiles/teacher/{memberId}/recent-answers")
     public ApiResponse<MemberResponseDTO.GetRecentAnswersDTO> getRecentAnswers(@PathVariable("memberId") Long memberId) {
         return ApiResponse.onSuccess(memberQueryService.getRecentAnswers(memberId));
