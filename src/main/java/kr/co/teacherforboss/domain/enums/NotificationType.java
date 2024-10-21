@@ -23,6 +23,8 @@ public enum NotificationType {
     POST_HOT("{0}", "{0}님의 글이 인기글이 되었어요!"),
     HOME_NEW_HOT_TEACHERS("보스들의 선택은 누구?", "이번 주 인기 티처 결과가 발표되었어요!"),
     EXCHANGE_COMPLETE("환전 완료!", "{0}TP 환전이 완료되었어요! 계좌를 확인해주세요."),
+    TEACHER_SIGNUP_COMPLETE("티처 심사 완료!", "이제 티처포보스에서 티처로 활동할 수 있어요."),
+    TEACHER_SIGNUP_REJECT("티처 심사가 반려되었어요.", "티처 심사에 실패했어요. 궁금한 점은 티처포보스로 문의해주세요."),
     NOTICE("{0}", "{0}"),
     EVENT("{0}", "{0}");
 

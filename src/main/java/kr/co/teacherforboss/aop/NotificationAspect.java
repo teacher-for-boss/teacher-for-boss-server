@@ -496,6 +496,26 @@ public class NotificationAspect {
         snsService.publishMessage(List.of(notification));
     }
 
+    /* TEACHER_SIGNUP_COMPLETE */
+    @AfterReturning(value = "execution(* kr.co.teacherforboss.service.authService.AuthCommandService.completeTeacherSignup(..))", returning = "member")
+    public void sendTeacherSignupCompleteNotification(Member member) {
+        log.info("===== Send Teacher Signup Complete Notification =====");
+
+        if (!agreeNotification(member, NotificationType.TEACHER_SIGNUP_COMPLETE)) return;
+
+        Notification notification = notificationRepository.save(
+                Notification.builder()
+                        .member(member)
+                        .type(NotificationType.TEACHER_SIGNUP_COMPLETE)
+                        .title(NotificationType.TEACHER_SIGNUP_COMPLETE.getTitle())
+                        .content(NotificationType.TEACHER_SIGNUP_COMPLETE.getContent())
+                        .data(null)
+                        .build()
+        );
+
+        snsService.publishMessage(List.of(notification));
+    }
+
     /* 알림 읽음 처리 */
     @AfterReturning(value = "execution(* kr.co.teacherforboss.service.notificationService.NotificationQueryService.getNotifications(..))", returning = "notificationsDTO")
     public void readNotification(NotificationResponseDTO.GetNotificationsDTO notificationsDTO) {
