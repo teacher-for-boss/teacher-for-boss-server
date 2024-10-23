@@ -29,6 +29,7 @@ public class NotificationConverter {
                                 .title(notification.getTitle())
                                 .content(notification.getContent())
                                 .type(notification.getType().name())
+                                .data(notification.getData())
                                 .read(notification.getIsRead().isIdentifier())
                                 .createdAt(notification.getCreatedAt().toString())
                                 .build())

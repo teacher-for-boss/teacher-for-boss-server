@@ -1,6 +1,7 @@
 package kr.co.teacherforboss.web.dto;
 
 import java.util.List;
+import kr.co.teacherforboss.domain.vo.notificationVO.NotificationLinkData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,6 +38,7 @@ public class NotificationResponseDTO {
             String title;
             String content;
             String type;
+            NotificationLinkData data;
             boolean read;
             String createdAt;
         }
