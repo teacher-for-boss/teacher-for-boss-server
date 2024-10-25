@@ -20,7 +20,9 @@ import kr.co.teacherforboss.domain.QuestionLike;
 import kr.co.teacherforboss.domain.TeacherInfo;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.ImageOrigin;
+import kr.co.teacherforboss.domain.enums.QuestionExtraDataUserType;
 import kr.co.teacherforboss.domain.enums.Status;
+import kr.co.teacherforboss.domain.vo.questionVO.QuestionExtraData;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import kr.co.teacherforboss.web.dto.HomeResponseDTO;
@@ -196,6 +198,44 @@ public class BoardConverter {
                 .build();
     }
 
+    public static Question toMarketQuestion(BoardRequestDTO.SaveMarketQuestionDTO request, Member member, Category category) {
+        return Question.builder()
+                .category(category)
+                .member(member)
+                .title(request.getTitle())
+                .content(request.getContent())
+                .extraContent(new QuestionExtraData.MarketData(
+                        QuestionExtraDataUserType.of(request.getBossType()), request.getBusinessType(), request.getLocation(),
+                        request.getCustomerType(), request.getStoreInfo(), request.getBudget()
+                ))
+                .solved(BooleanType.F)
+                .likeCount(0)
+                .viewCount(0)
+                .bookmarkCount(0)
+                .imageUuid(extractImageUuid(request.getImageUrlList()))
+                .imageIndex(extractImageIndexs(request.getImageUrlList()))
+                .build();
+    }
+
+    public static Question toTaxQuestion(BoardRequestDTO.SaveTaxQuestionDTO request, Member member, Category category) {
+        return Question.builder()
+                .category(category)
+                .member(member)
+                .title(request.getTitle())
+                .content(request.getContent())
+                .extraContent(new QuestionExtraData.TaxData(
+                        QuestionExtraDataUserType.of(request.getTaxFilingStatus()), request.getBusinessInfo(), request.getBranchInfo(),
+                        request.getEmployeeManagement(), request.getPurchaseEvidence(), request.getSalesScale()
+                ))
+                .solved(BooleanType.F)
+                .likeCount(0)
+                .viewCount(0)
+                .bookmarkCount(0)
+                .imageUuid(extractImageUuid(request.getImageUrlList()))
+                .imageIndex(extractImageIndexs(request.getImageUrlList()))
+                .build();
+    }
+
     public static QuestionHashtag toQuestionHashtag(Question question, Hashtag hashtag) {
         return QuestionHashtag.builder()
                 .question(question)
@@ -324,6 +364,7 @@ public class BoardConverter {
         return BoardResponseDTO.GetQuestionDTO.builder()
                 .title(question.getTitle())
                 .content(question.getContent())
+                .extraContent(question.getExtraContent())
                 .category(question.getCategory().getName())
                 .imageUrlList(toImageUrlList(ImageOrigin.QUESTION.getValue(), question.getImageUuid(), question.getImageIndex()))
                 .hashtagList(toQuestionHashtags(question))

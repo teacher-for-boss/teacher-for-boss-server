@@ -156,6 +156,57 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         return question;
     }
 
+    @Override
+    @Transactional
+    public Question saveMarketQuestion(BoardRequestDTO.SaveMarketQuestionDTO request) {
+        Member member = authCommandService.getMember();
+        Category category = categoryRepository.findByIdAndStatus(request.getCategoryId(), Status.ACTIVE);
+        if (!(category.getId() == 3 || category.getId() == 6))
+            throw new BoardHandler(ErrorStatus.INVALID_QUESTION_CATEGORY);
+        if (!(request.getBossType() == 1 || request.getBossType() == 2))
+            throw new BoardHandler(ErrorStatus.INVALID_QUESTION_USERTYPE);
+        Question question = BoardConverter.toMarketQuestion(request, member, category);
+
+        List<QuestionHashtag> questionHashtags = createHashtags(request.getHashtagList(), question);
+        questionRepository.save(question);
+        questionHashtagRepository.saveAll(questionHashtags);
+
+        return question;
+    }
+
+    @Override
+    @Transactional
+    public Question saveTaxQuestion(BoardRequestDTO.SaveTaxQuestionDTO request) {
+        Member member = authCommandService.getMember();
+        Category category = categoryRepository.findByIdAndStatus(request.getCategoryId(), Status.ACTIVE);
+        if (category.getId() != 1)
+            throw new BoardHandler(ErrorStatus.INVALID_QUESTION_CATEGORY);
+        if (!(request.getTaxFilingStatus() == 3 || request.getTaxFilingStatus() == 4))
+            throw new BoardHandler(ErrorStatus.INVALID_QUESTION_USERTYPE);
+        Question question = BoardConverter.toTaxQuestion(request, member, category);
+
+        List<QuestionHashtag> questionHashtags = createHashtags(request.getHashtagList(), question);
+        questionRepository.save(question);
+        questionHashtagRepository.saveAll(questionHashtags);
+
+        return question;
+    }
+
+    private List<QuestionHashtag> createHashtags(List<String> hashtagList, Question question) {
+        List<QuestionHashtag> questionHashtags = new ArrayList<>();
+        if (hashtagList != null) {
+            Set<String> hashtags = new HashSet<>(hashtagList);
+            for (String tag : hashtags) {
+                Hashtag hashtag = hashtagRepository.findByNameAndStatus(tag, Status.ACTIVE);
+                if (hashtag == null) {
+                    hashtag = hashtagRepository.save(BoardConverter.toHashtag(tag));
+                }
+                QuestionHashtag questionHashtag = BoardConverter.toQuestionHashtag(question, hashtag);
+                questionHashtags.add(questionHashtag);
+            }
+        }
+        return questionHashtags;
+    }
 
     @Override
     @Transactional

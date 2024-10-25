@@ -33,10 +33,7 @@ public class BoardRequestDTO {
     }
 
     @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Builder
-    public static class SaveQuestionDTO {
+    public static abstract class SaveQuestionDTO {
 
         @NotNull(message = "카테고리는 필수 입력값입니다.")
         Long categoryId;
@@ -55,6 +52,40 @@ public class BoardRequestDTO {
         @Size(max = 3, message = "사진은 최대 3장까지 등록 가능합니다.")
         @CheckImageUuid
         List<String> imageUrlList;
+    }
+
+    @Getter
+    @Builder
+    public static class SaveMarketQuestionDTO extends SaveQuestionDTO {
+        @NotNull(message = "작성자 유형은 필수 입력값입니다.")
+        Integer bossType;
+        @Size(max = 200)
+        String businessType;
+        @Size(max = 200)
+        String location;
+        @Size(max = 200)
+        String customerType;
+        @Size(max = 200)
+        String storeInfo;
+        @Size(max = 200)
+        String budget;
+    }
+
+    @Getter
+    @Builder
+    public static class SaveTaxQuestionDTO extends SaveQuestionDTO {
+        @NotNull(message = "세무 기장 여부는 필수 입력값입니다.")
+        Integer taxFilingStatus;
+        @Size(max = 200)
+        String businessInfo;
+        @Size(max = 200)
+        String branchInfo;
+        @Size(max = 200)
+        String employeeManagement;
+        @Size(max = 200)
+        String purchaseEvidence;
+        @Size(max = 200)
+        String salesScale;
     }
 
     @Getter

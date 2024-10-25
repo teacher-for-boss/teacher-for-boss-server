@@ -16,6 +16,8 @@ public interface BoardCommandService {
     Post savePost(BoardRequestDTO.SavePostDTO request);
     Post editPost(Long postId, BoardRequestDTO.SavePostDTO request);
     Question saveQuestion(BoardRequestDTO.SaveQuestionDTO request);
+    Question saveMarketQuestion(BoardRequestDTO.SaveMarketQuestionDTO request);
+    Question saveTaxQuestion(BoardRequestDTO.SaveTaxQuestionDTO request);
     PostBookmark togglePostBookmark(Long postId);
     PostLike togglePostLike(Long postId);
     Post deletePost(Long postId);
