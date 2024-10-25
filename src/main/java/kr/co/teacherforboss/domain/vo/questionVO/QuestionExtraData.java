@@ -21,7 +21,7 @@ public class QuestionExtraData {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class MarketData extends QuestionExtraData {
-        private QuestionExtraDataUserType bossType;
+        private String bossType;
         private String businessType;
         private String location;
         private String customerType;
@@ -33,7 +33,7 @@ public class QuestionExtraData {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class TaxData extends QuestionExtraData {
-        private QuestionExtraDataUserType taxFilingStatus;
+        private String taxFilingStatus;
         private String businessInfo;
         private String branchInfo;
         private String employeeManagement;

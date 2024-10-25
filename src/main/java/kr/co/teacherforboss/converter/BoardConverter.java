@@ -205,7 +205,7 @@ public class BoardConverter {
                 .title(request.getTitle())
                 .content(request.getContent())
                 .extraContent(new QuestionExtraData.MarketData(
-                        QuestionExtraDataUserType.of(request.getBossType()), request.getBusinessType(), request.getLocation(),
+                        QuestionExtraDataUserType.of(request.getBossType()).getUserType(), request.getBusinessType(), request.getLocation(),
                         request.getCustomerType(), request.getStoreInfo(), request.getBudget()
                 ))
                 .solved(BooleanType.F)
@@ -224,7 +224,7 @@ public class BoardConverter {
                 .title(request.getTitle())
                 .content(request.getContent())
                 .extraContent(new QuestionExtraData.TaxData(
-                        QuestionExtraDataUserType.of(request.getTaxFilingStatus()), request.getBusinessInfo(), request.getBranchInfo(),
+                        QuestionExtraDataUserType.of(request.getTaxFilingStatus()).getUserType(), request.getBusinessInfo(), request.getBranchInfo(),
                         request.getEmployeeManagement(), request.getPurchaseEvidence(), request.getSalesScale()
                 ))
                 .solved(BooleanType.F)
