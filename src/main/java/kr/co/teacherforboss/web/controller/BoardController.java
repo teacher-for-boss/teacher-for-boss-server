@@ -76,20 +76,6 @@ public class BoardController {
         return ApiResponse.onSuccess(BoardConverter.toSaveQuestionDTO(question));
     }
 
-    @PreAuthorize("hasRole('ROLE_BOSS')")
-    @PostMapping("/teacher/questions/market-questions")
-    public ApiResponse<BoardResponseDTO.SaveQuestionDTO> saveMarketQuestion(@RequestBody @Valid BoardRequestDTO.SaveMarketQuestionDTO request) {
-        Question question = boardCommandService.saveMarketQuestion(request);
-        return ApiResponse.onSuccess(BoardConverter.toSaveQuestionDTO(question));
-    }
-
-    @PreAuthorize("hasRole('ROLE_BOSS')")
-    @PostMapping("/teacher/questions/tax-questions")
-    public ApiResponse<BoardResponseDTO.SaveQuestionDTO> saveTaxQuestion(@RequestBody @Valid BoardRequestDTO.SaveTaxQuestionDTO request) {
-        Question question = boardCommandService.saveTaxQuestion(request);
-        return ApiResponse.onSuccess(BoardConverter.toSaveQuestionDTO(question));
-    }
-
     @PostMapping("/boss/posts/{postId}/bookmark")
     public ApiResponse<BoardResponseDTO.TogglePostBookmarkDTO> togglePostBookmark(@PathVariable("postId") Long postId){
         PostBookmark bookmark = boardCommandService.togglePostBookmark(postId);

@@ -1,6 +1,7 @@
 package kr.co.teacherforboss.converter;
 
-import java.util.UUID;
+import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
+import kr.co.teacherforboss.apiPayload.exception.handler.BoardHandler;
 import kr.co.teacherforboss.config.AwsS3Config;
 import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.AnswerLike;
@@ -184,11 +185,14 @@ public class BoardConverter {
 	}
 
     public static Question toQuestion(BoardRequestDTO.SaveQuestionDTO request, Member member, Category category) {
+        QuestionExtraData extraContent = createExtraContent(request.getExtraContent(), category);
+
         return Question.builder()
                 .category(category)
                 .member(member)
                 .title(request.getTitle())
                 .content(request.getContent())
+                .extraContent(extraContent)
                 .solved(BooleanType.F)
                 .likeCount(0)
                 .viewCount(0)
@@ -198,42 +202,59 @@ public class BoardConverter {
                 .build();
     }
 
-    public static Question toMarketQuestion(BoardRequestDTO.SaveMarketQuestionDTO request, Member member, Category category) {
-        return Question.builder()
-                .category(category)
-                .member(member)
-                .title(request.getTitle())
-                .content(request.getContent())
-                .extraContent(new QuestionExtraData.MarketData(
-                        QuestionExtraDataUserType.of(request.getBossType()).getUserType(), request.getBusinessType(), request.getLocation(),
-                        request.getCustomerType(), request.getStoreInfo(), request.getBudget()
-                ))
-                .solved(BooleanType.F)
-                .likeCount(0)
-                .viewCount(0)
-                .bookmarkCount(0)
-                .imageUuid(extractImageUuid(request.getImageUrlList()))
-                .imageIndex(extractImageIndexs(request.getImageUrlList()))
-                .build();
+    private static QuestionExtraData createExtraContent(Map<String, Object> extraContentMap, Category category) {
+        if (category.getId() == 3 || category.getId() == 6) {
+            if (!validateMarketDataFields(extraContentMap)) {
+                throw new BoardHandler(ErrorStatus.INVALID_EXTRA_CONTENT_FIELDS);
+            }
+
+            Integer bossType = (Integer) extraContentMap.get("bossType");
+            if (bossType != 1 && bossType != 2) throw new BoardHandler(ErrorStatus.INVALID_QUESTION_USER_TYPE);
+
+            return new QuestionExtraData.MarketData(
+                    QuestionExtraDataUserType.of(bossType).getUserType(),
+                    (String) extraContentMap.get("businessType"),
+                    (String) extraContentMap.get("location"),
+                    (String) extraContentMap.get("customerType"),
+                    (String) extraContentMap.get("storeInfo"),
+                    (String) extraContentMap.get("budget")
+            );
+        } else if (category.getId() == 1) {
+            if (!validateTaxDataFields(extraContentMap)) {
+                throw new BoardHandler(ErrorStatus.INVALID_EXTRA_CONTENT_FIELDS);
+            }
+
+            Integer taxFilingStatus = (Integer) extraContentMap.get("taxFilingStatus");
+            if (taxFilingStatus != 3 && taxFilingStatus != 4) throw new BoardHandler(ErrorStatus.INVALID_QUESTION_USER_TYPE);
+            return new QuestionExtraData.TaxData(
+                    QuestionExtraDataUserType.of(taxFilingStatus).getUserType(),
+                    (String) extraContentMap.get("businessInfo"),
+                    (String) extraContentMap.get("branchInfo"),
+                    (String) extraContentMap.get("employeeManagement"),
+                    (String) extraContentMap.get("purchaseEvidence"),
+                    (String) extraContentMap.get("salesScale")
+            );
+        } else {
+            throw new BoardHandler(ErrorStatus.INVALID_QUESTION_CATEGORY);
+        }
     }
 
-    public static Question toTaxQuestion(BoardRequestDTO.SaveTaxQuestionDTO request, Member member, Category category) {
-        return Question.builder()
-                .category(category)
-                .member(member)
-                .title(request.getTitle())
-                .content(request.getContent())
-                .extraContent(new QuestionExtraData.TaxData(
-                        QuestionExtraDataUserType.of(request.getTaxFilingStatus()).getUserType(), request.getBusinessInfo(), request.getBranchInfo(),
-                        request.getEmployeeManagement(), request.getPurchaseEvidence(), request.getSalesScale()
-                ))
-                .solved(BooleanType.F)
-                .likeCount(0)
-                .viewCount(0)
-                .bookmarkCount(0)
-                .imageUuid(extractImageUuid(request.getImageUrlList()))
-                .imageIndex(extractImageIndexs(request.getImageUrlList()))
-                .build();
+    private static boolean validateMarketDataFields(Map<String, Object> extraContentMap) {
+        return extraContentMap.containsKey("bossType") &&
+                (extraContentMap.containsKey("businessType") ||
+                        extraContentMap.containsKey("location") ||
+                        extraContentMap.containsKey("customerType") ||
+                        extraContentMap.containsKey("storeInfo") ||
+                        extraContentMap.containsKey("budget"));
+    }
+
+    private static boolean validateTaxDataFields(Map<String, Object> extraContentMap) {
+        return extraContentMap.containsKey("taxFilingStatus") &&
+                (extraContentMap.containsKey("businessInfo") ||
+                        extraContentMap.containsKey("branchInfo") ||
+                        extraContentMap.containsKey("employeeManagement") ||
+                        extraContentMap.containsKey("purchaseEvidence") ||
+                        extraContentMap.containsKey("salesScale"));
     }
 
     public static QuestionHashtag toQuestionHashtag(Question question, Hashtag hashtag) {
