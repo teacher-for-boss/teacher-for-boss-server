@@ -11,7 +11,9 @@ public enum QuestionExtraDataUserType {
 	STORE_OWNER(1, "매장 운영 중"),
 	ASPIRING_ENTREPRENEUR(2, "예비 자영업자"),
 	TAX_FILLING(3, "세무 기장 진행 중"),
-	NO_TAX_FILLING(4, "세무 기장 진행X")
+	NO_TAX_FILLING(4, "세무 기장 진행X"),
+	WITH_CONTRACT(5, "근로계약서 작성"),
+	WITHOUT_CONTRACT(6, "근로계약서 미작성")
 	;
 
 	private final int identifier;
@@ -22,6 +24,8 @@ public enum QuestionExtraDataUserType {
 		if (identifier == 2) return ASPIRING_ENTREPRENEUR;
 		if (identifier == 3) return TAX_FILLING;
 		if (identifier == 4) return NO_TAX_FILLING;
+		if (identifier == 5) return WITH_CONTRACT;
+		if (identifier == 6) return WITHOUT_CONTRACT;
 		return NONE;
 	}
 }

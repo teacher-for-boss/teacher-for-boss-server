@@ -2,7 +2,6 @@ package kr.co.teacherforboss.domain.vo.questionVO;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import kr.co.teacherforboss.domain.enums.QuestionExtraDataUserType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +12,8 @@ import lombok.NoArgsConstructor;
 )
 @JsonSubTypes({
         @JsonSubTypes.Type(value = QuestionExtraData.MarketData.class, name = "market"),
-        @JsonSubTypes.Type(value = QuestionExtraData.TaxData.class, name = "tax")
+        @JsonSubTypes.Type(value = QuestionExtraData.TaxData.class, name = "tax"),
+        @JsonSubTypes.Type(value = QuestionExtraData.LaborData.class, name = "labor")
 })
 public class QuestionExtraData {
 
@@ -39,5 +39,17 @@ public class QuestionExtraData {
         private String employeeManagement;
         private String purchaseEvidence;
         private String salesScale;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class LaborData extends QuestionExtraData {
+        private String contractStatus;
+        private String businessClassification;
+        private String employmentTypeAndDuration;
+        private String workAndBreakHours;
+        private String salaryAndAllowance;
+        private String statutoryBenefits;
     }
 }

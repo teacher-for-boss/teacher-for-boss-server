@@ -3,11 +3,8 @@ package kr.co.teacherforboss.web.dto;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.List;
-import java.util.Map;
 
-import kr.co.teacherforboss.validation.annotation.CheckFirstEntryNotNull;
 import kr.co.teacherforboss.validation.annotation.CheckImageUuid;
-import kr.co.teacherforboss.validation.annotation.CheckStringLengthLimit;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -60,10 +57,32 @@ public class BoardRequestDTO {
         @CheckImageUuid
         List<String> imageUrlList;
 
-        @CheckFirstEntryNotNull
-        @CheckStringLengthLimit
-        Map<String, Object> extraContent;
+        ExtraContent extraContent;
     }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class ExtraContent {
+        @NotNull(message = "첫 번째 항목은 필수입니다.")
+        int firstField;
+
+        @Size(max = 200, message = "해당 필드는 최대 200자 입력 가능합니다.")
+        String secondField;
+
+        @Size(max = 200, message = "해당 필드는 최대 200자 입력 가능합니다.")
+        String thirdField;
+
+        @Size(max = 200, message = "해당 필드는 최대 200자 입력 가능합니다.")
+        String fourthField;
+
+        @Size(max = 200, message = "해당 필드는 최대 200자 입력 가능합니다.")
+        String fifthField;
+        @Size(max = 200, message = "해당 필드는 최대 200자 입력 가능합니다.")
+        String sixthField;
+    }
+
 
     @Getter
     @AllArgsConstructor

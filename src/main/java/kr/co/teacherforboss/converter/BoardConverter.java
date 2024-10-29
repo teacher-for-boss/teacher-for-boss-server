@@ -202,60 +202,57 @@ public class BoardConverter {
                 .build();
     }
 
-    private static QuestionExtraData createExtraContent(Map<String, Object> extraContentMap, Category category) {
-        if (category.getId() == 3 || category.getId() == 6) {
-            if (!validateMarketDataFields(extraContentMap)) {
-                throw new BoardHandler(ErrorStatus.INVALID_EXTRA_CONTENT_FIELDS);
-            }
+    private static QuestionExtraData createExtraContent(BoardRequestDTO.ExtraContent extraContentMap, Category category) {
+        QuestionExtraDataUserType userType = validateUserType(extraContentMap.getFirstField(), category.getId());
 
-            Integer bossType = (Integer) extraContentMap.get("bossType");
-            if (bossType != 1 && bossType != 2) throw new BoardHandler(ErrorStatus.INVALID_QUESTION_USER_TYPE);
-
+        if (category.getId() == 3 || category.getId() == 6) { // 노하우 & 상권
             return new QuestionExtraData.MarketData(
-                    QuestionExtraDataUserType.of(bossType).getUserType(),
-                    (String) extraContentMap.get("businessType"),
-                    (String) extraContentMap.get("location"),
-                    (String) extraContentMap.get("customerType"),
-                    (String) extraContentMap.get("storeInfo"),
-                    (String) extraContentMap.get("budget")
+                    userType.getUserType(),
+                    extraContentMap.getSecondField(),
+                    extraContentMap.getThirdField(),
+                    extraContentMap.getFourthField(),
+                    extraContentMap.getFifthField(),
+                    extraContentMap.getSixthField()
             );
-        } else if (category.getId() == 1) {
-            if (!validateTaxDataFields(extraContentMap)) {
-                throw new BoardHandler(ErrorStatus.INVALID_EXTRA_CONTENT_FIELDS);
-            }
-
-            Integer taxFilingStatus = (Integer) extraContentMap.get("taxFilingStatus");
-            if (taxFilingStatus != 3 && taxFilingStatus != 4) throw new BoardHandler(ErrorStatus.INVALID_QUESTION_USER_TYPE);
+        } else if (category.getId() == 1) { // 세무
             return new QuestionExtraData.TaxData(
-                    QuestionExtraDataUserType.of(taxFilingStatus).getUserType(),
-                    (String) extraContentMap.get("businessInfo"),
-                    (String) extraContentMap.get("branchInfo"),
-                    (String) extraContentMap.get("employeeManagement"),
-                    (String) extraContentMap.get("purchaseEvidence"),
-                    (String) extraContentMap.get("salesScale")
+                    userType.getUserType(),
+                    extraContentMap.getSecondField(),
+                    extraContentMap.getThirdField(),
+                    extraContentMap.getFourthField(),
+                    extraContentMap.getFifthField(),
+                    extraContentMap.getSixthField()
+            );
+        } else if (category.getId() == 2) { // 직원관리
+            return new QuestionExtraData.LaborData(
+                    userType.getUserType(),
+                    extraContentMap.getSecondField(),
+                    extraContentMap.getThirdField(),
+                    extraContentMap.getFourthField(),
+                    extraContentMap.getFifthField(),
+                    extraContentMap.getSixthField()
             );
         } else {
             throw new BoardHandler(ErrorStatus.INVALID_QUESTION_CATEGORY);
         }
     }
 
-    private static boolean validateMarketDataFields(Map<String, Object> extraContentMap) {
-        return extraContentMap.containsKey("bossType") &&
-                (extraContentMap.containsKey("businessType") ||
-                        extraContentMap.containsKey("location") ||
-                        extraContentMap.containsKey("customerType") ||
-                        extraContentMap.containsKey("storeInfo") ||
-                        extraContentMap.containsKey("budget"));
+    private static QuestionExtraDataUserType validateUserType(int firstField, long categoryId) {
+        QuestionExtraDataUserType userType = QuestionExtraDataUserType.of(firstField);
+
+        boolean isValidUserType = switch ((int) categoryId) {
+            case 3, 6 -> userType == QuestionExtraDataUserType.STORE_OWNER || userType == QuestionExtraDataUserType.ASPIRING_ENTREPRENEUR;
+            case 1 -> userType == QuestionExtraDataUserType.TAX_FILLING || userType == QuestionExtraDataUserType.NO_TAX_FILLING;
+            case 2 -> userType == QuestionExtraDataUserType.WITH_CONTRACT || userType == QuestionExtraDataUserType.WITHOUT_CONTRACT;
+            default -> false;
+        };
+
+        if (!isValidUserType) {
+            throw new BoardHandler(ErrorStatus.INVALID_EXTRA_CONTENT_FIELDS);
+        }
+        return userType;
     }
 
-    private static boolean validateTaxDataFields(Map<String, Object> extraContentMap) {
-        return extraContentMap.containsKey("taxFilingStatus") &&
-                (extraContentMap.containsKey("businessInfo") ||
-                        extraContentMap.containsKey("branchInfo") ||
-                        extraContentMap.containsKey("employeeManagement") ||
-                        extraContentMap.containsKey("purchaseEvidence") ||
-                        extraContentMap.containsKey("salesScale"));
-    }
 
     public static QuestionHashtag toQuestionHashtag(Question question, Hashtag hashtag) {
         return QuestionHashtag.builder()
