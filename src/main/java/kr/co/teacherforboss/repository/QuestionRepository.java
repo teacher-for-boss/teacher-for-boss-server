@@ -20,6 +20,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     Optional<Question> findByIdAndMemberIdAndStatus(Long questionId, Long memberId, Status status);
     boolean existsByIdAndStatus(Long questionId, Status status);
 	long countByMemberIdAndStatus(Long memberId, Status status);
+	long countByCreatedAtGreaterThanEqualAndStatus(LocalDateTime reqDateTime, Status status);
 	Slice<Question> findSliceByStatusOrderByLikeCountDescCreatedAtDesc(Status status, PageRequest pageRequest);
 	Slice<Question> findSliceByStatusOrderByViewCountDescCreatedAtDesc(Status status, PageRequest pageRequest);
 	Slice<Question> findSliceByStatusOrderByCreatedAtDesc(Status status, PageRequest pageRequest);
