@@ -337,7 +337,7 @@ public class NotificationAspect {
     }
 
     /* QUESTION_NEW */
-    @Scheduled(cron = "0 0/1 * * * ?")
+    @Scheduled(cron = "0 0 15,20 * * ?")
     public void sendNewQuestionNotification() {
         log.info("===== Send New Question Notification =====");
 
