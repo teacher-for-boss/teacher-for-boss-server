@@ -57,14 +57,14 @@ public class BoardRequestDTO {
         @CheckImageUuid
         List<String> imageUrlList;
 
-        ExtraContent extraContent;
+        QuestionExtraField extraContent;
     }
 
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class ExtraContent {
+    public static class QuestionExtraField {
         @NotNull(message = "첫 번째 항목은 필수입니다.")
         int firstField;
 
@@ -79,6 +79,7 @@ public class BoardRequestDTO {
 
         @Size(max = 200, message = "해당 필드는 최대 200자 입력 가능합니다.")
         String fifthField;
+
         @Size(max = 200, message = "해당 필드는 최대 200자 입력 가능합니다.")
         String sixthField;
     }
