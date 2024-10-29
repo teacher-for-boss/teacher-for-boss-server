@@ -232,7 +232,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Override
     @Transactional(readOnly = true)
     public Member getMember() {
-        return memberRepository.findByEmail(SecurityUtil.getCurrentUserEmail())
+        return memberRepository.findByEmailAndStatus(SecurityUtil.getCurrentUserEmail(), Status.ACTIVE)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
     }
 
