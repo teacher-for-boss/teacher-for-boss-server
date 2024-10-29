@@ -185,7 +185,7 @@ public class BoardConverter {
 	}
 
     public static Question toQuestion(BoardRequestDTO.SaveQuestionDTO request, Member member, Category category) {
-        QuestionExtraData extraContent = createExtraContent(request.getExtraContent(), category);
+        QuestionExtraData extraContent = createQuestionExtraField(request.getExtraContent(), category);
 
         return Question.builder()
                 .category(category)
@@ -202,40 +202,22 @@ public class BoardConverter {
                 .build();
     }
 
-    private static QuestionExtraData createExtraContent(BoardRequestDTO.ExtraContent extraContentMap, Category category) {
-        QuestionExtraDataUserType userType = validateUserType(extraContentMap.getFirstField(), category.getId());
+    private static QuestionExtraData createQuestionExtraField(BoardRequestDTO.QuestionExtraField extraContent, Category category) {
+        QuestionExtraDataUserType userType = validateUserType(extraContent.getFirstField(), category.getId());
+        String secondField = extraContent.getSecondField();
+        String thirdField = extraContent.getThirdField();
+        String fourthField = extraContent.getFourthField();
+        String fifthField = extraContent.getFifthField();
+        String sixthField = extraContent.getSixthField();
 
-        if (category.getId() == 3 || category.getId() == 6) { // 노하우 & 상권
-            return new QuestionExtraData.MarketData(
-                    userType.getUserType(),
-                    extraContentMap.getSecondField(),
-                    extraContentMap.getThirdField(),
-                    extraContentMap.getFourthField(),
-                    extraContentMap.getFifthField(),
-                    extraContentMap.getSixthField()
-            );
-        } else if (category.getId() == 1) { // 세무
-            return new QuestionExtraData.TaxData(
-                    userType.getUserType(),
-                    extraContentMap.getSecondField(),
-                    extraContentMap.getThirdField(),
-                    extraContentMap.getFourthField(),
-                    extraContentMap.getFifthField(),
-                    extraContentMap.getSixthField()
-            );
-        } else if (category.getId() == 2) { // 직원관리
-            return new QuestionExtraData.LaborData(
-                    userType.getUserType(),
-                    extraContentMap.getSecondField(),
-                    extraContentMap.getThirdField(),
-                    extraContentMap.getFourthField(),
-                    extraContentMap.getFifthField(),
-                    extraContentMap.getSixthField()
-            );
-        } else {
-            throw new BoardHandler(ErrorStatus.INVALID_QUESTION_CATEGORY);
-        }
+        return switch (category.getId().intValue()) {
+            case 3, 6 -> QuestionExtraData.MarketData.create(userType, secondField, thirdField, fourthField, fifthField, sixthField);
+            case 1 -> QuestionExtraData.TaxData.create(userType, secondField, thirdField, fourthField, fifthField, sixthField);
+            case 2 -> QuestionExtraData.LaborData.create(userType, secondField, thirdField, fourthField, fifthField, sixthField);
+            default -> null;
+        };
     }
+
 
     private static QuestionExtraDataUserType validateUserType(int firstField, long categoryId) {
         QuestionExtraDataUserType userType = QuestionExtraDataUserType.of(firstField);
