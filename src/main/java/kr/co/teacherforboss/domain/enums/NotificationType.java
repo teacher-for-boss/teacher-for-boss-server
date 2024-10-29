@@ -17,6 +17,7 @@ public enum NotificationType {
     QUESTION_ANSWER_SELECTED("{0}", "{0}님의 답변이 채택되었어요!"),
     QUESTION_ANSWER_LIKED("{0}", "{0}님의 질문에 남긴 답변이 추천을 받았어요!"),
     QUESTION_HOT("{0}", "{0}님의 질문이 인기글이 되었어요!"),
+    QUESTION_NEW("답변을 기다리는 질문이 있어요!", "티처톡에 새로운 게시글이 {0}개 올라왔어요."),
     POST_NEW_COMMENT("{0}", "{0}님이 댓글을 남겼어요."),
     POST_COMMENT_NEW_REPLY("{0}", "{0}님이 답글을 남겼어요."),
     POST_VIEW_INCREASED("{0}", "글이 조회수 {0}명을 돌파했어요!"),

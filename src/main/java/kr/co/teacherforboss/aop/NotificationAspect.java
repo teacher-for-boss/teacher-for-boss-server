@@ -20,6 +20,7 @@ import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.ExchangeType;
 import kr.co.teacherforboss.domain.enums.NotificationType;
+import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.domain.vo.notificationVO.NotificationLinkData.PostData;
 import kr.co.teacherforboss.domain.vo.notificationVO.NotificationLinkData.QuestionData;
 import kr.co.teacherforboss.repository.AnswerRepository;
@@ -333,6 +334,46 @@ public class NotificationAspect {
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
+    }
+
+    /* QUESTION_NEW */
+    @Scheduled(cron = "0 0 15,20 * * ?")
+    public void sendNewQuestionNotification() {
+        log.info("===== Send New Question Notification =====");
+
+        int page = 0;
+        int batchSize = 100;
+
+        Page<Member> members;
+        List<Notification> notifications;
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime reqDateTime;
+        if (now.getHour() <= 15) reqDateTime = LocalDate.now().minusDays(1).atTime(20, 0);
+        else reqDateTime = LocalDate.now().atTime(15, 0);
+
+        long newQuestionCount = questionRepository.countByCreatedAtGreaterThanEqualAndStatus(reqDateTime, Status.ACTIVE);
+        if (newQuestionCount == 0) return;
+
+        do {
+            members = memberRepository.findAllAgreeServiceNotification(PageRequest.of(page++, batchSize));
+
+            notifications = members.stream()
+                    .map(member -> Notification.builder()
+                            .member(member)
+                            .type(NotificationType.QUESTION_NEW)
+                            .title(NotificationType.QUESTION_NEW.getTitle())
+                            .content(NotificationType.QUESTION_NEW.getContent(String.valueOf(newQuestionCount)))
+                            .data(null)
+                            .isRead(BooleanType.F)
+                            .sentAt(now)    // TODO: 여기 이렇게 하는게 맞을지 나중에 다시 보기
+                            .build()
+                    )
+                    .toList();
+
+            notificationRepository.saveAll(notifications);
+        } while (members.hasNext());
+
+        snsService.publishMessage(notifications.get(0));
     }
 
     /* POST_NEW_COMMENT, POST_COMMENT_NEW_REPLY */

@@ -80,13 +80,13 @@ public class RedisConfig {
     public RedisCacheManager contentCacheManager(RedisConnectionFactory cf) {
         RedisCacheConfiguration popularBoardCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer())) // Value Serializer 변경
-                .entryTtl(Duration.ofMinutes(3L)); // 캐시 수명 30분
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer())); // Value Serializer 변경
+//                .entryTtl(Duration.ofMinutes(3L)); // 캐시 수명 30분
 
         RedisCacheConfiguration popularTeacherCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer())) // Value Serializer 변경
-                .entryTtl(Duration.ofDays(7L)); // 캐시 수명 7일
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer())); // Value Serializer 변경
+//                .entryTtl(Duration.ofDays(7L)); // 캐시 수명 7일
 
         Map<String, RedisCacheConfiguration> cacheConfigurations = new HashMap<>();
         cacheConfigurations.put(HOT_POST_CACHE_NAME, popularBoardCacheConfiguration);
