@@ -90,7 +90,7 @@ public class QuestionExtraData {
     }
 
     public static QuestionExtraData of(BoardRequestDTO.QuestionExtraField extraField, Category category) {
-        QuestionExtraDataUserType userType = QuestionExtraDataUserType.validate(extraField.getUserType().getIdentifier(), category.getId());
+        QuestionExtraDataUserType userType = QuestionExtraDataUserType.validate(extraField.getUserType(), category.getId());
         return switch (category.getId().intValue()) {
             case 3, 6 -> MarketData.create(userType, extraField);
             case 1 -> TaxData.create(userType, extraField);

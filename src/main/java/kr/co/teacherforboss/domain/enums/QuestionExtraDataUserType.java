@@ -31,9 +31,7 @@ public enum QuestionExtraDataUserType {
 		return NONE;
 	}
 
-	public static QuestionExtraDataUserType validate(int identifier, long categoryId) {
-		QuestionExtraDataUserType userType = QuestionExtraDataUserType.of(identifier);
-
+	public static QuestionExtraDataUserType validate(QuestionExtraDataUserType userType, long categoryId) {
 		boolean isValidUserType = switch ((int) categoryId) {
 			case 3, 6 -> userType == QuestionExtraDataUserType.STORE_OWNER || userType == QuestionExtraDataUserType.ASPIRING_ENTREPRENEUR;
 			case 1 -> userType == QuestionExtraDataUserType.TAX_FILLING || userType == QuestionExtraDataUserType.NO_TAX_FILLING;
