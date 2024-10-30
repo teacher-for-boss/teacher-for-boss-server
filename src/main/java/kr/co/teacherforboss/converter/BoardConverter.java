@@ -1,7 +1,5 @@
 package kr.co.teacherforboss.converter;
 
-import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
-import kr.co.teacherforboss.apiPayload.exception.handler.BoardHandler;
 import kr.co.teacherforboss.config.AwsS3Config;
 import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.AnswerLike;
@@ -185,7 +183,7 @@ public class BoardConverter {
 	}
 
     public static Question toQuestion(BoardRequestDTO.SaveQuestionDTO request, Member member, Category category) {
-        QuestionExtraData extraData = QuestionExtraData.createQuestionExtraField(request.getExtraContent(), category);
+        QuestionExtraData extraData = QuestionExtraData.of(request.getExtraContent(), category);
 
         return Question.builder()
                 .category(category)

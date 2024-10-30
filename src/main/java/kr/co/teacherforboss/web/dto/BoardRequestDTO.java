@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 
+import kr.co.teacherforboss.domain.enums.QuestionExtraDataUserType;
 import kr.co.teacherforboss.validation.annotation.CheckImageUuid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -66,7 +67,7 @@ public class BoardRequestDTO {
     @Builder
     public static class QuestionExtraField {
         @NotNull(message = "첫 번째 항목은 필수입니다.")
-        int firstField;
+        QuestionExtraDataUserType userType;
 
         @Size(max = 200, message = "해당 필드는 최대 200자 입력 가능합니다.")
         String secondField;
