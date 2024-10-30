@@ -2,7 +2,9 @@ package kr.co.teacherforboss.domain.vo.questionVO;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import kr.co.teacherforboss.domain.Category;
 import kr.co.teacherforboss.domain.enums.QuestionExtraDataUserType;
+import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,8 +31,15 @@ public class QuestionExtraData {
         private String storeInfo;
         private String budget;
 
-        public static MarketData create(QuestionExtraDataUserType bossType, String businessType, String location, String customerType, String storeInfo, String budget) {
-            return new MarketData(bossType, businessType, location, customerType, storeInfo, budget);
+        public static MarketData create(QuestionExtraDataUserType userType, BoardRequestDTO.QuestionExtraField extraField) {
+            return new MarketData(
+                    userType,
+                    extraField.getSecondField(),
+                    extraField.getThirdField(),
+                    extraField.getFourthField(),
+                    extraField.getFifthField(),
+                    extraField.getSixthField()
+            );
         }
     }
 
@@ -45,8 +54,15 @@ public class QuestionExtraData {
         private String purchaseEvidence;
         private String salesScale;
 
-        public static TaxData create(QuestionExtraDataUserType taxBookKeepingStatus, String businessType, String branchInfo, String employeeManagement, String purchaseEvidence, String salesScale) {
-            return new TaxData(taxBookKeepingStatus, businessType, branchInfo, employeeManagement, purchaseEvidence, salesScale);
+        public static TaxData create(QuestionExtraDataUserType userType, BoardRequestDTO.QuestionExtraField extraField) {
+            return new TaxData(
+                    userType,
+                    extraField.getSecondField(),
+                    extraField.getThirdField(),
+                    extraField.getFourthField(),
+                    extraField.getFifthField(),
+                    extraField.getSixthField()
+            );
         }
     }
 
@@ -61,8 +77,25 @@ public class QuestionExtraData {
         private String salaryAndAllowance;
         private String statutoryBenefits;
 
-        public static LaborData create(QuestionExtraDataUserType contractStatus, String businessType, String employmentTypeAndDuration, String workAndBreakHours, String salaryAndAllowance, String statutoryBenefits) {
-            return new LaborData(contractStatus, businessType, employmentTypeAndDuration, workAndBreakHours, salaryAndAllowance, statutoryBenefits);
+        public static LaborData create(QuestionExtraDataUserType userType, BoardRequestDTO.QuestionExtraField extraField) {
+            return new LaborData(
+                    userType,
+                    extraField.getSecondField(),
+                    extraField.getThirdField(),
+                    extraField.getFourthField(),
+                    extraField.getFifthField(),
+                    extraField.getSixthField()
+            );
         }
+    }
+
+    public static QuestionExtraData createQuestionExtraField(BoardRequestDTO.QuestionExtraField extraField, Category category) {
+        QuestionExtraDataUserType userType = QuestionExtraDataUserType.validateUserType(extraField.getFirstField(), category.getId());
+        return switch (category.getId().intValue()) {
+            case 3, 6 -> MarketData.create(userType, extraField);
+            case 1 -> TaxData.create(userType, extraField);
+            case 2 -> LaborData.create(userType, extraField);
+            default -> null;
+        };
     }
 }

@@ -61,7 +61,7 @@ public class Question extends BaseEntity {
 
     @Column(columnDefinition = "TEXT")
     @Convert(converter = QuestionExtraDataConverter.class)
-    private QuestionExtraData extraContent;
+    private QuestionExtraData extraData;
 
     @NotNull
     @Enumerated(EnumType.STRING)

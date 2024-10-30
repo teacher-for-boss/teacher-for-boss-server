@@ -267,7 +267,7 @@ public class BoardResponseDTO {
     public static class GetQuestionDTO {
         String title;
         String content;
-        QuestionExtraData extraContent;
+        QuestionExtraData extraData;
         String category;
         List<String> imageUrlList;
         List<String> hashtagList;

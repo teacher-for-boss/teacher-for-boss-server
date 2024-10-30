@@ -1,5 +1,7 @@
 package kr.co.teacherforboss.domain.enums;
 
+import kr.co.teacherforboss.apiPayload.code.status.ErrorStatus;
+import kr.co.teacherforboss.apiPayload.exception.handler.BoardHandler;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -27,5 +29,21 @@ public enum QuestionExtraDataUserType {
 		if (identifier == 5) return WITH_CONTRACT;
 		if (identifier == 6) return WITHOUT_CONTRACT;
 		return NONE;
+	}
+
+	public static QuestionExtraDataUserType validateUserType(int firstField, long categoryId) {
+		QuestionExtraDataUserType userType = QuestionExtraDataUserType.of(firstField);
+
+		boolean isValidUserType = switch ((int) categoryId) {
+			case 3, 6 -> userType == QuestionExtraDataUserType.STORE_OWNER || userType == QuestionExtraDataUserType.ASPIRING_ENTREPRENEUR;
+			case 1 -> userType == QuestionExtraDataUserType.TAX_FILLING || userType == QuestionExtraDataUserType.NO_TAX_FILLING;
+			case 2 -> userType == QuestionExtraDataUserType.WITH_CONTRACT || userType == QuestionExtraDataUserType.WITHOUT_CONTRACT;
+			default -> false;
+		};
+
+		if (!isValidUserType) {
+			throw new BoardHandler(ErrorStatus.INVALID_EXTRA_CONTENT_FIELDS);
+		}
+		return userType;
 	}
 }

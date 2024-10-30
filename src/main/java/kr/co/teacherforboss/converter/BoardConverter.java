@@ -185,14 +185,14 @@ public class BoardConverter {
 	}
 
     public static Question toQuestion(BoardRequestDTO.SaveQuestionDTO request, Member member, Category category) {
-        QuestionExtraData extraContent = createQuestionExtraField(request.getExtraContent(), category);
+        QuestionExtraData extraData = QuestionExtraData.createQuestionExtraField(request.getExtraContent(), category);
 
         return Question.builder()
                 .category(category)
                 .member(member)
                 .title(request.getTitle())
                 .content(request.getContent())
-                .extraContent(extraContent)
+                .extraData(extraData)
                 .solved(BooleanType.F)
                 .likeCount(0)
                 .viewCount(0)
@@ -201,40 +201,6 @@ public class BoardConverter {
                 .imageIndex(extractImageIndexs(request.getImageUrlList()))
                 .build();
     }
-
-    private static QuestionExtraData createQuestionExtraField(BoardRequestDTO.QuestionExtraField extraContent, Category category) {
-        QuestionExtraDataUserType userType = validateUserType(extraContent.getFirstField(), category.getId());
-        String secondField = extraContent.getSecondField();
-        String thirdField = extraContent.getThirdField();
-        String fourthField = extraContent.getFourthField();
-        String fifthField = extraContent.getFifthField();
-        String sixthField = extraContent.getSixthField();
-
-        return switch (category.getId().intValue()) {
-            case 3, 6 -> QuestionExtraData.MarketData.create(userType, secondField, thirdField, fourthField, fifthField, sixthField);
-            case 1 -> QuestionExtraData.TaxData.create(userType, secondField, thirdField, fourthField, fifthField, sixthField);
-            case 2 -> QuestionExtraData.LaborData.create(userType, secondField, thirdField, fourthField, fifthField, sixthField);
-            default -> null;
-        };
-    }
-
-
-    private static QuestionExtraDataUserType validateUserType(int firstField, long categoryId) {
-        QuestionExtraDataUserType userType = QuestionExtraDataUserType.of(firstField);
-
-        boolean isValidUserType = switch ((int) categoryId) {
-            case 3, 6 -> userType == QuestionExtraDataUserType.STORE_OWNER || userType == QuestionExtraDataUserType.ASPIRING_ENTREPRENEUR;
-            case 1 -> userType == QuestionExtraDataUserType.TAX_FILLING || userType == QuestionExtraDataUserType.NO_TAX_FILLING;
-            case 2 -> userType == QuestionExtraDataUserType.WITH_CONTRACT || userType == QuestionExtraDataUserType.WITHOUT_CONTRACT;
-            default -> false;
-        };
-
-        if (!isValidUserType) {
-            throw new BoardHandler(ErrorStatus.INVALID_EXTRA_CONTENT_FIELDS);
-        }
-        return userType;
-    }
-
 
     public static QuestionHashtag toQuestionHashtag(Question question, Hashtag hashtag) {
         return QuestionHashtag.builder()
@@ -364,7 +330,7 @@ public class BoardConverter {
         return BoardResponseDTO.GetQuestionDTO.builder()
                 .title(question.getTitle())
                 .content(question.getContent())
-                .extraContent(question.getExtraContent())
+                .extraData(question.getExtraData())
                 .category(question.getCategory().getName())
                 .imageUrlList(toImageUrlList(ImageOrigin.QUESTION.getValue(), question.getImageUuid(), question.getImageIndex()))
                 .hashtagList(toQuestionHashtags(question))
