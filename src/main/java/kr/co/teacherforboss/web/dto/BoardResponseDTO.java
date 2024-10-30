@@ -3,8 +3,8 @@ package kr.co.teacherforboss.web.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import jakarta.annotation.Nullable;
 import kr.co.teacherforboss.domain.enums.Role;
+import kr.co.teacherforboss.domain.vo.questionVO.QuestionExtraData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -267,6 +267,7 @@ public class BoardResponseDTO {
     public static class GetQuestionDTO {
         String title;
         String content;
+        QuestionExtraData extraData;
         String category;
         List<String> imageUrlList;
         List<String> hashtagList;

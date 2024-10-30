@@ -156,7 +156,6 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         return question;
     }
 
-
     @Override
     @Transactional
     public PostBookmark togglePostBookmark(Long postId) {

@@ -1,6 +1,5 @@
 package kr.co.teacherforboss.converter;
 
-import java.util.UUID;
 import kr.co.teacherforboss.config.AwsS3Config;
 import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.AnswerLike;
@@ -20,7 +19,9 @@ import kr.co.teacherforboss.domain.QuestionLike;
 import kr.co.teacherforboss.domain.TeacherInfo;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.ImageOrigin;
+import kr.co.teacherforboss.domain.enums.QuestionExtraDataUserType;
 import kr.co.teacherforboss.domain.enums.Status;
+import kr.co.teacherforboss.domain.vo.questionVO.QuestionExtraData;
 import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
 import kr.co.teacherforboss.web.dto.HomeResponseDTO;
@@ -182,11 +183,14 @@ public class BoardConverter {
 	}
 
     public static Question toQuestion(BoardRequestDTO.SaveQuestionDTO request, Member member, Category category) {
+        QuestionExtraData extraData = QuestionExtraData.of(request.getExtraContent(), category);
+
         return Question.builder()
                 .category(category)
                 .member(member)
                 .title(request.getTitle())
                 .content(request.getContent())
+                .extraData(extraData)
                 .solved(BooleanType.F)
                 .likeCount(0)
                 .viewCount(0)
@@ -324,6 +328,7 @@ public class BoardConverter {
         return BoardResponseDTO.GetQuestionDTO.builder()
                 .title(question.getTitle())
                 .content(question.getContent())
+                .extraData(question.getExtraData())
                 .category(question.getCategory().getName())
                 .imageUrlList(toImageUrlList(ImageOrigin.QUESTION.getValue(), question.getImageUuid(), question.getImageIndex()))
                 .hashtagList(toQuestionHashtags(question))

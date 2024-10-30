@@ -8,6 +8,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import kr.co.teacherforboss.domain.converter.QuestionExtraDataConverter;
+import kr.co.teacherforboss.domain.vo.questionVO.QuestionExtraData;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -56,6 +58,10 @@ public class Question extends BaseEntity {
     @NotNull
     @Column(length = 1000)
     String content;
+
+    @Column(columnDefinition = "TEXT")
+    @Convert(converter = QuestionExtraDataConverter.class)
+    private QuestionExtraData extraData;
 
     @NotNull
     @Enumerated(EnumType.STRING)
