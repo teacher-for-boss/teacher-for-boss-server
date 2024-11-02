@@ -558,11 +558,11 @@ public class NotificationAspect {
     }
 
     /* 알림 읽음 처리 */
-    @AfterReturning(value = "execution(* kr.co.teacherforboss.service.notificationService.NotificationQueryService.getNotifications(..))", returning = "notificationsDTO")
-    public void readNotification(NotificationResponseDTO.GetNotificationsDTO notificationsDTO) {
-        notificationCommandService.readNotifications(notificationsDTO.getNotificationList()
-                .stream().map(NotificationResponseDTO.GetNotificationsDTO.NotificationInfo::getNotificationId).toList());
-    }
+//    @AfterReturning(value = "execution(* kr.co.teacherforboss.service.notificationService.NotificationQueryService.getNotifications(..))", returning = "notificationsDTO")
+//    public void readNotification(NotificationResponseDTO.GetNotificationsDTO notificationsDTO) {
+//        notificationCommandService.readNotifications(notificationsDTO.getNotificationList()
+//                .stream().map(NotificationResponseDTO.GetNotificationsDTO.NotificationInfo::getNotificationId).toList());
+//    }
 
     private boolean agreeNotification(Member target, NotificationType type) {
         NotificationSetting notificationSetting = notificationSettingRepository.findByMemberId(target.getId()).orElse(null);

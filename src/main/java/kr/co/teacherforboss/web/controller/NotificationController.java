@@ -2,6 +2,7 @@ package kr.co.teacherforboss.web.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
 import kr.co.teacherforboss.apiPayload.ApiResponse;
 import kr.co.teacherforboss.service.notificationService.NotificationCommandService;
 import kr.co.teacherforboss.service.notificationService.NotificationQueryService;
@@ -9,6 +10,7 @@ import kr.co.teacherforboss.web.dto.NotificationRequestDTO;
 import kr.co.teacherforboss.web.dto.NotificationResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,5 +46,12 @@ public class NotificationController {
         return ApiResponse.onSuccess(notificationQueryService.getNotifications(lastNotificationId, size));
     }
 
+    @PostMapping("/{notificationId}/read")
+    public ApiResponse<Void> readNotification(
+            @PathVariable Long notificationId
+    ) {
+        notificationCommandService.readNotifications(List.of(notificationId));
+        return ApiResponse.onSuccess();
+    }
 
 }

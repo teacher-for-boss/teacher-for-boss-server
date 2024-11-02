@@ -198,10 +198,12 @@ public class SnsServiceImpl implements SnsService {
         notifications.forEach(notification -> {
             System.out.println(notification.getType().name() + " :: Publishing message to " + notification.getMember().getEmail());
             try {
+                // 대상 디바이스 토큰 조회
                 List<DeviceToken> deviceTokens = deviceTokenRepository.findAllByMemberIdAndStatus(
                         notification.getMember().getId(), Status.ACTIVE);
                 if (deviceTokens.isEmpty()) return;
 
+                // 대상 디바이스 토큰을 SNS 토픽에 구독
                 List<String> subscriptionArns = deviceTokens.stream()
                         .map(deviceToken -> snsClient.subscribe(r -> r
                                 .topicArn(AwsSnsConfig.SNS_TOPIC_ARN_FOR_SPECIFIC)
@@ -210,12 +212,15 @@ public class SnsServiceImpl implements SnsService {
                         ).subscriptionArn())
                         .toList();
 
+                // 알림 전송
                 snsClient.publish(r -> r
                         .topicArn(AwsSnsConfig.SNS_TOPIC_ARN_FOR_SPECIFIC)
                         .message(NotificationMessage.from(notification).getMessage()));
 
+                // 알림 보낸 시각 저장
                 notification.setSentAt(LocalDateTime.now());
 
+                // 구독 취소
                 subscriptionArns.forEach(subscriptionArn ->
                         snsClient.unsubscribe(r -> r
                             .subscriptionArn(subscriptionArn))

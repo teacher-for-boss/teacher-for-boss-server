@@ -16,6 +16,8 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class NotificationMessage {
+
+    private Long notificationId;
     private String title;
     private String body;
     private NotificationType notificationType;
@@ -29,6 +31,7 @@ public class NotificationMessage {
         notification.put("body", body);
 
         Map<String, Object> data = new HashMap<>();
+        data.put("notificationId", notificationId);
         data.put("notificationType", notificationType);
         data.put("notificationLinkData", notificationLinkData);
 
@@ -49,6 +52,7 @@ public class NotificationMessage {
 
     public static NotificationMessage from(Notification notification) {
         return NotificationMessage.builder()
+                .notificationId(notification.getType().isSpecificType() ? notification.getId() : null)
                 .title(notification.getTitle())
                 .body(notification.getContent())
                 .notificationType(notification.getType())
