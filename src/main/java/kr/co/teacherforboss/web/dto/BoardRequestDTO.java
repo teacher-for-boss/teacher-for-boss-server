@@ -109,6 +109,8 @@ public class BoardRequestDTO {
         @Size(max = 3, message = "사진은 최대 3장까지 등록 가능합니다.")
         @CheckImageUuid
         List<String> imageUrlList;
+
+        QuestionExtraField extraContent;
     }
 
     @Getter

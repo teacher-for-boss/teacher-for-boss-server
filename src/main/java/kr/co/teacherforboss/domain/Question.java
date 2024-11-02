@@ -8,8 +8,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import kr.co.teacherforboss.converter.BoardConverter;
 import kr.co.teacherforboss.domain.converter.QuestionExtraDataConverter;
 import kr.co.teacherforboss.domain.vo.questionVO.QuestionExtraData;
+import kr.co.teacherforboss.web.dto.BoardRequestDTO;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -100,12 +102,13 @@ public class Question extends BaseEntity {
     @Builder.Default
     private List<Answer> answerList = new ArrayList<>();
 
-    public Question editQuestion(Category category, String title, String content, List<String> imageIndex, String imageUuid) {
+    public Question editQuestion(Category category, BoardRequestDTO.EditQuestionDTO request) {
         this.category = category;
-        this.title = title;
-        this.content = content;
-        this.imageIndex = imageIndex;
-        this.imageUuid = imageUuid; // TODO: imageUuid 업데이트 안하도록 수정
+        this.title = request.getTitle();
+        this.content = request.getContent();
+        this.imageIndex = BoardConverter.extractImageIndexs(request.getImageUrlList());
+        this.imageUuid = BoardConverter.extractImageUuid(request.getImageUrlList()); // TODO: imageUuid 업데이트 안하도록 수정
+        this.extraData = QuestionExtraData.of(request.getExtraContent(), category);
         return this;
     }
 

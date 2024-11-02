@@ -208,11 +208,7 @@ public class BoardCommandServiceImpl implements BoardCommandService {
         Category category = categoryRepository.findByIdAndStatus(request.getCategoryId(), Status.ACTIVE);
         Question editedQuestion = questionRepository.findByIdAndMemberIdAndStatus(questionId, member.getId(), Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.QUESTION_NOT_FOUND))
-                .editQuestion(category,
-                        request.getTitle(),
-                        request.getContent(),
-                        BoardConverter.extractImageIndexs(request.getImageUrlList()),
-                        BoardConverter.extractImageUuid(request.getImageUrlList()));
+                .editQuestion(category, request);
 
         editedQuestion.getHashtagList().forEach(BaseEntity::softDelete);
         List<QuestionHashtag> editedQuestionHashtags = new ArrayList<>();
