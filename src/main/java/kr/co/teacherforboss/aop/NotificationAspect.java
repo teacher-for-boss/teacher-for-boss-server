@@ -281,7 +281,7 @@ public class NotificationAspect {
     /* QUESTION_ANSWER_LIKED */
     @AfterReturning(pointcut = "execution(* kr.co.teacherforboss.service.boardService.BoardCommandService.toggleAnswerLike(..))", returning = "answerLike")
     public void sendAnswerLikedNotification(AnswerLike answerLike) {
-        if (!answerLike.getLiked().isIdentifier()) return;
+        if (answerLike.getLiked() == null || !answerLike.getLiked().isIdentifier()) return;
 
         log.info("===== Send Answer Liked Notification =====");
 
