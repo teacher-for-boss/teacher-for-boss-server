@@ -166,7 +166,7 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         List<Long> answerIds = answers.stream().map(BaseEntity::getId).toList();
         List<Long> memberIds = answers.stream().map(answer -> answer.getMember().getId()).toList();
 
-        List<AnswerLike> answerLikes = answerLikeRepository.findAllByAnswerIdInAndStatus(answerIds, Status.ACTIVE);
+        List<AnswerLike> answerLikes = answerLikeRepository.findAllByMemberIdAndAnswerIdInAndStatus(member.getId(), answerIds, Status.ACTIVE);
         List<TeacherInfo> teacherInfos = teacherInfoRepository.findAllByMemberIdInAndStatus(memberIds, Status.ACTIVE);
 
         return BoardConverter.toGetAnswersDTO(answers, answerLikes, teacherInfos, member);
@@ -197,7 +197,7 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         List<Long> allCommentIds = allComments.stream().map(BaseEntity::getId).toList();
 
         List<Long> memberIds = allComments.stream().map(comment -> comment.getMember().getId()).toList();
-        List<CommentLike> commentLikes = commentLikeRepository.findAllByCommentIdInAndStatus(allCommentIds, Status.ACTIVE);
+        List<CommentLike> commentLikes = commentLikeRepository.findAllByMemberIdAndCommentIdInAndStatus(member.getId(), allCommentIds, Status.ACTIVE);
         List<TeacherInfo> teacherInfos = teacherInfoRepository.findAllByMemberIdInAndStatus(memberIds, Status.ACTIVE);
 
         return BoardConverter.toGetCommentsDTO(parentComments, childComments, commentLikes, teacherInfos, member);

@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AnswerLikeRepository extends JpaRepository<AnswerLike, Long> {
-    List<AnswerLike> findAllByAnswerIdInAndStatus(List<Long> answerIdCollect, Status status);
+    List<AnswerLike> findAllByMemberIdAndAnswerIdInAndStatus(Long memberId, List<Long> answerIdCollect, Status status);
     Optional<AnswerLike> findByAnswerIdAndMemberIdAndStatus(Long answerId, Long memberId, Status status);
 }

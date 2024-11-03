@@ -1,8 +1,6 @@
 package kr.co.teacherforboss.repository;
 
-import kr.co.teacherforboss.domain.Comment;
 import kr.co.teacherforboss.domain.CommentLike;
-import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.enums.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -23,5 +21,5 @@ public interface CommentLikeRepository extends JpaRepository<CommentLike, Long> 
     """, nativeQuery = true)
     void softDeleteCommentLikeByComments(@Param(value = "commentIds") List<Long> commentIds);
     Optional<CommentLike> findByCommentIdAndMemberIdAndStatus(Long commentId, Long memberId, Status status);
-    List<CommentLike> findAllByCommentIdInAndStatus(List<Long> commentIds, Status status);
+    List<CommentLike> findAllByMemberIdAndCommentIdInAndStatus(Long memberId, List<Long> commentIds, Status status);
 }
