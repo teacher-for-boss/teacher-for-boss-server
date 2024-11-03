@@ -23,7 +23,7 @@ public class AuthQueryServiceImpl implements AuthQueryService, UserDetailsServic
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Member member = memberRepository.findByEmail(username)
+        Member member = memberRepository.findByEmailAndStatus(username, Status.ACTIVE)
                 .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         log.info("user Email [ID : {}]", member.getEmail());
