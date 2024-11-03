@@ -5,7 +5,7 @@
 # This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
 
-name: CICD
+name: CICD-dev
 
 on:
   push:
@@ -17,7 +17,7 @@ env:
   AWS_REGION: ap-northeast-2
   AWS_S3_BUCKET: teacherforboss-cicd-bucket
   AWS_CODE_DEPLOY_APPLICATION: teacherforboss-CICD-dev
-  AWS_CODE_DEPLOY_GROUP: teacherforboss-CICD-dev-standby
+  AWS_CODE_DEPLOY_GROUP: teacherforboss-CICD-dev-group-standby
 
 jobs:
   build:
