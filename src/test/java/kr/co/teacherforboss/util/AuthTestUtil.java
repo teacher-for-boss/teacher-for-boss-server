@@ -60,9 +60,9 @@ public class AuthTestUtil {
 
     public AgreementTerm generateAgreementTerm(){
         return AgreementTerm.builder()
-                .agreementLocation("T")
-                .agreementEmail("T")
-                .agreementSms("T")
+                .agreementLocation(BooleanType.T)
+                .agreementEmail(BooleanType.T)
+                .agreementSms(BooleanType.T)
                 .build();
     }
   
