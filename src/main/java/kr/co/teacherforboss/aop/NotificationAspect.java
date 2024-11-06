@@ -542,7 +542,7 @@ public class NotificationAspect {
     public void sendTeacherSignupCompleteNotification(Member member) {
         log.info("===== Send Teacher Signup Complete Notification =====");
 
-        if (!agreeNotification(member, NotificationType.TEACHER_SIGNUP_COMPLETE)) return;
+//        if (!agreeNotification(member, NotificationType.TEACHER_SIGNUP_COMPLETE)) return;
 
         Notification notification = notificationRepository.save(
                 Notification.builder()

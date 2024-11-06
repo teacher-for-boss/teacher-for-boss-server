@@ -118,6 +118,8 @@ public class AuthRequestDTO {
         @NotNull(message = "위치 이용 동의 여부를 입력해주세요.")
         @CheckTrueOrFalse
         String agreementLocation;
+
+        DeviceInfoDTO deviceInfo;
     }
     
     @Getter
