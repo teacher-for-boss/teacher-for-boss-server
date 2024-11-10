@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class SnsController {
 
     private final AwsSnsAspect awsSnsAspect;
-    private final NotificationScheduler notificationScheduler;
     private final SnsService snsService;
     private final AuthCommandService authCommandService;
 
@@ -55,17 +54,17 @@ public class SnsController {
         return ApiResponse.onSuccess("success");
     }
 
-    @PostMapping("/publish/all")
-    public ApiResponse<String> publishAll(@RequestParam("notificationType") NotificationType notificationType) {
-        switch (notificationType) {
-            case HOME_NEW_HOT_TEACHERS:
-                notificationScheduler.sendNewHotTeachersNotification();
-                break;
-            default:
-                break;
-        }
-        return ApiResponse.onSuccess("success");
-    }
+//    @PostMapping("/publish/all")
+//    public ApiResponse<String> publishAll(@RequestParam("notificationType") NotificationType notificationType) {
+//        switch (notificationType) {
+//            case HOME_NEW_HOT_TEACHERS:
+//                notificationScheduler.sendNewHotTeachersNotification();
+//                break;
+//            default:
+//                break;
+//        }
+//        return ApiResponse.onSuccess("success");
+//    }
 
     // ex. targetLoginInfoIds=1&targetLoginInfoIds=2&targetLoginInfoIds=3
     @PostMapping("/publish")
