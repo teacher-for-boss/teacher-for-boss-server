@@ -29,20 +29,29 @@ public class AwsSnsAspect {
     private final DeviceTokenQueryService deviceTokenQueryService;
 
     @AfterReturning(pointcut = "execution(* kr.co.teacherforboss.service.authService.AuthCommandService.socialLogin(..)) || " +
-            "execution(* kr.co.teacherforboss.service.authService.AuthCommandService.login(..))",
+            "execution(* kr.co.teacherforboss.service.authService.AuthCommandService.login(..)) || " +
+            "execution(* kr.co.teacherforboss.service.authService.AuthCommandService.joinMember(..))",
             returning = "member")
     public void registerAll(JoinPoint joinPoint, Member member) {
         System.out.println("Method Name: " + joinPoint.getSignature().getName());
 
         Object arg = joinPoint.getArgs()[0];
-        DeviceInfoDTO deviceInfo = arg instanceof AuthRequestDTO.LoginDTO
-                ? ((AuthRequestDTO.LoginDTO) arg).getDeviceInfo()
-                : ((AuthRequestDTO.SocialLoginDTO) arg).getDeviceInfo();
+        DeviceInfoDTO deviceInfo;
+
+        if (arg instanceof AuthRequestDTO.LoginDTO loginDTO) {
+            deviceInfo = loginDTO.getDeviceInfo();
+        } else if (arg instanceof AuthRequestDTO.SocialLoginDTO socialLoginDTO) {
+            deviceInfo = socialLoginDTO.getDeviceInfo();
+        } else if (arg instanceof AuthRequestDTO.JoinDTO joinDTO) {
+            deviceInfo = joinDTO.getDeviceInfo();
+        } else {
+            return;
+        }
 
         if (deviceInfo == null) return;
 
          snsService.createEndpoint(member, List.of(deviceInfo), NotificationTopic.ALL);
-            snsService.createEndpoint(member, List.of(deviceInfo), NotificationTopic.GENERAL);
+         snsService.createEndpoint(member, List.of(deviceInfo), NotificationTopic.GENERAL);
     }
 
     @AfterReturning(pointcut = "execution(* kr.co.teacherforboss.service.notificationService.NotificationCommandService.updateSettings(..))", returning = "settings")

@@ -20,6 +20,7 @@ import kr.co.teacherforboss.domain.Question;
 import kr.co.teacherforboss.domain.enums.BooleanType;
 import kr.co.teacherforboss.domain.enums.ExchangeType;
 import kr.co.teacherforboss.domain.enums.NotificationType;
+import kr.co.teacherforboss.domain.enums.Role;
 import kr.co.teacherforboss.domain.enums.Status;
 import kr.co.teacherforboss.domain.vo.notificationVO.NotificationLinkData.PostData;
 import kr.co.teacherforboss.domain.vo.notificationVO.NotificationLinkData.QuestionData;
@@ -355,7 +356,7 @@ public class NotificationAspect {
         if (newQuestionCount == 0) return;
 
         do {
-            members = memberRepository.findAllAgreeServiceNotification(PageRequest.of(page++, batchSize));
+            members = memberRepository.findAllAgreeServiceNotificationByRole(Role.TEACHER.name(), PageRequest.of(page++, batchSize));
 
             notifications = members.stream()
                     .map(member -> Notification.builder()
@@ -542,7 +543,7 @@ public class NotificationAspect {
     public void sendTeacherSignupCompleteNotification(Member member) {
         log.info("===== Send Teacher Signup Complete Notification =====");
 
-        if (!agreeNotification(member, NotificationType.TEACHER_SIGNUP_COMPLETE)) return;
+//        if (!agreeNotification(member, NotificationType.TEACHER_SIGNUP_COMPLETE)) return;
 
         Notification notification = notificationRepository.save(
                 Notification.builder()

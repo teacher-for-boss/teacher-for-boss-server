@@ -68,7 +68,7 @@ public class BoardQueryServiceImpl implements BoardQueryService {
         Post post = postRepository.findByIdAndStatus(postId, Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.POST_NOT_FOUND))
                 .increaseViewCount();
-
+        Member writer = post.getMember();
         boolean liked = false;
         boolean bookmarked = false;
         boolean isMine = member.equals(post.getMember());
@@ -83,7 +83,7 @@ public class BoardQueryServiceImpl implements BoardQueryService {
             bookmarked = postBookmark.getBookmarked().isIdentifier();
         }
 
-        TeacherInfo teacherInfo = (member.getRole().equals(Role.TEACHER)) ? teacherInfoRepository.findByMemberIdAndStatus(member.getId(), Status.ACTIVE)
+        TeacherInfo teacherInfo = (writer.getRole().equals(Role.TEACHER)) ? teacherInfoRepository.findByMemberIdAndStatus(writer.getId(), Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.TEACHER_INFO_NOT_FOUND)) : null;
 
         int commentCount = commentRepository.countByPostIdAndStatus(post.getId(), Status.ACTIVE);
