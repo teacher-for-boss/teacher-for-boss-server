@@ -1,8 +1,6 @@
 package kr.co.teacherforboss.aop;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import kr.co.teacherforboss.config.RedisConfig;
 import kr.co.teacherforboss.domain.Answer;
 import kr.co.teacherforboss.domain.AnswerLike;
 import kr.co.teacherforboss.domain.Comment;
@@ -17,30 +15,18 @@ import kr.co.teacherforboss.domain.enums.ExchangeType;
 import kr.co.teacherforboss.domain.enums.NotificationType;
 import kr.co.teacherforboss.domain.vo.notificationVO.NotificationLinkData.PostData;
 import kr.co.teacherforboss.domain.vo.notificationVO.NotificationLinkData.QuestionData;
-import kr.co.teacherforboss.repository.MemberRepository;
 import kr.co.teacherforboss.repository.NotificationRepository;
 import kr.co.teacherforboss.repository.NotificationSettingRepository;
 import kr.co.teacherforboss.repository.PostRepository;
-import kr.co.teacherforboss.repository.QuestionRepository;
 import kr.co.teacherforboss.service.notificationService.NotificationCommandService;
 import kr.co.teacherforboss.service.snsService.SnsService;
 import kr.co.teacherforboss.web.dto.BoardResponseDTO;
-import kr.co.teacherforboss.web.dto.HomeResponseDTO.GetHotPostsDTO;
-import kr.co.teacherforboss.web.dto.HomeResponseDTO.GetHotPostsDTO.HotPostInfo;
-import kr.co.teacherforboss.web.dto.HomeResponseDTO.GetHotQuestionsDTO;
-import kr.co.teacherforboss.web.dto.HomeResponseDTO.GetHotQuestionsDTO.HotQuestionInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.cache.CacheManager;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -53,10 +39,7 @@ public class NotificationAspect {
     private final NotificationCommandService notificationCommandService;
     private final NotificationSettingRepository notificationSettingRepository;
     private final NotificationRepository notificationRepository;
-    private final MemberRepository memberRepository;
-    private final QuestionRepository questionRepository;
     private final PostRepository postRepository;
-    private final CacheManager cacheManager;
 
     /* QUESTION_NEW_ANSWER */
     @AfterReturning(pointcut = "execution(* kr.co.teacherforboss.service.boardService.BoardCommandService.saveAnswer(..))", returning = "answer")
@@ -165,40 +148,6 @@ public class NotificationAspect {
         snsService.publishMessage(List.of(notification));
     }
 
-    /* QUESTION_HOT */
-    @Around("execution(* kr.co.teacherforboss.scheduler.HomeScheduler.updateHotQuestions())")
-    public void sendHotQuestionNotification(ProceedingJoinPoint joinPoint) {
-        log.info("===== Send Hot Question Notification =====");
-        try {
-            GetHotQuestionsDTO before = cacheManager.getCache(RedisConfig.HOT_QUESTION_CACHE_NAME).get(RedisConfig.HOT_QUESTION_CACHE_KEY, GetHotQuestionsDTO.class);
-            GetHotQuestionsDTO after = (GetHotQuestionsDTO) joinPoint.proceed();
-
-            List<Long> hotQuestionIds = after.getHotQuestionList().stream()
-                    .filter(hotQuestionInfo -> before == null || before.getHotQuestionList().stream().noneMatch(questionInfo -> questionInfo.getQuestionId().equals(hotQuestionInfo.getQuestionId())))
-                    .map(HotQuestionInfo::getQuestionId)
-                    .toList();
-
-            List<Question> hotQuestions = questionRepository.findAllById(hotQuestionIds);
-
-            List<Notification> notifications = hotQuestions.stream()
-                    .map(question -> Notification.builder()
-                            .member(question.getMember())
-                            .type(NotificationType.QUESTION_HOT)
-                            .title(NotificationType.QUESTION_HOT.getTitle(question.getTitle()))
-                            .content(NotificationType.QUESTION_HOT.getContent(question.getMember().getNickname()))
-                            .data(new QuestionData(question.getId()))
-                            .build()
-                    )
-                    .toList();
-
-            notifications = notifications.stream().filter(notification -> agreeNotification(notification.getMember(), notification.getType())).toList();
-            notificationRepository.saveAll(notifications);
-            snsService.publishMessage(notifications);
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-        }
-    }
-
     /* POST_NEW_COMMENT, POST_COMMENT_NEW_REPLY */
     @AfterReturning(pointcut = "execution(* kr.co.teacherforboss.service.boardService.BoardCommandService.saveComment(..))", returning = "comment")
     public void sendNewCommentNotification(Comment comment) {
@@ -265,76 +214,6 @@ public class NotificationAspect {
 
             snsService.publishMessage(List.of(notification));
         }
-    }
-
-    /* POST_HOT */
-    @Around("execution(* kr.co.teacherforboss.scheduler.HomeScheduler.updateHotPosts())")
-    public void sendHotPostNotification(ProceedingJoinPoint joinPoint) {
-        log.info("===== Send Hot Post Notification =====");
-        try {
-            GetHotPostsDTO before = cacheManager.getCache(RedisConfig.HOT_POST_CACHE_NAME).get(RedisConfig.HOT_POST_CACHE_KEY, GetHotPostsDTO.class);
-            GetHotPostsDTO after = (GetHotPostsDTO) joinPoint.proceed();
-
-            List<Long> hotPostIds = after.getHotPostList().stream()
-                    .filter(hotPostInfo -> before == null || before.getHotPostList().stream().noneMatch(postInfo -> postInfo.getPostId().equals(hotPostInfo.getPostId())))
-                    .map(HotPostInfo::getPostId)
-                    .toList();
-
-            List<Post> hotPosts = postRepository.findAllById(hotPostIds);
-
-            List<Notification> notifications = hotPosts.stream()
-                    .map(post -> Notification.builder()
-                            .member(post.getMember())
-                            .type(NotificationType.POST_HOT)
-                            .title(NotificationType.POST_HOT.getTitle(post.getTitle()))
-                            .content(NotificationType.POST_HOT.getContent(post.getMember().getNickname()))
-                            .data(new PostData(post.getId()))
-                            .build()
-                    )
-                    .toList();
-
-            notifications = notifications.stream().filter(notification -> agreeNotification(notification.getMember(), notification.getType())).toList();
-            notificationRepository.saveAll(notifications);
-            snsService.publishMessage(notifications);
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-        }
-    }
-
-    /* HOME_NEW_HOT_TEACHERS */
-    // 전체 알림
-    @Async
-    @After(value = "execution(* kr.co.teacherforboss.scheduler.HomeScheduler.updateHotTeachers())")
-    public void sendNewHotTeachersNotification() {
-        log.info("===== Send New Hot Teachers Notification =====");
-
-        int page = 0;
-        int batchSize = 100;
-
-        Page<Member> members;
-        List<Notification> notifications;
-        LocalDateTime now = LocalDateTime.now();
-
-        do {
-            members = memberRepository.findAllAgreeServiceNotification(PageRequest.of(page++, batchSize));
-
-            notifications = members.stream()
-                    .map(member -> Notification.builder()
-                            .member(member)
-                            .type(NotificationType.HOME_NEW_HOT_TEACHERS)
-                            .title(NotificationType.HOME_NEW_HOT_TEACHERS.getTitle())
-                            .content(NotificationType.HOME_NEW_HOT_TEACHERS.getContent())
-                            .data(null)
-                            .isRead(BooleanType.F)
-                            .sentAt(now)    // TODO: 여기 이렇게 하는게 맞을지 나중에 다시 보기
-                            .build()
-                    )
-                    .toList();
-
-            notificationRepository.saveAll(notifications);
-        } while (members.hasNext());
-
-        snsService.publishMessage(notifications.get(0));
     }
 
     /* EXCHANGE_COMPLETE */

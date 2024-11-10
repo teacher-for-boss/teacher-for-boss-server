@@ -9,6 +9,7 @@ import kr.co.teacherforboss.config.AwsSnsConfig;
 import kr.co.teacherforboss.domain.Member;
 import kr.co.teacherforboss.domain.enums.NotificationTopic;
 import kr.co.teacherforboss.domain.enums.NotificationType;
+import kr.co.teacherforboss.scheduler.NotificationScheduler;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.service.snsService.SnsService;
 import kr.co.teacherforboss.web.dto.AuthRequestDTO;
@@ -26,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SnsController {
 
     private final AwsSnsAspect awsSnsAspect;
-    private final NotificationAspect notificationAspect;
+    private final NotificationScheduler notificationScheduler;
     private final SnsService snsService;
     private final AuthCommandService authCommandService;
 
@@ -58,7 +59,7 @@ public class SnsController {
     public ApiResponse<String> publishAll(@RequestParam("notificationType") NotificationType notificationType) {
         switch (notificationType) {
             case HOME_NEW_HOT_TEACHERS:
-                notificationAspect.sendNewHotTeachersNotification();
+                notificationScheduler.sendNewHotTeachersNotification();
                 break;
             default:
                 break;
