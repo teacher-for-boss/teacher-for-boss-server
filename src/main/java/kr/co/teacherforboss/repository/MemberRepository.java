@@ -50,4 +50,14 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
                 AND m.status = 'ACTIVE'
             """, nativeQuery = true)
     Page<Member> findAllAgreeServiceNotification(Pageable pageable);
+
+    @Query(value = """
+            SELECT m.*
+            FROM member m
+            INNER JOIN notification_setting ns ON m.id = ns.member_id
+            WHERE m.role = 'TEACHER'
+                AND ns.service = 'T'
+                AND m.status = 'ACTIVE'
+            """, nativeQuery = true)
+    Page<Member> findAllAgreeServiceNotificationByRole(String role, Pageable pageable);
 }
