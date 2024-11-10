@@ -44,6 +44,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      - name: make script file (profile setting)
+        run: |
+          cd ./scripts
+          echo "${{ secrets.MAIN_STANDBY_START_SCRIPT }}" > ./start.sh
+
       - name: make main application.yml
         run: |
           sudo mkdir -p ./src/main/resources
@@ -53,6 +58,7 @@ jobs:
           echo "${{ secrets.MAIN_YML }}" > ./application.yml 
           echo "${{ secrets.MAIN_DEV_YML }}" > ./application-dev.yml
           echo "${{ secrets.MAIN_PROD_YML }}" > ./application-prod.yml
+          echo "${{ secrets.MAIN_STANDBY_YML }}" > ./application-standby.yml
 
       - name: Build with Gradle
         run: ./gradlew clean build -x test
