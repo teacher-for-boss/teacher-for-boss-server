@@ -46,8 +46,7 @@ jobs:
 
       - name: make script file (profile setting)
         run: |
-          cd ./scripts
-          echo "${{ secrets.MAIN_STANDBY_START_SCRIPT }}" > ./start.sh
+          echo '${{ secrets.MAIN_STANDBY_START_SCRIPT }}' > ./scripts/start.sh
 
       - name: make main application.yml
         run: |
