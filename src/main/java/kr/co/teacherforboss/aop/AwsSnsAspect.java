@@ -18,6 +18,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import kr.co.teacherforboss.web.dto.NotificationRequestDTO;
 
 @Aspect
 @Component
@@ -54,8 +55,8 @@ public class AwsSnsAspect {
          snsService.createEndpoint(member, List.of(deviceInfo), NotificationTopic.GENERAL);
     }
 
-    @AfterReturning(pointcut = "execution(* kr.co.teacherforboss.service.notificationService.NotificationCommandService.updateSettings(..))", returning = "settings")
-    public void registerOrDeregisterGeneral(JoinPoint joinPoint, NotificationResponseDTO.SettingsDTO settings) {
+    @AfterReturning(pointcut = "execution(* kr.co.teacherforboss.service.notificationService.NotificationCommandService.updateSettings(..)) && args(request)", returning = "settings")
+    public void registerOrDeregisterGeneral(JoinPoint joinPoint, NotificationRequestDTO.SettingsDTO request, NotificationResponseDTO.SettingsDTO settings) {
         Member member = authCommandService.getMember();
         List<DeviceInfoDTO> deviceInfoDTOS = deviceTokenQueryService.getDeviceTokens(member.getId()).stream().map(DeviceToken::toDeviceInfoDTO).toList();
 
