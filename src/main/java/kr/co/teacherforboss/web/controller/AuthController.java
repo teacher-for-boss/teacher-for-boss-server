@@ -11,9 +11,12 @@ import kr.co.teacherforboss.domain.EmailAuth;
 import kr.co.teacherforboss.domain.PhoneAuth;
 import kr.co.teacherforboss.service.authService.AuthCommandService;
 import kr.co.teacherforboss.service.authService.AuthQueryService;
+import kr.co.teacherforboss.service.notificationService.NotificationCommandService;
 import kr.co.teacherforboss.validation.annotation.CheckSocialType;
 import kr.co.teacherforboss.web.dto.AuthRequestDTO;
 import kr.co.teacherforboss.web.dto.AuthResponseDTO;
+import kr.co.teacherforboss.web.dto.NotificationRequestDTO;
+import kr.co.teacherforboss.web.dto.NotificationResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,11 +40,20 @@ public class AuthController {
     private final AuthCommandService authCommandService;
     private final AuthQueryService authQueryService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final NotificationCommandService notificationCommandService;
 
     @PostMapping("/signup")
     public ApiResponse<AuthResponseDTO.JoinResultDTO> join(@RequestBody @Valid AuthRequestDTO.JoinDTO request){
         Member member = authCommandService.joinMember(request);
         return ApiResponse.onSuccess(AuthConverter.toJoinResultDTO(member));
+    }
+
+    @PostMapping("/signup/notifications/settings")
+    public ApiResponse<NotificationResponseDTO.SettingsDTO> updateSettings(
+            @RequestHeader("Member-Id") Long memberId,
+            @RequestBody @Valid NotificationRequestDTO.SettingsDTO request
+    ) {
+        return ApiResponse.onSuccess(notificationCommandService.updateSettings(memberId, request));
     }
 
     @PostMapping("/email")
