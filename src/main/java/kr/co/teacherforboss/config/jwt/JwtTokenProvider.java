@@ -39,7 +39,7 @@ public class JwtTokenProvider {
     protected static final long ACCESS_TOKEN_EXPIRE_TIME = (long) 1000 * 60 * 60 * 24; // 24시간
     protected static final long REFRESH_TOKEN_EXPIRE_TIME = (long) 1000 * 60 * 60 * 24 * 30; // 1달
 
-    public AuthResponseDTO.TokenResponseDTO createTokenResponse(String email, String name, Role role) {
+    public AuthResponseDTO.TokenResponseDTO createTokenResponse(Long memberId, String email, String name, Role role) {
         List<String> roles = getRolesByUserType(role);
 
         Claims claims = Jwts.claims().setSubject(email);
@@ -50,6 +50,7 @@ public class JwtTokenProvider {
 
         tokenManager.addRefreshToken(email, refreshToken);
         return AuthResponseDTO.TokenResponseDTO.builder()
+                .memberId(memberId)
                 .role(role.name())
                 .email(email)
                 .name(name)

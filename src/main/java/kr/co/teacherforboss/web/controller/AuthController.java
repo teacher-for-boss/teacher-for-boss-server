@@ -102,7 +102,7 @@ public class AuthController {
     public ApiResponse<AuthResponseDTO.TokenResponseDTO> login(@RequestBody @Valid AuthRequestDTO.LoginDTO request) {
         Member member = authCommandService.login(request);
         return ApiResponse.onSuccess(jwtTokenProvider.createTokenResponse(
-                member.getEmail(), member.getName(), member.getRole()));
+                member.getId(), member.getEmail(), member.getName(), member.getRole()));
     }
 
     @PostMapping("/logout")
@@ -131,7 +131,7 @@ public class AuthController {
                                                                      @RequestParam(name = "socialType") @CheckSocialType int socialType) {
         Member member = authCommandService.socialLogin(request, socialType);
         return ApiResponse.onSuccess(jwtTokenProvider.createTokenResponse(
-                member.getEmail(), member.getName(), member.getRole()));
+                member.getId(), member.getEmail(), member.getName(), member.getRole()));
     }
 
     @PostMapping("/nickname/check")
