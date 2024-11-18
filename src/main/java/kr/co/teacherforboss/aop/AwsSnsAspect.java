@@ -62,7 +62,7 @@ public class AwsSnsAspect {
 
         if (settings.isServiceNotification()) {
             System.out.println("register general endpoint");
-            snsService.createEndpoint(member, deviceInfoDTOS, NotificationTopic.GENERAL );
+            snsService.createEndpoint(member, deviceInfoDTOS, NotificationTopic.GENERAL);
         }
         if (!settings.isServiceNotification()) {
             System.out.println("deregister general endpoint");
