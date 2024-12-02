@@ -54,6 +54,10 @@ public class QuestionScheduler {
     public void autoSelectAnswer(Question question) {
         Answer bestAnswer = answerRepository.findTopByQuestionIdAndSelectedAtIsNullAndStatusOrderByLikeCountDescDislikeCountAscCreatedAtAsc(question.getId(), Status.ACTIVE)
                 .orElseThrow(() -> new BoardHandler(ErrorStatus.ANSWER_NOT_FOUND));
-        boardCommandService.selectAnswer(question.getId(), bestAnswer.getId());
+
+        question.selectAnswer(bestAnswer);
+        TeacherSelectInfo teacherSelectInfo = teacherSelectInfoRepository.findByMemberIdAndStatus(bestAnswer.getMember().getId(), Status.ACTIVE)
+                .orElseThrow(() -> new BoardHandler(ErrorStatus.TEACHER_SELECT_INFO_NOT_FOUND));
+        teacherSelectInfo.increaseSelectCount();
     }
 }
