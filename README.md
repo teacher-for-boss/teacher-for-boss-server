@@ -1,8 +1,8 @@
 # 🧑🏻‍🏫 티쳐 포 보스 백엔드 Repository
-![image](https://github.com/teacher-for-boss/teacher-for-boss-server/assets/77263479/93cddb64-40f7-477b-826a-598f301cf930)
+![image](https://github.com/user-attachments/assets/c56dae89-68b6-41b2-9c02-cc1478c3a3fb)
 
 
-1인 자영업자를 위한 솔루션 제공 서비스, **티쳐 포 보스 (Teacher for boss) 팀의 백엔드 레포지토리**입니다.
+자영업자 사장님들을 위한 멘토링 커뮤니티 앱, **티쳐 포 보스 (Teacher for boss) 팀의 백엔드 레포지토리**입니다.
 
 <br>
 
@@ -32,25 +32,11 @@
 
 <br>
 
-### 우리는 사장님을 위한 선생님, ‘**티쳐 포 보스(Teacher for Boss)**’입니다.
-
-티쳐 포 보스는 다음과 같은 서비스를 제공해요
-
-- 1️⃣ 1인 사장님들은 다양한 카테고리의 시험을 통해, 문제점을 파악하고 부족한 부분을 공부할 수 있어요
-- 2️⃣ 메뉴선정부터 매뉴얼 설정, 마케팅까지! 튜터 선생님에게 도움을 받을 수 있어요
-- 3️⃣ 자영업자 사장님들의 커뮤니티를 통해 서로 어려움을 공유하며 성장할 수 있어요
-
-<br>
-
-
-
-## 🖥️ 서비스 소개
-![image](https://github.com/teacher-for-boss/teacher-for-boss-server/assets/77263479/6c6f0843-fc93-42f0-92c3-ba3af813674f)
-![image](https://github.com/teacher-for-boss/teacher-for-boss-server/assets/77263479/4d34a099-90dc-4965-8ba9-fc50dc70052b)
-![image](https://github.com/teacher-for-boss/teacher-for-boss-server/assets/77263479/f9832397-be8d-40b4-bb18-1ab90adabc24)
-
-<br>
-
+### 자영업자 사장님들을 위한 멘토링 커뮤니티 앱, 티처 포 보스 👨‍👦
+![image](https://github.com/user-attachments/assets/2c88a6f7-5bcf-45dd-b3bc-4657cd018b87)
+  ![image](https://github.com/user-attachments/assets/316530cf-c76f-4b65-bfa4-48ffa8e85715)
+  ![image](https://github.com/user-attachments/assets/83f6f280-3b6d-411a-af23-ddb0de6d7423)
+  ![image](https://github.com/user-attachments/assets/4da14357-37c6-4a4d-9799-dc569134437f)
 
 ## 🔧 Tech Stack
 
